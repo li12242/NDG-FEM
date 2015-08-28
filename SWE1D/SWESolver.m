@@ -22,20 +22,25 @@ resQ = zeros(size(q)); resH = zeros(size(h));
 % compute time step size
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
 
-CFL=0.20; 
+CFL=0.30; 
 % is_Camera_on = 1;	% 否进行摄像
 % if is_Camera_on
 %     writerObj = VideoWriter('SWE1D.avi');
 %     writerObj.FrameRate=50;
 %     open(writerObj);	% 设定好储存的帧速率以后才能打开
 % end
-% outer time step loop 
+% outer time step loop
 while(time<FinalTime)
     lamda = SWESpeed(h, q);
-    
     dt = CFL/max(lamda(:))*xmin;
+%     if dt < 10^-10
+%         dt = 10^-10;
+%     end
+    % Increment time
+    time = time+dt;
+    fprintf('Processing: %f ...\n', time./FinalTime)
     for INTRK = 1:5
-        
+        try
         [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
@@ -43,11 +48,22 @@ while(time<FinalTime)
         h = h + rk4b(INTRK)*resH;
         [h, q] = PositivePreserving(mesh, h, q, bedElva);
 
+%         if time > 3.8
+%             keyboard
+%             subplot(2,1,1)
+%             plot(mesh.x, h+bedElva, '.-'); drawnow
+%             subplot(2,1,2)
+%             plot(mesh.x, q, '.-'); drawnow
+%         end
+        if sum(sum(isnan(h)))
+            keyboard
+        end
         % plot
+%         if time > 269/8
+%             plot(mesh.x, h+bedElva, 'o-'); drawnow
+%         end
 %         subplot(2,1,1)
-%     if time > 20
 %         plot(mesh.x, h+bedElva, 'o-'); drawnow
-%     end
 %         subplot(2,1,2)
 %         plot(mesh.x, q, 'o-'); drawnow
         
@@ -55,10 +71,10 @@ while(time<FinalTime)
 %             frame = getframe(gcf);
 %             writeVideo(writerObj,frame);     % writeVideo 语句并不返回任何参数
 %         end
+        catch
+            keyboard
+        end
     end
-    % Increment time
-    time = time+dt;
-    
 end
 % if is_Camera_on
 %     close(writerObj);
@@ -69,28 +85,30 @@ function [h, q] = PositivePreserving(mesh, h, q, bedElva)
 % Positivity-preserving methods
 % REFERENCE:
 % [1]: Xing(2010)
-eta = h + bedElva;
+hDelta = 0; % scheme min depth
+eta = h + bedElva; 
 hlim = Utilities.SlopeLimitN(mesh, h); q = Utilities.SlopeLimitN(mesh, q);
 etalim = Utilities.SlopeLimitN(mesh, eta);
 
-hmin = min(h); etaLimit = find(hmin>0); hLimit = find(hmin<0);
+hmin = min(h); etaLimit = find(hmin>hDelta); hLimit = find(hmin<=hDelta);
 % for hmin>0, TVB limiter is based on (h+b, q)
 h(:, etaLimit) = etalim(:, etaLimit) - bedElva(:, etaLimit);
 % for hmin<0, TVB limiter is based on (h, q)
 h(:, hLimit) = hlim(:, hLimit);
 
 if(~isempty(hLimit))
-    hdelta = 10^-12; % scheme min depth
+%     hdelta = 10^-12; % scheme min depth
     % Compute cell averages
-    hmean = CellMean(mesh, h(:, hLimit)); hmean(hmean< 10^-12) = 10^-12;
-    theta = min(1, hmean./(hmean - hmin(hLimit) + hdelta));
+    hmean = CellMean(mesh, h(:, hLimit)); hmean(hmean< hDelta) = hDelta;
+    theta = min(1, hmean./(hmean - hmin(hLimit) + hDelta));
     hmean = repmat(hmean, mesh.Shape.nNode, 1);
     theta = repmat(theta, mesh.Shape.nNode, 1);
     h(:, hLimit) = theta.*(h(:, hLimit) - hmean) + hmean;
 end% if
-
+% temp
+h(h<hDelta) = hDelta;
 % eliminate the flux in near dry regions
-q(h<10e-6) = 0;
+q(h<10^-4) = 0;
 end% func
 
 function hmean = CellMean(mesh, h)
