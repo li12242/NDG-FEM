@@ -5,12 +5,13 @@ function [h ,q] = SWESetUp
 %     Discontinuous Galerkin Method[M]. CRC Press, 2014. 65
 
 % max order of polymomials
-N = 2; nElement = 100;
-len = 25;
-% len = 1000;
+N = 3; nElement = 200;
+x1 = 0; x2 = 1000; % Dam break
+% x1 = 0; x2 = 25; % Flow over dump
+% x1 = -1000; x2 = 1000; % Parabolic Bowl
 % assert(mod(nElement,2) == 0)
 % Generate simple mesh
-[Nv, VX, K, EToV] = Utilities.MeshGen1D(0.0,len,nElement);
+[Nv, VX, K, EToV] = Utilities.MeshGen1D(x1,x2,nElement);
 BC = [2,1; 3,Nv];
 
 % Initialize solver and construct grid and metric
@@ -19,7 +20,9 @@ mesh = MultiRegions.RegionLineBC(line, EToV, VX, BC);
 bedElevation = SetBed(mesh);
 
 % Solve Problem
-FinalTime = 50.0;
+% T = 269; FinalTime = T/2; % Parabolic Bowl
+FinalTime = 20; % Dam break
+% FinalTime = 240; % Flow over dump
 
 % Set initial conditions
 [h, q] = SWEInit(mesh, bedElevation);
@@ -30,15 +33,33 @@ FinalTime = 50.0;
 end% func
 
 function bedElevation = SetBed(mesh)
+% Dam break
 bedElevation = zeros(size(mesh.x));
-flag = (mesh.x >= 8) & (mesh.x <=12);
-bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
+% flow over dump
+% flag = (mesh.x >= 8) & (mesh.x <=12);
+% bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
+
+% parabolic bowl
+% a = 600; h0 = 10;
+% bedElevation = h0.*(mesh.x.^2./a^2 - 1);
 end% func
 
 function [h,q] = SWEInit(mesh, bedElva)
+% [h, q] = ParaBowlInit(mesh, bedElva);
 initCase = 1;
-[h, q] = FlowDumpInit(mesh, bedElva, initCase);
-% [h, q] = DamBreakInit(mesh, initCase);
+% [h, q] = FlowDumpInit(mesh, bedElva, initCase);
+[h, q] = DamBreakInit(mesh, initCase);
+end% func
+
+function [h, q] = ParaBowlInit(mesh, bedElva)
+q = zeros(size(mesh.x)); hDelta = 0.0;
+
+g = 9.8; B = 5; h0 = 10; a = 600;
+w = sqrt(2*g*h0)./a;
+% z = zeros(size(mesh.x));
+z = -(4*B*w).*mesh.x./(4*g);
+h = z - bedElva;
+h(h<hDelta) = hDelta;
 end% func
 
 function [h, q] = FlowDumpInit(mesh, bedElva, initCase)

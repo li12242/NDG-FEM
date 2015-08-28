@@ -36,6 +36,7 @@ fprintf('\n')
 %% tesing triangle element
 nOrder = 5;
 tri = StdRegions.Triangle(nOrder);
+line = StdRegions.LineBasic(nOrder);
 
 % test edge node list
 nodelist = tri.getFaceListToNodeList;
@@ -56,13 +57,13 @@ end
 for iface = 1:tri.nFace
     [~,nodelist] = tri.getNodeListAtFace(iface);
     facelist = tri.getFaceListAtFace(iface);
-    temp = tri.FaceMassMatrixSmall(nodelist, facelist);
+    temp = tri.Mes(nodelist, facelist);
     if any(temp - line.M)
         error('properties: FaceMassMatrixSmall error occurs');
     end
 end
 % check full edge mass matrix
 vmapM = tri.getFaceListToNodeList;
-tri.FaceMassMatrixFull*tri.r - tri.FaceMassMatrixSmall*tri.r(vmapM)
+tri.Mef*tri.r - tri.Mes*tri.r(vmapM)
 
 end
