@@ -1,5 +1,5 @@
 function testing_jacobiP(n)
-r = Polylib.zwglj(n+1);
+[r, ~] = Polylib.zwglj(n+1);
 alpha=1; beta=1;
 %% poylib
 % hpath = fullfile('/Users/mac/Documents/Model/NDG-FEM/+Polylib/libpolylib.h');
@@ -21,4 +21,4 @@ p1 = JacobiP(r, alpha, beta, double(n));
 
 %% compare
 
-p1-p'
+p1-p

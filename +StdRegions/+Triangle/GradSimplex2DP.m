@@ -1,7 +1,7 @@
 function [dmodedr, dmodeds] = GradSimplex2DP(a,b,id,jd)
 % Return the derivatives of the modal basis (id,jd) on the 2D simplex at (a,b).
-fa = Polylib.JacobiP(a, 0, 0, id)';     dfa = Polylib.GradJacobiP(a, 0, 0, id)';
-gb = Polylib.JacobiP(b, 2*id+1,0, jd)'; dgb = Polylib.GradJacobiP(b, 2*id+1,0, jd)';
+fa = Polylib.JacobiP(a, 0, 0, id);     dfa = Polylib.GradJacobiP(a, 0, 0, id);
+gb = Polylib.JacobiP(b, 2*id+1,0, jd); dgb = Polylib.GradJacobiP(b, 2*id+1,0, jd);
 % r-derivative
 % d/dr = da/dr d/da + db/dr d/db = (2/(1-s)) d/da = (2/(1-b)) d/da
 dmodedr = dfa.*gb;

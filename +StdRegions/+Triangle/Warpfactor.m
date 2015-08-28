@@ -2,8 +2,8 @@ function warp = Warpfactor(N, rout)
 % Compute scaled warp function at order N based on rout interpolation nodes
 
 % Compute LGL and equidistant node distribution
-[LGLr,~] = Polylib.zwglj(N+1); req  = linspace(-1,1,N+1)';
-LGLr = LGLr';
+[LGLr,~] = Polylib.zwglj(N+1); req = linspace(-1,1,N+1)';
+
 % Compute V based on req
 Veq = Polylib.VandMatrix(N, req);
 % Evaluate Lagrange polynomial at rout
