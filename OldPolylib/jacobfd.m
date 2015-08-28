@@ -6,8 +6,8 @@ function [p,dp] = jacobfd(r, alpha, beta, n)
 %     $ P^{\alpha,\beta}_n(z) \alpha > -1, \beta > -1 $ and its
 %     derivative at the np points in z[i]
 % Input:
-%       int         n   nth order Jacobi polynomial
 %       double[np]  r   np points $\in$ [-1,1]
+%       int         n   nth order Jacobi polynomial
 % Output:
 %       
 % 
