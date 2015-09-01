@@ -16,10 +16,11 @@ dF = normal(mesh, FM, GM) - Fs;
 
 rhsVar = -( mesh.rx.*(tri.Dr*F) + mesh.sx.*(tri.Ds*F) ...
     + mesh.ry.*(tri.Dr*G) + mesh.sy.*(tri.Ds*G) ) ...
-    + tri.invM*(tri.Mes*(dF.*mesh.fScale));
+    + tri.invM*tri.Mes*(dF.*mesh.fScale);
+
 % weak form
-% rhsVar = ( mesh.rx.*(tri.Dr*F) + mesh.sx.*(tri.Ds*F) ...
-%     + mesh.ry.*(tri.Dr*G) + mesh.sy.*(tri.Ds*G) ) ...
+% rhsVar = ( mesh.rx.*((tri.invM*tri.Dr'*tri.M)*F) + mesh.sx.*((tri.invM*tri.Ds'*tri.M)*F) ...
+%     + mesh.ry.*((tri.invM*tri.Dr'*tri.M)*G) + mesh.sy.*((tri.invM*tri.Ds'*tri.M)*G) ) ...
 %     - tri.invM*(tri.Mes*(Fs.*mesh.fScale));
 end% func
 
@@ -37,9 +38,9 @@ end% func
 function Fs = BoundaryCondition(mesh, Fs, time, Speed)
 % Inflow BC
 % c = sin(t);
-c = sin(- 2*pi*time);
+c = sin(- pi*time);%*sin(2*pi*mesh.y(mesh.vmapM(mesh.mapI)));
 [F,G] = ConvectionFlux(c, Speed);
-Fs(mesh.mapI) = F*mesh.nx(mesh.mapI) + G*mesh.ny(mesh.mapI);
+Fs(mesh.mapI) = F.*mesh.nx(mesh.mapI) + G.*mesh.ny(mesh.mapI);
 end% func
 
 

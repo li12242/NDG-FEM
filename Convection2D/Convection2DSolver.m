@@ -27,8 +27,9 @@ while(time < FinalTime)
         rhsVar = Convection2DRHS(mesh, var, time, Speed);
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
+        plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)], [var; var(1,:)], '.-'); drawnow
     end% for
-%     plot3(mesh.x, mesh.y, var, '.-'); drawnow
+    
 
 end% while
 
