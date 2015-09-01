@@ -88,16 +88,16 @@ classdef RegionTri < MultiRegions.Region
             % List of local face to local vertex connections
             vn = [[1,2];[2,3];[1,3]];
             % Build global face to node sparse array
-            SpFToV = spalloc(TotalFaces, Nv, 2*TotalFaces);
+            obj.SpFToV = spalloc(TotalFaces, Nv, 2*TotalFaces);
             sk = 1;
             for k=1:K
               for face=1:Nfaces
-                SpFToV(sk, EToV(k, vn(face,:))) = 1;
+                obj.SpFToV(sk, EToV(k, vn(face,:))) = 1;
                 sk = sk+1;
               end
             end
             % Build global face to global face sparse array
-            SpFToF = SpFToV*SpFToV' - 2*speye(TotalFaces);
+            SpFToF = obj.SpFToV*obj.SpFToV' - 2*speye(TotalFaces);
             % Find complete face to face connections
             [faces1, faces2] = find(SpFToF==2);
             % Convert face global number to element and face numbers

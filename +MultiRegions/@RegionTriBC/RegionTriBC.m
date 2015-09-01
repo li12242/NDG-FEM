@@ -27,6 +27,7 @@ classdef RegionTriBC < MultiRegions.RegionTri
     % RegionTri methods: none
     properties
         mapO    % bc(outflow) list to face list
+        mapI    % bc(inflow) list to face list
         mapW    % bc(wall) list to face list
     end% properties
     methods
@@ -39,6 +40,7 @@ classdef RegionTriBC < MultiRegions.RegionTri
             
             MultiRegions.BCType
             obj.mapO = getBoundMapList(obj, BC, OUTFLOW);
+            obj.mapI = getBoundMapList(obj, BC, INFLOW);
             obj.mapW = getBoundMapList(obj, BC, WALL);
         end% function
     end% methods

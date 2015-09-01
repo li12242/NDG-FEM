@@ -5,10 +5,10 @@ function warp = Warpfactor(N, rout)
 [LGLr,~] = Polylib.zwglj(N+1); req = linspace(-1,1,N+1)';
 
 % Compute V based on req
-Veq = Polylib.VandMatrix(N, req);
+Veq = StdRegions.Line.getVandMatrix(N, req);
 % Evaluate Lagrange polynomial at rout
 Nr = length(rout); %Lmat=zeros(N+1,Nr); 
-Pmat = zeros(N+1,Nr); 
+Pmat = zeros(N+1,Nr);
 for i=1:N+1
   Pmat(i,:) = Polylib.JacobiP(rout, 0, 0, i-1);
 end
