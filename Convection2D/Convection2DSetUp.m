@@ -2,7 +2,7 @@ function var = Convection2DSetUp
 % 2D convection problem
 % dc/dt + udc/dx + vdu/dy = 0
 
-N = 3;
+N = 1;
 % read triangle mesh
 [EToV, VX, VY, EToR, BC] = Utilities.MeshReaderTriangle('Convection2D/mesh/rectangle');
 
@@ -10,24 +10,25 @@ tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTriBC(tri, EToV, VX, VY, BC);
 var = ConvectionInit(mesh);
 
-Speed = [1,0]; % speed of domain, [u, v]
-FinalTime = pi;
+Speed = [1,1]; % speed of domain, [u, v]
+FinalTime = 4;
 
 var = Convection2DSolver(mesh, var, FinalTime, Speed);
 
-postprocess(mesh, var);
+postprocess(mesh, var, VX, VY, EToV);
 end% func
 
-function postprocess(mesh, var)
-plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)],...
-    [var; var(1,:)], '.')
+function postprocess(mesh, var, VX, VY, EToV)
 
-% patch('Faces',EToV,...
-%     'Vertices',[mesh.x(:), mesh.y(:)],...
-%     'edgecol','k','facecol',[.8,.9,1])
+interp = TriScatteredInterp(mesh.x(:), mesh.y(:), var(:));
+c = interp(VX, VY);
+
+patch('Faces',EToV,...
+    'Vertices',[VX, VY, c],...
+    'edgecol','k','facecol',[.8,.9,1])
 end% func
 
 function var = ConvectionInit(mesh)
-% var = zeros(size(mesh.x));
-var = sin(2*pi*mesh.x);
+% var = ones(size(mesh.x));
+var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
 end% func
