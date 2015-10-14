@@ -31,7 +31,7 @@ resQ = zeros(size(q)); resH = zeros(size(h));
 
 % compute time step size
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
-CFL=0.1;
+CFL=0.3;
 FinalTime = physics.getVal('FinalTime');
 outstep = 0;
 lamda = SWESpeed(h, q);
@@ -71,7 +71,7 @@ while(time<FinalTime)
         h = h + rk4b(INTRK)*resH;
 
         [h, q] = PositivePreserving(mesh, h, q, bedElva);
-        
+%         [h, q] = PositivePreserving2(mesh, h, q, bedElva);
 %         catch
 %             keyboard
 %         end
@@ -84,19 +84,26 @@ end
 % end
 end% func
 
+function [h, q] = PositivePreserving2(mesh, h, q, bedElva)
+h = Utilities.Limiter.SlopeLimit1(mesh, h); 
+q = Utilities.Limiter.SlopeLimit1(mesh, q);
+% q(h<=0) = 0;
+h(h<0) = 0;
+end% func
+
 function [h, q] = PositivePreserving(mesh, h, q, bedElva)
 % Positivity-preserving methods
 % REFERENCE:
 % [1]: Xing(2010)
-hDelta = 0.001; % scheme min depth
+hDelta = 0.000; % scheme min depth
 limitH = 0.001;
 eta = h + bedElva;
-q = Utilities.SlopeLimitN(mesh, q);
+q = Utilities.Limiter.SlopeLimit1(mesh, q);
 
 % 1. limiter on eta
-etalim = Utilities.SlopeLimitN(mesh, eta);
+etalim = Utilities.Limiter.SlopeLimit1(mesh, eta);
 % 2. limiter on h
-hlim = Utilities.SlopeLimitN(mesh, h); 
+hlim = Utilities.Limiter.SlopeLimit1(mesh, h); 
 % for hmin<0, TVB limiter is based on (h, q)
 h = hlim;
 % for hmin>0, TVB limiter is based on (h+b, q)
