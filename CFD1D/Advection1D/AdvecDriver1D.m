@@ -2,14 +2,15 @@
 % Globals1D;
 
 % Order of polymomials used for approximation 
-N = 8;
+N = 2;
 
-Element = Element1D(N);
+line = StdRegions.Line(N);
 
 % Generate simple mesh
-[Nv, VX, K, EToV] = MeshGen1D(0.0,2.0,10);
+[Nv, VX, K, EToV] = Utilities.MeshGen1D(0.0,2.0,10);
+BC = [2, 1; 3, Nv];
 
-Mesh = Mesh1D(Element, EToV, VX);
+Mesh = MultiRegions.RegionLineBC(line, EToV, VX, BC);
 
 % Initialize solver and construct grid and metric
 % StartUp1D;
