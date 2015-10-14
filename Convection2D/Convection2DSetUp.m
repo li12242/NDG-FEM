@@ -2,7 +2,7 @@ function var = Convection2DSetUp
 % 2D convection problem
 % dc/dt + udc/dx + vdu/dy = 0
 
-N = 1;
+N = 4;
 % read triangle mesh
 [EToV, VX, VY, EToR, BC] = Utilities.MeshReaderTriangle('Convection2D/mesh/rectangle');
 
@@ -10,8 +10,8 @@ tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTriBC(tri, EToV, VX, VY, BC);
 var = ConvectionInit(mesh);
 
-Speed = [1,1]; % speed of domain, [u, v]
-FinalTime = 4;
+Speed = [1,0]; % speed of domain, [u, v]
+FinalTime = 2;
 
 var = Convection2DSolver(mesh, var, FinalTime, Speed);
 
@@ -30,5 +30,6 @@ end% func
 
 function var = ConvectionInit(mesh)
 % var = ones(size(mesh.x));
+% var = mesh.x;
 var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
 end% func

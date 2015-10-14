@@ -1,7 +1,9 @@
-function F = SWEFlux(Q)
-% F = SWEFlux(Q);
-% calculate the flux of shallow water equation
-g = 9.8;
-h = Q(:,:,1); hu = Q(:,:,2); u = hu./h;
-F(:,:,1) = hu; F(:,:,2) = hu.*u + 1/2*g*h.^2;
-end
+function [Fh, Fq] = SWEFlux(h, q)
+
+g = 9.8; hDelta = 10^-6; isWet = h>hDelta;
+u = zeros(size(h)); 
+
+u(isWet) = q(isWet)./h(isWet);
+Fh = q;
+Fq = g*h.^2./2 + u.^2.*h;
+end% func

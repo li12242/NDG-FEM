@@ -31,16 +31,16 @@ resQ = zeros(size(q)); resH = zeros(size(h));
 
 % compute time step size
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
-CFL=0.1;
+CFL=0.02;
 FinalTime = physics.getVal('FinalTime');
 outstep = 0;
-lamda = SWESpeed(h, q);
-dt = CFL/lamda*xmin;
+% lamda = SWESpeed(h, q);
+% dt = CFL/max(lamda(:))*xmin;
 
 % outer time step loop
 while(time<FinalTime)
     lamda = SWESpeed(h, q);
-%     dt = CFL/max(lamda(:))*xmin;
+    dt = CFL/max(lamda(:))*xmin;
     % Increment time
     if time + dt > FinalTime
         time = FinalTime;
@@ -49,9 +49,12 @@ while(time<FinalTime)
         time = time + dt;
     end% if
     
-    if lamda*dt > CFL*xmin
+    if lamda > 50
         dt = dt/2;
-    elseif lamda*dt < CFL*xmin/4
+        if dt < 10^-4
+            error('too large wave speed!')
+        end
+    elseif lamda<5
         dt = dt*2;
     end%if
 %     if time >= 26.6555 - 3*dt
@@ -88,8 +91,8 @@ function [h, q] = PositivePreserving(mesh, h, q, bedElva)
 % Positivity-preserving methods
 % REFERENCE:
 % [1]: Xing(2010)
-hDelta = 0.001; % scheme min depth
-limitH = 0.001;
+hDelta = 0; % scheme min depth
+
 eta = h + bedElva;
 q = Utilities.SlopeLimitN(mesh, q);
 
@@ -101,7 +104,7 @@ hlim = Utilities.SlopeLimitN(mesh, h);
 h = hlim;
 % for hmin>0, TVB limiter is based on (h+b, q)
 hlim = etalim - bedElva;
-hmin = min(hlim); etaLimit = find(hmin > limitH);
+hmin = min(hlim); etaLimit = find(hmin > hDelta);
 h(:, etaLimit) = etalim(:, etaLimit) - bedElva(:, etaLimit);
 
 hmin = min(h); hLimit = find(hmin<hDelta);

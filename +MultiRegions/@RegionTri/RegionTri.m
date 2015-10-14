@@ -38,13 +38,14 @@ classdef RegionTri < MultiRegions.Region
             %           VX - vertice coordinate, size [nVerticx1]
             %           VY - vertice coordinate, size [nVerticx1]
             obj = obj@MultiRegions.Region(shape, EToV);
-            [obj.EToE, obj.EToF] = Connect2D(obj,EToV);
-            [obj.vmapM,obj.vmapP] = BuildMap(obj,EToV, obj.EToE, obj.EToF);
             
             % get node coordiante
             vx = VX(EToV'); vy = VY(EToV');
             [obj.x, obj.y, obj.rx, obj.sx, obj.ry, obj.sy, obj.J]  = shape.getEleGeometric(vx, vy);
             [obj.nx, obj.ny, obj.sJ] = shape.getFaceGeometric(obj.x, obj.y);
+            
+            [obj.EToE, obj.EToF] = Connect2D(obj,EToV);
+            [obj.vmapM,obj.vmapP] = BuildMap(obj,EToV, obj.EToE, obj.EToF);
             
             obj.fScale = obj.sJ./obj.J(obj.vmapM);
         end% function

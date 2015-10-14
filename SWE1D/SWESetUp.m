@@ -1,54 +1,94 @@
 function [h ,q] = SWESetUp
 % Idealized dam break problem of 1D shallow water equation 
+% 
 % REFERENCE:
 % [1] Khan A A, Lai W. Modeling Shallow Water Flows Using the 
 %     Discontinuous Galerkin Method[M]. CRC Press, 2014. 65
 
+physics = Utilities.varGroup;
+
+caseName = 'DamBreakDry';
+switch caseName
+    case 'DamBreakDry'
+        FinalTime = 20; % Dam break
+        x1 = 0; x2 = 1000; % Dam break
+    case 'DamBreakWet'
+        FinalTime = 20; % Dam break
+        x1 = 0; x2 = 1000; % Dam break
+    case 'FlowDump'
+        FinalTime = 240; % Flow over dump
+        x1 = 0; x2 = 25; % Flow over dump
+    case 'ParabolicBowl'
+        T = 269; FinalTime = T/2; % Parabolic Bowl
+        x1 = -1000; x2 = 1000; % Parabolic Bowl
+end% switch
+
+physics.incert('FinalTime', FinalTime);
+physics.incert('caseName', caseName);
+
 % max order of polymomials
-N = 3; nElement = 200;
-x1 = 0; x2 = 1000; % Dam break
-% x1 = 0; x2 = 25; % Flow over dump
-% x1 = -1000; x2 = 1000; % Parabolic Bowl
-% assert(mod(nElement,2) == 0)
-% Generate simple mesh
-[Nv, VX, K, EToV] = Utilities.MeshGen1D(x1,x2,nElement);
+N = 2; nElement = 200;
+[Nv, VX, K, EToV] = Utilities.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
 % Initialize solver and construct grid and metric
 line = StdRegions.Line(N);
 mesh = MultiRegions.RegionLineBC(line, EToV, VX, BC);
-bedElevation = SetBed(mesh);
+physics.incert('mesh', mesh);
 
-% Solve Problem
-% T = 269; FinalTime = T/2; % Parabolic Bowl
-FinalTime = 20; % Dam break
-% FinalTime = 240; % Flow over dump
+bedElevation = SetBed(physics);
+physics.incert('bedElva', bedElevation);
 
 % Set initial conditions
-[h, q] = SWEInit(mesh, bedElevation);
+[h, q] = SWEInit(physics);
+physics.incert('height', h);
+physics.incert('flux', q);
 
-[h, q] = SWESolver(mesh, h, q, bedElevation, FinalTime);
+% set output file
+ncfile = CreateOutputFile(mesh);
+ncid = netcdf.open('SWE1D.nc','WRITE');
+mesh_id = ncfile.varid(1);
+netcdf.putVar(ncid,mesh_id,mesh.x(:))
+netcdf.close(ncid);
+% Solve Problem
+[h, q] = SWESolver(physics, ncfile);
 
 % plot(mesh.x, h, 'o-')
 end% func
 
-function bedElevation = SetBed(mesh)
-% Dam break
-bedElevation = zeros(size(mesh.x));
-% flow over dump
-% flag = (mesh.x >= 8) & (mesh.x <=12);
-% bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
-
-% parabolic bowl
-% a = 600; h0 = 10;
-% bedElevation = h0.*(mesh.x.^2./a^2 - 1);
+function bedElevation = SetBed(physics)
+mesh = physics.getVal('mesh');
+% initialize the bed elevation according to the case name
+switch physics.getVal('caseName')
+    case 'DamBreakDry'
+        bedElevation = zeros(size(mesh.x));
+    case 'DamBreakWet'
+        bedElevation = zeros(size(mesh.x));
+    case 'FlowDump'
+        bedElevation = zeros(size(mesh.x));
+        flag = (mesh.x >= 8) & (mesh.x <=12);
+        bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
+    case 'ParabolicBowl'
+        a = 600; h0 = 10;
+        bedElevation = h0.*(mesh.x.^2./a^2 - 1);
+end% switch
 end% func
 
-function [h,q] = SWEInit(mesh, bedElva)
-% [h, q] = ParaBowlInit(mesh, bedElva);
-initCase = 1;
-% [h, q] = FlowDumpInit(mesh, bedElva, initCase);
-[h, q] = DamBreakInit(mesh, initCase);
+function [h,q] = SWEInit(physics)
+mesh = physics.getVal('mesh');
+bedElva = physics.getVal('bedElva');
+% initialize the bed elevation according to the case name
+switch physics.getVal('caseName')
+    case 'DamBreakDry'
+        [h, q] = DamBreakInit(mesh, 2);
+    case 'DamBreakWet'
+        [h, q] = DamBreakInit(mesh, 1);
+    case 'FlowDump'
+        initCase = 1;
+        [h, q] = FlowDumpInit(mesh, bedElva, initCase);
+    case 'ParabolicBowl'
+        [h, q] = ParaBowlInit(mesh, bedElva);
+end% switch
 end% func
 
 function [h, q] = ParaBowlInit(mesh, bedElva)
