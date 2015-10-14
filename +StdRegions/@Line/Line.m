@@ -21,21 +21,26 @@ classdef Line < StdRegions.LineBasic
     %   getNodeListAtFace        - return the number of nodes & node list
     %   getFaceListAtFace        - return the face list at spicific face
     %   getReorderFaceListAtFace - return the reorder face list of the spicific face
-    %   getFaceListToNodeList    - return the node list of face node
+    %   getFaceListToNodeList    - return the node list of face node, from
+    %   left to right
     %   getFaceGeometric         - return face normal vector & surface jacobi factor
     %   getEleGeometric          - return node Coordinate & dr/dx & jacobi factor
     %
+%% properties public
+% 
     properties
         nFaceNode               % nFace x nNode (at face element)
         Mes                     % Mass Matrix of Edge, integral only of face nodes, M_{E,small}
         Mef                     % Mass Matrix of Edge, integral of all nodes, M_{E,full}
     end% public properties
-    
+%% properties private
+
     properties(SetAccess=private, GetAccess=private)
         nPerBoundaryNode   % number of nodes at every boundary, size [nFace x 1] 
     end
     methods
-        %-----------------------------------------------------------------%
+%% function line
+% 
         function obj = Line(nOrder)
             % construction function
             obj = obj@StdRegions.LineBasic(nOrder);
@@ -47,16 +52,20 @@ classdef Line < StdRegions.LineBasic
             obj.Mes = getSmallFaceMassMatrix(obj, PointFaceShape);
             obj.Mef = getFullFaceMassMatrix(obj);
         end% func
-        %-----------------------------------------------------------------%
+%% function getNodeListAtFace
+% get the spicific face local face list
+% return the number of nodes & node indicator, at spicific face
+% 
         function  [n, nodelist] = getNodeListAtFace(obj, iface)
-            % return - number of nodes & node list, at spicific face
-            % get the spicific face local face list
+            
             facelist = obj.getFaceListAtFace(iface);
             faceListToNodelist = getFaceListToNodeList(obj);
             nodelist = faceListToNodelist(facelist);
             n = obj.nPerBoundaryNode(iface);
         end% func
-        %-----------------------------------------------------------------%
+%% function getFaceListAtFace
+% 
+% 
         function facelist = getFaceListAtFace(obj, iface) 
             % return the face list at spicific face
             if (iface ==1)
@@ -67,14 +76,18 @@ classdef Line < StdRegions.LineBasic
             % the number of nodes at the ibth boundary is 'nPerBoundaryNode(ib)'
             facelist = contour+1:contour+obj.nPerBoundaryNode(iface);
         end %function getLocalFaceList
-        %-----------------------------------------------------------------%
+%% function getReorderFaceListAtFace
+% 
+% 
         function facelist = getReorderFaceListAtFace(obj, iface, vorder)
             % return the reorder face list of the spicific face
             % with the vertice order reformed
             facelist = getFaceListAtFace(obj, iface);
         end% function
         
-        %-----------------------------------------------------------------%
+%%  function getFaceListToNodeList
+% 
+% 
         function nodelist = getFaceListToNodeList(obj)
             % return the node list of face node
             % size [nFaceNode x 1]
@@ -83,7 +96,9 @@ classdef Line < StdRegions.LineBasic
             nodelist(2) = obj.nOrder+1;
             nodelist = int16(nodelist);
         end %function
-        %-----------------------------------------------------------------%
+%% function getFaceGeometric
+% 
+% 
         function [nx, sJ] = getFaceGeometric(obj, x)
             % get Face Normal vector & surface jacobi factor
             % Input:    x  - node coordinate, size [nNode, nElement]
@@ -93,8 +108,9 @@ classdef Line < StdRegions.LineBasic
             % Define outward normals
             nx(1, :) = -1.0; nx(2, :) = 1.0; sJ = ones(size(nx));
         end% function
-        %-----------------------------------------------------------------%
-        
+%% function getEleGeometric  
+% 
+% 
         function [x, rx, J] = getEleGeometric(obj, vx)
             % get element Geometric Factor
             % Input:    vx  - Vertic Coordinate, size [2(nVertice) x nElement]
@@ -107,6 +123,9 @@ classdef Line < StdRegions.LineBasic
         end% function
     end %methods public
     methods(Hidden)
+%% function getSmallFaceMassMatrix
+% 
+% 
         function FaceMassMatrixSmall = getSmallFaceMassMatrix(obj, PointShape)
             % getSmallFaceMassMatrix
             % $M^f_{i,j} = \int_{\partial \Omega}l_i l_{fj} ds$
@@ -121,8 +140,9 @@ classdef Line < StdRegions.LineBasic
                 FaceMassMatrixSmall(iFaceNodeList,iFaceList) = PointShape.M;
             end
         end %function getSmallFaceMassMatrix
-        %-----------------------------------------------------------------%
-        
+%% function getFullFaceMassMatrix
+%  
+% 
         function FaceMassMatrixFull = getFullFaceMassMatrix(obj)
             % getFullFaceMassMatrix
             % $M^f_{i,j} = \int_{\partial \Omega}l_i l_j ds$, size [nNode x nNode]
@@ -137,7 +157,6 @@ classdef Line < StdRegions.LineBasic
                     obj.Mes(nodelist,facelist);
             end
         end %function getFullFaceMassMatrix
-        %-----------------------------------------------------------------%
     end% methods private
 end %classdef Line
 
