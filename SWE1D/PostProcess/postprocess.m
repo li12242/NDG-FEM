@@ -17,12 +17,12 @@ figure
 subplot(2,1,1); p_h = plot(x, h+bedElevation, '-b.'); hold on;
 plot(x, bedElevation, 'k')
 subplot(2,1,2); p_q = plot(x, q, '-r.');
-for itime = startStep:100:numel(time)
+for itime = startStep:numel(time)
     h = ncread(filename, 'h', [1, itime],[inf, 1]);
     q = ncread(filename, 'q', [1, itime],[inf, 1]);
     set(p_h, 'YData', h+bedElevation);
     set(p_q, 'YData', q);
-    drawnow; pause(0.2)
+    drawnow;
     
 %     if( any((h>20)) )
 %         keyboard

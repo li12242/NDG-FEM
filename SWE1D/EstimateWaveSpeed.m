@@ -1,5 +1,59 @@
 function [SM, SP] = EstimateWaveSpeed(mesh, hM, hP, uM, uP)
-    gra = 9.8; hDelta = 10^-1;
+
+[SM, SP] = Toro(mesh, hM, hP, uM, uP);
+
+end% func
+
+function [SM, SP] = Toro(mesh, hM, hP, uM, uP)
+gra = 9.8; hDelta = 10^-6;
+    
+cs = 0.5*( sqrt(gra*hM) - sqrt(gra*hP) ) + 0.5*(uM + uP).*mesh.nx;
+us = ( 0.5*(uM + uP) ).*mesh.nx + (sqrt(gra*hM) - sqrt(gra*hP));
+
+SM = zeros(size(uM)); SP = zeros(size(uP));
+isWetM = hM>hDelta; isWetP = hP>hDelta;
+
+flag =  isWetP & ~isWetM; % left is dry
+SM(flag) = mesh.nx(flag) .* uP(flag) - 2*sqrt(gra.*hP(flag) ); % hM = 0
+SP(flag) = mesh.nx(flag) .* uP(flag) + sqrt(gra.*hP(flag) ); % hM = 0
+
+flag = ~isWetP &  isWetM; % right is dry
+SP(flag) = mesh.nx(flag) .* uM(flag) + 2*sqrt(gra.*hM(flag) ); % hP = 0
+SM(flag) = mesh.nx(flag) .* uM(flag) - sqrt(gra.*hM(flag) ); % hP = 0
+
+flag =  isWetP & isWetM; % both wet
+SM(flag) = mesh.nx(flag).*uM(flag) - sqrt(gra.*hM(flag));
+SM(flag) = min(SM(flag), mesh.nx(flag).*us(flag) - cs(flag) );
+
+SP(flag) = mesh.nx(flag).*uP(flag) + sqrt(gra.*hP(flag));
+SP(flag) = max(SP(flag), mesh.nx(flag).*us(flag) + cs(flag) );
+end% func
+
+function [SM, SP] = Fraccarollo(mesh, hM, hP, uM, uP)
+gra = 9.8; hDelta = 10^-6;
+
+SM = zeros(size(uM)); SP = zeros(size(uP));
+isWetM = hM>hDelta; isWetP = hP>hDelta;
+
+flag =  isWetP & ~isWetM; % left is dry
+SM(flag) = mesh.nx(flag) .* uP(flag) - 2*sqrt(gra.*hP(flag) ); % hM = 0
+SP(flag) = mesh.nx(flag) .* uP(flag) + sqrt(gra.*hP(flag) ); % hM = 0
+
+flag = ~isWetP &  isWetM; % right is dry
+SP(flag) = mesh.nx(flag) .* uM(flag) + 2*sqrt(gra.*hM(flag) ); % hP = 0
+SM(flag) = mesh.nx(flag) .* uM(flag) - sqrt(gra.*hM(flag) ); % hP = 0
+
+flag =  isWetP & isWetM; % both wet
+SM(flag) = mesh.nx(flag).*uM(flag) - sqrt(gra.*hM(flag));
+SM(flag) = min(SM(flag), mesh.nx(flag).*uP(flag) - sqrt(gra.*hP(flag)) );
+
+SP(flag) = mesh.nx(flag).*uP(flag) + sqrt(gra.*hP(flag));
+SP(flag) = max(SP(flag), mesh.nx(flag).*uM(flag) + sqrt(gra.*hM(flag)) );
+end% func
+
+function [SM, SP] = Song(mesh, hM, hP, uM, uP)
+% [Song_2010]
+    gra = 9.8; hDelta = 10^-6;
     
     cs = 0.5*( sqrt(gra*hM) + sqrt(gra*hP) ) + 0.25*(uM - uP).*mesh.nx;
     us = ( 0.5*(uM + uP) ).*mesh.nx + (sqrt(gra*hM) - sqrt(gra*hP));
@@ -17,6 +71,7 @@ function [SM, SP] = EstimateWaveSpeed(mesh, hM, hP, uM, uP)
 
     flag =  isWetP & ~isWetM; % left is dry
     SM(flag) = mesh.nx(flag) .* uP(flag) - 2*sqrt(gra.*hP(flag) ); % hM = 0
+    
     flag = ~isWetP &  isWetM; % right is dry
     SP(flag) = mesh.nx(flag) .* uM(flag) + 2*sqrt(gra.*hM(flag) ); % hP = 0
 
