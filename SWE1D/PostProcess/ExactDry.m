@@ -402,14 +402,15 @@ data = [   2.500000       10.00000      0.0000000E+00  0.0000000E+00
 ];
 
 figure
-plot(mesh.x(:), h(:), '.-')
+subplot(2,1,1)
+plot(mesh.x(:), h(:), 'b.-')
 hold on
 plot(data(:,1), data(:,2), 'k');
 legend('DGM', 'Exact')
 title('water depth')
 
-figure
-plot(mesh.x(:), q(:), '.')
+subplot(2,1,2)
+plot(mesh.x(:), q(:), 'r.')
 hold on
 plot(data(:,1), data(:,4), 'k');
 legend('DGM', 'Exact')

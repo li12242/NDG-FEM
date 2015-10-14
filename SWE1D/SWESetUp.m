@@ -28,7 +28,7 @@ physics.incert('caseName', caseName);
 
 % max order of polymomials
 N = 2; nElement = 200;
-[Nv, VX, K, EToV] = Utilities.MeshGen1D(x1, x2, nElement);
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
 % Initialize solver and construct grid and metric
@@ -126,6 +126,6 @@ switch initCase
         h(flag) = 2;
     case 2 % dry bed
         flag = mesh.x > damPosition;
-        h(flag) = 10^-12;
+        h(flag) = 0;
 end% switch
 end% func
