@@ -70,8 +70,7 @@ while(time<FinalTime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
 
-        [h, q] = PositivePreserving(mesh, h, q, bedElva);
-%         [h, q] = PositivePreserving2(mesh, h, q, bedElva);
+        [h, q] = PositivePreserving2(mesh, h, q, bedElva);
 %         catch
 %             keyboard
 %         end
@@ -87,7 +86,7 @@ end% func
 function [h, q] = PositivePreserving2(mesh, h, q, bedElva)
 h = Utilities.Limiter.SlopeLimit1(mesh, h); 
 q = Utilities.Limiter.SlopeLimit1(mesh, q);
-% q(h<=0) = 0;
+q(h<=10^-3) = 0;
 h(h<0) = 0;
 end% func
 
@@ -98,12 +97,12 @@ function [h, q] = PositivePreserving(mesh, h, q, bedElva)
 hDelta = 0.000; % scheme min depth
 limitH = 0.001;
 eta = h + bedElva;
-q = Utilities.Limiter.SlopeLimitBiswas(mesh, q);
+q = Utilities.Limiter.SlopeLimitN(mesh, q);
 
 % 1. limiter on eta
-etalim = Utilities.Limiter.SlopeLimitBiswas(mesh, eta);
+etalim = Utilities.Limiter.SlopeLimitN(mesh, eta);
 % 2. limiter on h
-hlim = Utilities.Limiter.SlopeLimitBiswas(mesh, h); 
+hlim = Utilities.Limiter.SlopeLimitN(mesh, h); 
 % for hmin<0, TVB limiter is based on (h, q)
 h = hlim;
 % for hmin>0, TVB limiter is based on (h+b, q)

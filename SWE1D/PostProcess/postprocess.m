@@ -10,8 +10,8 @@ q = ncread(filename, 'q', [1, itime],[inf, 1]);
 
 % % ParabolicBowl
 a = 600; h0 = 10;
-% bedElevation = h0.*(x.^2./a^2 - 1);
-bedElevation = zeros(size(x));
+bedElevation = h0.*(x.^2./a^2 - 1);
+% bedElevation = zeros(size(x));
 
 figure
 subplot(2,1,1); p_h = plot(x, h+bedElevation, '-b.'); hold on;
