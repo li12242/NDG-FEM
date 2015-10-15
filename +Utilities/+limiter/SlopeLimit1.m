@@ -18,5 +18,5 @@ vk = v; vkm1 = [v(1),v(1:mesh.nElement-1)];
 vkp1 = [v(2:mesh.nElement),v(mesh.nElement)]; 
 
 % Limit function in all cells
-ulimit = Utilities.SlopeLimitLin(ul,mesh.x,vkm1,vk,vkp1, mesh);
+ulimit = Utilities.Limiter.SlopeLimitLin(ul,mesh.x,vkm1,vk,vkp1, mesh);
 return
