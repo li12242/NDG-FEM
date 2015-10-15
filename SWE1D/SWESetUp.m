@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'DamBreakDry';
+caseName = 'ParabolicBowl';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -19,7 +19,7 @@ switch caseName
         FinalTime = 240; % Flow over dump
         x1 = 0; x2 = 25; % Flow over dump
     case 'ParabolicBowl'
-        T = 269; FinalTime = T/2; % Parabolic Bowl
+        T = 269; FinalTime = T*3/4; % Parabolic Bowl
         x1 = -1000; x2 = 1000; % Parabolic Bowl
 end% switch
 
