@@ -19,8 +19,8 @@ vkm1 = [v(1),v(1:mesh.nElement-1)];
 vkp1 = [v(2:mesh.nElement),v(mesh.nElement)];
 
 % Apply reconstruction to find elements in need of limiting
-ve1 = vk - Utilities.Limiter.minmod([(vk-ue1);vk-vkm1;vkp1-vk]);
-ve2 = vk + Utilities.Limiter.minmod([(ue2-vk);vk-vkm1;vkp1-vk]);
+ve1 = vk - Utilities.minmod([(vk-ue1);vk-vkm1;vkp1-vk]);
+ve2 = vk + Utilities.minmod([(ue2-vk);vk-vkm1;vkp1-vk]);
 ids = find(abs(ve1-ue1)>eps0 | abs(ve2-ue2)>eps0);
 
 % Check to see if any elements require limiting
@@ -29,6 +29,6 @@ if(~isempty(ids))
   uhl = V()\u(:,ids); uhl(3:Np(),:)=0; ul = V()*uhl;
   
   % apply slope limiter to selected elements
-  ulimit(:,ids) = Utilities.Limiter.SlopeLimitLin(ul, mesh.x(:,ids),vkm1(ids),vk(ids),vkp1(ids),mesh);
+  ulimit(:,ids) = Utilities.SlopeLimitLin(ul, mesh.x(:,ids),vkm1(ids),vk(ids),vkp1(ids),mesh);
 end% if
 end% func
