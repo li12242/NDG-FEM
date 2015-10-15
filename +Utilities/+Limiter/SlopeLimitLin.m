@@ -16,6 +16,6 @@ hN = ones(Np,1)*h;
 % Limit function
 ux = (2./hN).*(mesh.Shape.Dr*ul);
 
-ulimit = ones(Np,1)*v0+(xl-x0).*(ones(Np,1)*...
-    Utilities.Limiter.minmod([ux(1,:);(vp1-v0)./h;(v0-vm1)./h]));
+ulimit = ones(Np,1)*v0+(xl-x0).*(ones(Np,1)...
+    *Utilities.Limiter.minmod([ux(1,:);(vp1-v0)./h;(v0-vm1)./h]));
 return
