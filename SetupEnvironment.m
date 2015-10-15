@@ -1,3 +1,4 @@
+addpath(pwd)
 addpath([pwd, '/Codes1D'], [pwd, '/Codes1D/testing'])
 addpath([pwd, '/Codes2D'], [pwd, '/Codes2D/testing'])
 addpath([pwd, '/Codes3D'], [pwd, '/Codes3D/testing'])
