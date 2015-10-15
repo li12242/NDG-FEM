@@ -98,12 +98,12 @@ function [h, q] = PositivePreserving(mesh, h, q, bedElva)
 hDelta = 0.000; % scheme min depth
 limitH = 0.001;
 eta = h + bedElva;
-q = Utilities.Limiter.SlopeLimit1(mesh, q);
+q = Utilities.Limiter.SlopeLimitBiswas(mesh, q);
 
 % 1. limiter on eta
-etalim = Utilities.Limiter.SlopeLimit1(mesh, eta);
+etalim = Utilities.Limiter.SlopeLimitBiswas(mesh, eta);
 % 2. limiter on h
-hlim = Utilities.Limiter.SlopeLimit1(mesh, h); 
+hlim = Utilities.Limiter.SlopeLimitBiswas(mesh, h); 
 % for hmin<0, TVB limiter is based on (h, q)
 h = hlim;
 % for hmin>0, TVB limiter is based on (h+b, q)
