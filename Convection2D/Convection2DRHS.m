@@ -49,7 +49,8 @@ end% func
 function Fs = BoundaryCondition(mesh, Fs, time, Speed)
 % Inflow BC
 % c = sin(t);
-c = sin(- pi*time);%*sin(2*pi*mesh.y(mesh.vmapM(mesh.mapI)));
+% c = sin(- pi*time);%*sin(2*pi*mesh.y(mesh.vmapM(mesh.mapI)));
+c = 1;
 [F,G] = ConvectionFlux(c, Speed);
 Fs(mesh.mapI) = F.*mesh.nx(mesh.mapI) + G.*mesh.ny(mesh.mapI);
 end% func
