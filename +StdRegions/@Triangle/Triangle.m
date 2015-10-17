@@ -110,6 +110,15 @@ classdef Triangle < StdRegions.TriangleBasic
             facelist(:) = facelist(localList);
         end% function
         
+        function nodelist = getVertexNodeList(obj)
+            % return the nodelist of vertice in element
+            Nfp = obj.nFaceNode/3;   % No. of node on sigle face
+%             ids = [1;Nfp;2*Nfp]; % facelist No. of vertex node
+%             facelist = getFaceListToNodeList(obj);
+%             nodelist = facelist(ids);
+            nodelist = [1, Nfp, obj.nNode]';
+        end% function
+        
         function FacelistToNodelist = getFaceListToNodeList(obj)
             % return the node list of face node counterclockwise
 %             MAXERROR = 10^-10;
