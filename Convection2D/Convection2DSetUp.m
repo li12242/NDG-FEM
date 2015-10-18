@@ -2,7 +2,7 @@ function var = Convection2DSetUp
 % 2D convection problem
 % dc/dt + udc/dx + vdu/dy = 0
 
-N = 1;
+N = 2;
 % read triangle mesh
 [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/rectangle');
 
