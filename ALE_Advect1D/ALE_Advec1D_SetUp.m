@@ -36,14 +36,14 @@ ncfile = CreateOutputFile(fileName, mesh);
 %% time evolution
 
 % set time interval
-min_x = min( abs(mesh.x(2) - mesh.x(1)) ); CFL = 0.5;
+min_x = min( abs(mesh.x(2) - mesh.x(1)) ); CFL = 0.1;
 dt = CFL*(min_x./a(1));
 nt = floor(FinalTime/dt);
 time = 0;
 
 % set RK coefficient
-[rk4a, rk4b, rk4c] = getRK_coefficient;
-resu = zeros(size(u));
+% [rk4a, rk4b, rk4c] = getRK_coefficient;
+% resu = zeros(size(u));
 
 % u = u .* mesh.J;
 for it = 1:nt
@@ -60,20 +60,28 @@ for it = 1:nt
         at = a;
     end%
 %     mesh_temp = mesh_new;
-    for INTRK = 1:5
-        timelocal = time + rk4c(INTRK)*dt;
-        mesh_temp = mesh_ratio(mesh, mesh_new, rk4c(INTRK));
-        % cal RHS
-        u = u./mesh_temp.J;
-        [rhsu] = ALE_AdvecRHS1D(mesh_temp, u, timelocal, at);
-        rhsu = rhsu.*mesh_temp.J;
-        resu = rk4a(INTRK)*resu + dt*rhsu;
-        u = u.*mesh_new.J + rk4b(INTRK)*resu;
-        % 
+
+
+    mesh_temp = mesh_ratio(mesh, mesh_new, 0.5);
+    [rhsu] = ALE_AdvecRHS1D(mesh_temp, u, time, at);
+    u_temp = (u.*mesh.J + dt*rhsu.*mesh_temp.J)./mesh_new.J;
+    [rhsu] = ALE_AdvecRHS1D(mesh_temp, u_temp, time+dt, at);
+    u = (u.*mesh.J + u_temp.*mesh_new.J)./mesh_new.J/2 + 1/2*dt*rhsu;
+    
+%     for INTRK = 1:5
+%         timelocal = time + rk4c(INTRK)*dt;
+%         mesh_temp = mesh_ratio(mesh, mesh_new, rk4c(INTRK));
+%         % cal RHS
+%         u = u./mesh_temp.J;
+%         [rhsu] = ALE_AdvecRHS1D(mesh_temp, u, timelocal, at);
+%         rhsu = rhsu.*mesh_temp.J;
 %         resu = rk4a(INTRK)*resu + dt*rhsu;
-%         u = u + rk4b(INTRK)*resu;
-    end;
-%     plot(mesh.x, u./mesh_new.J); drawnow;
+%         u = u.*mesh_new.J + rk4b(INTRK)*resu;
+%         % 
+% %         resu = rk4a(INTRK)*resu + dt*rhsu;
+% %         u = u + rk4b(INTRK)*resu;
+%     end;
+%     plot(mesh.x, u); drawnow;
     
     mesh = mesh_new;
     % Increment time
