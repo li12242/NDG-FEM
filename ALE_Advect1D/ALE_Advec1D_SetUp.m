@@ -50,11 +50,12 @@ for it = 1:nt
     
     % cal new mesh & velocity
     % mesh update
+    ori_x = mesh.x;
     mesh_new = mesh_deform(mesh, time+dt, FinalTime, VX, delta_x, EToV);
 %     % fix mesh
 %     mesh_new = mesh;
     if dt > 0
-        vg = (mesh_new.x - mesh.x)/dt;           
+        vg = (mesh_new.x - ori_x)/dt;           
         at = a - vg;
     else 
         at = a;
