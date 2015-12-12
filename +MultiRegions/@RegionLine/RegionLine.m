@@ -36,6 +36,7 @@ classdef RegionLine < MultiRegions.Region
             % get node coordinate
             vx = zeros(2, obj.nElement);
             vx(1,:) = VX(EToV(:,1)); vx(2,:) = VX(EToV(:,2));
+            % 
             [obj.x, obj.rx, obj.J] = line.getEleGeometric(vx);
             [obj.nx, obj.sJ] = line.getFaceGeometric(obj.x);
             % face scal, used for surface integral
