@@ -1,4 +1,4 @@
-nOrder = 3; nEle = 20; filename = 'ALE_Approxi_Advec1D';
+nOrder = 3; nEle = 20; filename = 'ALE_Advec1D';
 ALE_Advec1D_SetUp(nOrder, nEle, filename)
 
 nOrder = 3; nEle = 40; filename2 = [filename, '_2'];
