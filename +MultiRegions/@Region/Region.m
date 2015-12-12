@@ -14,7 +14,7 @@ classdef Region < handle
     %   SpFToV   - face to vertices
     % Region methods: none
     % 
-    properties(SetAccess = protected)
+    properties%(SetAccess = protected)
         Shape       % base element type
         nElement    % No. of element
         nNode       % No. of node
