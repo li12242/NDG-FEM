@@ -1,21 +1,21 @@
 function OrderAnalysis
 [p_ori, E_ori] = L2_error('Advec1D');
 [p_ale, E_ale] = L2_error('ALE_Advec1D');
-[p_app, E_app] = L2_error('ALE_Approxi_Advec1D');
+% [p_app, E_app] = L2_error('ALE_Approxi_Advec1D');
 
 fprintf('The order of Advec1D: %f\n', p_ori);
 fprintf('The order of ALE_Advec1D: %f\n', p_ale);
-fprintf('The order of ALE_Approxi_Advec1D: %f\n', p_app);
+% fprintf('The order of ALE_Approxi_Advec1D: %f\n', p_app);
 
 
 x = [1, 0.5, 0.5^2, 0.5^3];
 figure; hold on
 plot(log10(x), log10(E_ori), 'o-', ...
-    log10(x), log10(E_ale), 's-',...
-    log10(x), log10(E_app), '^-');
+    log10(x), log10(E_ale), 's-')%,...
+%     log10(x), log10(E_app), '^-');
 % axis equal;
-legend('fix grid', 'ALE from Xia', 'Approximate ALE', 'Location', 'NorthWest')
-
+% legend('fix grid', 'ALE', 'Approximate ALE', 'Location', 'NorthWest')
+legend('fix grid', 'ALE', 'Location', 'NorthWest')
 end% func
 
 function [p, E] = L2_error(ncFileName)
