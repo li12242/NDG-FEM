@@ -31,7 +31,7 @@ classdef RegionLine < MultiRegions.Region
             % Input:    VX   - vertice coordinate, size [nVertic  x1]
             %           EToV - element to vertice, size [nElement x2]
             obj = obj@MultiRegions.Region(line, EToV);
-            [obj.EToE, obj.EToF] = Connect1D(obj,EToV);
+            [obj.SpFToV, obj.EToE, obj.EToF] = Connect1D(obj,EToV);
             [obj.vmapM,obj.vmapP] = BuildMap(obj,EToV, obj.EToE, obj.EToF);
             % get node coordinate
             vx = zeros(2, obj.nElement);
@@ -45,7 +45,7 @@ classdef RegionLine < MultiRegions.Region
     end% methods public
     
     methods(Hidden)
-        function [EToE, EToF] = Connect1D(obj, EToV)
+        function [SpFToV, EToE, EToF] = Connect1D(obj, EToV)
             % Build global connectivity arrays for 1D grid based on EToV 
             Nfaces = obj.Shape.nFace;
             % Find number of elements and vertices
@@ -53,16 +53,16 @@ classdef RegionLine < MultiRegions.Region
             % List of local face to local vertex connections
             vn = [1;2];
             % Build global face to node sparse array
-            obj.SpFToV = spalloc(TotalFaces, Nv, 2*TotalFaces);
+            SpFToV = spalloc(TotalFaces, Nv, 2*TotalFaces);
             sk = 1;
             for k=1:K
               for face=1:Nfaces
-                 obj.SpFToV(sk, EToV(k, vn(face,:))) = 1;
+                 SpFToV(sk, EToV(k, vn(face,:))) = 1;
                  sk = sk+1;
               end
             end
             % Build global face to global face sparse array
-            SpFToF = obj.SpFToV*obj.SpFToV' - speye(TotalFaces);
+            SpFToF = SpFToV*SpFToV' - speye(TotalFaces);
             % Find complete face to face connections
             [faces1, faces2] = find(SpFToF==1);
             % Convert face global number to element and face numbers
