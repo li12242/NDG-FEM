@@ -36,7 +36,7 @@ ncfile = CreateOutputFile(fileName, mesh);
 %% time evolution
 
 % set time interval
-min_x = min( abs(mesh.x(2) - mesh.x(1)) ); CFL = 0.1;
+min_x = min( abs(mesh.x(2) - mesh.x(1)) ); CFL = 0.3;
 dt = CFL*(min_x./a(1));
 nt = floor(FinalTime/dt);
 time = 0;
@@ -52,10 +52,11 @@ for it = 1:nt
     % mesh update
     ori_x = mesh.x;
     mesh_new = mesh_deform(mesh, time+dt, FinalTime, VX, delta_x, EToV);
+    mesh = mesh_new;
 %     % fix mesh
 %     mesh_new = mesh;
     if dt > 0
-        vg = (mesh_new.x - ori_x)/dt;           
+        vg = (mesh_new.x - ori_x)/dt;        
         at = a - vg;
     else 
         at = a;
@@ -63,11 +64,13 @@ for it = 1:nt
 %     mesh_temp = mesh_new;
 
 
-    mesh_temp = mesh_ratio(mesh, mesh_new, 0.5);
-    [rhsu] = ALE_AdvecRHS1D(mesh_temp, u, time, at);
-    u_temp = (u.*mesh.J + dt*rhsu.*mesh_temp.J)./mesh_new.J;
-    [rhsu] = ALE_AdvecRHS1D(mesh_temp, u_temp, time+dt, at);
-    u = (u.*mesh.J + u_temp.*mesh_new.J)./mesh_new.J/2 + 1/2*dt*rhsu;
+%     mesh = mesh_ratio(mesh, mesh_new, 0.5);
+    
+    [rhsu] = ALE_AdvecRHS1D(mesh, u, time, at);
+%     u_temp = (u.*mesh.J + dt*rhsu.*mesh.J)./mesh_new.J;
+    u_temp = (u + dt*rhsu);
+    [rhsu] = ALE_AdvecRHS1D(mesh, u_temp, time+dt, at);
+    u = (u + u_temp)/2 + 1/2*dt*rhsu;
     
 %     for INTRK = 1:5
 %         timelocal = time + rk4c(INTRK)*dt;
@@ -88,6 +91,8 @@ for it = 1:nt
     % Increment time
     time = time+dt;
     % 
+    plot(mesh.x, u, 'b.', mesh.x, sin(mesh.x - time),'r' ); drawnow;
+    
     StoreVar(fileName, ncfile, mesh.x, u, time, it-1);
 
 %     StoreVar(fileName, ncfile, mesh.x, u./mesh_new.J, time, it-1);
