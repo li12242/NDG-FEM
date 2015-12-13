@@ -1,4 +1,4 @@
-classdef Region < handle
+classdef Region
     % physical meshes
     % Region properties:
     %   Shape    - base element type
