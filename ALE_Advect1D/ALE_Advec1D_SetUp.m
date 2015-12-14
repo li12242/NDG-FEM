@@ -34,97 +34,53 @@ ncfile = CreateOutputFile(fileName, mesh);
 
 
 %% time evolution
+[rk4a, rk4b, rk4c] = getRK_coefficient;
 
 % set time interval
-min_x = min( abs(mesh.x(2) - mesh.x(1)) ); CFL = 0.3;
+min_x = min( abs(mesh.x(2) - mesh.x(1)) ); CFL = 0.5;
 dt = CFL*(min_x./a(1));
 nt = floor(FinalTime/dt);
 time = 0;
 
-% set RK coefficient
-% <<<<<<< HEAD
-% [rk4a, rk4b, rk4c] = getRK_coefficient;
-% resu = zeros(size(u));
-% =======
-% [rk4a, rk4b, rk4c] = getRK_coefficient;
-% resu = zeros(size(u));
-
-% >>>>>>> 26c8c60b82c7abb7a38bbeaa2b87479958b4531a
-% u = u .* mesh.J;
 for it = 1:nt
+    
+    u_temp = u.*mesh.J;
+    resu = zeros(size(u));
     
     % cal new mesh & velocity
     % mesh update
-    ori_x = mesh.x;
     mesh_new = mesh_deform(mesh, time+dt, FinalTime, VX, delta_x, EToV);
-    mesh = mesh_new;
-%     % fix mesh
+    % fix mesh
 %     mesh_new = mesh;
     if dt > 0
-        vg = (mesh_new.x - ori_x)/dt;        
+        vg = (mesh_new.x - mesh.x)/dt;           
         at = a - vg;
     else 
         at = a;
     end%
 %     mesh_temp = mesh_new;
-% <<<<<<< HEAD
-%     mesh = mesh_new;
-%     for INTRK = 1:5
-%         timelocal = time + rk4c(INTRK)*dt;
-% %         mesh_temp = mesh_ratio(mesh, mesh_new, rk4c(INTRK));
-%         % cal RHS
-% %         u = u./mesh_temp.J;
-% %         [rhsu] = ALE_AdvecRHS1D(mesh_temp, u, timelocal, at);        
-% %         rhsu = rhsu.*mesh_temp.J;
-% %         resu = rk4a(INTRK)*resu + dt*rhsu;
-% %         u = u.*mesh_new.J + rk4b(INTRK)*resu;
-%         
-%         [rhsu] = ALE_AdvecRHS1D(mesh, u, timelocal, at);
-%         resu = rk4a(INTRK)*resu + dt*rhsu;
-%         u = u + rk4b(INTRK)*resu;
-%         % 
-%     end;
-% %     plot(mesh.x, u./mesh_new.J); drawnow;
-% =======
+    for INTRK = 1:4
+        timelocal = time + rk4c(INTRK)*dt;
+        mesh_temp = mesh_ratio(mesh, mesh_new, rk4c(INTRK));
 
-
-%     mesh = mesh_ratio(mesh, mesh_new, 0.5);
+%         cal RHS
+        [rhsu] = ALE_AdvecRHS1D(mesh_temp, u_temp./mesh_temp.J, timelocal, at);
+        rhsu = rhsu.*mesh_temp.J;
+        resu = resu + dt*rk4b(INTRK)*rhsu;
+        u_temp = u.*mesh.J + dt*rk4a(INTRK)*rhsu;
+    end;
     
-    [rhsu] = ALE_AdvecRHS1D(mesh, u, time, at);
-%     u_temp = (u.*mesh.J + dt*rhsu.*mesh.J)./mesh_new.J;
-    u_temp = (u + dt*rhsu);
-    [rhsu] = ALE_AdvecRHS1D(mesh, u_temp, time+dt, at);
-    u = (u + u_temp)/2 + 1/2*dt*rhsu;
+    u = u.*mesh.J./mesh_new.J + resu./mesh_new.J;
+    mesh = mesh_new;
     
-%     for INTRK = 1:5
-%         timelocal = time + rk4c(INTRK)*dt;
-%         mesh_temp = mesh_ratio(mesh, mesh_new, rk4c(INTRK));
-%         % cal RHS
-%         u = u./mesh_temp.J;
-%         [rhsu] = ALE_AdvecRHS1D(mesh_temp, u, timelocal, at);
-%         rhsu = rhsu.*mesh_temp.J;
-%         resu = rk4a(INTRK)*resu + dt*rhsu;
-%         u = u.*mesh_new.J + rk4b(INTRK)*resu;
-%         % 
-% %         resu = rk4a(INTRK)*resu + dt*rhsu;
-% %         u = u + rk4b(INTRK)*resu;
-%     end;
-%     plot(mesh.x, u); drawnow;
-% >>>>>>> 26c8c60b82c7abb7a38bbeaa2b87479958b4531a
-    
-%     mesh = mesh_new;
+%     plot(mesh.x, u, 'b.', mesh.x, sin(mesh.x - time -dt)); 
+%     set(gca, 'YLim', [-1.1, 1.1]); drawnow;
     % Increment time
     time = time+dt;
     % 
-%     plot(mesh.x, u, 'b.', mesh.x, sin(mesh.x - time),'r' ); drawnow;
-    
     StoreVar(fileName, ncfile, mesh.x, u, time, it-1);
-
-%     StoreVar(fileName, ncfile, mesh.x, u./mesh_new.J, time, it-1);
     fprintf('Processing: %f...\n', it/nt)
     
-%     plot(mesh.x, u); set(gca, 'YLim', [-1.1, 1.1])
-%     drawnow; pause(0.1);
 end% for
 
 end% func
@@ -148,7 +104,7 @@ du (mesh.mapI) = (u(vmapI)- uin ).*(a(1)*mesh.nx(mesh.mapI)...
 du (mesh.mapO) = 0;
 
 % compute right hand sides of the semi-discrete PDE
-rhsu = -a.*mesh.rx.*(line.Dr*u) + line.invM*line.Mes*( du.*mesh.fScale );
+rhsu = -mesh.rx.*(line.Dr*(a.*u)) + line.invM*line.Mes*( du.*mesh.fScale );
 end% func
 
 function mesh_temp = mesh_ratio(mesh, new_mesh, p)
@@ -201,25 +157,24 @@ mesh_out.fScale = mesh_out.sJ./mesh_out.J(mesh_out.vmapM);
 end% func
 
 function [rk4a, rk4b, rk4c] = getRK_coefficient
-%% traditional RK4
-% rk4c = [0, 1/2, 1/2, 1];
-% rk4a = [1/2, 1/2, 1, 1];
-% rk4b = [1/6, 1/3, 1/3, 1/6];
+rk4c = [0, 1/2, 1/2, 1];
+rk4a = [1/2, 1/2, 1, 1];
+rk4b = [1/6, 1/3, 1/3, 1/6];
 
 %% LSERK
-rk4a = [            0.0 ...
-        -567301805773.0/1357537059087.0 ...
-        -2404267990393.0/2016746695238.0 ...
-        -3550918686646.0/2091501179385.0  ...
-        -1275806237668.0/842570457699.0];
-rk4b = [ 1432997174477.0/9575080441755.0 ...
-         5161836677717.0/13612068292357.0 ...
-         1720146321549.0/2090206949498.0  ...
-         3134564353537.0/4481467310338.0  ...
-         2277821191437.0/14882151754819.0];
-rk4c = [             0.0  ...
-         1432997174477.0/9575080441755.0 ...
-         2526269341429.0/6820363962896.0 ...
-         2006345519317.0/3224310063776.0 ...
-         2802321613138.0/2924317926251.0];
+% rk4a = [            0.0 ...
+%         -567301805773.0/1357537059087.0 ...
+%         -2404267990393.0/2016746695238.0 ...
+%         -3550918686646.0/2091501179385.0  ...
+%         -1275806237668.0/842570457699.0];
+% rk4b = [ 1432997174477.0/9575080441755.0 ...
+%          5161836677717.0/13612068292357.0 ...
+%          1720146321549.0/2090206949498.0  ...
+%          3134564353537.0/4481467310338.0  ...
+%          2277821191437.0/14882151754819.0];
+% rk4c = [             0.0  ...
+%          1432997174477.0/9575080441755.0 ...
+%          2526269341429.0/6820363962896.0 ...
+%          2006345519317.0/3224310063776.0 ...
+%          2802321613138.0/2924317926251.0];
 end
