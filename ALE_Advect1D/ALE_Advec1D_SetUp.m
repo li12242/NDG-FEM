@@ -73,8 +73,11 @@ for it = 1:nt
     u = u.*mesh.J./mesh_new.J + resu./mesh_new.J;
     mesh = mesh_new;
     
-%     plot(mesh.x, u, 'b.', mesh.x, sin(mesh.x - time -dt)); 
-%     set(gca, 'YLim', [-1.1, 1.1]); drawnow;
+    subplot(2,1,1)
+    plot(mesh.x, u, 'b.', mesh.x, sin(mesh.x - time -dt),'r'); 
+    set(gca, 'YLim', [-1.1, 1.1]); drawnow;
+    subplot(2,1,2)
+    plot(mesh.x, zeros(size(mesh.x)), 'o')
     % Increment time
     time = time+dt;
     % 
