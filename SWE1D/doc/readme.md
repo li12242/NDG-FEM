@@ -7,20 +7,23 @@ F = \begin{bmatrix} q \cr gh^2/2 + q^2/h \end{bmatrix}$$
 
 ##2.Discrete with DGM
 
-$$U_h = \sum{l_j U_j} \quad F_h(U) = \sum{l_j F(U_j)}$$
-$$\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx+ 
-\int_{\Omega} l_i \frac{\partial l_j}{\partial x} F(U_j) dx= 0$$
+$$\begin{equation} U_h = \sum{l_j U_j} \quad F_h(U) = \sum{l_j F(U_j)} \end{equation}$$
 
-$$\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx + 
+
+$$\begin{equation}\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx+
+\int_{\Omega} l_i \frac{\partial l_j}{\partial x} F(U_j) dx= 0 \end{equation}$$
+
+
+$$\begin{equation} \int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx +
 \int_{\Omega} l_i \frac{\partial l_j}{\partial x} F(U_j) dx+
-\oint_{\partial \Omega} l_i l_j (F^* - F)\cdot \vec{n} ds = 0 $$
+\oint_{\partial \Omega} l_i l_j (F^* - F)\cdot \vec{n} ds = 0  \end{equation}$$
 
-$$JM \frac{\partial U}{\partial t} + JMD_x F(U) + J_E M_E (F^* - F)\cdot \vec{n} = 0$$
+$$\begin{equation} JM \frac{\partial U}{\partial t} + JMD_x F(U) + J_E M_E (F^* - F)\cdot \vec{n} = 0 \end{equation}$$
 
 ODE:
-$$\frac{\partial U}{\partial t} = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F^* - F)\cdot \vec{n}=L(U(t))$$
+$$\begin{equation} \frac{\partial U}{\partial t} = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F^* - F)\cdot \vec{n}=L(U(t)) \end{equation}$$
 
-$$rhs = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}$$
+$$\begin{equation} rhs = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}\end{equation} $$
 
 ##3.Numerical Flux
 ###3.1.HLL flux function
@@ -47,30 +50,18 @@ $$u^* = \frac{1}{2}(u^- + u^+) + \sqrt{gh^-} - \sqrt{gh^+}$$
 
 $$c^* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
 
-###3.2.Coordinate Transformation
+###3.2.Rotational invariance
 
-If $F' = F\cdot \frac{\partial x'}{\partial x} = -F$, then derived corresponding Jacobian Matrix 
-$$A' = \partial F'/ \partial U = -A$$
- 
-The original Jacobian Matrix $A$ and its eigenvalues is
+$$T = \begin{bmatrix} 1 & 0 \cr
+0 & n_x\end{bmatrix} \quad
+T^{-1} = \begin{bmatrix} 1 & 0 \cr
+0 & n_x\end{bmatrix}$$
 
-$$A = \begin{bmatrix} 
-0 & 1 \cr
-c^2 - u^2 & 2u \cr
-\end{bmatrix}$$
+$$\mathbf{F} \cdot \mathbf{n} = \mathbf{F} \cdot n_x = T^{-1}\mathbf{F}(TU)$$
 
-$$\lambda_1 = u-c \quad \lambda_2 = u+c$$
+defining $Q = TU$, the numerical flux $\hat{\mathbf{F}}$ can be obtained through the evaluation of numerical flux $\mathbf{F}$ by
 
-$A'$ and its eigenvalues is
-
-$$A = \begin{bmatrix} 
-0 & -1 \cr
-u^2 - c^2 & -2u \cr
-\end{bmatrix}$$
-
-$$\lambda'_1 =-u-c \quad \lambda'_2 = -u+c$$
-
-**After the transformation of coordinate, the wave speed is not the negative of original wave speed.**
+$$\hat{\mathbf{F}} \cdot n = T^{-1}\mathbf{F}(Q)$$
 
 #4.Limiter
 
@@ -82,7 +73,7 @@ minmod limiter
 
 ##5.1.Ideal dam break
 
-| | |
+| Modeling setting | value |
 | --- | --- |
 | channel length | 1000m |
 | dam position | 500m |
