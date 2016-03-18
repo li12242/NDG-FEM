@@ -47,30 +47,44 @@ $$u^* = \frac{1}{2}(u^- + u^+) + \sqrt{gh^-} - \sqrt{gh^+}$$
 
 $$c^* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
 
-###3.2.Coordinate Transformation
+For dry bed treatment:
 
-If $F' = F\cdot \frac{\partial x'}{\partial x} = -F$, then derived corresponding Jacobian Matrix 
-$$A' = \partial F'/ \partial U = -A$$
- 
-The original Jacobian Matrix $A$ and its eigenvalues is
+1. if left is dry
+$$\begin{equation}
+\left\{ \begin{array}\
+S_L = u_R - 2 \sqrt{gh_R} \cr
+S_R = u_R + \sqrt{gh_R} \cr
+\end{array} \right.
+\end{equation}$$
 
-$$A = \begin{bmatrix} 
-0 & 1 \cr
-c^2 - u^2 & 2u \cr
-\end{bmatrix}$$
+2. if right is dry
+$$\begin{equation}
+\left\{ \begin{array}\
+S_L = u_L - \sqrt{gh_L} \cr
+S_R = u_L + 2\sqrt{gh_L} \cr
+\end{array} \right.
+\end{equation}$$
 
-$$\lambda_1 = u-c \quad \lambda_2 = u+c$$
 
-$A'$ and its eigenvalues is
+###3.2.Rotational Invariance
 
-$$A = \begin{bmatrix} 
-0 & -1 \cr
-u^2 - c^2 & -2u \cr
-\end{bmatrix}$$
+The rotation matrix and its inverse is giving as:
 
-$$\lambda'_1 =-u-c \quad \lambda'_2 = -u+c$$
+$$\begin{equation}
+T = \begin{bmatrix}
+1 & 0 \cr
+0 & n_x \end{bmatrix} \quad
+T^{-1} = \begin{bmatrix}
+1 & 0 \cr
+0 & n_x \end{bmatrix}
+\end{equation}$$
 
-**After the transformation of coordinate, the wave speed is not the negative of original wave speed.**
+The rotational invariance of the flux yields
+
+$$\begin{equation}
+\mathbf{F} \cdot \mathbf{n} = \mathbf{F} \cdot n_x = T^{-1} \mathbf{F} (TU)
+\end{equation}$$
+
 
 #4.Limiter
 
@@ -82,7 +96,7 @@ minmod limiter
 
 ##5.1.Ideal dam break
 
-| | |
+| Model Setting | value |
 | --- | --- |
 | channel length | 1000m |
 | dam position | 500m |
