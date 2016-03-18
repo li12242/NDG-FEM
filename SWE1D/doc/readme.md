@@ -50,6 +50,7 @@ $$u^* = \frac{1}{2}(u^- + u^+) + \sqrt{gh^-} - \sqrt{gh^+}$$
 
 $$c^* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
 
+
 ###3.2.Rotational invariance
 
 $$T = \begin{bmatrix} 1 & 0 \cr
@@ -63,6 +64,28 @@ defining $Q = TU$, the numerical flux $\hat{\mathbf{F}}$ can be obtained through
 
 $$\hat{\mathbf{F}} \cdot n = T^{-1}\mathbf{F}(Q)$$
 
+
+###3.2.Rotational Invariance
+
+The rotation matrix and its inverse is giving as:
+
+$$\begin{equation}
+T = \begin{bmatrix}
+1 & 0 \cr
+0 & n_x \end{bmatrix} \quad
+T^{-1} = \begin{bmatrix}
+1 & 0 \cr
+0 & n_x \end{bmatrix}
+\end{equation}$$
+
+The rotational invariance of the flux yields
+
+$$\begin{equation}
+\mathbf{F} \cdot \mathbf{n} = \mathbf{F} \cdot n_x = T^{-1} \mathbf{F} (TU)
+\end{equation}$$
+
+
+
 #4.Limiter
 
 minmod limiter
@@ -73,7 +96,8 @@ minmod limiter
 
 ##5.1.Ideal dam break
 
-| Modeling setting | value |
+
+| Model Setting | value |
 | --- | --- |
 | channel length | 1000m |
 | dam position | 500m |
