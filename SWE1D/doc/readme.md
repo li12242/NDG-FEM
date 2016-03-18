@@ -1,11 +1,11 @@
-#Idealized dam break in a rectangular channel
+#RKDG to shallow water equations
 
-#1.Governing Equations
+##1.Governing Equations
 $$\frac{\partial U}{\partial t} + \frac{\partial F}{\partial x} = 0$$
 $$U = \begin{bmatrix} h \cr q \end{bmatrix} \quad
 F = \begin{bmatrix} q \cr gh^2/2 + q^2/h \end{bmatrix}$$
 
-#2.Discrete with DGM
+##2.Discrete with DGM
 
 $$U_h = \sum{l_j U_j} \quad F_h(U) = \sum{l_j F(U_j)}$$
 $$\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx+ 
@@ -22,14 +22,13 @@ $$\frac{\partial U}{\partial t} = -\frac{\partial r}{\partial x}D_r F(U) + \frac
 
 $$rhs = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}$$
 
-#3.Numerical Flux
-##3.1.HLL flux
+##3.Numerical Flux
+###3.1.HLL flux function
 
-$$F^{HLL} = \left\\{
-\begin{matrix}
+$$F^{HLL} = \left\{ \begin{matrix}
 F^- \cr
 \frac{S_R F^- - S_L F^+ + S_L S_R(U^+ - U^-)}{S_R S_L} \cr
-F^+ \end{matrix} \right. 
+F^+ \end{matrix} \right.
 \begin{matrix}
 S_L \geq 0 \cr
 S_L < 0 < S_R \cr
@@ -38,17 +37,18 @@ S_R \leq 0
 
 Wave Speed is suggested by Fraccarollo and Toro (1995)
 
-$$ S_L = min(u^- - \sqrt{gh^-}, u^\* - c^*)$$
+$$ S_L = min(u^- - \sqrt{gh^-}, u^* - c^*)$$
 
-$$ S_R = min(u^+ + \sqrt{gh^+}, u^\* + c^*)$$
+$$ S_R = min(u^+ + \sqrt{gh^+}, u^* + c^*)$$
 
-$u^\*$ and $c^\*$ is defined by
+$u^*$ and $c^*$ is defined by
 
-$$u^\* = \frac{1}{2}(u^- + u^+) + \sqrt{gh^-} - \sqrt{gh^+}$$
+$$u^* = \frac{1}{2}(u^- + u^+) + \sqrt{gh^-} - \sqrt{gh^+}$$
 
-$$c^\* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
+$$c^* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
 
-##3.2.Coordinate Transformation
+###3.2.Coordinate Transformation
+
 If $F' = F\cdot \frac{\partial x'}{\partial x} = -F$, then derived corresponding Jacobian Matrix 
 $$A' = \partial F'/ \partial U = -A$$
  
@@ -80,7 +80,7 @@ minmod limiter
 
 #5.Numerical Test
 
-Ideal dam break
+##5.1.Ideal dam break
 
 | | |
 | --- | --- |
