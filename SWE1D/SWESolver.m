@@ -70,10 +70,8 @@ while(time<FinalTime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
 
-        [h, q] = PositivePreserving2(mesh, h, q, bedElva);
-%         catch
-%             keyboard
-%         end
+%         plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
+%         drawnow;
     end
     StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;

@@ -87,10 +87,11 @@ $$\begin{equation}
 
 
 #4.Limiter
+**Note: discontinuity detector from Krivodonova (2003) is not working**
 
 minmod limiter
 
-[TBC]
+
 
 #5.Numerical Test
 
