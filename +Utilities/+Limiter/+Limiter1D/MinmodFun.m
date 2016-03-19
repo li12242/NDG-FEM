@@ -1,4 +1,4 @@
-function mfunc = minmod(v)
+function mfunc = MinmodFun(v)
 % function mfunc = minmod(v)
 % Purpose: Implement the midmod function v is a vector
 
@@ -7,6 +7,6 @@ s = sum(sign(v),1)/m;
 
 ids = find(abs(s)==1);
 if(~isempty(ids))
-  mfunc(ids) = s(ids).*min(abs(v(:,ids)),[],1); 
+    mfunc(ids) = s(ids).*min(abs(v(:,ids)),[],1); 
 end
 return;
