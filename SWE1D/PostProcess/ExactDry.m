@@ -401,16 +401,28 @@ data = [   2.500000       10.00000      0.0000000E+00  0.0000000E+00
    1000.000      1.0000000E-12  0.0000000E+00  0.0000000E+00
 ];
 
+%% get result
+close all
+filename = 'SWE1D.nc';
+
+time = ncread(filename, 'time');
+timestep = numel(time);
+x = ncread(filename, 'x'); nx = numel(x);
+itime = timestep;
+h = ncread(filename, 'h', [1, itime],[inf, 1]);
+q = ncread(filename, 'q', [1, itime],[inf, 1]);
+
+%% plot figure
 figure
 subplot(2,1,1)
-plot(mesh.x(:), h(:), 'b.-')
+plot(x(:), h(:), 'b.-')
 hold on
 plot(data(:,1), data(:,2), 'k');
 legend('DGM', 'Exact')
 title('water depth')
 
 subplot(2,1,2)
-plot(mesh.x(:), q(:), 'r.')
+plot(x(:), q(:), 'r.')
 hold on
 plot(data(:,1), data(:,4), 'k');
 legend('DGM', 'Exact')

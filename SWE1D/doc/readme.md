@@ -25,8 +25,14 @@ $$\begin{equation} \frac{\partial U}{\partial t} = -\frac{\partial r}{\partial x
 
 $$\begin{equation} rhs = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}\end{equation} $$
 
+It is important to point out that at dry cells no flux is flow inside the elemnt. Therefor, for dry cells
+
+$$\begin{equation} rhs = \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}\end{equation} $$
+
 ##3.Numerical Flux
 ###3.1.HLL flux function
+
+Formulations are given as
 
 $$F^{HLL} = \left\{ \begin{matrix}
 F^- \cr
@@ -50,6 +56,31 @@ $$u^* = \frac{1}{2}(u^- + u^+) + \sqrt{gh^-} - \sqrt{gh^+}$$
 
 $$c^* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
 
+for wet-dry interface, the wave speed is giving as
+
+1. left-hand dry bed
+$$\begin{equation}
+S_L = u^+ - 2\sqrt{g h^+} \quad S_R = u^+ + \sqrt{g h^+}
+\end{equation}$$
+
+2. right-hand dry bed
+$$\begin{equation}
+S_L = u^- - \sqrt{g h^-} \quad S_R = u^- + 2\sqrt{g h^-}
+\end{equation}$$
+
+3. both sides are dry
+$$\begin{equation}
+S_L = 0 \quad S_R = 0
+\end{equation}$$
+
+**Noticing. 1**
+For flux terms, the discharge $q^2$ is divided by water depth $h$
+$$F = \begin{bmatrix} q \cr gh^2/2 + q^2/h \end{bmatrix}$$
+
+so a threadhold of water depth $h_{flux}$ ( $10^{-3}$m ) is add into flux function `SWEFlux.m`. When $h$ is less than $h_{flux}$, the $q^2/h$ is approximated to 0 as there is no flow at this node.
+
+**Noticing. 2**
+When defining the dry beds, another threadhold of water depth $h_{dry}$ is used. It is convenient to deine $h_{dry}$ equals to $h_{flux}$.
 
 ###3.2.Rotational invariance
 
@@ -62,54 +93,93 @@ $$\mathbf{F} \cdot \mathbf{n} = \mathbf{F} \cdot n_x = T^{-1}\mathbf{F}(TU)$$
 
 defining $Q = TU$, the numerical flux $\hat{\mathbf{F}}$ can be obtained through the evaluation of numerical flux $\mathbf{F}$ by
 
-$$\hat{\mathbf{F}} \cdot n = T^{-1}\mathbf{F}(Q)$$
+$$\hat{\mathbf{F}} \cdot n = T^{-1}\mathbf{F}^{HLL}(Q)$$
 
 
-###3.2.Rotational Invariance
-
-The rotation matrix and its inverse is giving as:
-
-$$\begin{equation}
-T = \begin{bmatrix}
-1 & 0 \cr
-0 & n_x \end{bmatrix} \quad
-T^{-1} = \begin{bmatrix}
-1 & 0 \cr
-0 & n_x \end{bmatrix}
-\end{equation}$$
-
-The rotational invariance of the flux yields
-
-$$\begin{equation}
-\mathbf{F} \cdot \mathbf{n} = \mathbf{F} \cdot n_x = T^{-1} \mathbf{F} (TU)
-\end{equation}$$
-
-
-
-#4.Limiter
+##4.Limiter
 **Note: discontinuity detector from Krivodonova (2003) is not working**
 
-minmod limiter
+For better numerical stability, minmod limiter is used in limiting the discharge and elevation.
 
+Check `testing/Limiter1D/doc` for more details about minmod limiter.
 
+##5. Positive preserving limiter
 
-#5.Numerical Test
+For the thin layer approach, a small depth ( $h_{positive} = 10^{-3} m$) and zeros velocity are prescribed for dry nodes.
 
-##5.1.Ideal dam break
+The first step is to define wet elements. After each time step, **the whole domain** is calculated; If the any depth of nodes in $\Omega_i$ is greater than $h_{positive}$, then the element is defined as wet element, otherwise the water height of all nodes are remain unchanged.
 
+The second step is to modify wet cells; If the depth of any nodes is less than $h_{positive}$, then the flow rate is reset to zero and the new water depth is constructed as
+
+$$\begin{equation}
+\mathrm{M}\Pi_h h_i(x) = \theta_1 \left( h_i(x) - \bar{h}_i \right) + \bar{h}_i
+\end{equation}$$
+
+where
+
+$$\begin{equation}
+\theta_1 = min \left\{ \frac{\bar{h}_i - \xi }{\bar{h}_i - h_{min}}, 1 \right\}, \quad h_{min} = min\{ h_i (x_i) \}
+\end{equation}$$
+
+It is necessary to fulfill the restriction that the mean depth $\bar{h}_i$ is greater than $\xi$, i.e. $10^{-4}$m. In the function `PositiveOperator`, if the mean depth of element is less than $\xi$, all nodes will add a small depth $\xi - \bar{h}_i$ to re-fulfill the restriction.
+
+At last, all values of water height at nodes with negative $h_i(x_j) <0$ will be modified to zero and the discharge of dry nodes ( $h_i \le h_{positive}$ ) will be reseted to zero.
+
+##6. Wet/Dry reconstruction
+
+No special treatment is introduced in the model at the moment.
+
+##5.Numerical Test
+
+###5.1.Wet dam break
 
 | Model Setting | value |
 | --- | --- |
 | channel length | 1000m |
 | dam position | 500m |
-| upstream h | 10m |
-| downstream h | 2m |
+| upstream depth | 10m |
+| downstream depth | 2m |
 | element num | 400 |
 | Final Time | 20s |
 
-![](../fig/depth.png)
-![](../fig/flux.png)
+![](../fig/DamBreakWet.png)
 
+###5.2.Dry dam break
 
+| Model Setting | value |
+| --- | --- |
+| channel length | 1000m |
+| dam position | 500m |
+| upstream depth | 10m |
+| downstream depth | 0m |
+| element num | 400 |
+| Final Time | 20s |
+
+![](../fig/DamBreakDry.png)
+
+###5.3.Parabolic bowl
+
+| Model Setting | value |
+| --- | --- |
+| channel length | 2000m |
+| $h_0$ | 10m |
+| $a$ | 600m |
+| $B$ | 5m/s |
+| $T$ | 269s |
+
+Exact solution
+
+$$\begin{equation}
+Z(x,t) = \frac{-B^2 \mathrm{cos}(2wt) - B^2 - 4Bw \mathrm{cos}(wt)x}{4g}
+\end{equation}$$
+
+1. $t = T/2$
+![](../fig/ParabolicBowl_1.png)
+
+2. $t = 3T/4$
+![](../fig/ParabolicBowl_2.png)
+
+2. $t = T$
+![](../fig/ParabolicBowl_3.png)
 
 
