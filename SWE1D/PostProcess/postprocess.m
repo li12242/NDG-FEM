@@ -1,3 +1,4 @@
+close all
 filename = 'SWE1D.nc';
 
 time = ncread(filename, 'time');
@@ -10,13 +11,14 @@ q = ncread(filename, 'q', [1, itime],[inf, 1]);
 
 % % ParabolicBowl
 a = 600; h0 = 10;
-bedElevation = h0.*(x.^2./a^2 - 1);
-% bedElevation = zeros(size(x));
+% bedElevation = h0.*(x.^2./a^2 - 1);
+bedElevation = zeros(size(x));
 
 figure
 subplot(2,1,1); p_h = plot(x, h+bedElevation, '-b.'); hold on;
 plot(x, bedElevation, 'k')
 subplot(2,1,2); p_q = plot(x, q, '-r.');
+
 for itime = startStep:numel(time)
     h = ncread(filename, 'h', [1, itime],[inf, 1]);
     q = ncread(filename, 'q', [1, itime],[inf, 1]);
@@ -29,7 +31,7 @@ for itime = startStep:numel(time)
 %     end% if
 
     fprintf('Processing: %f ...\n', itime/numel(time))
-%     if time(itime)/20 > 0.345577
+%     if itime > 6
 %         keyboard
 %     end
 end% for

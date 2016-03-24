@@ -1,11 +1,17 @@
 function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva)
 % 1D shallow water equation 
 % Righ Hand Side
-
 line = mesh.Shape;
+hDelta = 1e-3;
 
 % numel flux
 [Fhs, Fqs] = SWEHLL(mesh, h, q);
+
+% eliminate dry boundary flux
+isdry = (h <= hDelta);
+dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
+Fhs(dryEdge) = 0; Fqs(dryEdge) = 0;
+
 
 % boundary condition
 % [Fhs, Fqs] = SWEBC(mesh, Fhs, Fqs, h, q);
@@ -13,7 +19,7 @@ line = mesh.Shape;
 [Sh, Sq] = SWESource(mesh, bedElva, h);
 
 % flux term
-[Fh, Fq] = SWEFlux(h, q);
+[Fh, Fq] = SWEFlux(h, q, hDelta);
 
 %% strong form
 dFh = mesh.nx.*Fh(mesh.vmapM) - Fhs;
@@ -30,13 +36,12 @@ rhsQ = -mesh.rx.*(line.Dr*Fq) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
 % rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
 %     - line.invM*line.Mes*(Fqs.*mesh.fScale) + Sq;
 
-%% eliminate the dry area
-dryPointFlag = (h <= 10^-6);
-eleFlag = (dryPointFlag(mesh.vmapM) > 0) & (dryPointFlag(mesh.vmapP) >0);
-eledist = find(all(eleFlag));
+%% eliminate the dry area gravitational flow
+dryIndex = all(isdry);
 
-rhsH(:,eledist) = zeros(mesh.Shape.nNode, numel(eledist));
-rhsQ(:,eledist) = zeros(mesh.Shape.nNode, numel(eledist));
+rhsH(:,dryIndex) = line.invM*line.Mes*(dFh(:, dryIndex).*mesh.fScale(:, dryIndex));
+rhsQ(:,dryIndex) = line.invM*line.Mes*(dFq(:, dryIndex).*mesh.fScale(:, dryIndex));
+
 end% func
 
 function [Sh, Sq] = SWESource(mesh, bedElva, h)
