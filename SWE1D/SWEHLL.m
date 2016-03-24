@@ -7,21 +7,21 @@ function [Fhs, Fqs] = SWEHLL(mesh, h, q)
 %     floods with wet/dry fronts over complex topography. (17-18)
 % [3] 
 % 
-hDelta = 10^-6;
+hDelta = 10^-3;
 
 % rotate variable
 hM = h(mesh.vmapM); hP = h(mesh.vmapP);
 qM = mesh.nx.* q(mesh.vmapM); qP = mesh.nx.* q(mesh.vmapP);
 uM = zeros(size(hM)); uP = zeros(size(hP));
-isWetM = hM>hDelta; isWetP = hP>hDelta;
+isWetM = hM > hDelta; isWetP = hP > hDelta;
 
 uM(isWetM) = qM(isWetM)./hM(isWetM);
 uP(isWetP) = qP(isWetP)./hP(isWetP);
 
 [SM, SP] = EstimateWaveSpeed(mesh, hM, hP, uM, uP);
 
-[FhM, FqM] = SWEFlux(hM, qM);
-[FhP, FqP] = SWEFlux(hP, qP);
+[FhM, FqM] = SWEFlux(hM, qM, hDelta);
+[FhP, FqP] = SWEFlux(hP, qP, hDelta);
 
 % Compute HLL flux
 Fhs = zeros(size(FhM)); Fqs = zeros(size(FqM));

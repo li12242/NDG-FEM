@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'DamBreakDry';
+caseName = 'ParabolicBowl';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -19,7 +19,7 @@ switch caseName
         FinalTime = 240; % Flow over dump
         x1 = 0; x2 = 25; % Flow over dump
     case 'ParabolicBowl'
-        T = 269; FinalTime = T*3/4; % Parabolic Bowl
+        T = 269; FinalTime = T; % Parabolic Bowl
         x1 = -1000; x2 = 1000; % Parabolic Bowl
 end% switch
 
@@ -27,8 +27,8 @@ physics.incert('FinalTime', FinalTime);
 physics.incert('caseName', caseName);
 
 % max order of polymomials
-N = 2; nElement = 100;
-[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
+N = 1; nElement = 100;
+[Nv, VX, ~, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
 % Initialize solver and construct grid and metric
@@ -53,12 +53,12 @@ netcdf.close(ncid);
 % Solve Problem
 [h, q] = SWESolver(physics, ncfile);
 
-% plot(mesh.x, h, 'o-')
 end% func
 
 function bedElevation = SetBed(physics)
 mesh = physics.getVal('mesh');
-% initialize the bed elevation according to the case name
+Np = mesh.Shape.nNode;
+% Initialize the bed elevation according to the case name
 switch physics.getVal('caseName')
     case 'DamBreakDry'
         bedElevation = zeros(size(mesh.x));
@@ -72,6 +72,10 @@ switch physics.getVal('caseName')
         a = 600; h0 = 10;
         bedElevation = h0.*(mesh.x.^2./a^2 - 1);
 end% switch
+% All of the bottom level is linear polynomial
+bedElevation = ones(Np, 1)*bedElevation(1,:) + (mesh.x - ones(Np, 1)*mesh.x(1, :))./...
+    (ones(Np, 1)*mesh.x(Np, :) - ones(Np, 1)*mesh.x(1, :)).*...
+    (ones(Np, 1)*bedElevation(end,:) - ones(Np, 1)*bedElevation(1,:));
 end% func
 
 function [h,q] = SWEInit(physics)
