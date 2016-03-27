@@ -1,5 +1,5 @@
 close all
-filename = 'SWE1D.nc';
+filename = 'ParabolicBowl.nc';
 
 time = ncread(filename, 'time');
 % timestep = numel(time)
@@ -27,7 +27,7 @@ z2 = (4*B*w).*x./(4*g);
 h2 = z2 - bedElevation;
 h2(h2<hDelta) = hDelta;
 
-z3 = 1.22*ones(size(x));
+z3 = 1.22*ones(size(x)); %
 h3 = z3 - bedElevation;
 h3(h3<hDelta) = hDelta;
 
@@ -45,15 +45,15 @@ for n = 1:numel(exTime)
     figure
     subplot(2,1,1); 
     p_h = plot(x, h+bedElevation, '-b.'); hold on;
-    plot(x, bedElevation, 'k')
     switch n
         case 1
             plot(x, bedElevation+h2, 'k--')
         case 2
-%             h3 = h3 + 1.22;
             plot(x, bedElevation+h3, 'k--')
         case 3
             plot(x, bedElevation+h1, 'k--')
     end
+    legend('DGM', 'Exact')
+    plot(x, bedElevation, 'k')
     subplot(2,1,2); p_q = plot(x, q, '-r.');
 end% for
