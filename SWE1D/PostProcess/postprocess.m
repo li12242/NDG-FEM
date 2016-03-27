@@ -1,5 +1,5 @@
-close all
-filename = 'SWE1D.nc';
+% close all
+filename = 'DamBreakDry.nc';
 
 time = ncread(filename, 'time');
 % timestep = numel(time)
