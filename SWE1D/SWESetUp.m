@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'ParabolicBowl';
+caseName = 'DamBreakDry';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -27,7 +27,7 @@ physics.incert('FinalTime', FinalTime);
 physics.incert('caseName', caseName);
 
 % max order of polymomials
-N = 1; nElement = 100;
+N = 1; nElement = 200;
 [Nv, VX, ~, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
