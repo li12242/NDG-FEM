@@ -5,7 +5,8 @@ line = mesh.Shape;
 hDelta = 1e-3;
 
 % numel flux
-[Fhs, Fqs] = SWEHLL(mesh, h, q);
+[Fhs, Fqs] = SWELF(mesh, h, q);
+% [Fhs, Fqs] = SWEHLL(mesh, h, q);
 
 % eliminate dry boundary flux
 isdry = (h <= hDelta);

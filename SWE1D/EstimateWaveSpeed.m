@@ -5,7 +5,7 @@ function [SM, SP] = EstimateWaveSpeed(mesh, hM, hP, uM, uP)
 end% func
 
 function [SM, SP] = Toro(mesh, hM, hP, uM, uP)
-gra = 9.8; hDelta = 10^-6;
+gra = 9.8; hDelta = 10^-3;
     
 us = 0.5*(uM + uP) + (sqrt(gra*hM) - sqrt(gra*hP));
 cs = 0.5*( sqrt(gra*hM) + sqrt(gra*hP) ) + 0.25*(uM - uP);
