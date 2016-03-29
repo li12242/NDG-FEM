@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'DamBreakDry';
+caseName = 'FlowDump';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -16,7 +16,7 @@ switch caseName
         FinalTime = 20; % Dam break
         x1 = 0; x2 = 1000; % Dam break
     case 'FlowDump'
-        FinalTime = 240; % Flow over dump
+        FinalTime = 200; % Flow over dump
         x1 = 0; x2 = 25; % Flow over dump
     case 'ParabolicBowl'
         T = 269; FinalTime = T; % Parabolic Bowl
@@ -27,7 +27,7 @@ physics.incert('FinalTime', FinalTime);
 physics.incert('caseName', caseName);
 
 % max order of polymomials
-N = 1; nElement = 200;
+N = 1; nElement = 100;
 [Nv, VX, ~, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
@@ -35,6 +35,8 @@ BC = [2,1; 3,Nv];
 line = StdRegions.Line(N);
 mesh = MultiRegions.RegionLineBC(line, EToV, VX, BC);
 physics.incert('mesh', mesh);
+physics.incert('VX', VX);
+physics.incert('EToV', EToV);
 
 bedElevation = SetBed(physics);
 physics.incert('bedElva', bedElevation);
@@ -88,7 +90,7 @@ switch physics.getVal('caseName')
     case 'DamBreakWet'
         [h, q] = DamBreakInit(mesh, 1);
     case 'FlowDump'
-        initCase = 1;
+        initCase = 3;
         [h, q] = FlowDumpInit(mesh, bedElva, initCase);
     case 'ParabolicBowl'
         [h, q] = ParaBowlInit(mesh, bedElva);
@@ -100,8 +102,8 @@ q = zeros(size(mesh.x)); hDelta = 0.0;
 
 g = 9.8; B = 5; h0 = 10; a = 600;
 w = sqrt(2*g*h0)./a;
-% z = zeros(size(mesh.x));
-z = -(4*B*w).*mesh.x./(4*g);
+z = zeros(size(mesh.x));
+% z = -(4*B*w).*mesh.x./(4*g);
 h = z - bedElva;
 h(h<hDelta) = hDelta;
 end% func
