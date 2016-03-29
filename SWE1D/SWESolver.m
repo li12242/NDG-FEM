@@ -35,6 +35,8 @@ CFL=0.3; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
 
 lamda = SWESpeed(h, q); dt = CFL/lamda*xmin;
+
+% eliminate zero depth in wet cell
 [h, q] = PositivePreserving(mesh, h, q, bedElva);
 
 % outer time step loop
@@ -70,6 +72,8 @@ while(time<FinalTime)
 %         subplot(2,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
 %         subplot(2,1,2); plot(mesh.x, q, '-r');
 %         drawnow;
+%         refineflag = TransiteCellIdentify(mesh, h, bedElva);
+%         [new_mesh, h1, q1, localEleIndex] = Hrefine1D(mesh, refineflag, h, q, physics);
         
         timelocal = time + dt*rk4c(INTRK);
         [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva);
@@ -86,7 +90,6 @@ while(time<FinalTime)
 end
 
 end% func
-
 
 function [h, q] = PositivePreserving2(mesh, h, q, bedElva)
 h = Utilities.Limiter.SlopeLimit1(mesh, h); 
@@ -126,7 +129,9 @@ h( h < 0 ) = 0; % eliminate negative water depth
 end% func
 
 function h = PositiveOperator(mesh, h, hDelta)
-% reference from Xing (2010)
+% positive operator
+% reference from Xing (2010); Zhang (2010)
+
 hmean = CellMean(mesh, h);
 Np = mesh.Shape.nNode;
 % correct mean water less than hDelta
@@ -140,6 +145,7 @@ h = (ones(Np, 1)*theta).*(h - ones(Np, 1)*hmean) + ones(Np, 1)*hmean;
 end% func
 
 function hmean = CellMean(mesh, h)
+% get mean depth in each cell
 Np = mesh.Shape.nNode;
 uh = mesh.Shape.VandMatrix\h; uh(2:Np,:)=0;
 uavg = mesh.Shape.VandMatrix*uh; hmean = uavg(1,:);
