@@ -1,5 +1,5 @@
 % close all
-filename = 'DamBreakDry.nc';
+filename = 'SWE1D.nc';
 
 time = ncread(filename, 'time');
 % timestep = numel(time)
@@ -10,16 +10,18 @@ h = ncread(filename, 'h', [1, itime],[inf, 1]);
 q = ncread(filename, 'q', [1, itime],[inf, 1]);
 
 % % ParabolicBowl
-a = 600; h0 = 10;
+% a = 600; h0 = 10;
 % bedElevation = h0.*(x.^2./a^2 - 1);
 bedElevation = zeros(size(x));
+flag = (x >= 8) & (x <=12);
+bedElevation(flag) = 0.2 - 0.05*(x(flag) -10).^2;
 
 figure
 subplot(2,1,1); p_h = plot(x, h+bedElevation, '-b.'); hold on;
 plot(x, bedElevation, 'k')
 subplot(2,1,2); p_q = plot(x, q, '-r.');
 
-for itime = startStep:numel(time)
+for itime = startStep:4:numel(time)
     h = ncread(filename, 'h', [1, itime],[inf, 1]);
     q = ncread(filename, 'q', [1, itime],[inf, 1]);
     set(p_h, 'YData', h+bedElevation);

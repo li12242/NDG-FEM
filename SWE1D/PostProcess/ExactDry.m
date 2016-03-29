@@ -403,7 +403,7 @@ data = [   2.500000       10.00000      0.0000000E+00  0.0000000E+00
 
 %% get result
 % close all
-filename = 'DamBreakDry.nc';
+filename = 'SWE1D.nc';
 
 time = ncread(filename, 'time');
 timestep = numel(time);

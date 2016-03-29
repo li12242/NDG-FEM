@@ -1,9 +1,13 @@
 #RKDG to shallow water equations
 
 ##1.Governing Equations
-$$\frac{\partial U}{\partial t} + \frac{\partial F}{\partial x} = 0$$
-$$U = \begin{bmatrix} h \cr q \end{bmatrix} \quad
-F = \begin{bmatrix} q \cr gh^2/2 + q^2/h \end{bmatrix}$$
+$$\begin{equation}
+\frac{\partial U}{\partial t} + \frac{\partial F(U)}{\partial x} = S(U)
+\end{equation}$$
+
+$$\begin{equation}
+U = \begin{bmatrix}\eta \cr q_x \end{bmatrix} \quad F = \begin{bmatrix}q_x \cr \frac{q_x^2}{h} + \frac{1}{2}g(\eta^2 - 2\eta z) \end{bmatrix} \quad S = \begin{bmatrix}0 \cr -g\eta\frac{\partial z}{\partial x} \end{bmatrix}
+\end{equation}$$
 
 ##2.Discrete with DGM
 
@@ -182,4 +186,30 @@ Z(x,t) = \frac{-B^2 \mathrm{cos}(2wt) - B^2 - 4Bw \mathrm{cos}(wt)x}{4g}
 2. $t = T$
 ![](../fig/ParabolicBowl_3.png)
 
+###5.4.Flow over dump
 
+![](../fig/FlowOverDumpBottomLevel.png)
+
+1. subcritical flow
+| Model Setting | value |
+| --- | --- |
+| channel length | 25m |
+| $h_0$ | 0.5m |
+| $q_0$ | 0.18m2/s |
+| $T$ | 200s |
+
+2. supercritical flow
+| Model Setting | value |
+| --- | --- |
+| channel length | 25m |
+| $h_0$ | 2.0m |
+| $q_0$ | 25.0567m2/s |
+| $T$ | 200s |
+
+3. transcritical flow
+| Model Setting | value |
+| --- | --- |
+| channel length | 25m |
+| $h_0$ | 0.33m |
+| $q_0$ | 0.18m2/s |
+| $T$ | 200s |
