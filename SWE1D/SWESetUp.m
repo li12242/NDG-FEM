@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'FlowDump';
+caseName = 'ParabolicBowl';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -27,7 +27,7 @@ physics.incert('FinalTime', FinalTime);
 physics.incert('caseName', caseName);
 
 % max order of polymomials
-N = 1; nElement = 100;
+N = 1; nElement = 21;
 [Nv, VX, ~, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
@@ -59,25 +59,33 @@ end% func
 
 function bedElevation = SetBed(physics)
 mesh = physics.getVal('mesh');
-Np = mesh.Shape.nNode;
+VX = physics.getVal('VX');
+EToV = physics.getVal('EToV');
 % Initialize the bed elevation according to the case name
 switch physics.getVal('caseName')
     case 'DamBreakDry'
-        bedElevation = zeros(size(mesh.x));
+        VB = zeros(size(VX));
+%         bedElevation = zeros(size(mesh.x));
     case 'DamBreakWet'
-        bedElevation = zeros(size(mesh.x));
+        VB = zeros(size(VX));
+%         bedElevation = zeros(size(mesh.x));
     case 'FlowDump'
-        bedElevation = zeros(size(mesh.x));
-        flag = (mesh.x >= 8) & (mesh.x <=12);
-        bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
+        VB = zeros(size(VX));
+        flag = (VX >= 8) & (VX <=12);
+        VB(flag) = 0.2 - 0.05*(VX(flag) -10).^2;        
+%         bedElevation = zeros(size(mesh.x));
+%         flag = (mesh.x >= 8) & (mesh.x <=12);
+%         bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
     case 'ParabolicBowl'
         a = 600; h0 = 10;
-        bedElevation = h0.*(mesh.x.^2./a^2 - 1);
+        VB = h0.*(VX.^2./a^2 - 1);
+%         bedElevation = h0.*(mesh.x.^2./a^2 - 1);
 end% switch
 % All of the bottom level is linear polynomial
-bedElevation = ones(Np, 1)*bedElevation(1,:) + (mesh.x - ones(Np, 1)*mesh.x(1, :))./...
-    (ones(Np, 1)*mesh.x(Np, :) - ones(Np, 1)*mesh.x(1, :)).*...
-    (ones(Np, 1)*bedElevation(end,:) - ones(Np, 1)*bedElevation(1,:));
+physics.incert('VB', VB);
+vb = VB(EToV');
+bedElevation = 0.5*((1-mesh.Shape.r)*vb(1,:) + (mesh.Shape.r+1)*vb(2,:));
+
 end% func
 
 function [h,q] = SWEInit(physics)
@@ -98,14 +106,16 @@ end% switch
 end% func
 
 function [h, q] = ParaBowlInit(mesh, bedElva)
-q = zeros(size(mesh.x)); hDelta = 0.0;
+q = zeros(size(mesh.x)); %hDelta = 0.0;
 
 g = 9.8; B = 5; h0 = 10; a = 600;
 w = sqrt(2*g*h0)./a;
 z = zeros(size(mesh.x));
 % z = -(4*B*w).*mesh.x./(4*g);
 h = z - bedElva;
-h(h<hDelta) = hDelta;
+hmean = CellMean(mesh, h);
+h(:, hmean < 0) = 0;
+% h(h<0) = 0;
 end% func
 
 function [h, q] = FlowDumpInit(mesh, bedElva, initCase)
