@@ -18,17 +18,13 @@ transIndex = xor(wetIndex(mesh.EToE(:, 1)), wetIndex(mesh.EToE(:, 2)));
 transIndex = transIndex & wetIndex;
 
 % refinement condition
+hP = max( h(mesh.vmapP) );
 hmean = CellMean(mesh,h);
-bedMean = CellMean(mesh, bedElva);
-bedMax = max(bedElva);
-refineflag = (hmean + bedMean) < (bedMax + hPositive);
+refineflag = 2*hmean + hPositive < hP;
+% bedMean = CellMean(mesh, bedElva);
+% bedMax = max(bedElva);
+% refineflag = (hmean + bedMean + eps) < (bedMax);
 
 refineflag = refineflag(:) & transIndex(:);
 end% function 
 
-function hmean = CellMean(mesh, h)
-% get mean depth in each cell
-Np = mesh.Shape.nNode;
-uh = mesh.Shape.VandMatrix\h; uh(2:Np,:)=0;
-uavg = mesh.Shape.VandMatrix*uh; hmean = uavg(1,:);
-end% func

@@ -26,8 +26,6 @@ rk4c = [             0.0  ...
      
 time = 0;
 q = physics.getVal('flux'); h = physics.getVal('height');
-% Runge-Kutta residual storage  
-resQ = zeros(size(q)); resH = zeros(size(h));
 
 % compute time step size
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
@@ -66,25 +64,44 @@ while(time<FinalTime)
 %     if outstep > 805
 %         keyboard
 %     end
+%     refineflag = TransiteCellIdentify(mesh, h, bedElva);
+%     [new_mesh, h1, q1, new_bedElva, localEleIndex] =...
+%         Hrefine1D(mesh, refineflag, h, q, bedElva, physics);
     
+    % Runge-Kutta residual storage  
+%     resQ = zeros(size(q1)); resH = zeros(size(h1));
+    resQ = zeros(size(q)); resH = zeros(size(h));
+
     for INTRK = 1:5
         
 %         subplot(2,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
 %         subplot(2,1,2); plot(mesh.x, q, '-r');
 %         drawnow;
-%         refineflag = TransiteCellIdentify(mesh, h, bedElva);
-%         [new_mesh, h1, q1, localEleIndex] = Hrefine1D(mesh, refineflag, h, q, physics);
         
         timelocal = time + dt*rk4c(INTRK);
         [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva);
+        
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
         
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
-
+        
         [h, q] = PositivePreserving(mesh, h, q, bedElva);
+%         
+%         timelocal = time + dt*rk4c(INTRK);
+%         [rhsH, rhsQ] = SWERHS(new_mesh, h1, q1, new_bedElva);
+%         
+%         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
+%         resH = rk4a(INTRK)*resH + dt*rhsH;
+%         
+%         q1 = q1 + rk4b(INTRK)*resQ;
+%         h1 = h1 + rk4b(INTRK)*resH;
+% 
+%         
+%         [h1, q1] = PositivePreserving(new_mesh, h1, q1, new_bedElva);
     end
+%     [h, q] = Hcombine1D(localEleIndex, h1, q1, new_mesh, refineflag);
     StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;
 end

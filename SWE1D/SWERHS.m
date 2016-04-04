@@ -5,13 +5,8 @@ line = mesh.Shape;
 hDelta = 1e-3;
 
 % numel flux
-% [Fhs, Fqs] = SWELF(mesh, h, q);
-[Fhs, Fqs] = SWEHLL(mesh, h, q);
-
-% eliminate dry boundary flux
-isdry = (h <= hDelta);
-dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
-Fhs(dryEdge) = 0; Fqs(dryEdge) = 0;
+[Fhs, Fqs] = SWELF(mesh, h, q);
+% [Fhs, Fqs] = SWEHLL(mesh, h, q);
 
 
 % boundary condition
@@ -25,6 +20,11 @@ Fhs(dryEdge) = 0; Fqs(dryEdge) = 0;
 %% strong form
 dFh = mesh.nx.*Fh(mesh.vmapM) - Fhs;
 dFq = mesh.nx.*Fq(mesh.vmapM) - Fqs;
+
+% eliminate dry boundary flux
+isdry = (h <= hDelta);
+dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
+dFh(dryEdge) = 0; dFq(dryEdge) = 0;
 
 % rhs
 rhsH = -mesh.rx.*(line.Dr*Fh) + line.invM*line.Mes*(dFh.*mesh.fScale) + Sh;
