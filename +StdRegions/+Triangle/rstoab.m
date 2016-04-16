@@ -1,5 +1,6 @@
 function [a,b] = rstoab(r,s)
 % Transfer from (r,s) -> (a,b) coordinates in triangle
+
 Np = length(r); a = zeros(Np,1);
 for n=1:Np
   if(s(n) ~= 1)
