@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'ParabolicBowl';
+caseName = 'DamBreakDry';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -27,7 +27,7 @@ physics.incert('FinalTime', FinalTime);
 physics.incert('caseName', caseName);
 
 % max order of polymomials
-N = 1; nElement = 21;
+N = 1; nElement = 400;
 [Nv, VX, ~, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
@@ -110,8 +110,8 @@ q = zeros(size(mesh.x)); %hDelta = 0.0;
 
 g = 9.8; B = 5; h0 = 10; a = 600;
 w = sqrt(2*g*h0)./a;
-z = zeros(size(mesh.x));
-% z = -(4*B*w).*mesh.x./(4*g);
+% z = zeros(size(mesh.x));
+z = -(4*B*w).*mesh.x./(4*g);
 h = z - bedElva;
 hmean = CellMean(mesh, h);
 h(:, hmean < 0) = 0;
