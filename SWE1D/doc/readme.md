@@ -159,6 +159,28 @@ No special treatment is introduced in the model at the moment.
 | element num | 400 |
 | Final Time | 20s |
 
+The analytical solution from Izem et al. (2016)
+
+$$\begin{eqnarray}
+\begin{aligned}
+h_1(x,t) = \left\{ \begin{matrix}
+h_0, & \text{if} \quad x\le -t \sqrt{gh_0}, \cr
+\frac{1}{9g}\left( 2 \sqrt{gh_0} - \frac{x}{t} \right)^2, & \text{if} \quad -t\sqrt{gh_0}\le x\le2t \sqrt{gh_0}, \cr
+0, & \text{if} \quad x> 2t\sqrt{gh_0}
+\end{matrix} \right.
+\end{aligned}
+\end{eqnarray}$$
+
+$$\begin{eqnarray}
+\begin{aligned}
+u_1(x,t) = \left\{ \begin{matrix}
+0, & \text{if} \quad x\le -t \sqrt{gh_0}, \cr
+\frac{2}{3}\left( \sqrt{gh_0} + \frac{x}{t} \right)^2, & \text{if} \quad -t\sqrt{gh_0}\le x\le2t \sqrt{gh_0}, \cr
+0, & \text{if} \quad x> 2t\sqrt{gh_0}
+\end{matrix} \right.
+\end{aligned}
+\end{eqnarray}$$
+
 ![](../fig/DamBreakDry.png)
 
 ###5.3.Parabolic bowl
