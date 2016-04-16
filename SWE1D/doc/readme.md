@@ -235,3 +235,29 @@ Z(x,t) = \frac{-B^2 \mathrm{cos}(2wt) - B^2 - 4Bw \mathrm{cos}(wt)x}{4g}
 | $h_0$ | 0.33m |
 | $q_0$ | 0.18m2/s |
 | $T$ | 200s |
+
+###5.5.Lake at rest
+| Model Setting | value |
+| --- | --- |
+| domain | 0~1m |
+| $h_0$ | 1.0m |
+| $q_0$ | 0.0m2/s |
+| $T$ | 20 |
+
+bottom topography
+
+$$\begin{equation}
+b_s(x) = b(r) = \left\{ \begin{matrix}
+a \cdot \frac{exp(-0.5/(r_m^2 - r^2))}{exp(-0.5/r_m^2)} & \text{if} \quad r\le r_m \cr
+0 & \text{otherwise}
+\end{matrix} \right.
+\end{equation}$$
+
+where $r = \left| x - 0.5 \right|$， $r_m = 0.4$ and $a = 1.2$
+
+water depth at $T=0$s
+$$\begin{equation}
+h_0 = min(0, 1- b(x))
+\end{equation}$$
+
+
