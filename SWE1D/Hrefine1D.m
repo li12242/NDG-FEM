@@ -28,7 +28,7 @@ v3 = Nv + (1:Nrefine)'; % index of new vertex
 EToV(refineflag,:) = [v1, v3]; % left part
 EToV((Ne+1):(Ne + Nrefine), :) = [v3, v2]; % right part
 
-[new_mesh, newVX, newBedElva, h1, q1] = getRefinedValue(mesh, h, q, bedElva, refineflag, hDelta);
+[new_mesh, newVX, newBedElva, h1, q1] = getRefinedValue(mesh, h, q, bedElva, refineflag);
 VX(v3) = newVX;
 
 refinedIndex = find(refineflag); % refined local element index
@@ -53,7 +53,7 @@ end% function
 
 
 function [new_mesh, newVX, newBedElva, h1, q1] = ...
-    getRefinedValue(mesh, h, q, bedElva, refineflag, hDelta)
+    getRefinedValue(mesh, h, q, bedElva, refineflag)
 % calculate new vertex location
 new_mesh = mesh;
 
@@ -78,12 +78,6 @@ for i = 1:Nrefine
     hmean = CellMean(mesh, h(:, eleIndex(i) ));
     qmean = CellMean(mesh, q(:, eleIndex(i) ));
     dx = vx(2) - vx(1);
-    
-    % element nodes location
-%     new_mesh.x(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*vx(1) ...
-%         + (mesh.Shape.r+1)*newVX(i));
-%     new_mesh.x(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*newVX(i) ...
-%         + (mesh.Shape.r+1)*vx(2));
     
     if hP(1) > hP(2) % left is wet cell
         deltax = 2*(hmean*dx) ./(hP(1));
