@@ -1,4 +1,4 @@
-function [Fhs, Fqs] = SWEHLL(mesh, h, q)
+function [Fhs, Fqs, status] = SWEHLL(mesh, h, q)
 % numerical flux: HLL
 % REFERENCE:
 % [1] Khan A A, Lai W. Modeling Shallow Water Flows Using the 
@@ -18,7 +18,7 @@ isWetM = hM > hDelta; isWetP = hP > hDelta;
 uM(isWetM) = qM(isWetM)./hM(isWetM);
 uP(isWetP) = qP(isWetP)./hP(isWetP);
 
-[SM, SP] = EstimateWaveSpeed(mesh, hM, hP, uM, uP);
+[SM, SP, status] = EstimateWaveSpeed(mesh, hM, hP, uM, uP);
 
 [FhM, FqM] = SWEFlux(hM, qM, hDelta);
 [FhP, FqP] = SWEFlux(hP, qP, hDelta);

@@ -1,4 +1,4 @@
-function [h, q] = SWESolver(physics, ncfile)
+function [h, q] = SWESolverHrefinedWetDry(physics, ncfile)
 % time setpping of 1D shallow water equation 
 % 
 mesh = physics.getVal('mesh');
@@ -57,43 +57,49 @@ while(time<FinalTime)
 %     if time > 100
 %         keyboard
 %     end% if
-%     if outstep > 3
+%     if outstep > 2
 %         keyboard
 %     end
 
+    refineflag = RefinedCellIdentify(mesh, h, bedElva);
+    [new_mesh, h1, q1, new_bedElva, localEleIndex] =...
+        Hrefine1D(mesh, refineflag, h, q, bedElva, physics);
+    
     % Runge-Kutta residual storage  
-    resQ = zeros(size(q)); resH = zeros(size(h));
+    resQ = zeros(size(q1)); resH = zeros(size(h1));
 
     for INTRK = 1:5
         
-%         subplot(3,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
-%         subplot(3,1,2); plot(mesh.x, q, '-r');
-%         u = q./h; u(h<eps) = 0;
-%         subplot(3,1,3); plot(mesh.x, u, '-b.');
+%         subplot(3,1,1); plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k');
+%         xlim([400, 600]);
+%         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); xlim([400, 600]);
+%         u = q1./h1; u(h1<eps) = 0;
+%         subplot(3,1,3); plot(new_mesh.x, u, '-b.'); xlim([400, 600]);
 %         drawnow;
         
         timelocal = time + dt*rk4c(INTRK);
-        [rhsH, rhsQ, status] = SWERHS(mesh, h, q, bedElva);
+
+        [rhsH, rhsQ] = SWERHS(new_mesh, h1, q1, new_bedElva);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
         
-        q = q + rk4b(INTRK)*resQ;
-        h = h + rk4b(INTRK)*resH;
-        
-        [h, q] = PositivePreserving(mesh, h, q, bedElva);
-        
+        q1 = q1 + rk4b(INTRK)*resQ;
+        h1 = h1 + rk4b(INTRK)*resH;
+   
+        [h1, q1] = PositivePreserving(new_mesh, h1, q1, new_bedElva);
     end
-    StoreVar(ncfile, h, q, time, lamda, outstep, status)
+    [h, q] = Hcombine1D(localEleIndex, h1, q1, new_mesh, refineflag);
+    StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;
 end
 
 end% func
 
 function [h, q] = PositivePreserving2(mesh, h, q, bedElva)
-h = Utilities.Limiter.Limiter1D.MinmodLinear(mesh, h); 
-q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh, q);
-q(h<=10^-3) = 0;
+h = Utilities.Limiter.SlopeLimit1(mesh, h); 
+q = Utilities.Limiter.SlopeLimit1(mesh, q);
+% q(h<=10^-3) = 0;
 h(h<0) = 0;
 end% func
 
@@ -105,7 +111,7 @@ hPositive = 10^-3;
 iswet = (h > hPositive);
 wetIndex = any(iswet); 
 
-%% slope limiter on water level and discharge
+%% slope limiter on water level
 
 % the slope limiter act on the wet cells
 q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,q);
@@ -122,7 +128,7 @@ temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h);
 h(:, ~wetIndex) = temp(:, ~wetIndex);
 
 %% positive preserving operator
-h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex), hPositive);
+h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex), hPositive/10);
 q( h < hPositive) = 0; % eliminate the flux of dry nodes
 h( h < 0 ) = 0; % eliminate negative water depth
 end% func
@@ -135,9 +141,9 @@ hmean = CellMean(mesh, h);
 Np = mesh.Shape.nNode;
 % correct mean water less than hDelta
 dis = (hmean < hDelta);
-h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
-
-hmean = CellMean(mesh, h);
+if dis
+    h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
+end% if
 % positive operator
 hmin = min(h);
 theta = min( (hmean - hDelta)./(hmean - hmin), 1);

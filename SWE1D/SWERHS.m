@@ -1,12 +1,12 @@
-function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva)
+function [rhsH, rhsQ, status] = SWERHS(mesh, h, q, bedElva)
 % 1D shallow water equation 
 % Righ Hand Side
 line = mesh.Shape;
 hDelta = 1e-3;
 
 % numel flux
-[Fhs, Fqs] = SWELF(mesh, h, q);
-% [Fhs, Fqs] = SWEHLL(mesh, h, q);
+% [Fhs, Fqs] = SWELF(mesh, h, q);
+[Fhs, Fqs, status] = SWEHLL(mesh, h, q);
 
 
 % boundary condition
