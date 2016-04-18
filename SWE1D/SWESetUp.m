@@ -7,7 +7,7 @@ function [h ,q] = SWESetUp
 
 physics = Utilities.varGroup;
 
-caseName = 'DamBreakWet';
+caseName = 'LakeAtRest';
 switch caseName
     case 'DamBreakDry'
         FinalTime = 20; % Dam break
@@ -21,13 +21,16 @@ switch caseName
     case 'ParabolicBowl'
         T = 269; FinalTime = T; % Parabolic Bowl
         x1 = -1000; x2 = 1000; % Parabolic Bowl
+    case 'LakeAtRest'
+        FinalTime = 0.5;
+        x1 = 0; x2 = 1;
 end% switch
 
 physics.incert('FinalTime', FinalTime);
 physics.incert('caseName', caseName);
 
 % max order of polymomials
-N = 1; nElement = 300;
+N = 1; nElement = 100;
 [Nv, VX, ~, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nElement);
 BC = [2,1; 3,Nv];
 
@@ -52,8 +55,8 @@ mesh_id = ncfile.varid(7);
 netcdf.putVar(ncid,mesh_id,mesh.x(mesh.vmapM(:)))
 netcdf.close(ncid);
 % Solve Problem
-% [h, q] = SWESolverHrefinedWetDry(physics, ncfile);
-[h, q] = SWESolver(physics, ncfile);
+[h, q] = SWESolverHrefinedWetDry(physics, ncfile);
+% [h, q] = SWESolver(physics, ncfile);
 end% func
 
 
