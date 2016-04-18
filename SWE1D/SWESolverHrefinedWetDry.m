@@ -47,7 +47,7 @@ while(time<FinalTime)
     
     if lamda*dt > CFL*xmin
         dt = dt/2;
-    elseif lamda*dt < CFL*xmin/4
+    elseif lamda*dt < CFL*xmin/2
         dt = dt*2;
     end%if
 
