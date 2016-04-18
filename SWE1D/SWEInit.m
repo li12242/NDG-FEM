@@ -1,6 +1,6 @@
-function [h, q, bedElevation] = SWEInit(mesh, physics)
-bedElevation = SetBed(physics);
-physics.incert('bedElva', bedElevation);
+function [h, q, bedElva] = SWEInit(mesh, physics)
+bedElva = SetBed(physics);
+physics.incert('bedElva', bedElva);
 
 % initialize the bed elevation according to the case name
 switch physics.getVal('caseName')
@@ -10,13 +10,26 @@ switch physics.getVal('caseName')
         [h, q] = DamBreakInit(mesh, 1);
     case 'FlowDump'
         initCase = 3;
-        [h, q] = FlowDumpInit(mesh, bedElevation, initCase);
+        [h, q] = FlowDumpInit(mesh, bedElva, initCase);
     case 'ParabolicBowl'
-        [h, q] = ParaBowlInit(mesh, bedElevation);
+        [h, q] = ParaBowlInit(mesh, bedElva);
         
     case 'LakeAtRest'
-        [h, q] = LakeAtRestInit(mesh, bedElevation);
+        [h, q] = LakeAtRestInit(mesh, bedElva);
+        
+    case 'TsunamiRunup'
+        [h, q] = TsunamiRunup(mesh, bedElva);
 end% switch
+end% func
+
+function [h, q] = TsunamiRunup(mesh, bedElva)
+q = zeros(size(mesh.x));
+data = load('TsunamiRunupInitialCondition.mat');
+Interp = griddedInterpolant(data.x, data.eta+5000, 'nearest');
+z = Interp(mesh.x(:)); z = reshape(z, size(mesh.x));
+
+h = z - bedElva;
+h(h<0) = 0;
 end% func
 
 function [h, q] = LakeAtRestInit(mesh, bedElevation)
@@ -49,11 +62,9 @@ q = zeros(size(mesh.x)); %hDelta = 0.0;
 g = 9.8; B = 5; h0 = 10; a = 600;
 w = sqrt(2*g*h0)./a;
 % z = zeros(size(mesh.x));
-z = -(4*B*w).*mesh.x./(4*g);
+z = (-2*B.^2 -(4*B*w).*mesh.x)./(4*g);
 h = z - bedElva;
-% hmean = CellMean(mesh, h);
-% h(:, hmean < 0) = 0;
-% h(h<0) = 0;
+
 % correct transition element
 transIndex = find(TransiteCellIdentify(mesh, h));
 h(h<0) = 0;
@@ -62,10 +73,11 @@ np = 10;
 [r, w] = Polylib.zwglj(np);
 V = StdRegions.Line.getVandMatrix(mesh.Shape.nOrder, r);
 for i = 1:numel(transIndex)
-    b1 = bedElevation(1, transIndex(i)); b2 = bedElevation(2, transIndex(i));
-%     x = (1-r)./2*x1 + (1+r)./2*x2;
+    b1 = bedElva(1, transIndex(i)); b2 = bedElva(end, transIndex(i));
+    z1 = z(1, transIndex(i)); z2 = z(end, transIndex(i));
+    eta = (1-r)./2*z1 + (1+r)./2*z2;
     b = (1-r)./2*b1 + (1+r)./2*b2;
-    htemp = 1 - b; htemp(htemp<0) = 0;
+    htemp = eta - b; htemp(htemp<0) = 0;
     temp = htemp.*w;
     hm = (sum( V.* repmat(temp, 1, mesh.Shape.nNode)));
     hm(2:end) = 0;
@@ -130,7 +142,8 @@ switch physics.getVal('caseName')
         a = 1.2; rm = 0.4; R = abs(VX - 0.5);
         index = (R < rm);
         VB(index) = a*exp(-0.5./(rm.^2 - R(index).^2))./exp(-0.5./rm^2);
-        
+    case 'TsunamiRunup'
+        VB = 5000 - 0.1*VX;
 end% switch
 % all of the bottom level is linear polynomial
 physics.incert('VB', VB);

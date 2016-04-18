@@ -13,10 +13,9 @@ itime = startStep;
 h = ncread(filename, 'h', [1, itime],[inf, 1]);
 q = ncread(filename, 'q', [1, itime],[inf, 1]);
 
-% % ParabolicBowl
-a = 600; h0 = 10;
+% bottom topography
 % bedElevation = h0.*(x.^2./a^2 - 1);
-bedElevation = zeros(size(x));
+bedElevation = 5000 - 0.1*x;
 % flag = (x >= 8) & (x <=12);
 % bedElevation(flag) = 0.2 - 0.05*(x(flag) -10).^2;
 
