@@ -71,13 +71,12 @@ while(time<FinalTime)
     for INTRK = 1:5
         
 %         subplot(3,1,1); plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k');
-%         xlim([400, 600]);
-%         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); xlim([400, 600]);
+%         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); 
 %         u = q1./h1; u(h1<eps) = 0;
-%         subplot(3,1,3); plot(new_mesh.x, u, '-b.'); xlim([400, 600]);
+%         subplot(3,1,3); plot(new_mesh.x, u, '-b.');
 %         drawnow;
         
-        timelocal = time + dt*rk4c(INTRK);
+%         timelocal = time + dt*rk4c(INTRK);
 
         [rhsH, rhsQ] = SWERHS(new_mesh, h1, q1, new_bedElva);
         
@@ -141,9 +140,9 @@ hmean = CellMean(mesh, h);
 Np = mesh.Shape.nNode;
 % correct mean water less than hDelta
 dis = (hmean < hDelta);
-if dis
-    h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
-end% if
+h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
+
+hmean = CellMean(mesh, h);
 % positive operator
 hmin = min(h);
 theta = min( (hmean - hDelta)./(hmean - hmin), 1);

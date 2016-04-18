@@ -73,7 +73,7 @@ while(time<FinalTime)
 %         drawnow;
         
         timelocal = time + dt*rk4c(INTRK);
-        [rhsH, rhsQ, status] = SWERHS(mesh, h, q, bedElva);
+        [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
@@ -84,7 +84,7 @@ while(time<FinalTime)
         [h, q] = PositivePreserving(mesh, h, q, bedElva);
         
     end
-    StoreVar(ncfile, h, q, time, lamda, outstep, status)
+    StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;
 end
 

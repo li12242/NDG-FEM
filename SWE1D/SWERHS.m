@@ -1,12 +1,12 @@
-function [rhsH, rhsQ, status] = SWERHS(mesh, h, q, bedElva)
+function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva)
 % 1D shallow water equation 
 % Righ Hand Side
 line = mesh.Shape;
-hDelta = 1e-3;
+hDelta = 1e-3; g = 9.81;
 
 % numel flux
 % [Fhs, Fqs] = SWELF(mesh, h, q);
-[Fhs, Fqs, status] = SWEHLL(mesh, h, q);
+[Fhs, Fqs, ~] = SWEHLL(mesh, h, q);
 
 
 % boundary condition
@@ -26,10 +26,13 @@ isdry = (h <= hDelta);
 dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
 dFh(dryEdge) = 0; dFq(dryEdge) = 0;
 
-% rhs
+% rhs - conservational form
 rhsH = -mesh.rx.*(line.Dr*Fh) + line.invM*line.Mes*(dFh.*mesh.fScale) + Sh;
 rhsQ = -mesh.rx.*(line.Dr*Fq) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
 
+% rhs - nonconservation form
+% rhsH = -mesh.rx.*(line.Dr*Fh) + line.invM*line.Mes*(dFh.*mesh.fScale) + Sh;
+% rhsQ = -g*h.*mesh.rx.*(line.Dr*h) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
 %% weak form
 % rhs
 % rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
@@ -46,7 +49,7 @@ rhsQ(:,dryIndex) = line.invM*line.Mes*(dFq(:, dryIndex).*mesh.fScale(:, dryIndex
 end% func
 
 function [Sh, Sq] = SWESource(mesh, bedElva, h)
-g = 9.8; line = mesh.Shape;
+g = 9.81; line = mesh.Shape;
 Sh = zeros(size(h)); %Sq = zeros(size(h));
 Sq = -g.*h.*mesh.rx.*(line.Dr*bedElva);
 end% func
