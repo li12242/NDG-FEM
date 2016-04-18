@@ -86,23 +86,23 @@ for i = 1:Nrefine
 %         + (mesh.Shape.r+1)*vx(2));
     
     if hP(1) > hP(2) % left is wet cell
-        deltax = 2*(hmean*dx) ./hP(1);
+        deltax = 2*(hmean*dx) ./(hP(1));
         newVX(i) = vx(1) + deltax;
         newBedElva(i) = b(1) + (b(2) - b(1))/dx*deltax;
         % interpolate refined element value
         h1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*hP(1) ...
-            + (mesh.Shape.r+1)*hDelta);
-        h1(:, mesh.nElement + i) = hDelta;
+            + (mesh.Shape.r+1)*0);
+        h1(:, mesh.nElement + i) = 0;
         q1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*2*qmean);
         q1(:, mesh.nElement + i) = 0;
         
     else % right is wet
-        deltax = 2*(hmean*dx) ./hP(2);
+        deltax = 2*(hmean*dx) ./(hP(2)+0);
         newVX(i) = vx(2) - deltax;
         newBedElva(i) = b(2) - (b(2) - b(1))/dx*deltax;
         % interpolate refined element value
-        h1(:, eleIndex) = hDelta;
-        h1(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*hDelta ...
+        h1(:, eleIndex(i)) = 0;
+        h1(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*0 ...
             + (mesh.Shape.r+1)*hP(2));
         q1(:, eleIndex) = 0;
         q1(:, mesh.nElement + i) = 0.5*((mesh.Shape.r+1)*2*qmean);
