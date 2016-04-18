@@ -1,6 +1,6 @@
 function LakeAtRestPostprocess
 filename = 'SWE1D_LakeAtRest.nc';
-filename1 = 'SWE1D.nc';
+filename1 = 'SWE1D_LakeAtRest1.nc';
 time = ncread(filename, 'time');
 % timestep = numel(time)
 x = ncread(filename, 'x');
