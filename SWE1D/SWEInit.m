@@ -13,7 +13,34 @@ switch physics.getVal('caseName')
         [h, q] = FlowDumpInit(mesh, bedElevation, initCase);
     case 'ParabolicBowl'
         [h, q] = ParaBowlInit(mesh, bedElevation);
+        
+    case 'LakeAtRest'
+        [h, q] = LakeAtRestInit(mesh, bedElevation);
 end% switch
+end% func
+
+function [h, q] = LakeAtRestInit(mesh, bedElevation)
+eta = ones(size(mesh.x));
+h = eta - bedElevation;
+q = zeros(size(mesh.x));
+% correct transition element
+transIndex = find(TransiteCellIdentify(mesh, h));
+h(h<0) = 0;
+
+np = 10;
+[r, w] = Polylib.zwglj(np);
+V = StdRegions.Line.getVandMatrix(mesh.Shape.nOrder, r);
+for i = 1:numel(transIndex)
+    b1 = bedElevation(1, transIndex(i)); b2 = bedElevation(2, transIndex(i));
+%     x = (1-r)./2*x1 + (1+r)./2*x2;
+    b = (1-r)./2*b1 + (1+r)./2*b2;
+    htemp = 1 - b; htemp(htemp<0) = 0;
+    temp = htemp.*w;
+    hm = (sum( V.* repmat(temp, 1, mesh.Shape.nNode)));
+    hm(2:end) = 0;
+    h(:, transIndex(i)) = mesh.Shape.VandMatrix*hm';
+end% for
+
 end% func
 
 function [h, q] = ParaBowlInit(mesh, bedElva)
@@ -24,9 +51,27 @@ w = sqrt(2*g*h0)./a;
 % z = zeros(size(mesh.x));
 z = -(4*B*w).*mesh.x./(4*g);
 h = z - bedElva;
-hmean = CellMean(mesh, h);
-h(:, hmean < 0) = 0;
+% hmean = CellMean(mesh, h);
+% h(:, hmean < 0) = 0;
 % h(h<0) = 0;
+% correct transition element
+transIndex = find(TransiteCellIdentify(mesh, h));
+h(h<0) = 0;
+
+np = 10;
+[r, w] = Polylib.zwglj(np);
+V = StdRegions.Line.getVandMatrix(mesh.Shape.nOrder, r);
+for i = 1:numel(transIndex)
+    b1 = bedElevation(1, transIndex(i)); b2 = bedElevation(2, transIndex(i));
+%     x = (1-r)./2*x1 + (1+r)./2*x2;
+    b = (1-r)./2*b1 + (1+r)./2*b2;
+    htemp = 1 - b; htemp(htemp<0) = 0;
+    temp = htemp.*w;
+    hm = (sum( V.* repmat(temp, 1, mesh.Shape.nNode)));
+    hm(2:end) = 0;
+    h(:, transIndex(i)) = mesh.Shape.VandMatrix*hm';
+end% for
+
 end% func
 
 function [h, q] = FlowDumpInit(mesh, bedElva, initCase)
@@ -80,6 +125,12 @@ switch physics.getVal('caseName')
         a = 600; h0 = 10;
         VB = h0.*(VX.^2./a^2 - 1);
 %         bedElevation = h0.*(mesh.x.^2./a^2 - 1);
+    case 'LakeAtRest'
+        VB = zeros(size(VX));
+        a = 1.2; rm = 0.4; R = abs(VX - 0.5);
+        index = (R < rm);
+        VB(index) = a*exp(-0.5./(rm.^2 - R(index).^2))./exp(-0.5./rm^2);
+        
 end% switch
 % all of the bottom level is linear polynomial
 physics.incert('VB', VB);
