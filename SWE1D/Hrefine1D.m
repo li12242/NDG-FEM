@@ -41,7 +41,7 @@ localEleIndex = [refinedIndex, [(Ne+1):(Ne + Nrefine)]' ];
 [new_mesh.nx, new_mesh.sJ] = new_mesh.Shape.getFaceGeometric(new_mesh.x);
 
 [new_mesh.vmapM, new_mesh.vmapP] = new_mesh.BuildMap(EToV, new_mesh.EToE, new_mesh.EToF);
-new_mesh.fScale = new_mesh.sJ./new_mesh.J;
+new_mesh.fScale = new_mesh.sJ./new_mesh.J(new_mesh.vmapM);
 %% get new bottom elevation
 VB = physics.getVal('VB');
 VB(v3) = newBedElva;
