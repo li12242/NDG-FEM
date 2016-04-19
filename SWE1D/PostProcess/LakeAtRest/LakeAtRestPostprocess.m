@@ -42,7 +42,7 @@ for itime = 1:numel(time)
     set(p_h, 'YData', h+bedElevation);
     set(p_q, 'YData', q);
     set(p_h1, 'YData', h1+bedElevation);
-    set(p_q1, 'YData', q1);
+    set(p_q1, 'YData', q1./100);
     drawnow;
     
 %     if( any((h>20)) )

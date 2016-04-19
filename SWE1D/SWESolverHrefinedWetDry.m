@@ -127,14 +127,16 @@ temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h);
 h(:, ~wetIndex) = temp(:, ~wetIndex);
 
 %% positive preserving operator
-h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex), hPositive/10);
+h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex));
 q( h < hPositive) = 0; % eliminate the flux of dry nodes
 h( h < 0 ) = 0; % eliminate negative water depth
 end% func
 
-function h = PositiveOperator(mesh, h, hDelta)
+function h = PositiveOperator(mesh, h)
 % positive operator
 % reference from Xing (2010); Zhang (2010)
+
+hDelta = 0.0;
 
 hmean = CellMean(mesh, h);
 Np = mesh.Shape.nNode;
