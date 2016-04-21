@@ -1,9 +1,62 @@
-function [h, q, bedElva] = SWEInit(mesh, physics)
+function physics = SWEInit(physics, nOrder, nEle)
+% initialization of the simulation
+% Input:
+% 
+% Output:
+
+caseName = physics.getVal('caseName');
+switch caseName
+    case 'DamBreakDry'
+        FinalTime = 20; % Dam break
+        x1 = 0; x2 = 1000; % Dam break
+    case 'DamBreakWet'
+        FinalTime = 20; % Dam break
+        x1 = 0; x2 = 1000; % Dam break
+    case 'FlowDump'
+        FinalTime = 200; % Flow over dump
+        x1 = 0; x2 = 25; % Flow over dump
+    case 'ParabolicBowl'
+        T = 269; FinalTime = T; % Parabolic Bowl
+        x1 = -1000; x2 = 1000; % Parabolic Bowl
+    case 'LakeAtRest'
+        FinalTime = 0.5;
+        x1 = 0; x2 = 1;
+    case 'TsunamiRunup'
+%         FinalTime = 240;
+        FinalTime = 10;
+        x1 = -500; x2 = 50000;
+end% switch
+physics.incert('FinalTime', FinalTime);
+
+% set mesh vertex
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nEle);
+BC = [2,1; 3,Nv];
+
+if strcmp( caseName, 'TsunamiRunup' )
+    % nonuniform mesh discretization
+    K1 = floor(K*3/4);
+    K2 = floor((K - K1)./2);
+    K3 = K - K1 - K2;
+    
+    xt1 = 2e4; xt2 = 3e4;
+    VX(1:(K1+1)) = linspace(x1, xt1, K1+1);
+    VX((K1+1):(K1+K2+1)) = linspace(xt1, xt2, K2+1);
+    VX((K1+K2+1):(K+1)) = linspace(xt2, x2, K3+1);
+end% if
+
+% Initialize solver and construct grid and metric
+line = StdRegions.Line(nOrder);
+mesh = MultiRegions.RegionLineBC(line, EToV, VX, BC);
+physics.incert('mesh', mesh);
+physics.incert('VX', VX);
+physics.incert('EToV', EToV);
+
+% set bottom topography
 bedElva = SetBed(physics);
 physics.incert('bedElva', bedElva);
 
-% initialize the bed elevation according to the case name
-switch physics.getVal('caseName')
+% set initial condition
+switch caseName
     case 'DamBreakDry'
         [h, q] = DamBreakInit(mesh, 2);
     case 'DamBreakWet'
@@ -20,6 +73,8 @@ switch physics.getVal('caseName')
     case 'TsunamiRunup'
         [h, q] = TsunamiRunup(mesh, bedElva);
 end% switch
+physics.incert('height', h);
+physics.incert('flux', q);
 end% func
 
 function [h, q] = TsunamiRunup(mesh, bedElva)
