@@ -56,7 +56,8 @@ while(time<FinalTime)
 
     for INTRK = 1:5
         
-%         subplot(3,1,1); plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k');
+%         subplot(3,1,1); 
+%         plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k'); xlim([0.56, 0.64])
 %         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); 
 %         u = q1./h1; u(h1<eps) = 0;
 %         subplot(3,1,3); plot(new_mesh.x, u, '-b.');

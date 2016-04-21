@@ -1,6 +1,6 @@
 function LakeAtRestPostprocess
-filename = 'SWE1D_LakeAtRest.nc';
-filename1 = 'SWE1D_LakeAtRest1.nc';
+filename = 'SWE1D.nc';
+filename1 = 'SWE1D.nc';
 time = ncread(filename, 'time');
 % timestep = numel(time)
 x = ncread(filename, 'x');
@@ -42,7 +42,7 @@ for itime = 1:numel(time)
     set(p_h, 'YData', h+bedElevation);
     set(p_q, 'YData', q);
     set(p_h1, 'YData', h1+bedElevation);
-    set(p_q1, 'YData', q1./100);
+    set(p_q1, 'YData', q1);
     drawnow;
     
 %     if( any((h>20)) )
