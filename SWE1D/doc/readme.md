@@ -133,9 +133,9 @@ At last, all values of water height at nodes with negative $h_i(x_j) <0$ will be
 
 No special treatment is introduced in the model at the moment.
 
-##5.Numerical Test
+##7.Numerical Test
 
-###5.1.Wet dam break
+###7.1.Wet dam break
 
 | Model Setting | value |
 | --- | --- |
@@ -148,7 +148,7 @@ No special treatment is introduced in the model at the moment.
 
 ![](../fig/DamBreakWet.png)
 
-###5.2.Dry dam break
+###7.2.Dry dam break
 
 | Model Setting | value |
 | --- | --- |
@@ -183,7 +183,7 @@ u_1(x,t) = \left\{ \begin{matrix}
 
 ![](../fig/DamBreakDry.png)
 
-###5.3.Parabolic bowl
+###7.3.Parabolic bowl
 
 | Model Setting | value |
 | --- | --- |
@@ -208,7 +208,7 @@ Z(x,t) = \frac{-B^2 \mathrm{cos}(2wt) - B^2 - 4Bw \mathrm{cos}(wt)x}{4g}
 2. $t = T$
 ![](../fig/ParabolicBowl_3.png)
 
-###5.4.Flow over dump
+###7.4.Flow over dump
 
 ![](../fig/FlowOverDumpBottomLevel.png)
 
@@ -236,7 +236,7 @@ Z(x,t) = \frac{-B^2 \mathrm{cos}(2wt) - B^2 - 4Bw \mathrm{cos}(wt)x}{4g}
 | $q_0$ | 0.18m2/s |
 | $T$ | 200s |
 
-###5.5.Lake at rest
+###7.5.Lake at rest
 | Model Setting | value |
 | --- | --- |
 | domain | 0~1m |
@@ -260,4 +260,10 @@ $$\begin{equation}
 h_0 = min(0, 1- b(x))
 \end{equation}$$
 
+##8. Todo List
+
+*16/4/21 - simplification of `Hrefine1D.m`*
+In `Hrefine1D.m`, avoid of calling `RegionLine.BuildMap`, modified `vmapM` and `vmapP` in an other way.
+
+*Done - 16/4/21, "optimization of Hrefine1D"*
 
