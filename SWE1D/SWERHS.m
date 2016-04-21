@@ -2,7 +2,7 @@ function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva)
 % 1D shallow water equation 
 % Righ Hand Side
 line = mesh.Shape;
-hDelta = 1e-3; g = 9.81;
+hDelta = 1e-3; %g = 9.81;
 
 % numel flux
 % [Fhs, Fqs] = SWELF(mesh, h, q);
