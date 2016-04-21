@@ -15,7 +15,6 @@ function [new_mesh, h1, q1, new_bedElva, localEleIndex] = ...
 EToV = physics.getVal('EToV');
 VX = physics.getVal('VX');
 Ne = mesh.nElement; 
-hDelta = 1e-3;
 
 %% get new vertex index and its location, EToV, h1, q1
 Nv = length(VX(:)); 
@@ -40,7 +39,9 @@ localEleIndex = [refinedIndex, [(Ne+1):(Ne + Nrefine)]' ];
 [new_mesh.x, new_mesh.rx, new_mesh.J] = new_mesh.Shape.getEleGeometric(VX(EToV'));
 [new_mesh.nx, new_mesh.sJ] = new_mesh.Shape.getFaceGeometric(new_mesh.x);
 
-[new_mesh.vmapM, new_mesh.vmapP] = new_mesh.BuildMap(EToV, new_mesh.EToE, new_mesh.EToF);
+% [new_mesh.vmapM, new_mesh.vmapP] = new_mesh.BuildMap(EToV, new_mesh.EToE, new_mesh.EToF);
+new_mesh = BuildMap(new_mesh, mesh, localEleIndex);
+
 new_mesh.fScale = new_mesh.sJ./new_mesh.J(new_mesh.vmapM);
 %% get new bottom elevation
 VB = physics.getVal('VB');
@@ -50,7 +51,33 @@ new_bedElva = 0.5*((1-mesh.Shape.r)*vb(1,:) + (mesh.Shape.r+1)*vb(2,:));
 
 end% function
 
+function new_mesh = BuildMap(new_mesh, mesh, localEleIndex)
+ne = new_mesh.nElement; % # of elements
+nfp = 1; % # of points on faces
+nf = 2; % # of faces
+np = new_mesh.Shape.nNode;
+nrefine = size(localEleIndex, 1);
 
+new_mesh.vmapM = zeros(nf*nfp, ne); new_mesh.vmapP = zeros(nf*nfp, ne);
+new_mesh.vmapM(:, 1:mesh.nElement) = mesh.vmapM;
+
+for ie = mesh.nElement+1:ne
+    new_mesh.vmapM(:, ie) = (ie - 1)*np + new_mesh.Shape.getFaceListToNodeList;
+end
+
+new_mesh.vmapP(:, 1:mesh.nElement) = mesh.vmapP;
+for ie = 1:nrefine
+    k1 = localEleIndex(ie, 1); k2 = localEleIndex(ie, 2);
+%     new_mesh.vmapP(1, k1) is the same with mesh
+    new_mesh.vmapP(2, k1) = new_mesh.vmapM(1, k2);
+    new_mesh.vmapP(1, k2) = new_mesh.vmapM(2, k1);
+    new_mesh.vmapP(2, k2) = mesh.vmapP(2, k1);
+    
+    e2 = mesh.EToE(k1, 2); f2 = mesh.EToF(k1, 2); % f2 should be 1 (left side)
+    new_mesh.vmapP(f2, e2) = new_mesh.vmapM(2, k2);
+end% for
+
+end% func
 
 function [new_mesh, newVX, newBedElva, h1, q1] = ...
     getRefinedValue(mesh, h, q, bedElva, refineflag)
