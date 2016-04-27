@@ -96,16 +96,16 @@ wetIndex = any(iswet);
 % the slope limiter act on the wet cells
 q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,q);
 
-eta = h + bedElva;
+% eta = h + bedElva;
 % eta = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta);
 
-temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
-eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
+% temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
+% eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
 
-h = eta - bedElva;
+% h = eta - bedElva;
 
-temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
-h(:, ~wetIndex) = temp(:, ~wetIndex);
+h = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
+% h(:, ~wetIndex) = temp(:, ~wetIndex);
 
 %% positive preserving operator
 h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex));

@@ -143,6 +143,7 @@ for i = 1:Nrefine
             vs = 0.5*(dx*db); vm = hmean*dx;
             deltax = dx*sqrt(vm/vs);
             newVX(i) = vx(2) - deltax;
+            newBedElva(i) = b(2) - (b(2) - b(1))/dx*deltax;
             h1(:, eleIndex(i)) = 0;
             h1(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*0 ...
                 + (mesh.Shape.r+1)*2*vm./deltax);

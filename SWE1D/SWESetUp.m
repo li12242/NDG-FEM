@@ -6,8 +6,8 @@ physics = Utilities.varGroup;
 
 % caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
-% caseName = 'ParabolicBowl';
-caseName = 'LakeAtRest';
+caseName = 'ParabolicBowl';
+% caseName = 'LakeAtRest';
 % caseName = 'TsunamiRunup';
 
 physics.incert('caseName', caseName);
