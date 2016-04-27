@@ -9,5 +9,6 @@ Fh = q;
 Fq = g*h.^2./2 + u.^2.*h;
 
 % for dry elements, no flow flux
-Fq(~isWet) = 0.0;
+dryIndex = all(~isWet);
+Fq(:, dryIndex) = 0.0;
 end% func
