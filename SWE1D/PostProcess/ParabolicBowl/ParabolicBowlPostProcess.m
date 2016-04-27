@@ -1,6 +1,6 @@
 function ParabolicBowlPostProcess
 
-filename = 'SWE1D_ParabolicBowl.nc';
+filename = 'SWE1D.nc';
 time = ncread(filename, 'time'); x = ncread(filename, 'x');
 startStep = 1; itime = startStep;
 
@@ -39,7 +39,7 @@ if camera_on
     open(writerObj);
 end
 
-for itime = 1:5:numel(time)
+for itime = 1:numel(time)
     h = ncread(filename, 'h', [1, itime],[inf, 1]);
     q = ncread(filename, 'q', [1, itime],[inf, 1]);
     [he, qe, ue] = exactParabolicBowlSolution(time(itime), x, bedElva);
