@@ -15,7 +15,7 @@ q = ncread(filename, 'q', [1, itime],[inf, 1]);
 % get exact solution
 [he, qe, ue] = exactParabolicBowlSolution(time(1), x, bedElva);
 
-% draw 
+% draw
 figure; subplot(3,1,1);
 p_h = plot(x, h+bedElva, '-b'); hold on;
 p_h1 = plot(x, he+bedElva, 'r.');
@@ -44,7 +44,7 @@ for itime = 1:numel(time)
     q = ncread(filename, 'q', [1, itime],[inf, 1]);
     [he, qe, ue] = exactParabolicBowlSolution(time(itime), x, bedElva);
     
-    u = q./h; u(h<=0) = 0;
+    u = q./h; u(h<=1e-3) = 0;
     set(p_h, 'YData', h+bedElva);
     set(p_q, 'YData', q);
     set(p_u, 'YData', u);
@@ -63,7 +63,11 @@ for itime = 1:numel(time)
     end
 
     fprintf('Processing: %f ...\n', itime/numel(time))
-%     if itime > 6
+    
+%     if itime/numel(time)> .969188
+%         keyboard
+%     end
+%     if itime > 695
 %         keyboard
 %     end
 end% for
