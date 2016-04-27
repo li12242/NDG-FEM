@@ -89,7 +89,7 @@ newVX = zeros(Nrefine, 1);
 newBedElva = zeros(Nrefine, 1);
 % allocate refined variables
 h1 = zeros(size(h,1), Nrefine + mesh.nElement);
-q1 = zeros(size(h1,1));
+q1 = zeros(size(h1));
 h1(:, 1:mesh.nElement) = h; q1(:, 1:mesh.nElement) = q;
 % new_mesh.x = zeros(size(h1));
 % new_mesh.x(:, 1:mesh.nElement) = mesh.x;
@@ -98,36 +98,37 @@ new_mesh.nElement = mesh.nElement + Nrefine;
 eleIndex = find(refineflag);
 
 for i = 1:Nrefine
-    hP = h(mesh.vmapP([1, end], eleIndex(i) ));
+%     hP = h(mesh.vmapP([1, end], eleIndex(i) ));
     vx = mesh.x(mesh.vmapM([1, end], eleIndex(i) ));
     b = bedElva( mesh.vmapM([1, end], eleIndex(i)) );
     db = max(b) - min(b);
     hmean = CellMean(mesh, h(:, eleIndex(i) ));
-    qmean = CellMean(mesh, q(:, eleIndex(i) ));
+%     qmean = CellMean(mesh, q(:, eleIndex(i) ));
     dx = vx(2) - vx(1);
     
-    if (hP(1) > hP(2)) && (hP(1) > 0) % left is wet cell
-        deltax = 2*(hmean*dx) ./(hP(1));
-        newVX(i) = vx(1) + deltax;
-        newBedElva(i) = b(1) + (b(2) - b(1))/dx*deltax;
-        % interpolate refined element value
-        h1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*hP(1) ...
-            + (mesh.Shape.r+1)*0);
-        h1(:, mesh.nElement + i) = 0;
-        q1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*2*qmean*dx/deltax);
-        q1(:, mesh.nElement + i) = 0;
-        
-    elseif (hP(1) < hP(2)) && (hP(2) > 0) % right is wet
-        deltax = 2*(hmean*dx) ./(hP(2)+0);
-        newVX(i) = vx(2) - deltax;
-        newBedElva(i) = b(2) - (b(2) - b(1))/dx*deltax;
-        % interpolate refined element value
-        h1(:, eleIndex(i)) = 0;
-        h1(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*0 ...
-            + (mesh.Shape.r+1)*hP(2));
-        q1(:, eleIndex(i)) = 0;
-        q1(:, mesh.nElement + i) = 0.5*((mesh.Shape.r+1)*2*qmean*dx/deltax);
-    else % assum steady state
+%     if (hP(1) > hP(2)) && (hP(1) > 0) % left is wet cell
+%         deltax = 2*(hmean*dx) ./(hP(1));
+%         newVX(i) = vx(1) + deltax;
+%         newBedElva(i) = b(1) + (b(2) - b(1))/dx*deltax;
+%         % interpolate refined element value
+%         h1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*hP(1) ...
+%             + (mesh.Shape.r+1)*0);
+%         h1(:, mesh.nElement + i) = 0;
+% %         q1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*2*qmean*dx/deltax);
+% %         q1(:, mesh.nElement + i) = 0;
+%         q1(:, [eleIndex(i), mesh.nElement + i]) = 0;
+%     elseif (hP(1) < hP(2)) && (hP(2) > 0) % right is wet
+%         deltax = 2*(hmean*dx) ./(hP(2)+0);
+%         newVX(i) = vx(2) - deltax;
+%         newBedElva(i) = b(2) - (b(2) - b(1))/dx*deltax;
+%         % interpolate refined element value
+%         h1(:, eleIndex(i)) = 0;
+%         h1(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*0 ...
+%             + (mesh.Shape.r+1)*hP(2));
+% %         q1(:, eleIndex(i)) = 0;
+% %         q1(:, mesh.nElement + i) = 0.5*((mesh.Shape.r+1)*2*qmean*dx/deltax);
+%         q1(:, [eleIndex(i), mesh.nElement + i]) = 0;
+%     else % assum steady state
         if b(1) < b(2)
             vs = 0.5*(dx*db); vm = hmean*dx;
             deltax = dx*sqrt(vm/vs);
@@ -137,8 +138,9 @@ for i = 1:Nrefine
             h1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*2*vm./deltax ...
                 + (mesh.Shape.r+1)*0);
             h1(:, mesh.nElement + i) = 0;
-            q1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*2*qmean*dx/deltax);
-            q1(:, mesh.nElement + i) = 0;
+%             q1(:, eleIndex(i)) = 0.5*((1-mesh.Shape.r)*2*qmean*dx/deltax);
+%             q1(:, mesh.nElement + i) = 0;
+            q1(:, [eleIndex(i), mesh.nElement + i]) = 0;
         elseif b(1) > b(2)
             vs = 0.5*(dx*db); vm = hmean*dx;
             deltax = dx*sqrt(vm/vs);
@@ -147,12 +149,13 @@ for i = 1:Nrefine
             h1(:, eleIndex(i)) = 0;
             h1(:, mesh.nElement + i) = 0.5*((1-mesh.Shape.r)*0 ...
                 + (mesh.Shape.r+1)*2*vm./deltax);
-            q1(:, eleIndex(i)) = 0;
-            q1(:, mesh.nElement + i) = 0.5*((mesh.Shape.r+1)*2*qmean*dx/deltax);
+            q1(:, [eleIndex(i), mesh.nElement + i]) = 0;
+%             q1(:, eleIndex(i)) = 0;
+%             q1(:, mesh.nElement + i) = 0.5*((mesh.Shape.r+1)*2*qmean*dx/deltax);
         else
             error('bottom is flat');
         end% if
-    end% if
+%     end% if
 end% for
 end% function
 

@@ -13,8 +13,8 @@ h = physics.getVal('height');
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
 CFL=0.3; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
-lamda = SWESpeed(h, q);
-dt = CFL/lamda*xmin;
+% lamda = SWESpeed(h, q);
+% dt = CFL/lamda*xmin;
 
 % eliminate zero depth in wet cell
 [h, q] = PositivePreserving(mesh, h, q, bedElva);
@@ -23,7 +23,11 @@ dt = CFL/lamda*xmin;
 while(time<FinalTime)
     lamda = SWESpeed(h, q);
     dt = CFL/lamda*xmin;
-
+    
+    if dt < 0.005 
+        dt = 0.005;
+    end
+    
     % Increment time
     if time + dt > FinalTime
         time = FinalTime;
@@ -44,7 +48,7 @@ while(time<FinalTime)
 %     if time > 100
 %         keyboard
 %     end% if
-%     if outstep > 0
+%     if outstep > 695
 %         keyboard
 %     end
 
@@ -92,7 +96,7 @@ end% func
 
 function [h, q] = PositivePreserving(mesh, h, q, bedElva)
 % Slope limiter and Positivity-preserving operator
-hPositive = 10^-3;
+hPositive = 1e-3;
 
 %% define wet cells
 iswet = (h > hPositive);
