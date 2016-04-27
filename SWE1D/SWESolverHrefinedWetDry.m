@@ -13,7 +13,8 @@ h = physics.getVal('height');
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
 CFL=0.3; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
-
+lamda = SWESpeed(h, q);
+dt = CFL/lamda*xmin;
 
 % eliminate zero depth in wet cell
 [h, q] = PositivePreserving(mesh, h, q, bedElva);
@@ -43,7 +44,7 @@ while(time<FinalTime)
 %     if time > 100
 %         keyboard
 %     end% if
-%     if outstep > 2
+%     if outstep > 0
 %         keyboard
 %     end
 
@@ -57,7 +58,7 @@ while(time<FinalTime)
     for INTRK = 1:5
         
 %         subplot(3,1,1); 
-%         plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k'); xlim([0.56, 0.64])
+%         plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k'); 
 %         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); 
 %         u = q1./h1; u(h1<eps) = 0;
 %         subplot(3,1,3); plot(new_mesh.x, u, '-b.');
@@ -102,16 +103,16 @@ wetIndex = any(iswet);
 % the slope limiter act on the wet cells
 q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,q);
 
-eta = h + bedElva;
+% eta = h + bedElva;
 % eta = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta);
 
-temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
-eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
+% temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
+% eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
 
-h = eta - bedElva;
+% h = eta - bedElva;
 
-temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
-h(:, ~wetIndex) = temp(:, ~wetIndex);
+h = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
+% h(:, ~wetIndex) = temp(:, ~wetIndex);
 
 %% positive preserving operator
 h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex));
