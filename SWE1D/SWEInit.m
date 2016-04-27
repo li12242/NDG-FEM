@@ -16,7 +16,7 @@ switch caseName
         FinalTime = 200; % Flow over dump
         x1 = 0; x2 = 25; % Flow over dump
     case 'ParabolicBowl'
-        T = 269; FinalTime = T; % Parabolic Bowl
+        T = 269; FinalTime = 2*T; % Parabolic Bowl
         x1 = -1000; x2 = 1000; % Parabolic Bowl
     case 'LakeAtRest'
         FinalTime = 0.5;
