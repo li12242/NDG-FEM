@@ -13,7 +13,7 @@ caseName = 'ParabolicBowl';
 physics.incert('caseName', caseName);
 
 % polynomial order and No. of elements
-ndegree = 1; nele = 100;
+ndegree = 1; nele = 800;
 
 % Set initial conditions
 physics = SWEInit(physics, ndegree, nele);
@@ -30,8 +30,11 @@ mesh_id = ncfile.varid(7);
 netcdf.putVar(ncid,mesh_id,mesh.x(mesh.vmapM(:)))
 netcdf.close(ncid);
 % Solve Problem
-[h, q] = SWESolverHrefinedWetDry(physics, ncfile);
-% [h, q] = SWESolver(physics, ncfile);
+% [h, q] = SWESolverHrefinedWetDry(physics, ncfile);
+[h, q] = SWESolver(physics, ncfile);
+
+filename = ['SWE1D_', num2str(ndegree), '_', num2str(nele), '.nc'];
+movefile('SWE1D.nc', filename)
 end% func
 
 

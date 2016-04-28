@@ -1,11 +1,11 @@
 function ParabolicBowlVerify
 
-filename = 'SWE1D_ParabolicBowl.nc';
+filename = 'SWE1D_2_100.nc';
 time = ncread(filename, 'time');
 x = ncread(filename, 'x');
 
 % bottom topography
-a = 600; h0 = 10; g = 9.81; B = 5; w = sqrt(2*g*h0)./a;
+g = 9.8; B = 5; h0 = 10; a = 3000; w = sqrt(2*g*h0)./a;
 bedElevation = h0.*(x.^2./a^2 - 1);
 
 T = 269;
