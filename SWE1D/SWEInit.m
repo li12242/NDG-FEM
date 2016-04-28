@@ -16,8 +16,10 @@ switch caseName
         FinalTime = 200; % Flow over dump
         x1 = 0; x2 = 25; % Flow over dump
     case 'ParabolicBowl'
-        T = 269; FinalTime = 2*T; % Parabolic Bowl
-        x1 = -1000; x2 = 1000; % Parabolic Bowl
+        a = 3000; h0 = 10; g = 9.81;
+        T = 2*pi*a/sqrt(2*g*h0);
+        FinalTime = 2*T; % Parabolic Bowl
+        x1 = -5000; x2 = 5000; % Parabolic Bowl
     case 'LakeAtRest'
         FinalTime = 0.5;
         x1 = 0; x2 = 1;
@@ -114,8 +116,7 @@ end% func
 function [h, q] = ParaBowlInit(mesh, bedElva)
 q = zeros(size(mesh.x)); %hDelta = 0.0;
 
-g = 9.8; B = 5; h0 = 10; a = 600;
-w = sqrt(2*g*h0)./a;
+a = 3000; h0 = 10; g = 9.81; B = 5; w = sqrt(2*g*h0)./a;
 % z = zeros(size(mesh.x));
 z = (-2*B.^2 -(4*B*w).*mesh.x)./(4*g);
 h = z - bedElva;
@@ -189,7 +190,7 @@ switch physics.getVal('caseName')
 %         flag = (mesh.x >= 8) & (mesh.x <=12);
 %         bedElevation(flag) = 0.2 - 0.05*(mesh.x(flag) -10).^2;
     case 'ParabolicBowl'
-        a = 600; h0 = 10;
+        a = 3000; h0 = 10;
         VB = h0.*(VX.^2./a^2 - 1);
 %         bedElevation = h0.*(mesh.x.^2./a^2 - 1);
     case 'LakeAtRest'
