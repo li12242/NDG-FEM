@@ -25,9 +25,9 @@ while(time<FinalTime)
     lamda = SWESpeed(h, q, physics, isWet);
     dt = CFL/lamda*xmin;
     
-%     if dt < 0.005 
-%         dt = 0.005;
-%     end
+    if dt < 0.005 
+        dt = 0.005;
+    end
     
     % Increment time
     if time + dt > FinalTime
@@ -41,7 +41,7 @@ while(time<FinalTime)
     fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
         time./FinalTime, dt, lamda)
     
-%     if time > 100
+%     if time/FinalTime > .126160
 %         keyboard
 %     end% if
 %     if outstep > 577

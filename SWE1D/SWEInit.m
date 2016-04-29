@@ -18,7 +18,7 @@ switch caseName
     case 'ParabolicBowl'
         a = 3000; h0 = 10; g = 9.81;
         T = 2*pi*a/sqrt(2*g*h0);
-        FinalTime = 2*T; % Parabolic Bowl
+        FinalTime = T*3/4; % Parabolic Bowl
         x1 = -5000; x2 = 5000; % Parabolic Bowl
     case 'LakeAtRest'
         FinalTime = 0.5;
