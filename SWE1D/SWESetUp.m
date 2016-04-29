@@ -13,7 +13,7 @@ caseName = 'ParabolicBowl';
 physics.incert('caseName', caseName);
 
 % polynomial order and No. of elements
-ndegree = 1; nele = 800;
+ndegree = 1; nele = 200;
 
 % Set initial conditions
 physics = SWEInit(physics, ndegree, nele);
@@ -21,6 +21,12 @@ physics = SWEInit(physics, ndegree, nele);
 % set output file
 mesh = physics.getVal('mesh');
 ncfile = CreateOutputFile(mesh);
+
+% minimum water depth
+hDry = 1e-6;
+physics.incert('minDepth', hDry);
+g = 9.81;
+physics.incert('gravity', g);
 
 % save mesh nodes
 ncid = netcdf.open('SWE1D.nc','WRITE');
@@ -33,8 +39,8 @@ netcdf.close(ncid);
 % [h, q] = SWESolverHrefinedWetDry(physics, ncfile);
 [h, q] = SWESolver(physics, ncfile);
 
-filename = ['SWE1D_', num2str(ndegree), '_', num2str(nele), '.nc'];
-movefile('SWE1D.nc', filename)
+% filename = ['SWE1D_', num2str(ndegree), '_', num2str(nele), '.nc'];
+% movefile('SWE1D.nc', filename)
 end% func
 
 

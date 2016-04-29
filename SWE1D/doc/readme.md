@@ -116,7 +116,10 @@ The first step is to define wet elements. After each time step, **the whole doma
 The second step is to modify wet cells; If the depth of any nodes is less than $h_{positive}$, then the flow rate is reset to zero and the new water depth is constructed as
 
 $$\begin{equation}
-\mathrm{M}\Pi_h h_i(x) = \theta_1 \left( h_i(x) - \bar{h}_i \right) + \bar{h}_i
+\begin{array}{c}
+\mathrm{M}\Pi_h h_i(x) = \theta_1 \left( h_i(x) - \bar{h}_i \right) + \bar{h}_i \cr
+\mathrm{M}\Pi_h q_i(x) = \theta_1 \left( q_i(x) - \bar{q}_i \right) + \bar{q}_i \cr
+\end{array}
 \end{equation}$$
 
 where
@@ -125,13 +128,20 @@ $$\begin{equation}
 \theta_1 = min \left\{ \frac{\bar{h}_i - \xi }{\bar{h}_i - h_{min}}, 1 \right\}, \quad h_{min} = min\{ h_i (x_i) \}
 \end{equation}$$
 
-It is necessary to fulfill the restriction that the mean depth $\bar{h}_i$ is greater than $\xi$, i.e. $10^{-4}$m. In the function `PositiveOperator`, if the mean depth of element is less than $\xi$, all nodes will add a small depth $\xi - \bar{h}_i$ to re-fulfill the restriction.
+It is necessary to fulfill the restriction that the mean depth $\bar{h}_i$ is greater than $\xi$, i.e. $0$ m. In the function `PositiveOperator`, if the mean depth of element is less than $\xi$, all nodes will add a small depth $\xi - \bar{h}_i$ to re-fulfill the restriction. At last, all nodes with negative water depth $h_i(x_j) < 0$ will be modified to zero.
 
-At last, all values of water height at nodes with negative $h_i(x_j) <0$ will be modified to zero and the discharge of dry nodes ( $h_i \le h_{positive}$ ) will be reseted to zero.
+##6. Wet/Dry treatment
 
-##6. Wet/Dry reconstruction
+###6.1. Identification of dry cells
 
-No special treatment is introduced in the model at the moment.
+`WetDryJudge.m`
+
+```
+function isWet = WetDryJudge(mesh, h, physics)
+```
+
+###6.2. Cancellation of gravity
+
 
 ##7.Numerical Test
 
@@ -266,4 +276,8 @@ h_0 = min(0, 1- b(x))
 In `Hrefine1D.m`, avoid of calling `RegionLine.BuildMap`, modified `vmapM` and `vmapP` in an other way.
 
 *Done - 16/4/21, "optimization of Hrefine1D"*
+
+*16/4/29 - reconstruct the wet/dry judgement*
+Use one function to judege the wet/dry status of cells and store it in variable `isWet`. Use the same threshold value in calculating the wet/dry status in RHS, flux terms, slope limiter.
+
 

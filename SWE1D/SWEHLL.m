@@ -1,4 +1,4 @@
-function [Fhs, Fqs, status] = SWEHLL(mesh, h, q)
+function [Fhs, Fqs, status] = SWEHLL(mesh, physics, h, q, isWet)
 % numerical flux: HLL
 % REFERENCE:
 % [1] Khan A A, Lai W. Modeling Shallow Water Flows Using the 
@@ -7,7 +7,7 @@ function [Fhs, Fqs, status] = SWEHLL(mesh, h, q)
 %     floods with wet/dry fronts over complex topography. (17-18)
 % [3] 
 % 
-hDelta = 10^-3;
+hDelta = physics.getVal('minDepth');
 
 % rotate variable
 hM = h(mesh.vmapM); hP = h(mesh.vmapP);
@@ -18,10 +18,10 @@ isWetM = hM > hDelta; isWetP = hP > hDelta;
 uM(isWetM) = qM(isWetM)./hM(isWetM);
 uP(isWetP) = qP(isWetP)./hP(isWetP);
 
-[SM, SP, status] = EstimateWaveSpeed(mesh, hM, hP, uM, uP);
+[SM, SP, status] = EstimateWaveSpeed(physics, hM, hP, uM, uP);
 
-[FhM, FqM] = SWEFlux(hM, qM, hDelta);
-[FhP, FqP] = SWEFlux(hP, qP, hDelta);
+[FhM, FqM] = SWEFlux(hM, qM, isWet, physics);
+[FhP, FqP] = SWEFlux(hP, qP, isWet, physics);
 
 % Compute HLL flux
 Fhs = zeros(size(FhM)); Fqs = zeros(size(FqM));

@@ -1,14 +1,17 @@
-function [Fh, Fq] = SWEFlux(h, q, hFlux)
+function [Fh, Fq] = SWEFlux(h, q, isWet, physics)
 % calculate flux terms of SWE
 
-g = 9.81; isWet = (h > hFlux);
+
+hPositive = physics.getVal('minDepth');
+g = physics.getVal('gravity');
+
+wetNode = (h > hPositive);
 u = zeros(size(h)); 
 
-u(isWet) = q(isWet)./h(isWet);
+u(wetNode) = q(wetNode)./h(wetNode);
 Fh = q;
 Fq = g*h.^2./2 + u.^2.*h;
 
 % for dry elements, no flow flux
-dryIndex = all(~isWet);
-Fq(:, dryIndex) = 0.0;
+Fq(:, ~isWet) = 0.0;
 end% func
