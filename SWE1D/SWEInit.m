@@ -18,7 +18,7 @@ switch caseName
     case 'ParabolicBowl'
         a = 3000; h0 = 10; g = 9.81;
         T = 2*pi*a/sqrt(2*g*h0);
-        FinalTime = T/4; % Parabolic Bowl
+        FinalTime = 2*T; % Parabolic Bowl
         x1 = -5000; x2 = 5000; % Parabolic Bowl
     case 'LakeAtRest'
         FinalTime = 0.5;
@@ -122,23 +122,23 @@ z = (-2*B.^2 -(4*B*w).*mesh.x)./(4*g);
 h = z - bedElva;
 
 % correct transition element
-transIndex = find(TransiteCellIdentify(mesh, h));
+% transIndex = find(TransiteCellIdentify(mesh, h));
 h(h<0) = 0;
 
-np = 10;
-[r, w] = Polylib.zwglj(np);
-V = StdRegions.Line.getVandMatrix(mesh.Shape.nOrder, r);
-for i = 1:numel(transIndex)
-    b1 = bedElva(1, transIndex(i)); b2 = bedElva(end, transIndex(i));
-    z1 = z(1, transIndex(i)); z2 = z(end, transIndex(i));
-    eta = (1-r)./2*z1 + (1+r)./2*z2;
-    b = (1-r)./2*b1 + (1+r)./2*b2;
-    htemp = eta - b; htemp(htemp<0) = 0;
-    temp = htemp.*w;
-    hm = (sum( V.* repmat(temp, 1, mesh.Shape.nNode)));
-    hm(2:end) = 0;
-    h(:, transIndex(i)) = mesh.Shape.VandMatrix*hm';
-end% for
+% np = 10;
+% [r, w] = Polylib.zwglj(np);
+% V = StdRegions.Line.getVandMatrix(mesh.Shape.nOrder, r);
+% for i = 1:numel(transIndex)
+%     b1 = bedElva(1, transIndex(i)); b2 = bedElva(end, transIndex(i));
+%     z1 = z(1, transIndex(i)); z2 = z(end, transIndex(i));
+%     eta = (1-r)./2*z1 + (1+r)./2*z2;
+%     b = (1-r)./2*b1 + (1+r)./2*b2;
+%     htemp = eta - b; htemp(htemp<0) = 0;
+%     temp = htemp.*w;
+%     hm = (sum( V.* repmat(temp, 1, mesh.Shape.nNode)));
+%     hm(2:end) = 0;
+%     h(:, transIndex(i)) = mesh.Shape.VandMatrix*hm';
+% end% for
 
 end% func
 
