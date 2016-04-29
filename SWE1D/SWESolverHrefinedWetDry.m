@@ -1,6 +1,7 @@
 function [h, q] = SWESolverHrefinedWetDry(physics, ncfile)
 % time setpping of 1D shallow water equation 
 % 
+
 mesh = physics.getVal('mesh');
 bedElva = physics.getVal('bedElva');
 
@@ -13,20 +14,20 @@ h = physics.getVal('height');
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
 CFL=0.3; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
-% lamda = SWESpeed(h, q);
-% dt = CFL/lamda*xmin;
+
 
 % eliminate zero depth in wet cell
-[h, q] = PositivePreserving(mesh, h, q, bedElva);
+isWet = WetDryJudge(mesh, h, physics);
+[h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
 
 % outer time step loop
 while(time<FinalTime)
-    lamda = SWESpeed(h, q);
+    lamda = SWESpeed(h, q, physics, isWet);
     dt = CFL/lamda*xmin;
     
-    if dt < 0.005 
-        dt = 0.005;
-    end
+%     if dt < 0.005 
+%         dt = 0.005;
+%     end
     
     % Increment time
     if time + dt > FinalTime
@@ -36,11 +37,6 @@ while(time<FinalTime)
         time = time + dt;
     end% if
     
-%     if lamda*dt > CFL*xmin
-%         dt = dt/2;
-%     elseif lamda*dt < CFL*xmin/2
-%         dt = dt*2;
-%     end%if
 
     fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
         time./FinalTime, dt, lamda)
@@ -48,14 +44,14 @@ while(time<FinalTime)
 %     if time > 100
 %         keyboard
 %     end% if
-%     if outstep > 695
+%     if outstep > 577
 %         keyboard
 %     end
 
-    refineflag = RefinedCellIdentify(mesh, h, bedElva);
+    refineflag = RefinedCellIdentify(mesh, h, physics, isWet);
     [new_mesh, h1, q1, new_bedElva, localEleIndex] =...
         Hrefine1D(mesh, refineflag, h, q, bedElva, physics);
-    
+    isWet = WetDryJudge(new_mesh, h1, physics);
     % Runge-Kutta residual storage  
     resQ = zeros(size(q1)); resH = zeros(size(h1));
 
@@ -64,13 +60,13 @@ while(time<FinalTime)
 %         subplot(3,1,1); 
 %         plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k'); 
 %         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); 
-%         u = q1./h1; u(h1<eps) = 0;
+%         u = q1./h1; u(h1<1e-3) = 0;
 %         subplot(3,1,3); plot(new_mesh.x, u, '-b.');
 %         drawnow;
         
 %         timelocal = time + dt*rk4c(INTRK);
 
-        [rhsH, rhsQ] = SWERHS(new_mesh, h1, q1, new_bedElva);
+        [rhsH, rhsQ] = SWERHS(new_mesh, h1, q1, new_bedElva, isWet, physics);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
@@ -81,6 +77,7 @@ while(time<FinalTime)
         [h1, q1] = PositivePreserving(new_mesh, h1, q1, new_bedElva);
     end
     [h, q] = Hcombine1D(localEleIndex, h1, q1, new_mesh, refineflag);
+    isWet = WetDryJudge(mesh, h, physics);
     StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;
 end
@@ -94,61 +91,11 @@ q = Utilities.Limiter.SlopeLimit1(mesh, q);
 h(h<0) = 0;
 end% func
 
-function [h, q] = PositivePreserving(mesh, h, q, bedElva)
-% Slope limiter and Positivity-preserving operator
-hPositive = 1e-3;
-
-%% define wet cells
-iswet = (h > hPositive);
-wetIndex = any(iswet); 
-
-%% slope limiter on water level
-
-% the slope limiter act on the wet cells
-q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,q);
-
-% eta = h + bedElva;
-% eta = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta);
-
-% temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
-% eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
-
-% h = eta - bedElva;
-
-h = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
-% h(:, ~wetIndex) = temp(:, ~wetIndex);
-
-%% positive preserving operator
-h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex));
-q( h < hPositive) = 0; % eliminate the flux of dry nodes
-h( h < 0 ) = 0; % eliminate negative water depth
-end% func
-
-function h = PositiveOperator(mesh, h)
-% positive operator
-% reference from Xing (2010); Zhang (2010)
-
-hDelta = 0.0;
-
-hmean = CellMean(mesh, h);
-Np = mesh.Shape.nNode;
-% correct mean water less than hDelta
-dis = (hmean < hDelta);
-h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
-
-hmean = CellMean(mesh, h);
-% positive operator
-hmin = min(h);
-theta = min( (hmean - hDelta)./(hmean - hmin), 1);
-h = (ones(Np, 1)*theta).*(h - ones(Np, 1)*hmean) + ones(Np, 1)*hmean;
-end% func
-
-function lambda = SWESpeed(h, q)
+function lambda = SWESpeed(h, q, physics, isWet)
 % max wave speed
-TOL = 0.03; g = 9.8;
-flag = (h>TOL);
+g = physics.getVal('gravity');
 u = (q./h) + sqrt(g*h);
-lambda = max(u(flag));
+lambda = max( max(u(:, isWet)) );
 end% func
 
 function [rk4a, rk4b, rk4c] = RKcoeff
