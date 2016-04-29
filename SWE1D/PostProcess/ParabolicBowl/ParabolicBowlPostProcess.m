@@ -68,10 +68,10 @@ for itime = 1:numel(time)
 
     fprintf('Processing: %f ...\n', itime/numel(time))
     
-%     if itime/numel(time)> .969188
+%     if itime/numel(time)> .813312
 %         keyboard
 %     end
-%     if itime > 695
+%     if itime > 577
 %         keyboard
 %     end
 end% for

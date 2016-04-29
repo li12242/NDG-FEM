@@ -15,11 +15,12 @@ CFL=0.3; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
 
 % eliminate zero depth in wet cell
-[h, q] = PositivePreserving(mesh, h, q, bedElva);
+isWet = WetDryJudge(mesh, h, physics);
+[h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
 
 % outer time step loop
 while(time<FinalTime)
-    lamda = SWESpeed(h, q);
+    lamda = SWESpeed(h, q, physics, isWet);
     dt = CFL/lamda*xmin;
     
     % Increment time
@@ -30,20 +31,10 @@ while(time<FinalTime)
         time = time + dt;
     end% if
 
-%     
-%     if lamda*dt > CFL*xmin
-%         dt = dt/2;
-%     elseif lamda*dt < CFL*xmin/4
-%         dt = dt*2;
-%     end%if
-
     fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
         time./FinalTime, dt, lamda)
     
-%     if time > 100
-%         keyboard
-%     end% if
-%     if outstep > 3
+%     if outstep > 577
 %         keyboard
 %     end
 
@@ -59,7 +50,7 @@ while(time<FinalTime)
 %         drawnow;
         
         timelocal = time + dt*rk4c(INTRK);
-        isWet = WetDryJudge(mesh, h, physics);
+        
         [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva, isWet, physics);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
@@ -69,7 +60,7 @@ while(time<FinalTime)
         h = h + rk4b(INTRK)*resH;
         
         [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
-        
+        isWet = WetDryJudge(mesh, h, physics);
     end
     StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;
@@ -84,14 +75,11 @@ q(h<=10^-3) = 0;
 h(h<0) = 0;
 end% func
 
-
-
-function lambda = SWESpeed(h, q)
+function lambda = SWESpeed(h, q, physics, isWet)
 % max wave speed
-TOL = 0.03; g = 9.8;
-flag = (h>TOL);
+g = physics.getVal('gravity');
 u = (q./h) + sqrt(g*h);
-lambda = max(u(flag));
+lambda = max( max(u(:, isWet)) );
 end% func
 
 function [rk4a, rk4b, rk4c] = RKcoeff

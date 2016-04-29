@@ -1,4 +1,4 @@
-function refineflag = RefinedCellIdentify(mesh, h, bedElva)
+function refineflag = RefinedCellIdentify(mesh, h, physics, isWet)
 % identify the wet/dey interface element
 % Input: 
 %   h - water depth
@@ -6,18 +6,15 @@ function refineflag = RefinedCellIdentify(mesh, h, bedElva)
 % Output:
 %   transIndex - bool flag for wet/dry transition element, size [1, Ne]
 
-% hPositive = 10^-3;
+hPositive = physics.getVal('minDepth');
 
 % identify transitation element
-transIndex = TransiteCellIdentify(mesh, h);
+transIndex = TransiteCellIdentify(mesh, isWet);
 
 % refinement condition - partically wet
-deltaB = max( bedElva ) - min( bedElva );
 hmean = CellMean(mesh,h);
-refineflag = 2*hmean < deltaB;
-% bedMean = CellMean(mesh, bedElva);
-% bedMax = max(bedElva);
-% refineflag = (hmean + bedMean + eps) < (bedMax);
+hPmax = max(h(mesh.vmapP));
+refineflag = ( hPmax > 0 ) & ( hPmax > 2*hmean ) & ( hmean >  hPositive);
 
 refineflag = refineflag(:) & transIndex(:);
 end% function 
