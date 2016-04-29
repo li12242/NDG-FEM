@@ -1,6 +1,6 @@
 function ParabolicBowlPostProcess
 
-filename = 'SWE1D.nc';
+filename = 'SWE1D_1_800.nc';
 time = ncread(filename, 'time'); x = ncread(filename, 'x');
 startStep = 1; itime = startStep;
 hd = 1e-3;
@@ -68,7 +68,7 @@ for itime = 1:numel(time)
 
     fprintf('Processing: %f ...\n', itime/numel(time))
     
-%     if itime/numel(time)> .813312
+%     if itime/numel(time)> .3
 %         keyboard
 %     end
 %     if itime > 577
