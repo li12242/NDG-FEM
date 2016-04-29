@@ -3,6 +3,7 @@ function ParabolicBowlPostProcess
 filename = 'SWE1D.nc';
 time = ncread(filename, 'time'); x = ncread(filename, 'x');
 startStep = 1; itime = startStep;
+hd = 1e-3;
 
 % bottom topography
 a = 3000; h0 = 10; g = 9.81; B = 5; w = sqrt(2*g*h0)./a;
@@ -28,7 +29,7 @@ subplot(3,1,2);
 p_q = plot(x, q, '-b'); hold on;
 p_q1 = plot(xe, qe, 'r.');
 
-u = q./h; u(h<=0) = 0;
+u = q./h; u(h<=hd) = 0;
 subplot(3,1,3);
 p_u = plot(x, u, '-b'); hold on;
 p_u1 = plot(xe, ue, 'r.');
@@ -47,7 +48,7 @@ for itime = 1:numel(time)
     q = ncread(filename, 'q', [1, itime],[inf, 1]);
     [he, qe, ue] = exactParabolicBowlSolution(time(itime), xe, be);
     
-    u = q./h; u(h<=1e-3) = 0;
+    u = q./h; u(h<=hd) = 0;
     set(p_h, 'YData', h+b);
     set(p_q, 'YData', q);
     set(p_u, 'YData', u);

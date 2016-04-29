@@ -1,17 +1,17 @@
-function [SM, SP, status] = EstimateWaveSpeed(mesh, hM, hP, uM, uP)
+function [SM, SP, status] = EstimateWaveSpeed(physics, hM, hP, uM, uP)
 
-[SM, SP, status] = Toro(mesh, hM, hP, uM, uP);
+[SM, SP, status] = Toro(physics, hM, hP, uM, uP);
 
 end% func
 
-function [SM, SP, status] = Toro(mesh, hM, hP, uM, uP)
+function [SM, SP, status] = Toro(physics, hM, hP, uM, uP)
 % output:
 %   status -    [0]: dry
 %               [1]: left (itself) is dry
 %               [2]: right (adjacent) is dry
 %               [3]: both is wet
-gra = 9.81; hDelta = 10^-3;
-status = zeros(size(hM));
+gra = physics.getVal('gravity');
+hDelta = physics.getVal('minDepth');
     
 us = 0.5*(uM + uP) + (sqrt(gra*hM) - sqrt(gra*hP));
 cs = 0.5*( sqrt(gra*hM) + sqrt(gra*hP) ) + 0.25*(uM - uP);

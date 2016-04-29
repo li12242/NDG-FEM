@@ -59,7 +59,8 @@ while(time<FinalTime)
 %         drawnow;
         
         timelocal = time + dt*rk4c(INTRK);
-        [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva);
+        isWet = WetDryJudge(mesh, h, physics);
+        [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva, isWet, physics);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
@@ -67,7 +68,7 @@ while(time<FinalTime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
         
-        [h, q] = PositivePreserving(mesh, h, q, bedElva);
+        [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
         
     end
     StoreVar(ncfile, h, q, time, lamda, outstep)
@@ -83,54 +84,7 @@ q(h<=10^-3) = 0;
 h(h<0) = 0;
 end% func
 
-function [h, q] = PositivePreserving(mesh, h, q, bedElva)
-% Slope limiter and Positivity-preserving operator
-hPositive = 10^-3;
 
-%% define wet cells
-iswet = (h > hPositive);
-wetIndex = any(iswet); 
-
-%% slope limiter on water level and discharge
-
-% the slope limiter act on the wet cells
-q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,q);
-
-% eta = h + bedElva;
-% eta = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta);
-
-% temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
-% eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
-
-% h = eta - bedElva;
-
-h = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
-% h(:, ~wetIndex) = temp(:, ~wetIndex);
-
-%% positive preserving operator
-h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex));
-q( h < hPositive) = 0; % eliminate the flux of dry nodes
-h( h < 0 ) = 0; % eliminate negative water depth
-end% func
-
-function h = PositiveOperator(mesh, h)
-% positive operator
-% reference from Xing (2010); Zhang (2010)
-
-hDelta = 0.0;
-
-hmean = CellMean(mesh, h);
-Np = mesh.Shape.nNode;
-% correct mean water less than hDelta
-dis = (hmean <= hDelta);
-h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
-
-hmean = CellMean(mesh, h);
-% positive operator
-hmin = min(h);
-theta = min( (hmean - hDelta)./(hmean - hmin), 1);
-h = (ones(Np, 1)*theta).*(h - ones(Np, 1)*hmean) + ones(Np, 1)*hmean;
-end% func
 
 function lambda = SWESpeed(h, q)
 % max wave speed

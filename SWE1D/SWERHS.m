@@ -1,57 +1,65 @@
-function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva)
+function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva, isWet, physics)
 % 1D shallow water equation 
 % Righ Hand Side
 line = mesh.Shape;
-hDelta = 1e-3; %g = 9.81;
+%g = 9.81;
 
 % numel flux
 % [Fhs, Fqs] = SWELF(mesh, h, q);
-[Fhs, Fqs, ~] = SWEHLL(mesh, h, q);
+[Fhs, Fqs, ~] = SWEHLL(mesh, physics, h, q, isWet);
 
 
 % boundary condition
 % [Fhs, Fqs] = SWEBC(mesh, Fhs, Fqs, h, q);
 % source term
-[Sh, Sq] = SWESource(mesh, bedElva, h);
+[Sh, Sq] = SWESource(mesh, bedElva, h, isWet);
 
 % flux term
-[Fh, Fq] = SWEFlux(h, q, hDelta);
+[Fh, Fq] = SWEFlux(h, q, isWet, physics);
 
-%% strong form
-dFh = mesh.nx.*Fh(mesh.vmapM) - Fhs;
-dFq = mesh.nx.*Fq(mesh.vmapM) - Fqs;
+% %% strong form
+% dFh = mesh.nx.*Fh(mesh.vmapM) - Fhs;
+% dFq = mesh.nx.*Fq(mesh.vmapM) - Fqs;
 
-% eliminate dry boundary flux
-isdry = (h <= hDelta);
-dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
-dFh(dryEdge) = 0; dFq(dryEdge) = 0;
+% % eliminate dry boundary flux
+% isdry = (h <= hDelta);
+% dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
+% dFh(dryEdge) = 0; dFq(dryEdge) = 0;
 
 % rhs - conservational form
-rhsH = -mesh.rx.*(line.Dr*Fh) + line.invM*line.Mes*(dFh.*mesh.fScale) + Sh;
-rhsQ = -mesh.rx.*(line.Dr*Fq) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
+% rhsH = -mesh.rx.*(line.Dr*Fh) + line.invM*line.Mes*(dFh.*mesh.fScale) + Sh;
+% rhsQ = -mesh.rx.*(line.Dr*Fq) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
 
 % rhs - nonconservation form
 % rhsH = -mesh.rx.*(line.Dr*Fh) + line.invM*line.Mes*(dFh.*mesh.fScale) + Sh;
 % rhsQ = -g*h.*mesh.rx.*(line.Dr*h) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
 %% weak form
 % rhs
-% rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
-%     - line.invM*line.Mes*(Fhs.*mesh.fScale) + Sh;
-% rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
-%     - line.invM*line.Mes*(Fqs.*mesh.fScale) + Sq;
+rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
+    - line.invM*line.Mes*(Fhs.*mesh.fScale) + Sh;
+rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
+    - line.invM*line.Mes*(Fqs.*mesh.fScale) + Sq;
 
-%% eliminate the dry area gravitational flow
-dryIndex = all(isdry);
+% %% eliminate the dry area gravitational flow
+% dryIndex = ~isWet;
+% 
+% % weak form
+% rhsH(:,dryIndex) = line.invM*line.Mes*(Fhs(:, dryIndex).*mesh.fScale(:, dryIndex));
+% rhsQ(:,dryIndex) = line.invM*line.Mes*(Fqs(:, dryIndex).*mesh.fScale(:, dryIndex));
 
-rhsH(:,dryIndex) = line.invM*line.Mes*(dFh(:, dryIndex).*mesh.fScale(:, dryIndex));
-rhsQ(:,dryIndex) = line.invM*line.Mes*(dFq(:, dryIndex).*mesh.fScale(:, dryIndex));
+
+% strong form
+% rhsH(:,dryIndex) = line.invM*line.Mes*(dFh(:, dryIndex).*mesh.fScale(:, dryIndex));
+% rhsQ(:,dryIndex) = line.invM*line.Mes*(dFq(:, dryIndex).*mesh.fScale(:, dryIndex));
 
 end% func
 
-function [Sh, Sq] = SWESource(mesh, bedElva, h)
+function [Sh, Sq] = SWESource(mesh, bedElva, h, isWet)
+
 g = 9.81; line = mesh.Shape;
 Sh = zeros(size(h)); %Sq = zeros(size(h));
 Sq = -g.*h.*mesh.rx.*(line.Dr*bedElva);
+Sq(:, ~isWet) = 0.0;
 end% func
 
 function [Fhs, Fqs] = SWEBC(mesh, Fhs, Fqs, h, q)
