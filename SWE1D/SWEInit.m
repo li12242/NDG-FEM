@@ -18,14 +18,14 @@ switch caseName
     case 'ParabolicBowl'
         a = 3000; h0 = 10; g = 9.81;
         T = 2*pi*a/sqrt(2*g*h0);
-        FinalTime = T*3/4; % Parabolic Bowl
+        FinalTime = 2*T; % Parabolic Bowl
         x1 = -5000; x2 = 5000; % Parabolic Bowl
     case 'LakeAtRest'
         FinalTime = 0.5;
         x1 = 0; x2 = 1;
     case 'TsunamiRunup'
-%         FinalTime = 240;
-        FinalTime = 10;
+        FinalTime = 360;
+%         FinalTime = 10;
         x1 = -500; x2 = 50000;
 end% switch
 physics.incert('FinalTime', FinalTime);
@@ -35,15 +35,9 @@ physics.incert('FinalTime', FinalTime);
 BC = [2,1; 3,Nv];
 
 if strcmp( caseName, 'TsunamiRunup' )
-    % nonuniform mesh discretization
-    K1 = floor(K*3/4);
-    K2 = floor((K - K1)./2);
-    K3 = K - K1 - K2;
-    
-    xt1 = 2e4; xt2 = 3e4;
-    VX(1:(K1+1)) = linspace(x1, xt1, K1+1);
-    VX((K1+1):(K1+K2+1)) = linspace(xt1, xt2, K2+1);
-    VX((K1+K2+1):(K+1)) = linspace(xt2, x2, K3+1);
+    % non-uniform mesh discretization
+    rm = 1.5; 
+    VX = MeshMapping(rm, Nv, x1, x2);
 end% if
 
 % Initialize solver and construct grid and metric
@@ -77,6 +71,22 @@ switch caseName
 end% switch
 physics.incert('height', h);
 physics.incert('flux', q);
+end% func
+
+function x = MeshMapping(rm, Nv, x1, x2)
+fp = @(r) exp(r) - 1;
+fm = @(r) 1 - exp(-r);
+xm = @(y) - log(1-y);
+% fp = @(r) r./3;
+% fm = @(r) r./3;
+% xm = @(y) 3.*y;
+
+rmin = xm(fp(rm)/x2*x1);
+r = linspace(rmin, rm, Nv);
+[~, index] = min(abs(r)); r(index) = 0;
+x = zeros(size(r));
+x(r > 0) = fp( r(r>0) )*x2/fp(r(end));
+x(r < 0) = fm( r(r<0) )*x1/fm(r(1));
 end% func
 
 function [h, q] = TsunamiRunup(mesh, bedElva)

@@ -4,7 +4,7 @@ nele = [50, 100, 200, 400, 600, 800, 1000, 1500, 2000];
 
 % coefficients
 a = 3000; h0 = 10; g = 9.81; B = 5; w = sqrt(2*g*h0)./a;
-T = 2*pi*a/sqrt(2*g*h0); FinalTime = T/4;
+T = 2*pi*a/sqrt(2*g*h0); FinalTime = T*0.5;
 
 errorType = 2; % L2 or L2 & Linf
 
@@ -20,7 +20,7 @@ for ideg = 1:numel(order)
         % bottom topography
         bed = h0.*(x.^2./a^2 - 1);
         % get output step & results
-        [~, index] = min(abs(time - FinalTime));
+        [~, index] = min( abs(time - FinalTime) );
         h = ncread(filename, 'h', [1, index],[inf, 1]);
         q = ncread(filename, 'q', [1, index],[inf, 1]);
         
