@@ -6,14 +6,14 @@ physics = Utilities.varGroup;
 
 % caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
-caseName = 'ParabolicBowl';
+% caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
-% caseName = 'TsunamiRunup';
+caseName = 'TsunamiRunup';
 
 physics.incert('caseName', caseName);
 
 % polynomial order and No. of elements
-ndegree = 1; nele = 2000;
+ndegree = 1; nele = 1000;
 
 % Set initial conditions
 physics = SWEInit(physics, ndegree, nele);
@@ -39,8 +39,8 @@ netcdf.close(ncid);
 % [h, q] = SWESolverHrefinedWetDry(physics, ncfile);
 [h, q] = SWESolver(physics, ncfile);
 
-filename = ['SWE1D_', num2str(ndegree), '_', num2str(nele), '.nc'];
-movefile('SWE1D.nc', filename)
+% filename = ['SWE1D_', num2str(ndegree), '_', num2str(nele), '.nc'];
+% movefile('SWE1D.nc', filename)
 end% func
 
 
