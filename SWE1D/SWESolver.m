@@ -11,7 +11,7 @@ h = physics.getVal('height');
 
 % compute initial time step size
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
-CFL=0.3; outstep = 0;
+CFL=0.2; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
 
 % eliminate zero depth in wet cell
