@@ -6,14 +6,14 @@ physics = Utilities.varGroup;
 
 % caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
-% caseName = 'ParabolicBowl';
+caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
-caseName = 'TsunamiRunup';
+% caseName = 'TsunamiRunup';
 
 physics.incert('caseName', caseName);
 
 % polynomial order and No. of elements
-ndegree = 1; nele = 1000;
+ndegree = 1; nele = 400;
 
 % Set initial conditions
 physics = SWEInit(physics, ndegree, nele);

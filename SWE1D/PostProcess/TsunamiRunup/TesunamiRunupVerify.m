@@ -16,12 +16,12 @@ for itime = 1:numel(FinalTime)
     h = ncread(filename, 'h', [1, index],[inf, 1]);
     q = ncread(filename, 'q', [1, index],[inf, 1]);
     h = reshape(h, 2, numel(x)/2); q = reshape(q, 2, numel(x)/2);
-    eta = h + bedElevation; u = q./h; u(h<1e-3) = 0; u(u>50) = 0;
+    eta = h + bedElevation; u = q./h; u(h<1e-2) = 0; u(u>50) = 0;
     
     load(['t', num2str(FinalTime(itime)), '.mat']);
     
     % draw picture
-    figure; subplot(2,1,1);
+    figure('Position', [266   506   556   252]);
     bed1 = -0.1*x1; eta1(eta1 < bed1) = bed1(eta1 < bed1);
     plot(x1, eta1, 'k.'); hold on;
     plot(x, eta, '-r.');
@@ -33,10 +33,10 @@ for itime = 1:numel(FinalTime)
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('$\eta$', 'Interpreter', 'Latex');
     
-    subplot(2,1,2);
+    figure('Position', [266   506   556   252]);
     plot(x1, u1, 'k.'); hold on;
     plot(x, u, '-r.'); 
-    
+    ylim([-20, 15])
     xlim([-400, 800]);
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('u', 'Interpreter', 'Latex');
