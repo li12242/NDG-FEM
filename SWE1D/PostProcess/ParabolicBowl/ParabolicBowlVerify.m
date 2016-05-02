@@ -30,9 +30,9 @@ for itime = 1:numel(FinalTime)
     figure('Position', [771   467   554   293]);
     plot(xe, he+be, 'k.', 'MarkerSize', 5); hold on;
     plot(x, h+b, 'r'); 
-    
     t = legend('Exact', 'HREF');
     plot(x, b, 'k')
+    xlim([-4500, 4500])
     set(t, 'box', 'off');
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('$\eta$', 'Interpreter', 'Latex');
@@ -40,13 +40,15 @@ for itime = 1:numel(FinalTime)
     figure('Position', [771   467   554   293]);
     plot(x, q, 'r'); hold on;
     plot(xe, qe, 'k.', 'MarkerSize', 5);
+    xlim([-4500, 4500])
     ylim([-50, 50]);
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('q', 'Interpreter', 'Latex');
     
     figure('Position', [771   467   554   293]);
     plot(x, u, 'r'); hold on;
-    plot(xe, ue, 'k.', 'MarkerSize', 5); ylim([-10, 10]);
+    plot(xe, ue, 'k.', 'MarkerSize', 5); 
+    xlim([-4500, 4500]); ylim([-10, 10]);
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('u', 'Interpreter', 'Latex');
 end% for
