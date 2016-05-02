@@ -3,7 +3,7 @@ SingleResult;
 end
 
 function SingleResult
-filename = 'SWE1D.nc';
+filename = 'SWE1DTsunamiRunup.nc';
 x = ncread(filename, 'x'); x = reshape(x, 2, numel(x)/2);
 bedElevation = -0.1*x;
 time = ncread(filename, 'time');
