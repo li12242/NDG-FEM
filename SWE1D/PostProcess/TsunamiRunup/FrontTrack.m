@@ -5,7 +5,7 @@ hm = 1e-1;
 hp = hm;
 
 % output file
-filename = 'SWE1D.nc';
+filename = 'SWE1DTsunamiRunup.nc';
 
 % rebuild mesh
 x = ncread(filename, 'x'); x = reshape(x, 2, numel(x)/2);
@@ -28,6 +28,8 @@ figure
 plot(pt, px, 'k'); hold on;
 plot(time, rp, 'r.', time, rm, 'b.')
 t = legend('Exact', '$r^+$', '$r^-$');
+xlabel('t', 'Interpreter', 'Latex');
+ylabel('x', 'Interpreter', 'Latex');
 set(t, 'Box', 'off',  'Interpreter', 'Latex');
 end% func
 
