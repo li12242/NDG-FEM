@@ -41,7 +41,8 @@ for itime = 1:numel(FinalTime)
     plot(x, q, 'r'); hold on;
     plot(xe, qe, 'k.', 'MarkerSize', 5);
     xlim([-4500, 4500])
-    ylim([-50, 50]);
+    ylim([-55, 55]);
+    set(gca, 'YTick', -50:25:50)
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('q', 'Interpreter', 'Latex');
     
