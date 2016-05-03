@@ -8,6 +8,7 @@ x = linspace(-500, 50000, np);
 Interp = griddedInterpolant(data.x, data.eta, 'nearest');
 z = Interp(x);
 
+figure('Position',[731   352   538   295])
 plot(x, z, 'r');
 xlabel('x', 'Interpreter', 'Latex');
 ylabel('$\eta$', 'Interpreter', 'Latex');
