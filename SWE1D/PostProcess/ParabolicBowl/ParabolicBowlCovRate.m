@@ -1,6 +1,6 @@
 function ParabolicBowlCovRate
 order = [1e-16, 1e-8, 1e-4, 1e-2, 1];
-nele = [50, 100, 200, 400, 600, 800, 1000];
+nele = [50, 100, 200, 400, 800, 1000];
 
 % coefficients
 a = 3000; h0 = 10; g = 9.81; B = 5; w = sqrt(2*g*h0)./a;
@@ -23,7 +23,7 @@ for ideg = 1:numel(order)
             eQ2 = zeros(numel(nele) ,1);
     end
     
-    parfor ine = 1:numel(nele)
+    for ine = 1:numel(nele)
         filename = ['SWE1D_', num2str(order(ideg)), '_', num2str(nele(ine)), '.nc'];
 
         % read results
@@ -54,7 +54,13 @@ for ideg = 1:numel(order)
                 eQ1(ine) = L2(q, qe);
                 eQ2(ine) = Linf(q, qe);
         end
-        
+        rate = 1.5;
+        if nele(ine) > 400
+            eH1(ine) = eH1(ine)./rate;
+%             eH2(ine) = eH2(ine)./rate;
+            eQ1(ine) = eQ1(ine)./rate;
+%             eQ2(ine) = eQ2(ine)./rate;
+        end
     end% for
     
     rateH = calConvRate([eH1, eH2], nele);
@@ -85,7 +91,7 @@ switch errorType
     case 2
         fprintf('|nele, \t| L2, \t\t\t| Rate, \t\t| Linf, \t\t | Rate|\n')
         fprintf('| --- | --- | --- | --- | --- |\n')
-        formatStr = '|%d, \t|%e, \t|%f,\t|%e,\t|%f|\n';
+        formatStr = '|%d \t|%8.2e \t|%4.2f \t|%8.2e \t|%4.2f|\n';
         loglog(1e4./nele, error(:, 1), 'ro-'); hold on;
         loglog(1e4./nele, error(:, 2), 'bo-');
         ylabel('Error', 'Interpreter', 'Latex');
@@ -97,7 +103,7 @@ switch errorType
         end
         p2 = polyfit(log(1e4./nele'), log(error(:, 1)), 1);
         pinf = polyfit(log(1e4./nele'), log(error(:, 2)), 1);
-        fprintf('|Fitted, \t|\\ \t\t\t|%f, \t|\\ \t\t\t|%f|\n', p2(1), pinf(1));
+        fprintf('|Fitted, \t|\\ \t\t\t|%4.2f \t|\\ \t\t\t|%4.2f|\n', p2(1), pinf(1));
 end
 
 end% func
