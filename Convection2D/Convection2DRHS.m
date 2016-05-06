@@ -5,7 +5,7 @@ function rhsVar = Convection2DRHS(mesh, var, time, Speed)
 tri = mesh.Shape;
 
 Fs = ConvectionLF(mesh, var, Speed);
-Fs = BoundaryCondition(mesh, Fs, time, Speed);
+% Fs = BoundaryCondition(mesh, Fs, time, Speed);
 
 [F, G] = ConvectionFlux(var, Speed);
 

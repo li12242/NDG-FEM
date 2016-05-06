@@ -34,8 +34,8 @@ while(time < FinalTime)
         
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
-        var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
-        plot3(mesh.x, mesh.y, var, '.'); drawnow;
+%         var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
+        plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 %         plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)], [var; var(1,:)], '.-'); drawnow
     end% for
     
