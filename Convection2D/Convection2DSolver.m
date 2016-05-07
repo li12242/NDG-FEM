@@ -1,4 +1,4 @@
-function var = Convection2DSolver(mesh, var, FinalTime, Speed)
+function var = Convection2DSolver(mesh, var, FinalTime, u, v)
 % 2D convection problem
 % RK time stepping
 
@@ -9,14 +9,21 @@ time = 0;
 resVar = zeros(size(var));
 % compute time step size
 xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
-CFL=0.30;  un = sqrt(sum(Speed.^2));
+CFL=0.30;  
+un = max(max( sqrt(u.^2 + v.^2) ));
 dt = CFL/un*xmin;
 
 while(time < FinalTime)
+    
+    if time + dt > FinalTime
+        dt = FinalTime - time;
+    end
     time = time+dt;
+    
     fprintf('Processing: %f ...\n', time./FinalTime)
+    
     for INTRK = 1:5
-        rhsVar = Convection2DRHS(mesh, var, time, Speed);
+        rhsVar = Convection2DRHS(mesh, var, time, u, v);
         
 %         % filter residual
 %         rhsVar = Filt*rhsVar;
@@ -24,7 +31,7 @@ while(time < FinalTime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
 %         var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
-        plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
+%         plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 %         plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)], [var; var(1,:)], '.-'); drawnow
     end% for
     
