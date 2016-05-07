@@ -7,7 +7,7 @@ mesh = quadSolver(N);
 var = ConvectionInit(mesh);
 
 Speed = [1,0]; % speed of domain, [u, v]
-FinalTime = 1;
+FinalTime = 0.25;
 
 var = Convection2DSolver(mesh, var, FinalTime, Speed);
 
@@ -47,14 +47,20 @@ np = 5; % nodes on each row
 m = np - 1; % elements on each row
 
 VX = 1:np; VX = repmat(VX, 1, np);
+dx = [-1, 0, -1, 0, -1];
+for i = 1:np
+    VX((i-1)*np+1: i*np) = VX((i-1)*np+1: i*np) + dx(i);
+end
 VY = [np:-1:1]'; VY = repmat(VY, 1, np)'; VY = VY(:);
 
 EToV = zeros(m^2, 4);
 for irow = 1:m
     for icol = 1:m
         index = (irow-1)*m + icol;
-        EToV(index, :) = [np*(irow-1)+icol, np*(irow-1)+icol+1, ...
-            np*(irow)+icol, np*(irow)+icol+1];
+        EToV(index, :) = [np*(irow)+icol, np*(irow)+icol+1, ...
+            np*(irow-1)+icol, np*(irow-1)+icol+1];
+%         EToV(index, :) = [np*(irow-1)+icol, np*(irow-1)+icol+1,...
+%             np*(irow)+icol, np*(irow)+icol+1];
     end
 end
 
@@ -72,10 +78,10 @@ end% func
 
 function var = ConvectionInit(mesh)
 % var = ones(size(mesh.x));
-var = mesh.x;
+% var = mesh.x;
 % xc = mean(mesh.x);
 % left = xc < 0.5; right = xc > 0.5;
-% var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
+var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
 % var = zeros(size(mesh.x));
 % var(:,left) = 1; var(:,right) = 0;
 end% func
