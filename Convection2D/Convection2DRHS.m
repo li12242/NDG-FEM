@@ -11,18 +11,18 @@ Fs = ConvectionLF(mesh, var, Speed);
 
 % strong form
 
-% [FM, GM] = ConvectionFlux(var(mesh.vmapM), Speed);
-% dF = normal(mesh, FM, GM) - Fs;
+[FM, GM] = ConvectionFlux(var(mesh.vmapM), Speed);
+dF = normal(mesh, FM, GM) - Fs;
 % dF = lf(mesh, var, Speed);
 
-% rhsVar = -( mesh.rx.*(tri.Dr*F) + mesh.sx.*(tri.Ds*F) ...
-%     + mesh.ry.*(tri.Dr*G) + mesh.sy.*(tri.Ds*G) ) ...
-%     + tri.invM*tri.Mes*(dF.*mesh.fScale);
+rhsVar = -( mesh.rx.*(tri.Dr*F) + mesh.sx.*(tri.Ds*F) ...
+    + mesh.ry.*(tri.Dr*G) + mesh.sy.*(tri.Ds*G) ) ...
+    + tri.invM*tri.Mes*(dF.*mesh.fScale);
 
 % weak form
-rhsVar = ( mesh.rx.*(tri.Drw*F) + mesh.sx.*(tri.Dsw*F) ...
-    + mesh.ry.*(tri.Drw*G) + mesh.sy.*(tri.Dsw*G) ) ...
-    - (tri.invM*tri.Mes)*(Fs.*mesh.fScale);
+% rhsVar = ( mesh.rx.*(tri.Drw*F) + mesh.sx.*(tri.Dsw*F) ...
+%     + mesh.ry.*(tri.Drw*G) + mesh.sy.*(tri.Dsw*G) ) ...
+%     - (tri.invM*tri.Mes)*(Fs.*mesh.fScale);
 end% func
 
 function Fs = ConvectionLF(mesh, var, Speed)
