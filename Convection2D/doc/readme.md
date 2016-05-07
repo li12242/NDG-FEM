@@ -22,8 +22,8 @@ $u(\mathbf{x}, t = 0) = exp\left( -\sigma \left| \mathbf{x} - \mathbf{x}_c \righ
 $[-L, L]$, where $L = 1$.
 
 4. computation meshes
-Different resolutions: [20 x 20], [40 x 40], [60 x 60].
-Different mesh types:
+different resolutions: [20 x 20], [40 x 40], [60 x 60].
+different mesh types:
 	1. triangle mesh
 	2. square mesh
 	3. skewed-rectangular mesh
