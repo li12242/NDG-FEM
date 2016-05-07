@@ -1,16 +1,22 @@
-function var = Convection2DSetUp
+function [mesh, var] = Convection2DSetUp(N, M)
 % 2D convection problem
-% dc/dt + udc/dx + vdu/dy = 0
+% dc/dt + d(uc)/dx + d(vc)/dy = 0
+% Input:
+%   N - degree of polynomial
+%   M - No. of elements on each edge
+% 
 
-N = 2;
-% mesh = quadSolver(N);
-mesh = triSolver(N);
+mesh = quadSolver(N, M);
+% mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
-Speed = [1,0]; % speed of domain, [u, v]
-FinalTime = 0.25;
+w = 5*pi/6;
+u = -w.*mesh.y; % flow rate in domain, [u, v]
+v = w.*mesh.x;
 
-var = Convection2DSolver(mesh, var, FinalTime, Speed);
+FinalTime = 2.4;
+
+var = Convection2DSolver(mesh, var, FinalTime, u, v);
 postprocess(mesh, var)
 end% func
 
@@ -19,16 +25,20 @@ function var = ConvectionInit(mesh)
 % var = mesh.x;
 % xc = mean(mesh.x);
 % left = xc < 0.5; right = xc > 0.5;
-var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
+% var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
 % var = zeros(size(mesh.x));
 % var(:,left) = 1; var(:,right) = 0;
+
+sigma = 125*1e3/33^2; 
+xc = 0; yc = 3/5;
+var = exp(-sigma.*( (mesh.x - xc).^2 + (mesh.y - yc).^2) );
 end% func
 
-function mesh = triSolver(N)
+function mesh = triSolver(N, M)
 
 % read triangle mesh
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/triangle');
-M = 20;
+
 np = M+1;
 [VX,VY,EToV] = Lmesh(np, -1, 1, 1);
 
@@ -36,13 +46,13 @@ tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
 end% func
 
-function mesh = quadSolver(N)
+function mesh = quadSolver(N, M)
 
 % read triangle mesh
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderQuad('Convection2D/mesh/quad');
 
 % uniform mesh
-[EToV, VX, VY] = uniformRetangle;
+[EToV, VX, VY] = uniformRetangle(M+1);
 
 temp = EToV(:, 3); 
 EToV(:, 3) = EToV(:, 4);
@@ -54,31 +64,33 @@ mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
 end% func
 
 function [X,Y,E] = Lmesh(n,start_coor,end_coor,flag)
-% 绘制规则三角形地形
+% Mesh generater with triangle element
 %
 % DESCRIPTION
-%   区域范围 [start_coor, end_coor]x[start_coor, end_coor];
-%   每边单元个数为n，节点个数为n+1
+%   domain [start_coor, end_coor]x[start_coor, end_coor];
+%   n - No. of element on each edge
 %
-%   生成网格节点编号顺序为:
-%       由(0, 1)起始，沿x轴方向循环
+%   index
+%       x coordinate 
+% 
 %       1   2   3   4   5   ....            n  n+1
 %       -----------------------------------------
 %       |   |   |   |   |   |   |   |   |   |   |
+% (n+2) ----------------------------------------- 2(n+1)
 %
 % INPUT
-%    n      = 每边单元个数
-%    start_coor = 起始坐标 
-%    end_coor   = 结束坐标
-%    flag   = [flag=0, 斜边方向为"\"；flag=1，斜边方向为"/"]
+%    n      = No. of elements on each edge
+%    start_coor = start coordinate
+%    end_coor   = end coordinate
+%    flag   = partination type [flag=0, "\", flag=1, "/"]
 %
 % OUTPUT
 %    X = x coordinate
 %    Y = y coordinate
-%    E = points of element (逆时针)
+%    E = index of vertices in element
 %
 % EXAMPLE USAGE
-%    [X,Y,E] = Lmesh(21, 1)
+%    [X,Y,E] = Lmesh(21, 0, 1, 1)
 %
 % Author(s)
 %    li12242 Tianjin University
@@ -92,13 +104,13 @@ x = linspace(start_coor, end_coor, n+1); y = linspace(end_coor, start_coor, n+1)
 x = repmat(x, n+1, 1); y = repmat(y, n+1, 1);
 x = x';
 X = x(:); Y = y(:);
-% 单元组成
+
 E = zeros(2*n^2,3);
-for i = 1:n %每层单元循环
+for i = 1:n % each row
     upLayerNum = (n+1)*(i-1)+1:(n+1)*(i-1)+n+1;
     downLayerNum = upLayerNum + (n+1);
 
-    if flag     % 上层单元在先
+    if flag     %
         E(2*n*(i-1)+1:2*n*(i-1)+n,:) = [downLayerNum(1:n)', upLayerNum(2:n+1)', upLayerNum(1:n)'];
         E(2*n*(i-1)+n+1:2*n*i,:) = [downLayerNum(1:n)',downLayerNum(2:n+1)',upLayerNum(2:n+1)'];
         flag=~flag;
@@ -114,12 +126,11 @@ end
 function [EToV, VX, VY] = uniformRetangle(np)
 m = np - 1; % elements on each row
 
-VX = 1:np; VX = repmat(VX, 1, np);
-VX = linspace(-1, 1, np);
-dx = [-1, 0, -1, 0, -1];
-for i = 1:np
-    VX((i-1)*np+1: i*np) = VX((i-1)*np+1: i*np) + dx(i);
-end
+VX = linspace(-1, 1, np); VX = repmat(VX, 1, np);
+% dx = [-1, 0, -1, 0, -1];
+% for i = 1:np
+%     VX((i-1)*np+1: i*np) = VX((i-1)*np+1: i*np) + dx(i);
+% end
 VY = linspace(1, -1, np)'; VY = repmat(VY, 1, np)'; VY = VY(:);
 
 EToV = zeros(m^2, 4);
