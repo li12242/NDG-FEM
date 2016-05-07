@@ -20,7 +20,7 @@ time = 0;
 resVar = zeros(size(var));
 % compute time step size
 xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
-CFL=0.10;  un = sqrt(sum(Speed.^2));
+CFL=0.30;  un = sqrt(sum(Speed.^2));
 dt = CFL/un*xmin;
 
 while(time < FinalTime)
@@ -35,7 +35,7 @@ while(time < FinalTime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
 %         var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
-        plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
+%         plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 %         plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)], [var; var(1,:)], '.-'); drawnow
     end% for
     
