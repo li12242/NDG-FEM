@@ -17,7 +17,7 @@ v = w.*mesh.x;
 FinalTime = 2.4;
 
 var = Convection2DSolver(mesh, var, FinalTime, u, v);
-postprocess(mesh, var)
+% postprocess(mesh, var)
 end% func
 
 function var = ConvectionInit(mesh)
