@@ -1,7 +1,7 @@
 function ConvergenceRate
 
-degree = 1:6;
-ele = [40, 60, 80];
+degree = 1:2;
+ele = [40, 60, 80, 100];
 
 for ideg = 1:numel(degree)
     e2 = zeros(numel(ele), 1);
@@ -47,14 +47,17 @@ function printResult(fig, rate, error, nele)
 ne = numel(nele);
 
 fprintf(fig, '|nele \t| L \t\t| Rate |\n');
-formatStr = '|%d \t|%8.2e \t|%4.2f \t|\n';
-        
+fprintf('nele \t L \t\t Rate \n');
+fileFormatStr = '|%d \t|%8.2e \t|%4.2f \t|\n';
+formatStr = '%d \t%8.2e \t%4.2f \t\n';
 for ie = 1:ne
-    fprintf(fig, formatStr, nele(ie), error(ie), rate(ie));
+    fprintf(fig, fileFormatStr, nele(ie), error(ie), rate(ie));
+    fprintf(formatStr, nele(ie), error(ie), rate(ie));
 end
 
 p = polyfit(log(1./nele'), log(error), 1);
 fprintf(fig, '|Fitted, \t|\\ \t|%4.2f \t|\n', p(1));
+fprintf('Fitted, \t\\ \t%4.2f \t\n', p(1));
 end% func
 
 function rate = calConvRate(err, nele)
@@ -75,7 +78,7 @@ end
 function [ev] = exactSolution(x, y)
 
 sigma = 125*1e3/33^2; 
-xc = -3/5; yc = 0;
+xc = 0; yc = 3/5;
 ev = exp(-sigma.*( (x - xc).^2 + (y - yc).^2) );
 
 end% func
