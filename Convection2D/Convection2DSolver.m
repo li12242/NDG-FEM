@@ -1,4 +1,4 @@
-function var = Convection2DSolver(mesh, var, FinalTime, u, v)
+function var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile)
 % 2D convection problem
 % RK time stepping
 
@@ -12,7 +12,7 @@ xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ))
 CFL=0.30;  
 un = max(max( sqrt(u.^2 + v.^2) ));
 dt = CFL/un*xmin;
-
+outStep = 0;
 while(time < FinalTime)
     
     if time + dt > FinalTime
@@ -31,10 +31,11 @@ while(time < FinalTime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
 %         var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
-%         plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
-%         plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)], [var; var(1,:)], '.-'); drawnow
+        
     end% for
-    
+    StoreVar(outfile, var, time, outStep);
+    outStep = outStep + 1;
+%     plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 end% while
 end% func
 
