@@ -31,16 +31,18 @@ resQ = zeros(size(q)); resH = zeros(size(h));
 
 % compute time step size
 xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
-CFL=0.3;
+CFL=0.3; outstep = 0;
 FinalTime = physics.getVal('FinalTime');
-outstep = 0;
-lamda = SWESpeed(h, q);
-dt = CFL/lamda*xmin;
+
+lamda = SWESpeed(h, q); dt = CFL/lamda*xmin;
+
+% eliminate zero depth in wet cell
+[h, q] = PositivePreserving(mesh, h, q, bedElva);
 
 % outer time step loop
 while(time<FinalTime)
     lamda = SWESpeed(h, q);
-%     dt = CFL/max(lamda(:))*xmin;
+
     % Increment time
     if time + dt > FinalTime
         time = FinalTime;
@@ -54,14 +56,25 @@ while(time<FinalTime)
     elseif lamda*dt < CFL*xmin/4
         dt = dt*2;
     end%if
-%     if time >= 26.6555 - 3*dt
+
+    fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
+        time./FinalTime, dt, lamda)
+    
+%     if time > 100
+%         keyboard
+%     end% if
+%     if outstep > 805
 %         keyboard
 %     end
     
-    fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
-        time./FinalTime, dt, lamda)
     for INTRK = 1:5
-%         try
+        
+%         subplot(2,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
+%         subplot(2,1,2); plot(mesh.x, q, '-r');
+%         drawnow;
+%         refineflag = TransiteCellIdentify(mesh, h, bedElva);
+%         [new_mesh, h1, q1, localEleIndex] = Hrefine1D(mesh, refineflag, h, q, physics);
+        
         timelocal = time + dt*rk4c(INTRK);
         [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
@@ -70,17 +83,12 @@ while(time<FinalTime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
 
-        [h, q] = PositivePreserving2(mesh, h, q, bedElva);
-%         catch
-%             keyboard
-%         end
+        [h, q] = PositivePreserving(mesh, h, q, bedElva);
     end
     StoreVar(ncfile, h, q, time, lamda, outstep)
     outstep = outstep + 1;
 end
-% if is_Camera_on
-%     close(writerObj);
-% end
+
 end% func
 
 function [h, q] = PositivePreserving2(mesh, h, q, bedElva)
@@ -91,43 +99,53 @@ h(h<0) = 0;
 end% func
 
 function [h, q] = PositivePreserving(mesh, h, q, bedElva)
-% Positivity-preserving methods
-% REFERENCE:
-% [1]: Xing(2010)
-hDelta = 0.000; % scheme min depth
-limitH = 0.001;
+% Slope limiter and Positivity-preserving operator
+hPositive = 10^-3;
+
+%% define wet cells
+iswet = (h > hPositive);
+wetIndex = any(iswet); 
+
+%% slope limiter on water level
+
+% the slope limiter act on the wet cells
+q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,q);
+
 eta = h + bedElva;
-q = Utilities.Limiter.SlopeLimitN(mesh, q);
+% eta = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta);
 
-% 1. limiter on eta
-etalim = Utilities.Limiter.SlopeLimitN(mesh, eta);
-% 2. limiter on h
-hlim = Utilities.Limiter.SlopeLimitN(mesh, h); 
-% for hmin<0, TVB limiter is based on (h, q)
-h = hlim;
-% for hmin>0, TVB limiter is based on (h+b, q)
-hlim = etalim - bedElva;
-hmin = min(hlim); etaLimit = find(hmin > limitH);
-h(:, etaLimit) = etalim(:, etaLimit) - bedElva(:, etaLimit);
+temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,eta); 
+eta(:, wetIndex) = temp(:, wetIndex); % reconstruct dry element to linear
 
-hmin = min(h); hLimit = find(hmin<hDelta);
-if(~isempty(hLimit))
-%     hdelta = 10^-12; % scheme min depth
-    % Compute cell averages
-    hmean = CellMean(mesh, h(:, hLimit)); hmean(hmean<= hDelta) = hDelta;
-    theta = min(1, hmean./(hmean - hmin(hLimit) + hDelta));
-    hmean = repmat(hmean, mesh.Shape.nNode, 1);
-    theta = repmat(theta, mesh.Shape.nNode, 1);
-    h(:, hLimit) = theta.*(h(:, hLimit) - hmean) + hmean;
-end% if
-% temp
-% h(h<hDelta) = hDelta;
-% eliminate the flux in near dry regions
-q(h<=0) = 0;
-% q(h<2*10^-2) = 0;
+h = eta - bedElva;
+
+temp = Utilities.Limiter.Limiter1D.MinmodLinear(mesh,h); 
+h(:, ~wetIndex) = temp(:, ~wetIndex);
+
+%% positive preserving operator
+h(:, wetIndex) = PositiveOperator(mesh, h(:, wetIndex), hPositive/10);
+q( h < hPositive) = 0; % eliminate the flux of dry nodes
+h( h < 0 ) = 0; % eliminate negative water depth
+end% func
+
+function h = PositiveOperator(mesh, h, hDelta)
+% positive operator
+% reference from Xing (2010); Zhang (2010)
+
+hmean = CellMean(mesh, h);
+Np = mesh.Shape.nNode;
+% correct mean water less than hDelta
+dis = (hmean < hDelta);
+h(:, dis) = h(:, dis) + ones(Np, 1)*(hDelta - hmean(dis));
+
+% positive operator
+hmin = min(h);
+theta = min( (hmean - hDelta)./(hmean - hmin), 1);
+h = (ones(Np, 1)*theta).*(h - ones(Np, 1)*hmean) + ones(Np, 1)*hmean;
 end% func
 
 function hmean = CellMean(mesh, h)
+% get mean depth in each cell
 Np = mesh.Shape.nNode;
 uh = mesh.Shape.VandMatrix\h; uh(2:Np,:)=0;
 uavg = mesh.Shape.VandMatrix*uh; hmean = uavg(1,:);
