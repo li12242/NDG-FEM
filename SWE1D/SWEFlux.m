@@ -1,6 +1,7 @@
-function [Fh, Fq] = SWEFlux(h, q)
+function [Fh, Fq] = SWEFlux(h, q, hFlux)
+% calculate flux terms of SWE
 
-g = 9.8; hDelta = 10^-6; isWet = h>hDelta;
+g = 9.8; isWet = h > hFlux;
 u = zeros(size(h)); 
 
 u(isWet) = q(isWet)./h(isWet);

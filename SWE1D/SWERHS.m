@@ -1,11 +1,18 @@
 function [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva)
 % 1D shallow water equation 
 % Righ Hand Side
-
 line = mesh.Shape;
+hDelta = 1e-3;
 
 % numel flux
+% [Fhs, Fqs] = SWELF(mesh, h, q);
 [Fhs, Fqs] = SWEHLL(mesh, h, q);
+
+% eliminate dry boundary flux
+isdry = (h <= hDelta);
+dryEdge = (isdry(mesh.vmapM) & isdry(mesh.vmapP));
+Fhs(dryEdge) = 0; Fqs(dryEdge) = 0;
+
 
 % boundary condition
 % [Fhs, Fqs] = SWEBC(mesh, Fhs, Fqs, h, q);
@@ -13,7 +20,7 @@ line = mesh.Shape;
 [Sh, Sq] = SWESource(mesh, bedElva, h);
 
 % flux term
-[Fh, Fq] = SWEFlux(h, q);
+[Fh, Fq] = SWEFlux(h, q, hDelta);
 
 %% strong form
 dFh = mesh.nx.*Fh(mesh.vmapM) - Fhs;
@@ -30,13 +37,12 @@ rhsQ = -mesh.rx.*(line.Dr*Fq) + line.invM*line.Mes*(dFq.*mesh.fScale) + Sq;
 % rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
 %     - line.invM*line.Mes*(Fqs.*mesh.fScale) + Sq;
 
-%% eliminate the dry area
-dryPointFlag = (h <= 10^-6);
-eleFlag = (dryPointFlag(mesh.vmapM) > 0) & (dryPointFlag(mesh.vmapP) >0);
-eledist = find(all(eleFlag));
+%% eliminate the dry area gravitational flow
+dryIndex = all(isdry);
 
-rhsH(:,eledist) = zeros(mesh.Shape.nNode, numel(eledist));
-rhsQ(:,eledist) = zeros(mesh.Shape.nNode, numel(eledist));
+rhsH(:,dryIndex) = line.invM*line.Mes*(dFh(:, dryIndex).*mesh.fScale(:, dryIndex));
+rhsQ(:,dryIndex) = line.invM*line.Mes*(dFq(:, dryIndex).*mesh.fScale(:, dryIndex));
+
 end% func
 
 function [Sh, Sq] = SWESource(mesh, bedElva, h)
@@ -45,8 +51,8 @@ Sh = zeros(size(h)); %Sq = zeros(size(h));
 Sq = -g.*h.*mesh.rx.*(line.Dr*bedElva);
 end% func
 
-% function [Fhs, Fqs] = SWEBC(mesh, Fhs, Fqs, h, q)
-% g = 9.8; vmapI = mesh.vmapM(mesh.mapI); vmapO = mesh.vmapM(mesh.mapO);
+function [Fhs, Fqs] = SWEBC(mesh, Fhs, Fqs, h, q)
+g = 9.8; vmapI = mesh.vmapM(mesh.mapI); vmapO = mesh.vmapM(mesh.mapO);
 
 %% subcritical flow
 % % Inflow
@@ -64,14 +70,14 @@ end% func
 % Fqs(mesh.mapI) = (g*h0.^2./2 + q0.^2./h0).*mesh.nx(mesh.mapI);
 
 %% transcritical flow
-% % Inflow
-% q0 = 0.18;
-% Fhs(mesh.mapI) = q0.*mesh.nx(mesh.mapI);
-% % Outflow
-% h0 = 0.33; u0 = q(vmapO)./h0;
-% Fqs(mesh.mapO) = (g*h0.^2./2 + u0.^2.*h0).*mesh.nx(mesh.mapO);
+% Inflow
+q0 = 0.18;
+Fhs(mesh.mapI) = q0.*mesh.nx(mesh.mapI);
+% Outflow
+h0 = 0.33; u0 = q(vmapO)./h0;
+Fqs(mesh.mapO) = (g*h0.^2./2 + u0.^2.*h0).*mesh.nx(mesh.mapO);
 
-% end% func
+end% func
 
 
 
