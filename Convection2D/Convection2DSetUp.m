@@ -14,10 +14,12 @@ w = 5*pi/6;
 u = -w.*mesh.y; % flow rate in domain, [u, v]
 v = w.*mesh.x;
 
-FinalTime = 2.4;
+FinalTime = 0.6;
+filename = ['Convection2D_', num2str(N),'_',num2str(M),'.nc'];
+outfile = CreateNetcdfFile(mesh, filename);
 
-var = Convection2DSolver(mesh, var, FinalTime, u, v);
-postprocess(mesh, var)
+var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile);
+% postprocess(mesh, var)
 end% func
 
 function var = ConvectionInit(mesh)

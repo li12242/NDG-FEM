@@ -1,6 +1,6 @@
 function ConvergenceRate
 
-degree = 1:8;
+degree = 1:6;
 ele = [40, 60, 80];
 
 for ideg = 1:numel(degree)
@@ -8,9 +8,13 @@ for ideg = 1:numel(degree)
     eInf = zeros(numel(ele), 1);
     
     for ine = 1: numel(ele)
-        [mesh, var] = Convection2DSetUp(degree(ideg), ele(ine));
+%         [mesh, var] = Convection2DSetUp( degree(ideg), ele(ine));
+        filename = ['Convection2D_', num2str(degree(ideg)),'_',num2str(ele(ine)),'.nc'];
+        x = ncread(filename, 'x'); y = ncread(filename, 'y');
+        time = ncread(filename, 'time');
+        var = ncread(filename, 'h', [1, numel(time)],[inf, 1]);
         
-        [ev] = exactSolution(mesh.x, mesh.y);
+        [ev] = exactSolution(x, y);
         
         e2(ine) = L2(var, ev);
         eInf(ine) = Linf(var, ev);
@@ -20,35 +24,37 @@ for ideg = 1:numel(degree)
     rate2 = calConvRate(e2, ele);
     rateInf = calConvRate(eInf, ele);
     
-    fprintf('========================= n = %d =========================\n',order(ideg));
+    fig = fopen(['n', num2str(degree(ideg)), '.txt'],'w');
+    fprintf('========================= n = %d =========================\n',degree(ideg));
     fprintf('----------------------- rate of L2 -----------------------\n');
-    printResult(rate2, e2, ele, 'L_2');
-    fprintf('---------------------- rate of LInf ----------------------\n');
-    printResult(rateInf, eInf, ele, 'L_{\infty}');
-    fprintf('\n');
+    printResult(fig, rate2, e2, ele);
+    fprintf('---------------------- rate of Linf ----------------------\n');
+    printResult(fig, rateInf, eInf, ele);
+    fclose(fig);
     
-    loglog(1./nele, e2, 'ro-'); hold on;
-    loglog(1./nele, eInf, 'bo-');
-    t = legend('L_2', 'L_{\infty}');
-    set(t, 'box', 'off', 'Interpreter', 'Latex');
-    ylabel('Error', 'Interpreter', 'Latex');
+%     loglog(1./ele, e2, 'ro-'); hold on;
+%     loglog(1./ele, eInf, 'bo-');
+%     t = legend('$L_2$', '$L_{\infty}$');
+%     set(t, 'box', 'off', 'Interpreter', 'Latex');
+%     xlabel('$\Delta x$', 'Interpreter', 'Latex');
+%     ylabel('Error', 'Interpreter', 'Latex');
 
 end% func
 
 end% func
 
-function printResult(rate, error, nele, errName)
-ne = numel(nele); figure
+function printResult(fig, rate, error, nele)
+ne = numel(nele);
 
-fprintf('|nele \t| L \t\t| Rate |\n');
+fprintf(fig, '|nele \t| L \t\t| Rate |\n');
 formatStr = '|%d \t|%8.2e \t|%4.2f \t|\n';
         
 for ie = 1:ne
-    fprintf(formatStr, nele(ie), error(ie), rate(ie));
+    fprintf(fig, formatStr, nele(ie), error(ie), rate(ie));
 end
 
 p = polyfit(log(1./nele'), log(error), 1);
-fprintf('|Fitted, \t|\\ \t\t\t|%4.2f \t|\n', p(1));
+fprintf(fig, '|Fitted, \t|\\ \t|%4.2f \t|\n', p(1));
 end% func
 
 function rate = calConvRate(err, nele)
@@ -69,7 +75,7 @@ end
 function [ev] = exactSolution(x, y)
 
 sigma = 125*1e3/33^2; 
-xc = 0; yc = 3/5;
+xc = -3/5; yc = 0;
 ev = exp(-sigma.*( (x - xc).^2 + (y - yc).^2) );
 
 end% func
