@@ -6,15 +6,15 @@ function [mesh, var] = Convection2DSetUp(N, M)
 %   M - No. of elements on each edge
 % 
 
-mesh = quadSolver(N, M);
-% mesh = triSolver(N, M);
+% mesh = quadSolver(N, M);
+mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
 u = -w.*mesh.y; % flow rate in domain, [u, v]
 v = w.*mesh.x;
 
-FinalTime = 0.6;
+FinalTime = 2.4;
 filename = ['Convection2D_', num2str(N),'_',num2str(M),'.nc'];
 outfile = CreateNetcdfFile(mesh, filename);
 
@@ -115,11 +115,11 @@ for i = 1:n % each row
     if flag     %
         E(2*n*(i-1)+1:2*n*(i-1)+n,:) = [downLayerNum(1:n)', upLayerNum(2:n+1)', upLayerNum(1:n)'];
         E(2*n*(i-1)+n+1:2*n*i,:) = [downLayerNum(1:n)',downLayerNum(2:n+1)',upLayerNum(2:n+1)'];
-        flag=~flag;
+%         flag=~flag;
     else
         E(2*n*(i-1)+1:2*n*(i-1)+n,:) = [downLayerNum(2:n+1)', upLayerNum(2:n+1)', upLayerNum(1:n)'];
         E(2*n*(i-1)+n+1:2*n*i,:) = [downLayerNum(1:n)',downLayerNum(2:n+1)',upLayerNum(1:n)'];
-        flag=~flag;
+%         flag=~flag;
     end
 
 end
