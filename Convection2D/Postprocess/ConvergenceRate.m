@@ -1,16 +1,20 @@
 function ConvergenceRate
 
 degree = 1:6;
-ele = [40, 60, 80, 100];
+ele = [40, 60, 80];
 
-parfor ideg = 1:numel(degree)
+for ideg = 1:numel(degree)
     e2 = zeros(numel(ele), 1);
     eInf = zeros(numel(ele), 1);
     
     for ine = 1: numel(ele)
-        [mesh, var] = Convection2DSetUp(degree(ideg), ele(ine));
+%         [mesh, var] = Convection2DSetUp( degree(ideg), ele(ine));
+        filename = ['Convection2D_', num2str(degree(ideg)),'_',num2str(ele(ine)),'.nc'];
+        x = ncread(filename, 'x'); y = ncread(filename, 'y');
+        time = ncread(filename, 'time');
+        var = ncread(filename, 'h', [1, numel(time)],[inf, 1]);
         
-        [ev] = exactSolution(mesh.x, mesh.y);
+        [ev] = exactSolution(x, y);
         
         e2(ine) = L2(var, ev);
         eInf(ine) = Linf(var, ev);
@@ -28,12 +32,12 @@ parfor ideg = 1:numel(degree)
     printResult(fig, rateInf, eInf, ele);
     fclose(fig);
     
-    loglog(1./ele, e2, 'ro-'); hold on;
-    loglog(1./ele, eInf, 'bo-');
-    t = legend('$L_2$', '$L_{\infty}$');
-    set(t, 'box', 'off', 'Interpreter', 'Latex');
-    xlabel('$\Delta x$', 'Interpreter', 'Latex');
-    ylabel('Error', 'Interpreter', 'Latex');
+%     loglog(1./ele, e2, 'ro-'); hold on;
+%     loglog(1./ele, eInf, 'bo-');
+%     t = legend('$L_2$', '$L_{\infty}$');
+%     set(t, 'box', 'off', 'Interpreter', 'Latex');
+%     xlabel('$\Delta x$', 'Interpreter', 'Latex');
+%     ylabel('Error', 'Interpreter', 'Latex');
 
 end% func
 
@@ -50,7 +54,7 @@ for ie = 1:ne
 end
 
 p = polyfit(log(1./nele'), log(error), 1);
-fprintf(fig, '|Fitted, \t|\\ \t\t\t|%4.2f \t|\n', p(1));
+fprintf(fig, '|Fitted, \t|\\ \t|%4.2f \t|\n', p(1));
 end% func
 
 function rate = calConvRate(err, nele)
@@ -71,7 +75,7 @@ end
 function [ev] = exactSolution(x, y)
 
 sigma = 125*1e3/33^2; 
-xc = 0; yc = 3/5;
+xc = -3/5; yc = 0;
 ev = exp(-sigma.*( (x - xc).^2 + (y - yc).^2) );
 
 end% func
