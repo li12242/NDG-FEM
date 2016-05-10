@@ -7,45 +7,48 @@ function [Fhs, Fqs] = SWEHLL(mesh, h, q)
 %     floods with wet/dry fronts over complex topography. (17-18)
 % [3] 
 % 
-hDelta = 10^-6;
+hDelta = 10^-3;
 
-% wave speed
+% rotate variable
 hM = h(mesh.vmapM); hP = h(mesh.vmapP);
-qM = q(mesh.vmapM); qP = q(mesh.vmapP);
+qM = mesh.nx.* q(mesh.vmapM); qP = mesh.nx.* q(mesh.vmapP);
 uM = zeros(size(hM)); uP = zeros(size(hP));
-
-isWetM = hM>hDelta; isWetP = hP>hDelta;
+isWetM = hM > hDelta; isWetP = hP > hDelta;
 
 uM(isWetM) = qM(isWetM)./hM(isWetM);
 uP(isWetP) = qP(isWetP)./hP(isWetP);
 
 [SM, SP] = EstimateWaveSpeed(mesh, hM, hP, uM, uP);
 
-[FhM, FqM] = SWEFlux(hM, qM);
-[FhP, FqP] = SWEFlux(hP, qP);
+[FhM, FqM] = SWEFlux(hM, qM, hDelta);
+[FhP, FqP] = SWEFlux(hP, qP, hDelta);
 
 % Compute HLL flux
 Fhs = zeros(size(FhM)); Fqs = zeros(size(FqM));
 
-sflag = SM >= 0;
-Fhs(sflag) = FhM(sflag).*mesh.nx(sflag);
-Fqs(sflag) = FqM(sflag).*mesh.nx(sflag);
+sflag = (SM >= 0);
+Fhs(sflag) = FhM(sflag);
+Fqs(sflag) = FqM(sflag);
 
 sflag = SP <= 0;
-Fhs(sflag) = FhP(sflag).*mesh.nx(sflag);
-Fqs(sflag) = FqP(sflag).*mesh.nx(sflag);
+Fhs(sflag) = FhP(sflag);
+Fqs(sflag) = FqP(sflag);
 
 sflag = SM < 0 & SP > 0;
-Fhs(sflag) = (- SM(sflag).*(FhP(sflag).*mesh.nx(sflag)) ...
-    + SP(sflag).*(FhM(sflag).*mesh.nx(sflag))...
-    + SP(sflag).*SM(sflag).*( hP(sflag)-hM(sflag) ) )...
+Fhs(sflag) = (- SM(sflag).*FhP(sflag) ...
+    + SP(sflag).*FhM(sflag)...
+    + SP(sflag).*SM(sflag).*( hP(sflag) - hM(sflag) ) )...
     ./(SP(sflag) - SM(sflag));
-Fqs(sflag) = (- SM(sflag).*(FqP(sflag).*mesh.nx(sflag)) ...
-    + SP(sflag).*(FqM(sflag).*mesh.nx(sflag))...
+Fqs(sflag) = (- SM(sflag).*FqP(sflag) ...
+    + SP(sflag).*FqM(sflag)...
     + SP(sflag).*SM(sflag).*( qP(sflag) - qM(sflag) ) )...
     ./(SP(sflag) - SM(sflag));
 
+% both dry
 sflag = ~isWetM & ~isWetP;
-Fhs(sflag) = 0;
-Fqs(sflag) = 0;
+Fhs(sflag) = 0; Fqs(sflag) = 0;
+
+% rotate invariance
+Fqs = Fqs.*mesh.nx;
+
 end% func

@@ -3,7 +3,7 @@
 % Order of polymomials used for approximation 
 N = 3;
 % read triangle mesh
-[EToV, VX, VY, EToR, BC] = Utilities.MeshReaderTriangle('SWE2D/grid/untitled');
+[EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('SWE2D/grid/untitled');
 % [Nv, VX, K, EToV] = Utilities.MeshGen1D(0.0,1000,nElement);
 
 % Initialize solver and construct grid and metric
