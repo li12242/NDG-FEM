@@ -1,133 +1,102 @@
 function main
 
-mesh = quadSolver(N, M);
-% mesh = triSolver(N, M);
-var = ConvectionInit(mesh);
+test = 1; 
 
+switch test
+    case 1 % quad
+        M = 40; N = 2;
+        mesh = quadSolver(N, M);
+    case 2 % triangle 
+        M = 1; N = 2;
+        mesh = triSolver(N, M);
+end
+
+var = ConvectionInit(mesh);
+u = zeros(size(mesh.x)); v = ones(size(mesh.x));
+
+% variable distribution
+figure;
+plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM));
+
+% discontinuity detector
+[~, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
+
+figure
+xc = mean(mesh.x); yc = mean(mesh.y);
+plot3(xc, yc, I, 'r.');
 end% func
 
 
 function var = ConvectionInit(mesh)
 % initial condition
+var = zeros(size(mesh.x));
 
-% left up, smooth part
-sigma = 125*1e3/33^2; 
-xc = -1/4; yc = 1/4;
-flag = (mesh.x<=0) & (mesh.y>0);
-var(flag) = exp(-sigma.*( (mesh.x(flag) - xc).^2 + (mesh.y(flag) - yc).^2) );
+% up left
+delta = 0.15;
+beta = log(2)./delta^2;
 
-% left right, discontinuous part
+temp = G(mesh.x, mesh.y, beta, -.5, 0.5);
 
+x1 = -0.8; x2 = -0.2; y1 = 0.2; y2 = 0.8;
+xm = (x1 + x2)./2; ym = (y1 + y2)./2;
+R = (x1 - xm).^2 + (y1 - ym).^2;
+ind = ( (mesh.x - xm).^2 + (mesh.y - ym).^2 ) < R;
+var(ind) = temp(ind);
+
+% up right
+x1 = 0.25; x2 = 0.75; y1 = 0.25; y2 = 0.75;
+xc = mean(mesh.x); yc = mean(mesh.y);
+ind = (xc > x1) & (xc < x2) ...
+    & ( yc > y1 ) & (yc < y2);
+var(:, ind) = 1;
+
+% down left
+x1 = -0.25; x2 = -0.75; y1 = -0.75; y2 = -0.25;
+xm = (x1 + x2)./2; ym = (y1 + y2)./2;
+R = (x1 - xm).^2 + (y1 - ym).^2;
+ind = ( (mesh.x - xm).^2 + (mesh.y - ym).^2 ) < R;
+
+temp = 1 - sqrt( ((mesh.x - xm).^2 + (mesh.y - ym).^2)./R );
+var(ind) = temp(ind);
+
+% down right
+x1 = 0.25; x2 = 0.75; y1 = -0.75; y2 = -0.25;
+xm = (x1 + x2)./2; ym = (y1 + y2)./2;
+R = (x1 - xm).^2 + (y1 - ym).^2;
+ind = ( (mesh.x - xm).^2 + (mesh.y - ym).^2 ) < R;
+
+alpha = 10;
+xm = 0.5; ym = -0.5;
+temp = F(mesh.x, mesh.y, alpha, xm, ym);
+var(ind) = temp(ind);
+end% func
+
+function g = G(x, y, beta, x0, y0)
+r2 = (x - x0).^2 + (y - y0).^2;
+g = exp( -beta*r2 );
+end
+
+function f = F(x, y, alpha, a, b)
+r2 = (x - a).^2 + (y - b).^2;
+f = sqrt( max(1 - alpha*r2, 0) );
 end% func
 
 function mesh = triSolver(N, M)
 
-% read triangle mesh
-% [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/triangle');
-
-np = M+1;
-[VX,VY,EToV] = Lmesh(np, -1, 1, 1);
+[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M, -1, 1, 1);
 
 tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
 end% func
 
 function mesh = quadSolver(N, M)
-
-% read triangle mesh
-% [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderQuad('Convection2D/mesh/quad');
-
 % uniform mesh
-[EToV, VX, VY] = uniformRetangle(M+1);
-
-temp = EToV(:, 3); 
-EToV(:, 3) = EToV(:, 4);
-EToV(:, 4) = temp;
+[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(M+1, -1, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
 
 end% func
 
-function [X,Y,E] = Lmesh(n,start_coor,end_coor,flag)
-% Mesh generater with triangle element
-%
-% DESCRIPTION
-%   domain [start_coor, end_coor]x[start_coor, end_coor];
-%   n - No. of element on each edge
-%
-%   index
-%       x coordinate 
-% 
-%       1   2   3   4   5   ....            n  n+1
-%       -----------------------------------------
-%       |   |   |   |   |   |   |   |   |   |   |
-% (n+2) ----------------------------------------- 2(n+1)
-%
-% INPUT
-%    n      = No. of elements on each edge
-%    start_coor = start coordinate
-%    end_coor   = end coordinate
-%    flag   = partination type [flag=0, "\", flag=1, "/"]
-%
-% OUTPUT
-%    X = x coordinate
-%    Y = y coordinate
-%    E = index of vertices in element
-%
-% EXAMPLE USAGE
-%    [X,Y,E] = Lmesh(21, 0, 1, 1)
-%
-% Author(s)
-%    li12242 Tianjin University
-%
-% Reversion
-%    v1.0 2014-12-8
-%========================================================================== 
 
-% info of point
-x = linspace(start_coor, end_coor, n+1); y = linspace(end_coor, start_coor, n+1);
-x = repmat(x, n+1, 1); y = repmat(y, n+1, 1);
-x = x';
-X = x(:); Y = y(:);
 
-E = zeros(2*n^2,3);
-for i = 1:n % each row
-    upLayerNum = (n+1)*(i-1)+1:(n+1)*(i-1)+n+1;
-    downLayerNum = upLayerNum + (n+1);
-
-    if flag     %
-        E(2*n*(i-1)+1:2*n*(i-1)+n,:) = [downLayerNum(1:n)', upLayerNum(2:n+1)', upLayerNum(1:n)'];
-        E(2*n*(i-1)+n+1:2*n*i,:) = [downLayerNum(1:n)',downLayerNum(2:n+1)',upLayerNum(2:n+1)'];
-        flag=~flag;
-    else
-        E(2*n*(i-1)+1:2*n*(i-1)+n,:) = [downLayerNum(2:n+1)', upLayerNum(2:n+1)', upLayerNum(1:n)'];
-        E(2*n*(i-1)+n+1:2*n*i,:) = [downLayerNum(1:n)',downLayerNum(2:n+1)',upLayerNum(1:n)'];
-        flag=~flag;
-    end
-
-end
-end
-
-function [EToV, VX, VY] = uniformRetangle(np)
-m = np - 1; % elements on each row
-
-VX = linspace(-1, 1, np); VX = repmat(VX, 1, np);
-% dx = [-1, 0, -1, 0, -1];
-% for i = 1:np
-%     VX((i-1)*np+1: i*np) = VX((i-1)*np+1: i*np) + dx(i);
-% end
-VY = linspace(1, -1, np)'; VY = repmat(VY, 1, np)'; VY = VY(:);
-
-EToV = zeros(m^2, 4);
-for irow = 1:m
-    for icol = 1:m
-        index = (irow-1)*m + icol;
-        EToV(index, :) = [np*(irow)+icol, np*(irow)+icol+1, ...
-            np*(irow-1)+icol, np*(irow-1)+icol+1];
-%         EToV(index, :) = [np*(irow-1)+icol, np*(irow-1)+icol+1,...
-%             np*(irow)+icol, np*(irow)+icol+1];
-    end
-end
-
-end% func
