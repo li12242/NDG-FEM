@@ -1,5 +1,5 @@
-function hlim = SlopeLimitSWE(mesh, h)
-% Slope limiting process for Shallow Water Equations
+function hlim = JKTA(mesh, h)
+% Slope limiting from Jawahear and Kamath and modified by Tu and Aliabadi (2005)
 
 % 1. compute geometric information for 4 element patch containing each element
 % Build average matrix

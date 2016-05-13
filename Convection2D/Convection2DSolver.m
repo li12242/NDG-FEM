@@ -30,10 +30,10 @@ while(time < FinalTime)
         
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
-%         var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
+        [disFlag, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
         
     end% for
-    StoreVar(outfile, var, time, outStep);
+    StoreVar(outfile, mesh, var, I, time, outStep);
     outStep = outStep + 1;
 %     plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 end% while

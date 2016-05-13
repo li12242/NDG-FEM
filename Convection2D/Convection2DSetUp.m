@@ -6,15 +6,15 @@ function [mesh, var] = Convection2DSetUp(N, M)
 %   M - No. of elements on each edge
 % 
 
-mesh = quadSolver(N, M);
-% mesh = triSolver(N, M);
+% mesh = quadSolver(N, M);
+mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
-u = -w.*mesh.y; % flow rate in domain, [u, v]
-v = w.*mesh.x;
+% flow rate in domain, [u, v]
+u = -w.*mesh.y; v = w.*mesh.x;
 
-FinalTime = 0.6;
+FinalTime = 2.4;
 filename = ['Convection2D_', num2str(N),'_',num2str(M),'.nc'];
 outfile = CreateNetcdfFile(mesh, filename);
 
