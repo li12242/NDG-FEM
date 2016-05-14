@@ -30,9 +30,9 @@ while(time < FinalTime)
         
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
-        temp = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
-        [~, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
-        ind = find(I);
+        temp = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
+        [flag, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
+        ind = find(flag);
         var(:, ind) = temp(:, ind);
         
     end% for

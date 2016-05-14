@@ -6,8 +6,8 @@ function [mesh, var] = Convection2DSetUp(N, M)
 %   M - No. of elements on each edge
 % 
 
-% mesh = quadSolver(N, M);
-mesh = triSolver(N, M);
+mesh = quadSolver(N, M);
+% mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
