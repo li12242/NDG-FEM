@@ -1,6 +1,6 @@
-function disFlag = DisDetector(mesh, var, u)
+function [disFlag, I] = DisDetector(mesh, var, u, v)
 % Reference: 
-%   [1]: Krivodonova 2004
+%   1. Krivodonova (2004)
 
 % discontinuity detector
 % Input:
@@ -10,29 +10,43 @@ function disFlag = DisDetector(mesh, var, u)
 % Output:
 %   disFlag - bool flag for mesh with discontinuity
 
-uM = u(mesh.vmapM); 
-% get boundary value and neighbour's 
-vM = var(mesh.vmapM); vP = var(mesh.vmapP);
+%% I. edge integral
+shape = mesh.Shape;
 
-disFlag = zeros(size(mesh.nx));
+% average matrix
+AVE = sum(shape.Mes);
 
-% get inflow boundary
-inflowFlag = (mesh.nx.*uM < 0 );
+% outflow node
+ind = (mesh.nx.*u(mesh.vmapM) + mesh.ny.*v(mesh.vmapM) ) >= 0;
 
-disFlag(inflowFlag) = abs(vM(inflowFlag) - vP(inflowFlag));
+% eliminate outflow boundary value
+temp = var(mesh.vmapM) - var(mesh.vmapP);
+temp(ind) = 0;
 
-% mean value
-varMean = mesh.Shape.VandMatrix\var;
-varMean = [varMean(1,:); varMean(1,:)];
+% boundary integral
+I = AVE*(mesh.sJ.*abs(temp));
 
-% mean value
-varFlag = (varMean <= eps);
+%% II. radius of the circumscribed circle
+r = sqrt(mesh.J(1,:)*2./pi);
+I = I./r;
 
-h = mesh.x(end, :) - mesh.x(1, :);
-h = [h; h]; % element length
-% h = ones(size(mesh.nx));
+%% III. edge length
+temp = mesh.sJ; temp(ind) = 0;
+l = AVE*temp;
 
-disFlag = disFlag./(h.^((mesh.Shape.nOrder+1)/2).*varMean );
-disFlag(varFlag) = 0;
-disFlag = sum(disFlag, 1);
+% small = (abs(l) <= eps);
+
+I = I./l;
+
+%% IV. max norm
+TOL = 1e-4;
+% max norm
+temp = max(abs(var));
+ind = abs(temp) > TOL;
+
+I(ind) = I(ind)./temp(ind);
+I(~ind) = 0;
+
+disFlag = I > 1;
+
 end% func
