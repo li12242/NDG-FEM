@@ -137,6 +137,13 @@ classdef Quad < StdRegions.QuadBasic
             % face IV, left
             nodelist(3*np+1:4*np) = indMatrix(:, 1);
         end% func
+        
+        function nodelist = getVertexNodeList(obj)
+            % return node list of vertex
+            % counterclockwise
+           Nfp = obj.nFaceNode/obj.nFace; % No. of node on sigle face
+            nodelist = [1, Nfp, obj.nNode, obj.nNode-Nfp+1]';
+        end% func
     end
     
     methods(Hidden)
