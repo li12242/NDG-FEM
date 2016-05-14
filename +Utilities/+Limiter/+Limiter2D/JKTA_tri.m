@@ -1,4 +1,4 @@
-function hlim = JKTA(mesh, h)
+function hlim = JKTA_tri(mesh, h)
 % Slope limiting from Jawahear and Kamath and modified by Tu and Aliabadi (2005)
 
 % 1. compute geometric information for 4 element patch containing each element

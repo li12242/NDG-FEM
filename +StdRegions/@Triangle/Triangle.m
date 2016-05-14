@@ -112,7 +112,7 @@ classdef Triangle < StdRegions.TriangleBasic
         
         function nodelist = getVertexNodeList(obj)
             % return the nodelist of vertice in element
-            Nfp = obj.nFaceNode/3;   % No. of node on sigle face
+            Nfp = obj.nFaceNode/obj.nFace;   % No. of node on sigle face
 %             ids = [1;Nfp;2*Nfp]; % facelist No. of vertex node
 %             facelist = getFaceListToNodeList(obj);
 %             nodelist = facelist(ids);
