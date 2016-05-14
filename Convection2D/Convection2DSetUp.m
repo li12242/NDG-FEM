@@ -11,8 +11,8 @@ mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
-u = -w.*mesh.y; % flow rate in domain, [u, v]
-v = w.*mesh.x;
+% flow rate in domain, [u, v]
+u = -w.*mesh.y; v = w.*mesh.x;
 
 FinalTime = 2.4;
 filename = ['Convection2D_', num2str(N),'_',num2str(M),'.nc'];
@@ -42,7 +42,7 @@ function mesh = triSolver(N, M)
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/triangle');
 
 np = M+1;
-[VX,VY,EToV] = Lmesh(np, -1, 1, 1);
+[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(np, -1, 1, 1);
 
 tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
@@ -54,17 +54,14 @@ function mesh = quadSolver(N, M)
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderQuad('Convection2D/mesh/quad');
 
 % uniform mesh
-[EToV, VX, VY] = uniformRetangle(M+1);
-
-temp = EToV(:, 3); 
-EToV(:, 3) = EToV(:, 4);
-EToV(:, 4) = temp;
+[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(M+1, -1, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
 
 end% func
 
+<<<<<<< HEAD
 function [X,Y,E] = Lmesh(n,start_coor,end_coor,flag)
 % Mesh generater with triangle element
 %
@@ -148,6 +145,8 @@ end
 
 end% func
 
+=======
+>>>>>>> master
 function postprocess(mesh, var)
 plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM))
 end% func
