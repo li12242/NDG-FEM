@@ -8,7 +8,7 @@ for ideg = 1:numel(degree)
     eInf = zeros(numel(ele), 1);
     
     for ine = 1: numel(ele)
-%         [mesh, var] = Convection2DSetUp( degree(ideg), ele(ine));
+        %[mesh, var] = Convection2DSetUp( degree(ideg), ele(ine));
         filename = ['Convection2D_', num2str(degree(ideg)),'_',num2str(ele(ine)),'.nc'];
         x = ncread(filename, 'x'); y = ncread(filename, 'y');
         time = ncread(filename, 'time');
@@ -26,38 +26,38 @@ for ideg = 1:numel(degree)
     
     fig = fopen(['n', num2str(degree(ideg)), '.txt'],'w');
     fprintf('========================= n = %d =========================\n',degree(ideg));
-    fprintf('----------------------- rate of L2 -----------------------\n');
-    printResult(fig, rate2, e2, ele);
-    fprintf('---------------------- rate of Linf ----------------------\n');
-    printResult(fig, rateInf, eInf, ele);
+    printResult(fig, rate2, e2, rateInf, eInf, ele, degree(ideg));
     fclose(fig);
     
-%     loglog(1./ele, e2, 'ro-'); hold on;
-%     loglog(1./ele, eInf, 'bo-');
-%     t = legend('$L_2$', '$L_{\infty}$');
-%     set(t, 'box', 'off', 'Interpreter', 'Latex');
-%     xlabel('$\Delta x$', 'Interpreter', 'Latex');
-%     ylabel('Error', 'Interpreter', 'Latex');
-
 end% func
 
 end% func
 
-function printResult(fig, rate, error, nele)
+function printResult(fig, rate2, e2, rateInf, einf, nele, deg)
 ne = numel(nele);
 
-fprintf(fig, '|nele \t| L \t\t| Rate |\n');
-fprintf('nele \t L \t\t Rate \n');
-fileFormatStr = '|%d \t|%8.2e \t|%4.2f \t|\n';
-formatStr = '%d \t%8.2e \t%4.2f \t\n';
-for ie = 1:ne
-    fprintf(fig, fileFormatStr, nele(ie), error(ie), rate(ie));
-    fprintf(formatStr, nele(ie), error(ie), rate(ie));
+type = 'tri';
+switch type
+    case 'tri'
+        dofs = nele.^2*2 * (deg+1)*(deg+2)/2;
+    case 'quad'
+        dofs = nele.^2 * (deg+1)*(deg+1);
 end
 
-p = polyfit(log(1./nele'), log(error), 1);
-fprintf(fig, '|Fitted, \t|\\ \t|%4.2f \t|\n', p(1));
-fprintf('Fitted, \t\\ \t%4.2f \t\n', p(1));
+fprintf(fig, '|nele \t|DOFs \t| L2 \t\t| Rate \t| Linf \t\t| Rate \t|\n');
+fprintf(fig, '| --- 	| --- 	| --- 		| ---  | --- 		| --- 	|\n');
+fprintf('nele \t DOFs \t L2 \t\t Rate \t Linf \t\t Rate \n');
+fileFormatStr = '|%d \t|%d \t|%8.2e \t|%4.2f \t|%8.2e \t|%4.2f \t|\n';
+formatStr = '%d \t %d \t %8.2e \t %4.2f \t %8.2e \t %4.2f\n';
+for ie = 1:ne
+    fprintf(fig, fileFormatStr, nele(ie), dofs(ie), e2(ie), rate2(ie), einf(ie), rateInf(ie));
+    fprintf(formatStr, nele(ie), dofs(ie), e2(ie), rate2(ie), einf(ie), rateInf(ie));
+end
+
+p = polyfit(log(1./nele'), log(e2), 1);
+q = polyfit(log(1./nele'), log(einf), 1);
+fprintf(fig, '|Fitted \t|\\ \t|\\ \t|%4.2f \t|\\ \t|%4.2f \t|\n', p(1), q(1));
+fprintf('Fitted \t \\ \t \\ \t %4.2f \t \\ \t %4.2f \t\n', p(1), q(1));
 end% func
 
 function rate = calConvRate(err, nele)
@@ -96,5 +96,5 @@ sumM = sum(sum(M));
 end
 
 function maxM = max2(M)
-maxM = sum(sum(M));
+maxM = max(max(M));
 end% func
