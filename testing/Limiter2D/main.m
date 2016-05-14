@@ -1,5 +1,5 @@
 function main
-
+% test of 2D slope limiter
 test = 1; 
 
 switch test
@@ -29,6 +29,7 @@ end% func
 
 function var = ConvectionInit(mesh)
 % initial condition
+% refer to Krivodonova (2007) for more details
 var = zeros(size(mesh.x));
 
 % up left
@@ -84,7 +85,6 @@ end% func
 function mesh = triSolver(N, M)
 
 [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M, -1, 1, 1);
-
 tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
 end% func
