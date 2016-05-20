@@ -3,3 +3,6 @@
 .DS_Store
 my_version
 *.nc
+*.mexmaci64
+*.mexw64
+*.mexw32
