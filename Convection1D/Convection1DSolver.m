@@ -1,4 +1,4 @@
-function var = Convection1DSolver(mesh, var, FinalTime, a)
+function var = Convection1DSolver(mesh, var, FinalTime, a, outfile)
 
 
 [rk4a, rk4b, rk4c] = getRK_coefficient;
@@ -7,7 +7,7 @@ function var = Convection1DSolver(mesh, var, FinalTime, a)
 xm = abs(mesh.x(2) - mesh.x(1)); CFL = 0.5;
 dt = CFL*(xm./a);
 
-time = 0; outStep = 0;
+time = 0; outStep = 0; nx = numel(mesh.x);
 
 resVar = zeros(size(var));
 
@@ -27,7 +27,8 @@ while(time < FinalTime)
         var = var + rk4b(INTRK)*resVar;
         
     end% for
-%     StoreVar(outfile, mesh, var, I, time, outStep);
+
+    outfile.putVarPart('var', [0, outStep], [nx, 1], var);
     outStep = outStep + 1;
     
 end% while
