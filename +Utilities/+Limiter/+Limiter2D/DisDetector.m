@@ -1,6 +1,6 @@
 function [disFlag, I] = DisDetector(mesh, var, u, v)
 % Reference: 
-%   1. Krivodonova (2004)
+%   1. Krivodonova, Xin & Remacle et al. (2004)
 
 % discontinuity detector
 % Input:
@@ -35,7 +35,6 @@ temp = mesh.sJ; temp(ind) = 0;
 l = AVE*temp;
 
 % small = (abs(l) <= eps);
-
 I = I./l;
 
 %% IV. max norm
@@ -47,6 +46,6 @@ ind = abs(temp) > TOL;
 I(ind) = I(ind)./temp(ind);
 I(~ind) = 0;
 
-disFlag = I > 1;
+disFlag = I > 5;
 
 end% func

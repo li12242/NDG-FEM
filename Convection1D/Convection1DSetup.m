@@ -1,7 +1,7 @@
 function Convection1DSetup
 
 % parameters
-N = 2; M = 100;
+N = 2; M = 80;
 x1 = 0; x2 = 1;
 
 % set mesh
@@ -21,10 +21,15 @@ outfile = CreateNetcdf(filename, mesh, var);
 % boundary condition
 mesh.vmapP(1) = numel(mesh.x); mesh.vmapP(end) = 1;
 
+% plot initial condition
+plot(mesh.x(:), var(:), 'r-.'); hold on;
+
 % solver
 var = Convection1DSolver(mesh, var, FinalTime, a, outfile);
 
 % postprocess
+plot(mesh.x(:), var(:), '.', 'Markersize', 10);
+ylim([-0.05, 1.1])
 end% func
 
 function outfile = CreateNetcdf(filename, mesh, var)
@@ -35,9 +40,10 @@ time = Utilities.Netcdf.dimobj('time', 0); % unlimited dimensions
 node = Utilities.Netcdf.dimobj('node', nx);
 
 x = Utilities.Netcdf.varobj('loc', node, 'double');
+t = Utilities.Netcdf.varobj('time', time, 'double');
 var = Utilities.Netcdf.varobj('var', [node, time], 'double');
 
-outfile = Utilities.Netcdf.fileobj(filename, [node, time], [x, var]);
+outfile = Utilities.Netcdf.fileobj(filename, [node, time], [x, t, var]);
 
 % initialize output file
 outfile.createFile;
