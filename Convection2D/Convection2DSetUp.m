@@ -1,4 +1,4 @@
-function [mesh, var] = Convection2DSetUp
+function [mesh, var] = Convection2DSetUp(N, M)
 % 2D convection problem
 % dc/dt + d(uc)/dx + d(vc)/dy = 0
 % Input:
@@ -6,10 +6,8 @@ function [mesh, var] = Convection2DSetUp
 %   M - No. of elements on each edge
 % 
 
-N = 2; M = 40;
-
-mesh = quadSolver(N, M);
-% mesh = triSolver(N, M);
+% mesh = quadSolver(N, M);
+mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;

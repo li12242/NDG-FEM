@@ -1,5 +1,5 @@
 function TransferProcess
-filename = 'Convection2D_2_40.nc';
+filename = 'Convection2D_2_80.nc';
 
 p_h = point3D(filename);
 % p_h = contour2D(filename);
@@ -12,7 +12,7 @@ x = ncread(filename, 'x');
 y = ncread(filename, 'y');
 
 % plot 3D points
-ind = 1:1:numel(x);
+ind = 1:6:numel(x);
 itime = 1;
 var = ncread(filename, 'var', [1, itime],[inf, 1]);
 
