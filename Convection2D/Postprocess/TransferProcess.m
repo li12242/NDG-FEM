@@ -1,24 +1,25 @@
 function TransferProcess
-filename = 'Convection2D_2_80.nc';
+filename = 'Convection2D_2_40.nc';
+
+p_h = point3D(filename);
+% p_h = contour2D(filename);
+end% func
+
+function p_h = point3D(filename)
 
 time = ncread(filename, 'time');
-% timestep = numel(time)
 x = ncread(filename, 'x');
 y = ncread(filename, 'y');
 
-p_h = point3D(filename, x, y, time);
-end% func
-
-function p_h = point3D(filename, x, y, time)
-ind = 1:6:numel(x);
+% plot 3D points
+ind = 1:1:numel(x);
 itime = 1;
-var = ncread(filename, 'h', [1, itime],[inf, 1]);
+var = ncread(filename, 'var', [1, itime],[inf, 1]);
 
 p_h = plot3(x(ind), y(ind), var(ind), '.');
-zlim([-0.5, 1.2]);
-view(-22.7, 57.2);
+zlim([-0.5, 1.2]); view(-22.7, 57.2);
 
-camera_on = 1;
+camera_on = 0;
 if camera_on
     writerObj = VideoWriter('Triangle2_40.avi');
     writerObj.FrameRate = 60;
@@ -27,8 +28,8 @@ end
 
 for itime = 1:1:numel(time)
     
-    var = ncread(filename, 'h', [1, itime],[inf, 1]);
-    dis = ncread(filename, 'temp', [1, itime], [inf, 1]);
+    var = ncread(filename, 'var', [1, itime],[inf, 1]);
+%     dis = ncread(filename, 'temp', [1, itime], [inf, 1]);
     
     set(p_h, 'ZData', var(ind));
     drawnow;
@@ -42,5 +43,31 @@ end% for
 
 if camera_on
     close(writerObj);
+end
+end% func
+
+function p_h = contour2D(filename)
+
+% get grid points
+time = ncread(filename, 'time');
+x = ncread(filename, 'x');
+y = ncread(filename, 'y');
+
+% set interpolation mesh
+np = 100;
+t = linspace(min(x), max(x), np);
+[X, Y] = meshgrid(t, t);
+
+% set levels
+v = [-0.1:0.1:1.1];
+for itime = 1:numel(time)
+    var = ncread(filename, 'var', [1, itime],[inf, 1]);
+
+    % Interpolation
+    Interp = TriScatteredInterp(x, y, var, 'linear');
+    Z = Interp(X, Y);
+    
+    contourf(X, Y, Z, v);
+    drawnow;
 end
 end% func
