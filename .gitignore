@@ -6,3 +6,4 @@ my_version
 *.mexmaci64
 *.mexw64
 *.mexw32
+*.txt
