@@ -1,6 +1,5 @@
 function var = Convection1DSolver(mesh, var, FinalTime, a, outfile)
 
-
 [rk4a, rk4b, rk4c] = getRK_coefficient;
 
 % set time interval
@@ -10,7 +9,7 @@ dt = CFL*(xm./a);
 time = 0; outStep = 0; nx = numel(mesh.x);
 
 resVar = zeros(size(var));
-
+u = a*ones(size(mesh.x));
 while(time < FinalTime)
     
     if time + dt > FinalTime
@@ -26,9 +25,18 @@ while(time < FinalTime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
         
+        
+        temp = Utilities.Limiter.Limiter1D.BJ1D(mesh,var);
+        [flag, I] = Utilities.Limiter.Limiter1D.DisDetector(mesh, var, u);
+        ind = find(flag);
+        var(:, ind) = temp(:, ind);
+%         var = Utilities.Limiter.Limiter1D.MomentBDF(mesh, var);
+%         var = Utilities.Limiter.Limiter1D.TVB1D(mesh, var, 1000);
+%         var = Utilities.Limiter.Limiter1D.GKTVB1D(mesh, var);
     end% for
 
     outfile.putVarPart('var', [0, outStep], [nx, 1], var);
+    outfile.putVarPart('time', outStep, 1, time);
     outStep = outStep + 1;
     
 end% while
