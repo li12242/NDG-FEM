@@ -1,7 +1,7 @@
 function ConvergenceRate
 
 degree = 1:2;
-ele = [40, 60, 80, 100];
+ele = [40, 60, 80];
 
 for ideg = 1:numel(degree)
     e2 = zeros(numel(ele), 1);
@@ -12,7 +12,7 @@ for ideg = 1:numel(degree)
         filename = ['Convection2D_', num2str(degree(ideg)),'_',num2str(ele(ine)),'.nc'];
         x = ncread(filename, 'x'); y = ncread(filename, 'y');
         time = ncread(filename, 'time');
-        var = ncread(filename, 'h', [1, numel(time)],[inf, 1]);
+        var = ncread(filename, 'var', [1, numel(time)],[inf, 1]);
         
         [ev] = exactSolution(x, y);
         
@@ -21,8 +21,8 @@ for ideg = 1:numel(degree)
         
     end% func
     
-    rate2 = calConvRate(e2, ele);
-    rateInf = calConvRate(eInf, ele);
+    rate2 = calConvRate(e2, ele, degree(ideg));
+    rateInf = calConvRate(eInf, ele, degree(ideg));
     
     fig = fopen(['n', num2str(degree(ideg)), '.txt'],'w');
     fprintf('========================= n = %d =========================\n',degree(ideg));
@@ -60,14 +60,13 @@ fprintf(fig, '|Fitted \t|\\ \t|\\ \t|%4.2f \t|\\ \t|%4.2f \t|\n', p(1), q(1));
 fprintf('Fitted \t \\ \t \\ \t %4.2f \t \\ \t %4.2f \t\n', p(1), q(1));
 end% func
 
-function rate = calConvRate(err, nele)
+function rate = calConvRate(err, nele, deg)
 ne = numel(nele);
 dx = 1./nele;
 if ~iscolumn(dx)
     dx = dx';
 end
 
-dx = repmat(dx, 1, size(err, 2));
 rate = zeros( size(err) );
 
 for i = 2:ne
