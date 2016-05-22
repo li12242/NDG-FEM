@@ -11,8 +11,8 @@ resVar = zeros(size(var));
 xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
 CFL=0.30;  
 un = max(max( sqrt(u.^2 + v.^2) ));
-dt = CFL/un*xmin;
-outStep = 0;
+dt = CFL/un*xmin; outStep = 0;
+
 while(time < FinalTime)
     
     if time + dt > FinalTime
@@ -30,13 +30,17 @@ while(time < FinalTime)
         
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
-        temp = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
+        
+        temp = Utilities.Limiter.Limiter2D.BJ2D(mesh, var);
+%         temp = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
         [flag, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
         ind = find(flag);
         var(:, ind) = temp(:, ind);
         
     end% for
-    StoreVar(outfile, mesh, var, I, time, outStep);
+    outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);
+    outfile.putVarPart('time', outStep, 1, time);
+    
     outStep = outStep + 1;
 %     plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 end% while
