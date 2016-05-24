@@ -129,8 +129,9 @@ dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), 'r*-', 'Markersize', 8, 'MarkerFaceColor', 'r');
 
 t = legend('triangle p = 1', 'triangle p = 2', 'triangle p = 3',...
-    'square p = 1', 'square p = 2', 'square p = 3');
+    'square p = 1', 'square p = 2', 'square p = 3', 'Location', 'SouthWest');
 set(t, 'box', 'off')
 xlabel('$\sqrt{DOFs}$', 'Interpreter', 'Latex')
 % ylabel('$L_2$', 'Interpreter', 'Latex')
 ylabel('$L_{\infty}$', 'Interpreter', 'Latex')
+grid on;
