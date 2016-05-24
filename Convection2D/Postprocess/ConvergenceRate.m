@@ -1,7 +1,7 @@
 function ConvergenceRate
 
-degree = 1:2;
-ele = [40, 60, 80];
+degree = 1:3;
+ele = [20, 40, 60, 80, 100];
 
 for ideg = 1:numel(degree)
     e2 = zeros(numel(ele), 1);
@@ -36,7 +36,7 @@ end% func
 function printResult(fig, rate2, e2, rateInf, einf, nele, deg)
 ne = numel(nele);
 
-type = 'tri';
+type = 'quad';
 switch type
     case 'tri'
         dofs = nele.^2*2 * (deg+1)*(deg+2)/2;

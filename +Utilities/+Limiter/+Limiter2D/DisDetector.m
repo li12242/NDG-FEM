@@ -27,8 +27,11 @@ temp(ind) = 0;
 I = AVE*(mesh.sJ.*abs(temp));
 
 %% II. radius of the circumscribed circle
-r = sqrt(mesh.J(1,:)*2./pi);
-I = I./r;
+% Area of the standard element
+area = sum(sum(shape.M));
+
+r = sqrt(mesh.J(1,:)*area./pi);
+I = I./r;%.^( (mesh.Shape.nOrder + 1)./2 );
 
 %% III. edge length
 temp = mesh.sJ; temp(ind) = 0;
