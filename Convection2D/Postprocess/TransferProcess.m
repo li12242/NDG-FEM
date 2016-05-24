@@ -1,5 +1,5 @@
 function TransferProcess
-filename = 'Convection2D_2_80.nc';
+filename = 'Convection2D_1_60.nc';
 
 p_h = point3D(filename);
 % p_h = contour2D(filename);
@@ -12,16 +12,16 @@ x = ncread(filename, 'x');
 y = ncread(filename, 'y');
 
 % plot 3D points
-ind = 1:6:numel(x);
+ind = 1:1:numel(x);
 itime = 1;
 var = ncread(filename, 'var', [1, itime],[inf, 1]);
 
 p_h = plot3(x(ind), y(ind), var(ind), '.');
 zlim([-0.5, 1.2]); view(-22.7, 57.2);
 
-camera_on = 0;
+camera_on = 1;
 if camera_on
-    writerObj = VideoWriter('Triangle2_40.avi');
+    writerObj = VideoWriter('Triangle1_60.avi');
     writerObj.FrameRate = 60;
     open(writerObj);
 end

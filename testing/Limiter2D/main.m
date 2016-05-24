@@ -4,10 +4,10 @@ test = 1;
 
 switch test
     case 1 % quad
-        M = 40; N = 2;
+        M = 2; N = 2;
         mesh = quadSolver(N, M);
     case 2 % triangle 
-        M = 1; N = 2;
+        M = 2; N = 2;
         mesh = triSolver(N, M);
 end
 
@@ -16,7 +16,8 @@ u = zeros(size(mesh.x)); v = ones(size(mesh.x));
 
 % variable distribution
 figure;
-plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM));
+plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); hold on;
+plot3(mesh.x, mesh.y, var, '.');
 
 % discontinuity detector
 [~, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
