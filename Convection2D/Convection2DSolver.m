@@ -31,11 +31,11 @@ while(time < FinalTime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var = var + rk4b(INTRK)*resVar;
         
-        temp = Utilities.Limiter.Limiter2D.BJ2D(mesh, var);
-%         temp = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
-        [flag, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
-        ind = find(flag);
-        var(:, ind) = temp(:, ind);
+%         temp = Utilities.Limiter.Limiter2D.BJ2D(mesh, var);
+        var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
+%         [flag, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
+%         ind = find(flag);
+%         var(:, ind) = temp(:, ind);
         
     end% for
     outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);
@@ -44,6 +44,12 @@ while(time < FinalTime)
     outStep = outStep + 1;
 %     plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 end% while
+
+% outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);
+% outfile.putVarPart('time', outStep, 1, time);
+%     
+% outStep = outStep + 1;
+
 end% func
 
 function [rk4a, rk4b, rk4c] = RK4Coeff

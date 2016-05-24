@@ -16,18 +16,12 @@ maxv = max([v; maxv]);
 minv = min([v; minv]);
 
 % Apply reconstruction to find elements in need of limiting
-minu = min(u);
-maxu = max(u);
-
-Ae = 0.5*2*2;
-dx = sqrt(mesh.J(1, :)*Ae); K = 0;
-
-ids = find( (maxu > maxv | minu < minv) & (maxu - minu) > K.*dx.^2);
+minu = min(u); maxu = max(u);
+ids = find( (maxu > maxv | minu < minv) );
 
 % Check to see if any elements require limiting
 if(~isempty(ids))
-  
-  % 
+
   maxu = ones(Np, 1)*maxv; minu = ones(Np, 1)*minv;
   meanu = ones(Np, 1)*v;
   
@@ -38,7 +32,6 @@ if(~isempty(ids))
   ulimit(:,ids) = meanu(:, ids) + ...
       a(:, ids).*(ulimit(:, ids) - meanu(:, ids));
 end% if
-
 end% func
 
 
