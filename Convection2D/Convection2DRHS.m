@@ -27,12 +27,17 @@ end% func
 
 function Fs = ConvectionLF(mesh, var, u, v)
 % L-F flux
-un = normal(mesh, u(mesh.vmapM), v(mesh.vmapM));
-[FM, GM] = ConvectionFlux(var(mesh.vmapM), u(mesh.vmapM), v(mesh.vmapM));
-[FP, GP] = ConvectionFlux(var(mesh.vmapP), u(mesh.vmapM), v(mesh.vmapM));
+
+uM = u(mesh.vmapM); vM = v(mesh.vmapM);
+varM = var(mesh.vmapM); varP = var(mesh.vmapP);
+un = normal(mesh, uM, vM);
+
+[FM, GM] = ConvectionFlux(varM, uM, vM);
+[FP, GP] = ConvectionFlux(varP, uM, vM);
+
 FsM = normal(mesh, FM, GM); 
 FsP = normal(mesh, FP, GP); 
-varM = var(mesh.vmapM); varP = var(mesh.vmapP);
+
 Fs = 0.5*(FsM + FsP) - 0.5.*abs(un).*(varP - varM);
 end% func
 
