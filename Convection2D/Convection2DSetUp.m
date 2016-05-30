@@ -4,7 +4,9 @@ function [mesh, var] = Convection2DSetUp(N, M)
 % Input:
 %   N - degree of polynomial
 %   M - No. of elements on each edge
-% 
+% Output:
+%   mesh - mesh object
+%   var - scalar variable
 
 % mesh = quadSolver(N, M);
 mesh = triSolver(N, M);
