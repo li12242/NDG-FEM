@@ -3,14 +3,17 @@ V = mesh.Shape.VandMatrix;
 Np = mesh.Shape.nNode;
 
 % Compute cell averages, v
-uh = V\u; uh(2:Np,:)=0; uavg = V*uh; v = uavg(1,:);
+uh = V\u;
+uh(2:Np,:)=0; 
+uavg = V*uh; 
+v = uavg(1,:);
 
 % Apply slope limiter as needed
 ulimit = u;
 
 % find max and min cell averages
-maxv = max(v(mesh.EToE')); 
-minv = min(v(mesh.EToE')); 
+maxv = max(v(mesh.EToE'));
+minv = min(v(mesh.EToE'));
 
 maxv = max([v; maxv]);
 minv = min([v; minv]);
@@ -36,10 +39,11 @@ end% func
 
 
 function a = limitCoeff(maxu, minu, meanu, u)
-a = ones(size(u)); Np = size(u, 1);
-
-ind = u > meanu;
-a(ind) = min(1, ( maxu(ind) - meanu(ind) )./( u(ind) - meanu(ind) ) );
+% a = ones(size(u)); 
+Np = size(u, 1);
+% 
+% ind = u > meanu;
+a = min(1, ( maxu - meanu )./( u - meanu ) );
 
 ind = u < meanu;
 a(ind) = min(1, ( minu(ind) - meanu(ind) )./( u(ind) - meanu(ind) ) );
