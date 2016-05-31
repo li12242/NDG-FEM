@@ -1,8 +1,8 @@
 function TransferProcess
 filename = 'Convection2D_2_20.nc';
 
-p_h = point3D(filename);
-% p_h = contour2D(filename);
+% p_h = point3D(filename);
+p_h = contour2D(filename);
 end% func
 
 function p_h = point3D(filename)
@@ -19,7 +19,7 @@ var = ncread(filename, 'var', [1, itime],[inf, 1]);
 p_h = plot3(x(ind), y(ind), var(ind), '.');
 zlim([-0.5, 1.2]); view(-22.7, 57.2);
 
-camera_on = 1;
+camera_on = 0;
 if camera_on
     writerObj = VideoWriter('Triangle1_60.avi');
     writerObj.FrameRate = 60;
