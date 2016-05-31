@@ -1,4 +1,6 @@
 function ulimit = BJ2D(mesh, u)
+% Barth and Jepson slope limiter
+
 V = mesh.Shape.VandMatrix;
 Np = mesh.Shape.nNode;
 

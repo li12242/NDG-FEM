@@ -33,6 +33,7 @@ classdef Quad < StdRegions.QuadBasic
         nFaceNode           % nFace x nNode (at face element)
         Mes                 % face integral mass matrix of face nodes
         Mef                 % face integral mass matrix of all nodes
+        LIFT                % lift matrix, inv(M)*Mes
     end% properties
 %% properties private
     properties(SetAccess=private, GetAccess=private)
@@ -52,6 +53,8 @@ classdef Quad < StdRegions.QuadBasic
             obj.nFaceNode = sum(obj.nPerBoundaryNode);
             obj.Mes = getSmallFaceMassMatrix(obj, LineFaceShape);
             obj.Mef = getFullFaceMassMatrix(obj);
+            
+            obj.LIFT = (obj.VandMatrix*(obj.VandMatrix)')*obj.Mes;
         end% func
         
         function [x, y, rx, sx, ry, sy, J] = getEleGeometric(obj, VX, VY)
