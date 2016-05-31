@@ -1,23 +1,22 @@
-function rhsVar = Convection2DRHS(mesh, var, time, u, v)
+function rhsVar = Convection2DRHS(mesh, var, u, v)
 % 2D convection problem
 % Righ Hand sides
 
 tri = mesh.Shape;
 
-Fs = ConvectionLF(mesh, var, u, v);
-% Fs = BoundaryCondition(mesh, Fs, time, Speed);
-
+% volume flux
 [F, G] = ConvectionFlux(var, u, v);
 
-% strong form
+% numerical flux
 
-[FM, GM] = ConvectionFlux(var(mesh.vmapM), u(mesh.vmapM), v(mesh.vmapM));
+Fs = ConvectionLF(mesh, var, u, v);
+FM = F(mesh.vmapM); GM = G(mesh.vmapM);
 dF = normal(mesh, FM, GM) - Fs;
-% dF = lf(mesh, var, Speed);
 
+% strong form
 rhsVar = -( mesh.rx.*(tri.Dr*F) + mesh.sx.*(tri.Ds*F) ...
     + mesh.ry.*(tri.Dr*G) + mesh.sy.*(tri.Ds*G) ) ...
-    + tri.invM*tri.Mes*(dF.*mesh.fScale);
+    + tri.LIFT*(dF.*mesh.fScale);
 
 % weak form
 % rhsVar = ( mesh.rx.*(tri.Drw*F) + mesh.sx.*(tri.Dsw*F) ...
@@ -35,8 +34,8 @@ un = normal(mesh, uM, vM);
 [FM, GM] = ConvectionFlux(varM, uM, vM);
 [FP, GP] = ConvectionFlux(varP, uM, vM);
 
-FsM = normal(mesh, FM, GM); 
-FsP = normal(mesh, FP, GP); 
+FsM = normal(mesh, FM, GM);
+FsP = normal(mesh, FP, GP);
 
 Fs = 0.5*(FsM + FsP) - 0.5.*abs(un).*(varP - varM);
 end% func
