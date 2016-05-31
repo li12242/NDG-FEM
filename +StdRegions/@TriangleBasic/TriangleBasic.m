@@ -19,7 +19,7 @@ classdef TriangleBasic < StdRegions.BaseElement
     %   VandMatrix  - Vandmonde Matrix
     properties
         M   % Mass matrix
-        invM    % inverse of Mass Matrix
+        
         Dr  % Derivative Matrix of r
         Ds  % Derivative Matrix of s
         Drw % Derivative Matrix of r in weak form 
@@ -42,7 +42,7 @@ classdef TriangleBasic < StdRegions.BaseElement
             obj.VandMatrix = getVandMatrix(obj.nOrder, obj.r, obj.s);
             invV = inv(obj.VandMatrix);
             obj.M = invV'*invV;
-            obj.invM = obj.VandMatrix*(obj.VandMatrix)';
+            
             [obj.Dr, obj.Ds, obj.Drw, obj.Dsw] = ...
                 getDeriMatrix(obj.nOrder,obj.r, obj.s ,obj.VandMatrix);
         end% function

@@ -23,7 +23,7 @@ while(time < FinalTime)
     fprintf('Processing: %f ...\n', time./FinalTime)
     
     for INTRK = 1:5
-        rhsVar = Convection2DRHS(mesh, var, time, u, v);
+        rhsVar = Convection2DRHS(mesh, var, u, v);
         
 %         % filter residual
 %         rhsVar = Filt*rhsVar;
