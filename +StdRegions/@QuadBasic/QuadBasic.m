@@ -38,7 +38,10 @@ classdef QuadBasic < StdRegions.BaseElement
             obj.sName = 'Quad';
             obj.nNode = (nOrder+1)^2;
             
+            % get coordinate of LGL points on reference element
             [obj.r, obj.s] = getCoor(nOrder);
+            
+            % get Vandermonde matrix
             obj.VandMatrix = getVandMatrix(obj.nOrder, obj.r, obj.s);
             invV = inv(obj.VandMatrix);
             obj.M = invV'*invV;

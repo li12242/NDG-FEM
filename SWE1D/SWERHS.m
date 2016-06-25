@@ -59,6 +59,7 @@ function [Sh, Sq] = SWESource(mesh, bedElva, h, isWet)
 g = 9.81; line = mesh.Shape;
 Sh = zeros(size(h)); %Sq = zeros(size(h));
 Sq = -g.*h.*mesh.rx.*(line.Dr*bedElva);
+% Sq = -g.*mesh.rx.*(line.Dr*(h.*bedElva));
 Sq(:, ~isWet) = 0.0;
 end% func
 
