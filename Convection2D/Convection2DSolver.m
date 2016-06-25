@@ -1,7 +1,46 @@
-function var = Convection2DSolver(mesh, var, FinalTime, Speed)
+function var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile)
 % 2D convection problem
 % RK time stepping
 
+[rk4a, rk4b, rk4c] = RK4Coeff;
+time = 0;
+% Filt = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
+
+resVar = zeros(size(var));
+% compute time step size
+xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
+CFL=0.30;  
+un = max(max( sqrt(u.^2 + v.^2) ));
+dt = CFL/un*xmin;
+outStep = 0;
+while(time < FinalTime)
+    
+    if time + dt > FinalTime
+        dt = FinalTime - time;
+    end
+    time = time+dt;
+    
+    fprintf('Processing: %f ...\n', time./FinalTime)
+    
+    for INTRK = 1:5
+        rhsVar = Convection2DRHS(mesh, var, time, u, v);
+        
+%         % filter residual
+%         rhsVar = Filt*rhsVar;
+        
+        resVar = rk4a(INTRK)*resVar + dt*rhsVar;
+        var = var + rk4b(INTRK)*resVar;
+        var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
+        [~, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
+        
+    end% for
+    StoreVar(outfile, mesh, var, I, time, outStep);
+    outStep = outStep + 1;
+%     plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
+end% while
+end% func
+
+function [rk4a, rk4b, rk4c] = RK4Coeff
 rk4a = [            0.0 ...
         -567301805773.0/1357537059087.0 ...
         -2404267990393.0/2016746695238.0 ...
@@ -12,34 +51,11 @@ rk4b = [ 1432997174477.0/9575080441755.0 ...
          1720146321549.0/2090206949498.0  ...
          3134564353537.0/4481467310338.0  ...
          2277821191437.0/14882151754819.0];
-     
-time = 0;
-
-% Filt = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
-
-resVar = zeros(size(var));
-% compute time step size
-xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
-CFL=0.10;  un = sqrt(sum(Speed.^2));
-dt = CFL/un*xmin;
-
-while(time < FinalTime)
-    time = time+dt;
-    fprintf('Processing: %f ...\n', time./FinalTime)
-    for INTRK = 1:5
-        rhsVar = Convection2DRHS(mesh, var, time, Speed);
-        
-%         % filter residual
-%         rhsVar = Filt*rhsVar;
-        
-        resVar = rk4a(INTRK)*resVar + dt*rhsVar;
-        var = var + rk4b(INTRK)*resVar;
-        var = Utilities.Limiter.SlopeLimitSWE(mesh, var);
-        plot3(mesh.x, mesh.y, var, '.'); drawnow;
-%         plot3([mesh.x; mesh.x(1,:)], [mesh.y; mesh.y(1,:)], [var; var(1,:)], '.-'); drawnow
-    end% for
-    
-end% while
+rk4c = [             0.0  ...
+         1432997174477.0/9575080441755.0 ...
+         2526269341429.0/6820363962896.0 ...
+         2006345519317.0/3224310063776.0 ...
+         2802321613138.0/2924317926251.0];
 end% func
 
 function F = Fliter(Shape, Nc, frac)

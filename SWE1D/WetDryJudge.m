@@ -1,5 +1,5 @@
 function isWet = WetDryJudge(mesh, h, physics)
-%
+% 
 
 hDry = physics.getVal('minDepth');
 

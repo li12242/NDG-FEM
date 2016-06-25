@@ -43,12 +43,12 @@ end% if
 % Initialize solver and construct grid and metric
 line = StdRegions.Line(nOrder);
 mesh = MultiRegions.RegionLineBC(line, EToV, VX, BC);
-physics.incert('mesh', mesh);
+
 physics.incert('VX', VX);
 physics.incert('EToV', EToV);
 
 % set bottom topography
-bedElva = SetBed(physics);
+bedElva = SetBed(physics, mesh);
 physics.incert('bedElva', bedElva);
 
 % set initial condition
@@ -64,11 +64,13 @@ switch caseName
         [h, q] = ParaBowlInit(mesh, bedElva);
         
     case 'LakeAtRest'
-        [h, q] = LakeAtRestInit(mesh, bedElva);
+        [h, q] = LakeAtRestInit(physics, mesh, bedElva);
         
     case 'TsunamiRunup'
         [h, q] = TsunamiRunup(mesh, bedElva);
 end% switch
+
+physics.incert('mesh', mesh);
 physics.incert('height', h);
 physics.incert('flux', q);
 end% func
@@ -99,13 +101,18 @@ h = z - bedElva;
 h(h<0) = 0;
 end% func
 
-function [h, q] = LakeAtRestInit(mesh, bedElevation)
+function [h, q] = LakeAtRestInit(physics, mesh, bedElevation)
 eta = ones(size(mesh.x));
 h = eta - bedElevation;
 q = zeros(size(mesh.x));
 % correct transition element
-transIndex = find(TransiteCellIdentify(mesh, h));
+isWet = WetDryJudge(mesh, h, physics);
+transIndex = find(TransiteCellIdentify(mesh, isWet));
 h(h<0) = 0;
+
+% periodic BC
+mesh.vmapP(1) = mesh.nNode;
+mesh.vmapP(end) = 1;
 
 np = 10;
 [r, w] = Polylib.zwglj(np);
@@ -134,21 +141,6 @@ h = z - bedElva;
 % correct transition element
 % transIndex = find(TransiteCellIdentify(mesh, h));
 h(h<0) = 0;
-
-% np = 10;
-% [r, w] = Polylib.zwglj(np);
-% V = StdRegions.Line.getVandMatrix(mesh.Shape.nOrder, r);
-% for i = 1:numel(transIndex)
-%     b1 = bedElva(1, transIndex(i)); b2 = bedElva(end, transIndex(i));
-%     z1 = z(1, transIndex(i)); z2 = z(end, transIndex(i));
-%     eta = (1-r)./2*z1 + (1+r)./2*z2;
-%     b = (1-r)./2*b1 + (1+r)./2*b2;
-%     htemp = eta - b; htemp(htemp<0) = 0;
-%     temp = htemp.*w;
-%     hm = (sum( V.* repmat(temp, 1, mesh.Shape.nNode)));
-%     hm(2:end) = 0;
-%     h(:, transIndex(i)) = mesh.Shape.VandMatrix*hm';
-% end% for
 
 end% func
 
@@ -180,8 +172,8 @@ switch initCase
 end% switch
 end% func
 
-function bedElevation = SetBed(physics)
-mesh = physics.getVal('mesh');
+function bedElevation = SetBed(physics, mesh)
+% mesh = physics.getVal('mesh');
 VX = physics.getVal('VX');
 EToV = physics.getVal('EToV');
 % Initialize the bed elevation according to the case name

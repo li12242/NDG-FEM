@@ -23,23 +23,23 @@ for itime = 1:numel(FinalTime)
     % draw picture
     figure('Position', [266   506   556   252]);
     bed1 = -0.1*x1; eta1(eta1 < bed1) = bed1(eta1 < bed1);
-    plot(x1, eta1, 'k.'); hold on;
-    plot(x, eta, '-r.');
+    plot(x1, eta1, 'k.', 'MarkerSize', 8); hold on;
+    plot(x, eta, '-r.', 'LineWidth', 1);
     plot(x, bedElevation, 'k')
     xlim([-400, 800]);
     t = legend('Exact', 'HREF');
     set(t, 'box', 'off');
         
-    xlabel('x', 'Interpreter', 'Latex');
-    ylabel('$\eta$', 'Interpreter', 'Latex');
+    xlabel('x (m)', 'Interpreter', 'Latex');
+    ylabel('$\eta$ (m)', 'Interpreter', 'Latex');
     
     figure('Position', [266   506   556   252]);
-    plot(x1, u1, 'k.'); hold on;
-    plot(x, u, '-r.'); 
+    plot(x1, u1, 'k.', 'MarkerSize', 8); hold on;
+    plot(x, u, '-r.', 'LineWidth', 1); 
     ylim([-20, 15])
     xlim([-400, 800]);
-    xlabel('x', 'Interpreter', 'Latex');
-    ylabel('u', 'Interpreter', 'Latex');
+    xlabel('x (m)', 'Interpreter', 'Latex');
+    ylabel('u (m/s)', 'Interpreter', 'Latex');
     
 end% for
 end
@@ -80,8 +80,8 @@ for itime = 1:numel(FinalTime)
     xlim([-400, 800]);
     legend('convectional wet/dry treatment', 'h-refined wet/dry treatment', ...
         'analytical solution')
-    xlabel('x', 'Interpreter', 'Latex');
-    ylabel('$\eta$', 'Interpreter', 'Latex');
+    xlabel('x (m)', 'Interpreter', 'Latex');
+    ylabel('$\eta$ (m)', 'Interpreter', 'Latex');
     
     subplot(2,1,2);
     plot(x1, u1, 'k'); hold on;
@@ -89,8 +89,8 @@ for itime = 1:numel(FinalTime)
     plot(x, ur, '-ro')
     
     xlim([-400, 800]);
-    xlabel('x', 'Interpreter', 'Latex');
-    ylabel('u', 'Interpreter', 'Latex');
+    xlabel('x (m)', 'Interpreter', 'Latex');
+    ylabel('u (m/s)', 'Interpreter', 'Latex');
     
 end% for
 end% func
