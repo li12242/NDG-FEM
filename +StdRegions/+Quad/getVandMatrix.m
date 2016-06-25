@@ -1,5 +1,8 @@
 function VandMatrix = getVandMatrix(nOrder, r, s)
-% get Vandermonde matrix of quadrilateral
+% get Vandermonde matrix of quadrilateral element V
+% $V_{ij} = \psi_j(\mathbf{\xi_i})$
+% where $\psi_{(n+1)i+j+1}(\mathbf{\xi}) = P_i{r}P_j(s), \quad 0\le i, j \le n$
+% is the orthogonal basis, and $P_i(x)$ is the normalized Legendre polynomials
 
 VandMatrix = zeros(numel(r), (nOrder+1)^2 );
 np = nOrder + 1; % number of points on edge

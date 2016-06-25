@@ -1,6 +1,4 @@
 function [h ,q] = SWESetUp(nele, hDry)
-% Idealized dam break problem of 1D shallow water equation 
-% 
 
 physics = Utilities.varGroup;
 
@@ -11,6 +9,10 @@ caseName = 'ParabolicBowl';
 % caseName = 'TsunamiRunup';
 
 physics.incert('caseName', caseName);
+% minimum water depth
+physics.incert('minDepth', hDry);
+g = 9.81;
+physics.incert('gravity', g);
 
 % polynomial order and No. of elements
 ndegree = 1; %nele = 400;
@@ -21,12 +23,6 @@ physics = SWEInit(physics, ndegree, nele);
 % set output file
 mesh = physics.getVal('mesh');
 ncfile = CreateOutputFile(mesh);
-
-% minimum water depth
-%hDry = 1e-16;
-physics.incert('minDepth', hDry);
-g = 9.81;
-physics.incert('gravity', g);
 
 % save mesh nodes
 ncid = netcdf.open('SWE1D.nc','WRITE');

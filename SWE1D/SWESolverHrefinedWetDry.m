@@ -18,8 +18,10 @@ FinalTime = physics.getVal('FinalTime');
 
 % eliminate zero depth in wet cell
 isWet = WetDryJudge(mesh, h, physics);
-[h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
-
+% [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
+lamda = SWESpeed(h, q, physics, isWet);
+StoreVar(ncfile, h, q, time, lamda, outstep)
+outstep = outstep + 1;
 % outer time step loop
 while(time<FinalTime)
     lamda = SWESpeed(h, q, physics, isWet);
@@ -57,12 +59,12 @@ while(time<FinalTime)
 
     for INTRK = 1:5
         
-%         subplot(3,1,1); 
-%         plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k'); 
-%         subplot(3,1,2); plot(new_mesh.x, q1, '-r'); 
-%         u = q1./h1; u(h1<1e-3) = 0;
-%         subplot(3,1,3); plot(new_mesh.x, u, '-b.');
-%         drawnow;
+% subplot(3,1,1); 
+% plot(new_mesh.x, h1+new_bedElva, '-b.', new_mesh.x, new_bedElva, 'k'); 
+% subplot(3,1,2); plot(new_mesh.x, q1, '-r'); 
+% u = q1./h1; u(h1<1e-3) = 0;
+% subplot(3,1,3); plot(new_mesh.x, u, '-b.');
+% drawnow;
         
 %         timelocal = time + dt*rk4c(INTRK);
 
