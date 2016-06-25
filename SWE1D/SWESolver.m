@@ -1,6 +1,6 @@
 function [h, q] = SWESolver(physics, ncfile)
 % time setpping of 1D shallow water equation 
-% 
+
 mesh = physics.getVal('mesh');
 bedElva = physics.getVal('bedElva');
      
@@ -16,8 +16,10 @@ FinalTime = physics.getVal('FinalTime');
 
 % eliminate zero depth in wet cell
 isWet = WetDryJudge(mesh, h, physics);
-[h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
-
+% [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
+lamda = SWESpeed(h, q, physics, isWet);
+StoreVar(ncfile, h, q, time, lamda, outstep)
+outstep = outstep + 1;
 % outer time step loop
 while(time<FinalTime)
     lamda = SWESpeed(h, q, physics, isWet);
@@ -34,20 +36,16 @@ while(time<FinalTime)
     fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
         time./FinalTime, dt, lamda)
     
-%     if outstep > 577
-%         keyboard
-%     end
-
     % Runge-Kutta residual storage  
     resQ = zeros(size(q)); resH = zeros(size(h));
 
     for INTRK = 1:5
         
-%         subplot(3,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
-%         subplot(3,1,2); plot(mesh.x, q, '-r');
-%         u = q./h; u(h<eps) = 0;
-%         subplot(3,1,3); plot(mesh.x, u, '-b.');
-%         drawnow;
+% subplot(3,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
+% subplot(3,1,2); plot(mesh.x, q, '-r');
+% u = q./h; u(h<eps) = 0;
+% subplot(3,1,3); plot(mesh.x, u, '-b.');
+% drawnow;
         
         timelocal = time + dt*rk4c(INTRK);
         

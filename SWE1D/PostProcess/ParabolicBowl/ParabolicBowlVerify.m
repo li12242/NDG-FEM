@@ -1,6 +1,6 @@
 function ParabolicBowlVerify
 
-filename = 'SWE1D_1_200.nc';
+filename = 'SWE1D_ParabolicBowl.nc';
 time = ncread(filename, 'time');
 x = ncread(filename, 'x');
 
@@ -28,8 +28,8 @@ for itime = 1:numel(FinalTime)
     
     % draw picture
     figure('Position', [771   467   554   293]);
-    plot(xe, he+be, 'k.', 'MarkerSize', 5); hold on;
-    plot(x, h+b, 'r'); 
+    plot(xe, he+be, 'b-', 'LineWidth', 2); hold on;
+    plot(x, h+b, 'r--', 'LineWidth', 2); 
     t = legend('Exact', 'HREF');
     plot(x, b, 'k')
     xlim([-4500, 4500])
@@ -38,8 +38,8 @@ for itime = 1:numel(FinalTime)
     ylabel('$\eta$', 'Interpreter', 'Latex');
 
     figure('Position', [771   467   554   293]);
-    plot(x, q, 'r'); hold on;
-    plot(xe, qe, 'k.', 'MarkerSize', 5);
+    plot(xe, qe, 'b-', 'LineWidth', 2); hold on;
+    plot(x, q, 'r--', 'LineWidth', 2); 
     xlim([-4500, 4500])
     ylim([-55, 55]);
     set(gca, 'YTick', -50:25:50)
@@ -47,8 +47,8 @@ for itime = 1:numel(FinalTime)
     ylabel('q', 'Interpreter', 'Latex');
     
     figure('Position', [771   467   554   293]);
-    plot(x, u, 'r'); hold on;
-    plot(xe, ue, 'k.', 'MarkerSize', 5); 
+    plot(xe, ue, 'b-', 'LineWidth', 2); hold on;
+    plot(x, u, 'r--', 'LineWidth', 2); 
     xlim([-4500, 4500]); ylim([-10, 10]);
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('u', 'Interpreter', 'Latex');
