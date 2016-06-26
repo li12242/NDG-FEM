@@ -4,10 +4,12 @@ function [mesh, var] = Convection2DSetUp(N, M)
 % Input:
 %   N - degree of polynomial
 %   M - No. of elements on each edge
-% 
+% Output:
+%   mesh - mesh object
+%   var - scalar variable
 
-mesh = quadSolver(N, M);
-% mesh = triSolver(N, M);
+% mesh = quadSolver(N, M);
+mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
@@ -15,11 +17,32 @@ w = 5*pi/6;
 u = -w.*mesh.y; v = w.*mesh.x;
 
 FinalTime = 2.4;
-filename = ['Convection2D_', num2str(N),'_',num2str(M),'.nc'];
-outfile = CreateNetcdfFile(mesh, filename);
+filename = ['Convection2D_', num2str(N),'_',num2str(M)];
+outfile = CreateNetcdf(filename, mesh);
 
 var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile);
 % postprocess(mesh, var)
+end% func
+
+function outfile = CreateNetcdf(filename, mesh)
+
+time = Utilities.Netcdf.dimobj('time', 0); % unlimited dimensions
+node = Utilities.Netcdf.dimobj('node', mesh.nNode);
+
+x = Utilities.Netcdf.varobj('x', node, 'double');
+y = Utilities.Netcdf.varobj('y', node, 'double');
+t = Utilities.Netcdf.varobj('time', time, 'double');
+var = Utilities.Netcdf.varobj('var', [node, time], 'double');
+
+outfile = Utilities.Netcdf.fileobj(filename, [node, time], [x, y, t, var]);
+
+% initialize output file
+outfile.createFile;
+
+% set vertex location value
+outfile.putVarPart('x', 0, mesh.nNode, mesh.x);
+outfile.putVarPart('y', 0, mesh.nNode, mesh.y);
+
 end% func
 
 function var = ConvectionInit(mesh)
@@ -41,8 +64,7 @@ function mesh = triSolver(N, M)
 % read triangle mesh
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/triangle');
 
-np = M+1;
-[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(np, -1, 1, 1);
+[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M, -1, 1, 1);
 
 tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);

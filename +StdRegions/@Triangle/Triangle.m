@@ -33,6 +33,7 @@ classdef Triangle < StdRegions.TriangleBasic
         nFaceNode           % nFace x nNode (at face element)
         Mes                 % face integral mass matrix of face nodes
         Mef                 % face integral mass matrix of all nodes
+        LIFT                % lift matrix, inv(M)*Mes
     end% properties
 %% properties private
     properties(SetAccess=private, GetAccess=private)
@@ -52,6 +53,8 @@ classdef Triangle < StdRegions.TriangleBasic
             obj.nFaceNode = sum(obj.nPerBoundaryNode);
             obj.Mes = getSmallFaceMassMatrix(obj, LineFaceShape);
             obj.Mef = getFullFaceMassMatrix(obj);
+            
+            obj.LIFT = (obj.VandMatrix*(obj.VandMatrix)')*obj.Mes;
         end% func
 %% function getNodeListAtFace
 % return the num of node & node indicator (counterclockwise) at spicific face
@@ -97,18 +100,7 @@ classdef Triangle < StdRegions.TriangleBasic
             end
             facelist = contour+1:contour+obj.nPerBoundaryNode(iface);
         end% function
-%% function getReorderFaceListAtFace
-% return the reorder face list of the spicific face 
-% with the vertice order reformed
-% 
-% 
-        function facelist = getReorderFaceListAtFace(obj, iface, vorder)
-            % return the reorder face list of the spicific face
-            % with the vertice order reformed
-            facelist = getFaceListAtFace(obj, iface);
-            localList = StdRegions.Line.reorderLineNodeList(obj.nOrder, vorder);
-            facelist(:) = facelist(localList);
-        end% function
+        
         
         function nodelist = getVertexNodeList(obj)
             % return the nodelist of vertice in element
