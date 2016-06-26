@@ -9,6 +9,7 @@ function phys = SWEInit2d(phys)
 %           | - h : water depth
 %           | - q : flow flux
 %           | - mesh : mesh object
+%           | - dt : delta time
 % 
 
 %% Get parameters
@@ -23,23 +24,25 @@ meshType = phys.meshType;
 % init mesh and initial condition of test case
 switch casename
     case 'DamBreakDry'
-        [mesh, h, q, ftime] = DamBreakDry(N, Ne, meshType);
+        [mesh, h, qx, qy, ftime, dt] = DamBreakDry(N, Ne, meshType);
     case 'DamBreakWet'
-        [mesh, h, q, ftime] = DamBreakWet(N, Ne, meshType);
+        [mesh, h, qx, qy, ftime, dt] = DamBreakWet(N, Ne, meshType);
     case 'ParabolicBowl'
-        [mesh, h, q, ftime] = ParabolicBowl(N, Ne, meshType);
+        [mesh, h, qx, qy, ftime, dt] = ParabolicBowl(N, Ne, meshType);
 end% switch
 
 %% Assignments
 % Assign the obtained variables to structure variable phys
-phys.mesh = mesh;
-phys.h = h;
-phys.q = q;
+phys.mesh  = mesh;
+phys.h     = h;
+phys.qx    = qx;
+phys.qy    = qy;
+phys.dt    = dt;
 phys.ftime = ftime;
 
 end% func
 
-function [mesh, h, q, ftime] = DamBreakDry(N, Ne, meshType)
+function [mesh, h, q, ftime, dt] = DamBreakDry(N, Ne, meshType)
 %% Initialize the mesh grid
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
@@ -67,9 +70,10 @@ q = zeros(size(mesh.x));
 
 xc = mean(mesh.x); ind = xc < damPosition;
 h(:, ind) = 10;
+dt = 1e-2;
 end% func
 
-function [mesh, h, q, ftime] = DamBreakWet(N, Ne)
+function [mesh, h, q, ftime, dt] = DamBreakWet(N, Ne)
 %% Initialize the mesh grid
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
@@ -97,4 +101,5 @@ q = zeros(size(mesh.x));
 
 xc = mean(mesh.x); ind = xc < damPosition;
 h(:, ind) = 10;
+dt = 1e-2;
 end% func
