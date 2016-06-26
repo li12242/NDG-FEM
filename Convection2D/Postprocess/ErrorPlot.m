@@ -1,3 +1,5 @@
+%% errors on square meshes
+
 close all
 
 index = 5;
@@ -6,7 +8,8 @@ data = [40	160	1.77e-02	0.00	1.85e+01	0.00
 80	320	4.72e-03	2.18	1.58e+01	0.43
 100	400	2.73e-03	2.46	1.36e+01	0.67];
 
-dx = sqrt(data(:, 2));
+n = 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), '+-', 'Markersize', 5); hold on;
 
 data = [40	360	1.01e-03	0.00	1.92e+00	0.00
@@ -14,7 +17,8 @@ data = [40	360	1.01e-03	0.00	1.92e+00	0.00
 80	720	6.69e-05	3.73	4.66e-01	1.80
 100	900	3.16e-05	3.36	3.34e-01	1.49];
 
-dx = sqrt(data(:, 2));
+n = n + 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), 'o-', 'Markersize', 5);
 
 data = [40	640	4.99e-05	0.00	1.46e-01	0.00
@@ -22,7 +26,8 @@ data = [40	640	4.99e-05	0.00	1.46e-01	0.00
 80	1280	2.68e-06	4.10	2.90e-02	2.09
 100	1600	1.09e-06	4.05	1.81e-02	2.11];
 
-dx = sqrt(data(:, 2));
+n = n+ 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), '<-', 'Markersize', 5);
 
 data = [40	1000	3.49e-06	0.00	1.59e-02	0.00
@@ -30,7 +35,8 @@ data = [40	1000	3.49e-06	0.00	1.59e-02	0.00
 80	2000	1.05e-07	5.02	1.84e-03	3.05
 100	2500	3.44e-08	4.99	9.37e-04	3.02];
 
-dx = sqrt(data(:, 2));
+n = n+ 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), '*-', 'Markersize', 5);
 
 data = [40	1440	7.80e-07	0.00	3.15e-03	0.00
@@ -38,7 +44,8 @@ data = [40	1440	7.80e-07	0.00	3.15e-03	0.00
 80	2880	4.08e-09	6.04	9.80e-05	4.20
 100	3600	1.08e-09	5.97	4.04e-05	3.97];
 
-dx = sqrt(data(:, 2));
+n = n+ 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), '^-', 'Markersize', 5);
 
 data = [40	1960	8.48e-07	0.00	2.52e-03	0.00
@@ -46,11 +53,59 @@ data = [40	1960	8.48e-07	0.00	2.52e-03	0.00
 80	3920	6.85e-08	8.26	6.05e-04	6.00
 100	4900	1.19e-08	7.85	1.15e-04	7.45];
 
-dx = sqrt(data(:, 2));
+n = n+ 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
 loglog(dx, data(:, index), 'd-', 'Markersize', 5);
 
 t = legend('p = 1', 'p = 2', 'p = 3', 'p = 4', 'p = 5', 'p = 6');
 set(t, 'box', 'off')
 
 xlabel('$\sqrt{DOFs}$', 'Interpreter', 'Latex')
+ylabel('$L_{\infty}$', 'Interpreter', 'Latex')
+
+%% errors on triangle
+
+index = 3;
+
+data = [40 	 9600 	 4.99e-02 	 0.00 	 8.25e-01 	 0.00
+60 	 21600 	 4.48e-02 	 0.26 	 8.05e-01 	 0.06
+80 	 38400 	 3.99e-02 	 0.41 	 7.57e-01 	 0.22
+100 	 60000 	 3.51e-02 	 0.57 	 7.00e-01 	 0.35];
+
+n = 1;
+dx = sqrt(data(:, 1).^2*2 * (n+1)*(n+2)/2);
+loglog(dx, data(:, index), 'b+-', 'Markersize', 5); hold on;
+
+data = [40 	 19200 	 5.01e-02 	 0.00 	 8.92e-01 	 0.00
+60 	 43200 	 4.53e-02 	 0.25 	 8.39e-01 	 0.15
+80 	 76800 	 4.05e-02 	 0.39 	 7.80e-01 	 0.25
+100 	 120000 	 3.58e-02 	 0.54 	 7.19e-01 	 0.36];
+
+n = 2;
+dx = sqrt(data(:, 1).^2*2 * (n+1)*(n+2)/2);
+loglog(dx, data(:, index), 'bo-', 'Markersize', 5);
+
+% compared square meshes
+data = [40	160	1.77e-02	0.00	1.85e+01	0.00
+60	240	8.83e-03	1.72	1.79e+01	0.08
+80	320	4.72e-03	2.18	1.58e+01	0.43
+100	400	2.73e-03	2.46	1.36e+01	0.67];
+
+n = 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
+loglog(dx, data(:, index), 'r+-', 'Markersize', 5); 
+
+data = [40	360	1.01e-03	0.00	1.92e+00	0.00
+60	540	1.96e-04	4.06	7.82e-01	2.22
+80	720	6.69e-05	3.73	4.66e-01	1.80
+100	900	3.16e-05	3.36	3.34e-01	1.49];
+
+n = n+ 1;
+dx = sqrt(data(:, 1).^2*(n+1).^2);
+loglog(dx, data(:, index), 'ro-', 'Markersize', 5);
+
+t = legend('triangle p = 1', 'triangle p = 2', 'square p = 1', 'square p = 2');
+set(t, 'box', 'off')
+xlabel('$\sqrt{DOFs}$', 'Interpreter', 'Latex')
+% ylabel('$L_2$', 'Interpreter', 'Latex')
 ylabel('$L_{\infty}$', 'Interpreter', 'Latex')
