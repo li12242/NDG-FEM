@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD:+Utilities/+Limiter/+Limiter1D/MinmodLinear.m
 function ulimit = MinmodLinear(mesh, u)
 % function ulimit = SlopeLimit1(u);
@@ -24,6 +26,7 @@ vkp1 = [v(2:mesh.nElement),v(mesh.nElement)];
 ulimit = Utilities.Limiter.Limiter1D.LimitLinear(ul,mesh.x,vkm1,vk,vkp1, mesh);
 return
 =======
+>>>>>>> master
 function ulimit = MinmodLinear(mesh, u)
 % function ulimit = SlopeLimit1(u);
 % Purpose: Apply minmod limiter to u, get linear result
@@ -48,4 +51,7 @@ vkp1 = [v(2:mesh.nElement),v(mesh.nElement)];
 % Limit function in all cells
 ulimit = Utilities.Limiter.Limiter1D.LimitLinear(ul,mesh.x,vkm1,vk,vkp1, mesh);
 return
+<<<<<<< HEAD
+=======
 >>>>>>> 4c67ef677518787526fc4d2de5e78498d098910c:+Utilities/+Limiter/+Limiter1D/MinmodLinear.m
+>>>>>>> master
