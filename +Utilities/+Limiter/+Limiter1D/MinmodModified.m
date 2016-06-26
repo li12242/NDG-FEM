@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD:+Utilities/+Limiter/+Limiter1D/MinmodModified.m
 function ulimit = MinmodModified(mesh, u)
 % function ulimit = MinmodModified(u);
@@ -37,6 +39,7 @@ if(~isempty(ids))
 end% if
 end% func
 =======
+>>>>>>> master
 function ulimit = MinmodModified(mesh, u)
 % function ulimit = MinmodModified(u);
 % Purpose: Apply slopelimiter (Pi^N) to u assuming u an N'th order polynomial
@@ -74,4 +77,7 @@ if(~isempty(ids))
       mesh.x(:,ids),vkm1(ids),vk(ids),vkp1(ids),mesh);
 end% if
 end% func
+<<<<<<< HEAD
+=======
 >>>>>>> 4c67ef677518787526fc4d2de5e78498d098910c:+Utilities/+Limiter/+Limiter1D/MinmodModified.m
+>>>>>>> master
