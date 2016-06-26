@@ -35,7 +35,8 @@ function [VX,VY,EToV] = MeshGenTriangle2D(ne,start_coor,end_coor,flag)
 %========================================================================== 
 
 % info of point
-x = linspace(start_coor, end_coor, ne+1); y = linspace(end_coor, start_coor, ne+1);
+x = linspace(start_coor, end_coor, ne+1); 
+y = linspace(end_coor, start_coor, ne+1);
 x = repmat(x, ne+1, 1); y = repmat(y, ne+1, 1);
 x = x';
 VX = x(:); VY = y(:);
