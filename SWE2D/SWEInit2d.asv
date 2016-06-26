@@ -1,0 +1,39 @@
+function phys = SWEInit2d(phys)
+% Input: phys - structure variable contaions
+%           | - casename : test case name
+%           | - mesh : mesh object
+% Output: phys
+%           | - ftime : final time
+%           | - h : water depth
+%           | - q : flow flux
+% 
+
+%% Get parameters
+casename = phys.casename;
+N = phys.n;
+N
+
+
+% different test case
+switch casename
+    case 'DamBreakDry'
+        [h, q, ftime] = DamBreakDry(mesh);
+    case 'DamBreakWet'
+        [h, q, ftime] = DamBreakWet(mesh);
+    case 'ParabolicBowl'
+        [h, q, ftime] = ParabolicBowl(mesh);
+end% switch
+phys.mesh = mesh;
+
+phys.ftime = ftime;
+phys.h = h;
+phys.q = q;
+end% func
+
+function [h, q] = DamBreakDry(mesh)
+rmin = -1; rmax = 1;
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGenTriangle2D(0.0,1000,nElement);
+end% func
+
+function [h, q] = DamBreakWet(mesh)
+end% func
