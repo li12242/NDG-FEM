@@ -6,3 +6,6 @@ my_version
 *.avi
 *.m~
 html
+*.mexmaci64
+*.mexw64
+*.mexw32
