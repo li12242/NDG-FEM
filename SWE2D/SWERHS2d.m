@@ -1,11 +1,4 @@
-function [rhsQ, lamda] = SWE2DRHS_LF(mesh, Q, Nfp, Dr, Ds, Fmat, invM)
-
-% Interface function handles, 目的减少对象调用时超长API
-% Nfp = @(x)mesh.Shape.nFaceNode;
-% Dr = @(x)mesh.Shape.Dr;
-% Ds = @(x)mesh.Shape.Ds;
-% Fmat = @(x)mesh.Shape.FaceMassMatrixSmall;
-% invM = @(x)mesh.Shape.invM;
+function [rhsH, rhsQ] = SWERHS2d(mesh, h, q)
 
 h = Q(:,:,1); hu = Q(:,:,2); hv = Q(:,:,3); g = 9.8;
 
@@ -21,9 +14,6 @@ huP  = zeros(Nfp(), mesh.nElement); huP(:) = hu(mesh.vmapP);
 hvM  = zeros(Nfp(), mesh.nElement); hvM(:) = hv(mesh.vmapM); 
 hvP  = zeros(Nfp(), mesh.nElement); hvP(:) = hv(mesh.vmapP);
 
-% lamda = max{u-a, u, u+a}, a=sqrt(g*h)
-% lamda = zeros(Nfp(), mesh.nElement);
-% max{u-a}
 lamda1 = (mesh.nx.*huM./hM + mesh.ny.*hvM./hM) - sqrt(g.*hM);
 lamda = lamda1;
 lamda1 = (mesh.nx.*huP./hP + mesh.ny.*hvP./hP) - sqrt(g.*hP);
