@@ -2,6 +2,7 @@ function [Dr,Ds,Drw,Dsw] = getDeriMatrix(N,r,s,V)
 % function [Dr,Ds] = Dmatrices2D(N,r,s,V)
 % Purpose : Initialize the (r,s) differentiation matrices on quadrilateral
 
+%%
 % $Dr_{ij} = \frac{\partial \varphi(\mathbf{\xi})}{\partial r}$
 % $Ds_{ij} = \frac{\partial \varphi(\mathbf{\xi})}{\partial s}$
 
