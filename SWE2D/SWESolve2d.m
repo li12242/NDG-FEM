@@ -1,39 +1,40 @@
-function [Q] = SWESolve2d(mesh,Q,FinalTime,fluxFunc)
+function phys = SWESolve2d(phys)
 
+
+%% Initializion of variables
+
+h    = phys.h;  % water depth
+q    = phys.q;  % water flux
+dt   = phys.dt; % time step
+mesh = phys.mesh;
+
+% 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
 time = 0;
 % Runge-Kutta residual storage  
-resQ = zeros(size(Q));
+resH = zeros(size(h));
+resQ = zeros(size(q));
 
-% compute time step size
-xmin = min(sqrt(abs(mesh.x(1,:)-mesh.x(2,:)).^2 + ...
-    abs(mesh.y(1,:)-mesh.y(2,:)).^2));
-
-Nfp = @(x)mesh.Shape.nFaceNode;
-Dr = @(x)mesh.Shape.Dr; 
-Ds = @(x)mesh.Shape.Ds;
-Fmat = @(x)mesh.Shape.FaceMassMatrixSmall;
-invM = @(x)mesh.Shape.invM;
-
-dt=0.001; CFL=0.010; 
-% outer time step loop 
+%% RK time stepping
 while(time<FinalTime)
+    % zeros Runge-Kutta residual storage
+    resQ(:) = 0; resH(:) = 0;
     for INTRK = 1:5
-%         timelocal = time + rk4c(INTRK)*dt;
-        [rhsQ, lamda] = fluxFunc(mesh, Q, Nfp, Dr, Ds, Fmat, invM);
+        timeloc = time + rk4c(INTRK)*dt;
+        [rhsH, rhsQ] = fluxFunc(mesh, h, q);
+        
+        resH = rk4a(INTRK)*resH + dt*rhsH;
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
-        Q = Q + rk4b(INTRK)*resQ;
-%         plot(mesh.x, Q(:,:,1), 'r'); drawnow;
+        h = h + rk4b(INTRK)*resH;
+        q = q + rk4b(INTRK)*resQ;
     end;
-%     Q = real(Q);
-%     for n = 1:2
-%         Q(:,:,n)  = Utilities.SlopeLimit1(mesh, Q(:,:,n));
-%     end
-    plot3(mesh.x, mesh.y, Q(:,:,1), 'ro'); drawnow;
     % Increment time
     time = time+dt;
-    dt = CFL/max(lamda(:))*xmin;
 end
+
+%% Assignment
+phys.h = h;
+phys.q = q;
 end
 
 function [rk4a, rk4b, rk4c] = RK45coef
