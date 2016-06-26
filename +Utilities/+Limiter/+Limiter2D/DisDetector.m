@@ -1,6 +1,6 @@
 function [disFlag, I] = DisDetector(mesh, var, u, v)
 % Reference: 
-%   1. Krivodonova (2004)
+%   1. Krivodonova, Xin & Remacle et al. (2004)
 
 % discontinuity detector
 % Input:
@@ -27,15 +27,17 @@ temp(ind) = 0;
 I = AVE*(mesh.sJ.*abs(temp));
 
 %% II. radius of the circumscribed circle
-r = sqrt(mesh.J(1,:)*2./pi);
-I = I./r;
+% Area of the standard element
+area = sum(sum(shape.M));
+
+r = sqrt(mesh.J(1,:)*area./pi);
+I = I./r;%.^( (mesh.Shape.nOrder + 1)./2 );
 
 %% III. edge length
 temp = mesh.sJ; temp(ind) = 0;
 l = AVE*temp;
 
 % small = (abs(l) <= eps);
-
 I = I./l;
 
 %% IV. max norm
@@ -47,6 +49,6 @@ ind = abs(temp) > TOL;
 I(ind) = I(ind)./temp(ind);
 I(~ind) = 0;
 
-disFlag = I > 1;
+disFlag = I > 5;
 
 end% func
