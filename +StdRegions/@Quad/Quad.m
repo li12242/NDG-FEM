@@ -34,8 +34,6 @@ classdef Quad < StdRegions.QuadBasic
         Mes                 % face integral mass matrix of face nodes
         Mef                 % face integral mass matrix of all nodes
     end% properties
-<<<<<<< HEAD
-=======
 %% properties private
     properties(SetAccess=private, GetAccess=private)
         nPerBoundaryNode   % [nFace x 1] number of nodes at every boundary
@@ -180,5 +178,4 @@ classdef Quad < StdRegions.QuadBasic
             end
         end %function getFullFaceMassMatrix
     end% methods
->>>>>>> master
 end% class

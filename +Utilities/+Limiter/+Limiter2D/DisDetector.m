@@ -16,14 +16,14 @@ shape = mesh.Shape;
 % average matrix
 AVE = sum(shape.Mes);
 
-% outflow node
+% outflow node index
 ind = (mesh.nx.*u(mesh.vmapM) + mesh.ny.*v(mesh.vmapM) ) >= 0;
 
 % eliminate outflow boundary value
 temp = var(mesh.vmapM) - var(mesh.vmapP);
 temp(ind) = 0;
 
-% boundary integral
+% boundary integral of $\int_{\partial \Omega} l_{j} C_j$
 I = AVE*(mesh.sJ.*abs(temp));
 
 %% II. radius of the circumscribed circle
