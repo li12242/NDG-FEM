@@ -77,4 +77,10 @@ Fhs  = 0.5*(FhM  + FhP  + S.*(hM  - hP ));
 Fqxs = 0.5*(FqxM + FqxP + S.*(QxM - QxP));
 Fqys = 0.5*(FqyM + FqyP + S.*(QyM - QyP));
 
+% Eliminate flux between dry elements
+dryInd       = dryM & dryP;
+Fhs(dryInd)  = 0.0;
+Fqxs(dryInd) = 0.0;
+Fqys(dryInd) = 0.0;
+
 end% func

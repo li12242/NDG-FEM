@@ -27,8 +27,8 @@ function [Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWEFlux2d(phys, h, qx, qy, dryNodeFlag)
 % 
 
 %% Parameters and wet element flag
-g          = phys.gra;
-minDepth   = phys.minDepth;
+g           = phys.gra;
+minDepth    = phys.minDepth;
 dryNodeFlag(h <= minDepth) = 1;
 
 %% Get the flux terms

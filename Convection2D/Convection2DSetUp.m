@@ -26,18 +26,18 @@ end% func
 
 function outfile = CreateNetcdf(filename, mesh)
 
-time = Utilities.Netcdf.dimobj('time', 0); % unlimited dimensions
-node = Utilities.Netcdf.dimobj('node', mesh.nNode);
+time = Utilities.netcdf.NcDim('time', 0); % unlimited dimensions
+node = Utilities.netcdf.NcDim('node', mesh.nNode);
 
-x = Utilities.Netcdf.varobj('x', node, 'double');
-y = Utilities.Netcdf.varobj('y', node, 'double');
-t = Utilities.Netcdf.varobj('time', time, 'double');
-var = Utilities.Netcdf.varobj('var', [node, time], 'double');
+x = Utilities.netcdf.NcVar('x', node, 'double');
+y = Utilities.netcdf.NcVar('y', node, 'double');
+t = Utilities.netcdf.NcVar('time', time, 'double');
+var = Utilities.netcdf.NcVar('var', [node, time], 'double');
 
-outfile = Utilities.Netcdf.fileobj(filename, [node, time], [x, y, t, var]);
+outfile = Utilities.netcdf.NcFile(filename, [node, time], [x, y, t, var]);
 
 % initialize output file
-outfile.createFile;
+outfile.CreateFile;
 
 % set vertex location value
 outfile.putVarPart('x', 0, mesh.nNode, mesh.x);
