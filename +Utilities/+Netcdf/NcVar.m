@@ -1,14 +1,22 @@
-classdef varobj < handle
+classdef NcVar < handle
     properties
-        dimArray
-        name
-        id % ID in the netcdf file
-        type % variable types
+        dimArray    % variable dimension array
+        name        % variable name
+        id          % variable ID
+        type        % variable types
     end% properties
     
     methods
-        
-        function obj = varobj(name, dimArray, type)
+        %% NcVar
+        % Define variables for NetCDF output.
+        %
+        % Usages:
+        %
+        %   time = Utilities.Netcdf.NcDim('time', 0);
+        %   node = Utilities.Netcdf.NcDim('node', 10);
+        %   x    = Utilities.Netcdf.NcVar('x'   , [node time], 'double');
+        %
+        function obj = NcVar(name, dimArray, type)
             % variable name
             obj.name = name;
             
@@ -38,9 +46,23 @@ classdef varobj < handle
             end% if
             
             % variable types: double, float, short, int
-            obj.type = type;
+            switch type
+                case 'double'
+                    obj.type = type;
+                case 'float'
+                    obj.type = type;
+                case 'short'
+                    obj.type = type;
+                case 'int'
+                    obj.type = type;
+                otherwise
+                    error(['Unknown variable type: ', type, '\n']);
+            end% switch
         end% func
         
+        %% setID
+        % Set variable ID
+        %
         function obj = setID(obj, id)
             obj.id = id;
         end% func

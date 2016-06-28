@@ -33,7 +33,7 @@ switch casename
     case 'DamBreakWet'
         [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakWet(N, Ne, meshType);
     case 'ParabolicBowl'
-        [mesh, h, qx, qy, botLevel, ftime, dt] = ParabolicBowl(N, Ne, meshType);
+        [mesh, h, qx, qy, botLevel, ftime, dt] = ParabolicBowl(phys, N, Ne, meshType);
 end% switch
 
 %% Assignments
@@ -48,9 +48,47 @@ phys.mesh  = mesh;
 
 end% func
 
+function [mesh, h, qx, qy, bot, ftime, dt] = ParabolicBowl(phys, N, Ne, meshType)
+%% Parameters
+g     = phys.gra;
+alpha = 1.6*1e-7;
+w     = sqrt(8*g*alpha);
+T     = 2*pi/w;
+X     = 1;
+Y     = -0.41884;
+
+rmin  = -4000; 
+rmax  =  4000;
+%% Initialize mesh
+switch meshType
+    case 'tri'
+        shape = StdRegions.Triangle(N);
+        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(Ne,rmin,rmax,0);
+        mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
+    case 'quad'
+        np = Ne + 1;
+        shape = StdRegions.Quad(N);
+        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, rmin,rmax);
+        mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
+    otherwise
+        error('DamBreakDry error: unknown mesh type "%s"', meshType)
+end% switch
+%% Initialize bottom level
+r   = (mesh.x.^2 + mesh.y.^2);
+bot = alpha*r;
+
+%% Initialize variables
+h      = 1/(X+Y) + alpha*(Y^2 - X^2).*r/(X+Y)^2 - bot;
+h(h<0) = 0;
+qx     = zeros(size(mesh.x));
+qy     = zeros(size(mesh.x));
+dt     = 1;
+ftime  = T/2;
+end% func
+
 function [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakDry(N, Ne, meshType)
 %% Initialize the mesh grid
-% The grid range is [-1, 1] and simulation ends at ftime (seconds).
+% The grid range is and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
 % be obtains a uniform mesh grid.
 rmin = 0; rmax = 1000;
@@ -81,7 +119,7 @@ h(:, ind) = 10;
 dt = 1e-1;
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakWet(N, Ne)
+function [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakWet(N, Ne, meshType)
 %% Initialize the mesh grid
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
@@ -97,7 +135,7 @@ switch meshType
     case 'quad'
         np = Ne + 1;
         shape = StdRegions.Quad(N);
-        [EToV, VX, VY] = MeshGenRectangle2D(np, rmin,rmax);
+        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, rmin,rmax);
         mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
@@ -111,5 +149,5 @@ botLevel = zeros(size(mesh.x));
 
 xc = mean(mesh.x); ind = xc < damPosition;
 h(:, ind) = 10;
-dt = 1e-2;
+dt = 1e-1;
 end% func
