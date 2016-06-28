@@ -56,6 +56,7 @@ for ist = 1:numel(time)
     figure('Color', 'w');
     plot(ye, Qye, 'k--'); hold on
     plot(yp, qys, 'r+');
+    ylim([-1.25, 1.25]);
     ylabel('Discharge (m)', 'Interpreter', 'Latex');
     xlabel('y (m)', 'Interpreter', 'Latex');
     title(timeStr{ist}, 'Interpreter', 'Latex');

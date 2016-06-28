@@ -1,6 +1,7 @@
-function [VX,VY,EToV] = MeshGenTriangle2D(ne,start_coor,end_coor,flag)
-% Mesh generater with triangle element
-%
+%% MeshGenTriangle2D
+% Generate uniform mesh with triangle elements
+% 
+function [VX,VY,EToV] = MeshGenTriangle2D(nx, ny, xmin, xmax, ymin, ymax, flag)
 % DESCRIPTION
 %   domain [start_coor, end_coor]x[start_coor, end_coor];
 %   ne - No. of element on each edge
@@ -17,7 +18,7 @@ function [VX,VY,EToV] = MeshGenTriangle2D(ne,start_coor,end_coor,flag)
 %    ne      = No. of elements on each edge
 %    start_coor = start coordinate
 %    end_coor   = end coordinate
-%    flag   = partination type [flag=0, "\", flag=1, "/"]
+%    flag   = partination type [flag=false, "\", flag=true, "/"]
 %
 % OUTPUT
 %    X = x coordinate
@@ -25,40 +26,45 @@ function [VX,VY,EToV] = MeshGenTriangle2D(ne,start_coor,end_coor,flag)
 %    E = index of vertices in element
 %
 % EXAMPLE USAGE
-%    [X,Y,E] = MeshGenTriangle2D(21, 0, 1, 1)
+%    [X,Y,E] = MeshGenTriangle2D(2, 2, -1.0, 1.0, -1.0, 1.0, true)
 %
 % Author(s)
 %    li12242 Tianjin University
-%
-% Reversion
-%    v1.0 2014-12-8
-%========================================================================== 
 
-% info of point
-x = linspace(start_coor, end_coor, ne+1); 
-y = linspace(end_coor, start_coor, ne+1);
-x = repmat(x, ne+1, 1); y = repmat(y, ne+1, 1);
-x = x';
-VX = x(:); VY = y(:);
+%% Parameters
+mx   = nx - 1; % number of elements along x coordinate
+my   = ny - 1;
 
-EToV = zeros(2*ne^2,3);
-for i = 1:ne % each row
-    upLayerNum = (ne+1)*(i-1)+1:(ne+1)*(i-1)+ne+1;
-    downLayerNum = upLayerNum + (ne+1);
+%% Define vertex
+% The vertex is sorted along x coordinate. (x coordinate counts first)
+VX   = linspace(xmin, xmax, nx) ;
+VY   = linspace(ymin, ymax, ny)'; 
+VX   = repmat(VX, 1, ny) ;
+VY   = repmat(VY, 1, nx)'; 
+VX   = VX(:);
+VY   = VY(:);
 
-    if flag     %
-        EToV(2*ne*(i-1)+1:2*ne*(i-1)+ne,:) = ...
-            [downLayerNum(1:ne)', upLayerNum(2:ne+1)', upLayerNum(1:ne)'];
-        EToV(2*ne*(i-1)+ne+1:2*ne*i,:) = ...
-            [downLayerNum(1:ne)',downLayerNum(2:ne+1)',upLayerNum(2:ne+1)'];
-        
-    else
-        EToV(2*ne*(i-1)+1:2*ne*(i-1)+ne,:) = ...
-            [downLayerNum(2:ne+1)', upLayerNum(2:ne+1)', upLayerNum(1:ne)'];
-        EToV(2*ne*(i-1)+ne+1:2*ne*i,:) = ...
-            [downLayerNum(1:ne)',downLayerNum(2:ne+1)',upLayerNum(1:ne)'];
-        
+%% Define EToV
+% The element is conuting along x coordinate
+EToV = zeros(2*mx*my,3);
+for i = 1:my % each row
+    for j = 1:mx
+        % element index
+        ind1 = 2*mx*(i-1)   +j;
+        ind2 = 2*mx*(i-1)+mx+j;
+        % vertex index
+        v1   = nx*(i-1) + j;
+        v2   = nx*(i-1) + j + 1;
+        v3   = nx*i     + j;
+        v4   = nx*i     + j + 1;
+        % Counterclockwise
+        if flag % '/' divided
+            EToV(ind1,:) = [v1, v4, v3];
+            EToV(ind2,:) = [v1, v2, v3];
+        else    % '\' divided
+            EToV(ind1,:) = [v1, v2, v3];
+            EToV(ind2,:) = [v2, v4, v3];
+        end% if
     end
-
 end
 end

@@ -20,7 +20,7 @@ resQy = zeros(size(qy));
 flag = true(mesh.nElement, 1);
 %% RK time stepping
 while(time<FinalTime)
-    s  = PredictWaveSpeed(phys, h, Qx, Qy);
+    s  = PredictWaveSpeed(phys, h, qx, qy);
     dt = dx/s;
     if(dt>dtm)
         dt = dtm;
