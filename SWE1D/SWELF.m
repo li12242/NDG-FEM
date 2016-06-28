@@ -14,7 +14,8 @@ uP(isWetP) = qP(isWetP)./hP(isWetP);
 
 % estimate wave speed
 SM = abs(uM) + sqrt(g*hM); SP = abs(uP) + sqrt(g*hP);
-SM(~isWetM) = 0; SM(~isWetP) = 0;
+SM(~isWetM) = 0; 
+SM(~isWetP) = 0;
 S = max(SM, SP);
 
 [FhM, FqM] = SWEFlux(hM, qM, hDelta);
