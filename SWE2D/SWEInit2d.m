@@ -74,11 +74,11 @@ switch meshType
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
 %% Initialize bottom level
-r   = (mesh.x.^2 + mesh.y.^2);
-bot = alpha*r;
+r2   = (mesh.x.^2 + mesh.y.^2);
+bot = alpha*r2;
 
 %% Initialize variables
-h      = 1/(X+Y) + alpha*(Y^2 - X^2).*r/(X+Y)^2 - bot;
+h      = 1/(X+Y) + alpha*(Y^2 - X^2).*r2/(X+Y)^2 - bot;
 h(h<0) = 0;
 qx     = zeros(size(mesh.x));
 qy     = zeros(size(mesh.x));
