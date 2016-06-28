@@ -1,15 +1,13 @@
 function phys = SWESolve2d(phys, outfile)
-
-
 %% Initializion of variables
-% 
 h         = phys.h;    % water depth
 qx        = phys.qx;   % water flux
 qy        = phys.qy;   % water flux
-dt        = phys.dt;   % time step
 mesh      = phys.mesh;
 FinalTime = phys.ftime;
 outStep   = 0;
+dx        = phys.dx;   % mesh length
+dtm       = phys.dt;   % max time step
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
@@ -21,8 +19,16 @@ resQy = zeros(size(qy));
 
 flag = true(mesh.nElement, 1);
 %% RK time stepping
-% 
 while(time<FinalTime)
+    s  = PredictWaveSpeed(phys, h, Qx, Qy);
+    dt = dx/s;
+    if(dt>dtm)
+        dt = dtm;
+    end% if
+    if(time+dt>FinalTime)
+        dt = FinalTime - time;
+    end% if
+    
     % zeros Runge-Kutta residual storage
     resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
     for INTRK = 1:5
@@ -41,9 +47,6 @@ while(time<FinalTime)
         qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
         qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
         
-%         if outStep > 16
-%             DrawPoints(phys.mesh, h, qx, qy); drawnow;
-%         end
     end
     
     outfile.putVarPart('time', outStep, 1, time);
@@ -55,9 +58,6 @@ while(time<FinalTime)
         [mesh.Shape.nNode,mesh.nElement,1], qy);
     outStep = outStep + 1;
     
-%     if outStep > 16
-%         keyboard
-%     end% if
     % Increment time
     time = time+dt;
     fprintf('Processing %f...\n', time/FinalTime);
@@ -67,7 +67,7 @@ end
 phys.h  = h;
 phys.qx = qx;
 phys.qy = qy;
-
+% close output file
 outfile.CloseFile;
 end
 
@@ -88,4 +88,16 @@ rk4c = [             0.0  ...
          2526269341429.0/6820363962896.0 ...
          2006345519317.0/3224310063776.0 ...
          2802321613138.0/2924317926251.0];
+end% func
+
+function s = PredictWaveSpeed(phys, h, Qx, Qy)
+g        = phys.gra;
+minDepth = phys.minDepth;
+dryflag  = h<minDepth;
+
+%% Estimate wave speed
+u   = Qx./h; u(dryflag) = 0.0;
+v   = Qy./h; v(dryflag) = 0.0;
+spe = sqrt(u.^2 + v.^2);
+s   = max(max( spe + sqrt(g*h) ));
 end% func

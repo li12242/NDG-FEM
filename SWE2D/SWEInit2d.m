@@ -29,11 +29,14 @@ meshType = phys.meshType;
 % init mesh and initial condition of test case
 switch casename
     case 'DamBreakDry'
-        [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakDry(N, Ne, meshType);
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
+            DamBreakDry(N, Ne, meshType);
     case 'DamBreakWet'
-        [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakWet(N, Ne, meshType);
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
+            DamBreakWet(N, Ne, meshType);
     case 'ParabolicBowl'
-        [mesh, h, qx, qy, botLevel, ftime, dt] = ParabolicBowl(phys, N, Ne, meshType);
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
+            ParabolicBowl(phys, N, Ne, meshType);
 end% switch
 
 %% Assignments
@@ -42,13 +45,14 @@ phys.h     = h;
 phys.qx    = qx;
 phys.qy    = qy;
 phys.dt    = dt;
+phys.dx    = dx;
 phys.ftime = ftime;
 phys.bot   = botLevel; % bottom elevation
 phys.mesh  = mesh;
 
 end% func
 
-function [mesh, h, qx, qy, bot, ftime, dt] = ParabolicBowl(phys, N, Ne, meshType)
+function [mesh, h, qx, qy, bot, ftime, dt, dx] = ParabolicBowl(phys, N, Ne, meshType)
 %% Parameters
 g     = phys.gra;
 alpha = 1.6*1e-7;
@@ -84,9 +88,10 @@ qx     = zeros(size(mesh.x));
 qy     = zeros(size(mesh.x));
 dt     = 1;
 ftime  = T/2;
+dx     = (rmax - rmin)./Ne/(N+1);
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakDry(N, Ne, meshType)
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx] = DamBreakDry(N, Ne, meshType)
 %% Initialize the mesh grid
 % The grid range is and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
@@ -114,12 +119,13 @@ qx = zeros(size(mesh.x));
 qy = zeros(size(mesh.x));
 botLevel = zeros(size(mesh.x));
 
-xc = mean(mesh.x); ind = xc < damPosition;
+xc        = mean(mesh.x); ind = xc < damPosition;
 h(:, ind) = 10;
-dt = 1e-1;
+dt        = 1e-1;
+dx        = (rmax - rmin)./Ne/(N+1);
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt] = DamBreakWet(N, Ne, meshType)
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx] = DamBreakWet(N, Ne, meshType)
 %% Initialize the mesh grid
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
@@ -147,7 +153,9 @@ qx = zeros(size(mesh.x));
 qy = zeros(size(mesh.x));
 botLevel = zeros(size(mesh.x));
 
-xc = mean(mesh.x); ind = xc < damPosition;
+xc        = mean(mesh.x); 
+ind       = xc < damPosition;
 h(:, ind) = 10;
-dt = 1e-1;
+dt        = 1e-1;
+dx        = (rmax - rmin)./Ne/(N+1);
 end% func
