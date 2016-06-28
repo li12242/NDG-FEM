@@ -23,20 +23,21 @@ casename = phys.casename;
 % order of polynomials used for approximation
 N = phys.n;
 % number of elements on each edge
-Ne = phys.ne;
+Nx = phys.nx;
+Ny = phys.ny;
 meshType = phys.meshType;
 %% Initialization
 % init mesh and initial condition of test case
 switch casename
     case 'DamBreakDry'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
-            DamBreakDry(N, Ne, meshType);
+            DamBreakDry(N, Nx, Ny, meshType);
     case 'DamBreakWet'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
-            DamBreakWet(N, Ne, meshType);
+            DamBreakWet(N, Nx, Ny, meshType);
     case 'ParabolicBowl'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
-            ParabolicBowl(phys, N, Ne, meshType);
+            ParabolicBowl(phys, N, Nx, Ny, meshType);
 end% switch
 
 %% Assignments
@@ -52,7 +53,7 @@ phys.mesh  = mesh;
 
 end% func
 
-function [mesh, h, qx, qy, bot, ftime, dt, dx] = ParabolicBowl(phys, N, Ne, meshType)
+function [mesh, h, qx, qy, bot, ftime, dt, dx] = ParabolicBowl(phys, N, Nx, Ny, meshType)
 %% Parameters
 g     = phys.gra;
 alpha = 1.6*1e-7;
@@ -67,12 +68,14 @@ rmax  =  4000;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(Ne,rmin,rmax,0);
+        [VX,VY,EToV] = ...
+            Utilities.Mesh.MeshGenTriangle2D(Nx,Ny,rmin,rmax,rmin,rmax,false);
         mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
     case 'quad'
         np = Ne + 1;
         shape = StdRegions.Quad(N);
-        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, rmin,rmax);
+        [EToV, VX, VY] = ...
+            Utilities.Mesh.MeshGenRectangle2D(Nx,Ny,rmin,rmax,rmin,rmax);
         mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
@@ -87,75 +90,81 @@ h(h<0) = 0;
 qx     = zeros(size(mesh.x));
 qy     = zeros(size(mesh.x));
 dt     = 1;
-ftime  = T/2;
+ftime  = T;
 dx     = (rmax - rmin)./Ne/(N+1);
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt, dx] = DamBreakDry(N, Ne, meshType)
+function [mesh, h, qx, qy, bot, ftime, dt, dx] = DamBreakDry(N, Nx, Ny, meshType)
 %% Initialize the mesh grid
 % The grid range is and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
 % be obtains a uniform mesh grid.
-rmin = 0; rmax = 1000;
+rmin  = 0; 
+rmax  = 1000;
+width = 200;
 ftime = 20;
 damPosition = 500;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(Ne,rmin,rmax,0);
+        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(Nx,Ny,rmin,rmax,-width/2,width/2,false);
         mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
     case 'quad'
-        np = Ne + 1;
         shape = StdRegions.Quad(N);
-        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, rmin,rmax);
+        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(Nx,Ny,rmin,rmax,-width/2,width/2);
         mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
 
 %% Initial condition
-h  = zeros(size(mesh.x));
-qx = zeros(size(mesh.x));
-qy = zeros(size(mesh.x));
-botLevel = zeros(size(mesh.x));
+h   = zeros(size(mesh.x));
+qx  = zeros(size(mesh.x));
+qy  = zeros(size(mesh.x));
+bot = zeros(size(mesh.x));
 
 xc        = mean(mesh.x); ind = xc < damPosition;
 h(:, ind) = 10;
 dt        = 1e-1;
-dx        = (rmax - rmin)./Ne/(N+1);
+dx        = min((rmax - rmin)./Nx/(N+1), width./Ny/(N+1));
+
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt, dx] = DamBreakWet(N, Ne, meshType)
+function [mesh, h, qx, qy, bot, ftime, dt, dx] = DamBreakWet(N, Nx, Ny, meshType)
 %% Initialize the mesh grid
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
 % be obtains a uniform mesh grid.
-rmin = 0; rmax = 1000;
+rmin  = 0; 
+rmax  = 1000;
+width = 200;
 ftime = 20;
 damPosition = 500;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(Ne,rmin,rmax,0);
+        [VX,VY,EToV] = ...
+            Utilities.Mesh.MeshGenTriangle2D(Nx,Ny,rmin,rmax,-width/2,width/2,false);
         mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
     case 'quad'
-        np = Ne + 1;
         shape = StdRegions.Quad(N);
-        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, rmin,rmax);
+        [EToV, VX, VY] = ...
+            Utilities.Mesh.MeshGenRectangle2D(Nx,Ny,rmin,rmax,-width/2,width/2);
         mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
 
 %% Initial condition
-h  = 2*ones(size(mesh.x));
-qx = zeros(size(mesh.x));
-qy = zeros(size(mesh.x));
-botLevel = zeros(size(mesh.x));
+h   = 2*ones(size(mesh.x));
+qx  = zeros(size(mesh.x));
+qy  = zeros(size(mesh.x));
+bot = zeros(size(mesh.x));
 
 xc        = mean(mesh.x); 
 ind       = xc < damPosition;
 h(:, ind) = 10;
 dt        = 1e-1;
-dx        = (rmax - rmin)./Ne/(N+1);
+dx        = min((rmax - rmin)./Nx/(N+1), width./Ny/(N+1));
+
 end% func
