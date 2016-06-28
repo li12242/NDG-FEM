@@ -2,34 +2,50 @@ function phys = SWESolve2d(phys)
 
 
 %% Initializion of variables
-
+% 
 h    = phys.h;  % water depth
-q    = phys.q;  % water flux
+qx   = phys.qx;  % water flux
+qy   = phys.qy;  % water flux
 dt   = phys.dt; % time step
 mesh = phys.mesh;
+FinalTime = phys.ftime;
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
 time = 0;
 % Runge-Kutta residual storage  
 resH = zeros(size(h));
-resQ = zeros(size(q));
+resQx = zeros(size(qx));
+resQy = zeros(size(qy));
 
 %% RK time stepping
+% 
 while(time<FinalTime)
     % zeros Runge-Kutta residual storage
-    resQ(:) = 0; resH(:) = 0;
+    resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
     for INTRK = 1:5
         timeloc = time + rk4c(INTRK)*dt;
-        [rhsH, rhsQ] = fluxFunc(mesh, h, q);
+        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy);
         
-        resH = rk4a(INTRK)*resH + dt*rhsH;
-        resQ = rk4a(INTRK)*resQ + dt*rhsQ;
-        h = h + rk4b(INTRK)*resH;
-        q = q + rk4b(INTRK)*resQ;
-    end;
+        resH  = rk4a(INTRK)*resH  + dt*rhsH;
+        resQx = rk4a(INTRK)*resQx + dt*rhsQx;
+        resQy = rk4a(INTRK)*resQy + dt*rhsQy;
+        h     = h  + rk4b(INTRK)*resH;
+        qx    = qx + rk4b(INTRK)*resQx;
+        qy    = qy + rk4b(INTRK)*resQy;
+        
+        % slope limiter
+        h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h);
+        qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx);
+        qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy);
+%         h(h< 0) = 1e-5;
+%         h(h>10) = 0;
+        DrawPoints(mesh, h, qx, qy)
+    end
+    
     % Increment time
     time = time+dt;
+    fprintf('Processing %f...\n', time/FinalTime);
 end
 
 %% Assignment

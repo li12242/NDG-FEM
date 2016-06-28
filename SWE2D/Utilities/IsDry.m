@@ -21,7 +21,7 @@ function dryEleFlag = IsDry(mesh, h, minDepth)
 % water volume is same as $V = \int_{\Omega_{std}} J \cdot h_h(x) dA
 % = \int_{\Omega_{std}} J \cdot \sum_{j=1}^{Np} h_j l_j dA$
 % 
-M = mesh.M; AVE = sum(M);
+M = mesh.Shape.M; AVE = sum(M);
 % water volume
 vol = AVE*(h.*mesh.J);
 

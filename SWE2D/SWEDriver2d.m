@@ -17,7 +17,8 @@ function SWEDriver2d
 % # threshold of water depth to determine dry elements
 % 
 % The struct variable will be put into function 
-% <matlab:edit(['/Users/mac/Documents/MATLAB/NDG-FEM/SWE2D/SWEInit2d.m']) SWEInit2d>
+% <matlab:edit(['/Users/mac/Documents/MATLAB/NDG-FEM/SWE2D/SWEInit2d.m']) 
+% SWEInit2d>
 % for further intialization
 
 % Name of test case
@@ -26,7 +27,7 @@ casename = 'DamBreakDry';
 % casename = 'ParabolicBowl';
 
 % Order of polymomials used for approximation 
-N = 3;
+N = 1;
 % Number of elements on each edge
 Ne = 20;
 
@@ -34,7 +35,7 @@ Ne = 20;
 phys.casename = casename;
 phys.ne = Ne;
 phys.n  = N;
-phys.meshType = 'tri';
+phys.meshType = 'quad';
 phys.minDepth = 1e-4;
 phys.gra = 9.81;
 % initialization
@@ -50,7 +51,7 @@ phys = SWEInit2d(phys);
 % The strucut variable 'phys' will be passed to function SWERHS2d and get
 % the derived solutions of h (water depth) and q (water flux)
 
-phys = SWERHS2d(phys);
+phys = SWESolve2d(phys);
 
 %% Post process
 
