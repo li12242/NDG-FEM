@@ -49,6 +49,6 @@ ind = abs(temp) > TOL;
 I(ind) = I(ind)./temp(ind);
 I(~ind) = 0;
 
-disFlag = I > 5;
+disFlag = I > 1;
 
 end% func

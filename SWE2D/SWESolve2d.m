@@ -1,14 +1,15 @@
-function phys = SWESolve2d(phys)
+function phys = SWESolve2d(phys, outfile)
 
 
 %% Initializion of variables
 % 
-h    = phys.h;  % water depth
-qx   = phys.qx;  % water flux
-qy   = phys.qy;  % water flux
-dt   = phys.dt; % time step
-mesh = phys.mesh;
+h         = phys.h;    % water depth
+qx        = phys.qx;   % water flux
+qy        = phys.qy;   % water flux
+dt        = phys.dt;   % time step
+mesh      = phys.mesh;
 FinalTime = phys.ftime;
+outStep   = 0;
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
@@ -18,6 +19,7 @@ resH = zeros(size(h));
 resQx = zeros(size(qx));
 resQy = zeros(size(qy));
 
+flag = true(mesh.nElement, 1);
 %% RK time stepping
 % 
 while(time<FinalTime)
@@ -35,22 +37,38 @@ while(time<FinalTime)
         qy    = qy + rk4b(INTRK)*resQy;
         
         % slope limiter
-        h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy);
-%         h(h< 0) = 1e-5;
-%         h(h>10) = 0;
-        DrawPoints(mesh, h, qx, qy)
+        h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h,  flag);
+        qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
+        qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
+        
+%         if outStep > 16
+%             DrawPoints(phys.mesh, h, qx, qy); drawnow;
+%         end
     end
     
+    outfile.putVarPart('time', outStep, 1, time);
+    outfile.putVarPart('h',  [0,0,outStep], ...
+        [mesh.Shape.nNode,mesh.nElement,1], h);
+    outfile.putVarPart('qx', [0,0,outStep], ...
+        [mesh.Shape.nNode,mesh.nElement,1], qx);
+    outfile.putVarPart('qy', [0,0,outStep], ...
+        [mesh.Shape.nNode,mesh.nElement,1], qy);
+    outStep = outStep + 1;
+    
+%     if outStep > 16
+%         keyboard
+%     end% if
     % Increment time
     time = time+dt;
     fprintf('Processing %f...\n', time/FinalTime);
 end
 
 %% Assignment
-phys.h = h;
-phys.q = q;
+phys.h  = h;
+phys.qx = qx;
+phys.qy = qy;
+
+outfile.CloseFile;
 end
 
 function [rk4a, rk4b, rk4c] = RK45coef

@@ -22,39 +22,36 @@ function SWEDriver2d
 % for further intialization
 
 % Name of test case
-casename = 'DamBreakDry';
+% casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
-% casename = 'ParabolicBowl';
+casename = 'ParabolicBowl';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Ne = 20;
+Ne = 40;
 
 % # Name of test case
 phys.casename = casename;
-phys.ne = Ne;
-phys.n  = N;
+phys.ne       = Ne;
+phys.n        = N;
 phys.meshType = 'quad';
 phys.minDepth = 1e-4;
-phys.gra = 9.81;
+phys.gra      = 9.81;
 % initialization
 phys = SWEInit2d(phys);
 
-% % test
-% mesh = phys.mesh;
-% h = phys.h;
-% plot3(mesh.x, mesh.y, h, 'b.');
-% plot(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM))
+%% Generate output
+outfile = GenOutputFile('SWE2D', phys);
 
 %% Solve the eqs
 % The strucut variable 'phys' will be passed to function SWERHS2d and get
 % the derived solutions of h (water depth) and q (water flux)
 
-phys = SWESolve2d(phys);
+phys = SWESolve2d(phys, outfile);
 
 %% Post process
-
+DrawPoints(phys.mesh, phys.h, phys.qx, phys.qy);
 end% func
 
 
