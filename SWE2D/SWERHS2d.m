@@ -1,55 +1,33 @@
-function [rhsH, rhsQ] = SWERHS2d(mesh, h, q)
+function [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy)
+% Calculation the RHS of SWE
 
-h = Q(:,:,1); hu = Q(:,:,2); hv = Q(:,:,3); g = 9.8;
+% parameters
+minDepth = phys.minDepth;
+shape    = mesh.Shape;
+bot      = phys.bot;
+% find the dry nodes
+dryEleFlag = IsDry(mesh, h, minDepth);
+dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
 
-%% flux
-[Fx, Fy] = SWE2DFlux(Q);
+% flux
+[Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWEFlux2d(phys, h, qx, qy, dryNodeFlag);
+% source terms
+[Sh, Sqx, Sqy] = SWESource2d(phys, mesh, h, bot, dryEleFlag);
 
-%% numerical flux
+% numerical flux
+[Fhs, Fqxs, Fqys] = SWENumFlux2d(phys, mesh, h, qx, qy, dryEleFlag);
 
-hM  = zeros(Nfp(), mesh.nElement); hM(:) = h(mesh.vmapM);
-hP  = zeros(Nfp(), mesh.nElement); hP(:) = h(mesh.vmapP); 
-huM  = zeros(Nfp(), mesh.nElement); huM(:) = hu(mesh.vmapM); 
-huP  = zeros(Nfp(), mesh.nElement); huP(:) = hu(mesh.vmapP);
-hvM  = zeros(Nfp(), mesh.nElement); hvM(:) = hv(mesh.vmapM); 
-hvP  = zeros(Nfp(), mesh.nElement); hvP(:) = hv(mesh.vmapP);
+% the flux difference
+dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;
+dFqx  = Fqx(mesh.vmapM).*mesh.nx + Gqx(mesh.vmapM).*mesh.ny - Fqxs;
+dFqy  = Fqy(mesh.vmapM).*mesh.nx + Gqy(mesh.vmapM).*mesh.ny - Fqys;
+% weak form
+divFh  = Div2D(mesh, Fh, Gh);
+rhsH   = -divFh + Sh + shape.LIFT*(dFh.*mesh.fScale);
 
-lamda1 = (mesh.nx.*huM./hM + mesh.ny.*hvM./hM) - sqrt(g.*hM);
-lamda = lamda1;
-lamda1 = (mesh.nx.*huP./hP + mesh.ny.*hvP./hP) - sqrt(g.*hP);
-lamda(lamda1>lamda) = lamda1(lamda1>lamda);
-% max{u}
-lamda1 = (mesh.nx.*huM./hM + mesh.ny.*hvM./hM);
-lamda(lamda1>lamda) = lamda1(lamda1>lamda);
-lamda1 = (mesh.nx.*huP./hP + mesh.ny.*hvP./hP);
-lamda(lamda1>lamda) = lamda1(lamda1>lamda);
-% max{u+a}
-lamda1 = (mesh.nx.*huM./hM + mesh.ny.*hvM./hM) + sqrt(g.*hM);
-lamda(lamda1>lamda) = lamda1(lamda1>lamda);
-lamda1 = (mesh.nx.*huP./hP + mesh.ny.*hvP./hP) + sqrt(g.*hP);
-lamda(lamda1>lamda) = lamda1(lamda1>lamda);
-%
-lamda = abs(lamda);
+divFh  = Div2D(mesh, Fqx, Gqx);
+rhsQx  = -divFh + Sqx + shape.LIFT*(dFqx.*mesh.fScale);
 
-QM(:,:,1) = hM; QM(:,:,2) = huM; QM(:,:,3)=hvM;
-QP(:,:,1) = hP; QP(:,:,2) = huP; QP(:,:,3)=hvP;
-
-[FxM, FyM] = SWE2DFlux(QM); [FxP,FyP] = SWE2DFlux(QP);
-
-dF = zeros(Nfp(), mesh.nElement, 3);
-dF(:,:,1) = mesh.nx.*(FxM(:,:,1) - FxP(:,:,1))./2 + mesh.ny.*(FyM(:,:,1) - FyP(:,:,1))./2 ...
-    - lamda.*(QM(:,:,1) - QP(:,:,1))./2;
-dF(:,:,2) = mesh.nx.*(FxM(:,:,2) - FxP(:,:,2))./2 + mesh.ny.*(FyM(:,:,2) - FyP(:,:,2))./2 ...
-    - lamda.*(QM(:,:,2) - QP(:,:,2))./2;
-dF(:,:,3) = mesh.nx.*(FxM(:,:,3) - FxP(:,:,3))./2 + mesh.ny.*(FyM(:,:,2) - FyP(:,:,2))./2 ...
-    - lamda.*(QM(:,:,3) - QP(:,:,3))./2;
-
-%% RHS
-rhsQ(:,:,1) = -( Dr()*(mesh.rx.*Fx(:,:,1)+mesh.ry.*Fy(:,:,1))+ Ds()*(mesh.sx.*Fx(:,:,1) + mesh.sy.*Fy(:,:,1)) ) ...
-    + invM()*(Fmat()*(mesh.fScale.*dF(:,:,1)));
-rhsQ(:,:,2) = -( Dr()*(mesh.rx.*Fx(:,:,2)+mesh.ry.*Fy(:,:,2))+ Ds()*(mesh.sx.*Fx(:,:,2) + mesh.sy.*Fy(:,:,2)) ) ...
-    + invM()*(Fmat()*(mesh.fScale.*dF(:,:,2)));
-rhsQ(:,:,3) = -( Dr()*(mesh.rx.*Fx(:,:,3)+mesh.ry.*Fy(:,:,3))+ Ds()*(mesh.sx.*Fx(:,:,3) + mesh.sy.*Fy(:,:,3)) ) ...
-    + invM()*(Fmat()*(mesh.fScale.*dF(:,:,3)));
-
+divFh  = Div2D(mesh, Fqy, Gqy);
+rhsQy  = -divFh + Sqy + shape.LIFT*(dFqy.*mesh.fScale);
 end
