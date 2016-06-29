@@ -1,7 +1,7 @@
 function DamBreakDryVerify
-filename = 'SWE1D_DamBreak.nc';
+filename = 'SWE1D.nc';
 x = ncread(filename, 'x');
-bedElevation = zeros(size(x));
+bot = zeros(size(x));
 
 time = ncread(filename, 'time');
 
@@ -19,19 +19,19 @@ p_h = zeros(numel(FinalTime)+1,1);
 
 for itime = 1:numel(FinalTime)
     [~, index] = min(abs(time - FinalTime(itime)));
-    fprintf('time deviation： %f\n', time(index) - FinalTime(itime));
-    h = ncread(filename, 'h', [1, index],[inf, 1]);
-    q = ncread(filename, 'q', [1, index],[inf, 1]);
+    fprintf('time deviation:%f\n', time(index) - FinalTime(itime));
+    h = ncread(filename, 'h', [1,1,index],[inf,inf,1]);
+    q = ncread(filename, 'q', [1,1,index],[inf,inf,1]);
     
     load(['DamBreakDry', num2str(FinalTime(itime)), 'mat']);
     
     % draw picture
     figure(fig(1));
-    p_h(itime) = plot(x, h, [colorstr{itime}, linestr{1}, markerstr{itime}],...
+    p_h(itime) = plot(x(:), h(:), [colorstr{itime}, linestr{1}, markerstr{itime}],...
         'MarkerSize', 5);
     hold on;
     plot(x1, h1, 'k');
-    plot(x, bedElevation, 'k')
+    plot(x, bot, 'k')
     xlabel('x', 'Interpreter', 'Latex');
     ylabel('$\eta$', 'Interpreter', 'Latex');
     

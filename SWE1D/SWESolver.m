@@ -1,55 +1,41 @@
-function [h, q] = SWESolver(physics, ncfile)
-% time setpping of 1D shallow water equation 
+function [h, q] = SWESolver(phys, ncfile)
+% get variables from phys
+mesh  = phys.mesh;
+bot   = phys.bot;
+q     = phys.q; 
+h     = phys.h;
+ftime = phys.ftime;
+dx    = phys.dx;
 
-mesh = physics.getVal('mesh');
-bedElva = physics.getVal('bedElva');
-     
-time = 0;
-q = physics.getVal('flux'); 
-h = physics.getVal('height');
+% Init parameters
+time  = 0;
+CFL   = 0.2; 
+isk   = 0;   % output step
+resQ  = zeros(size(q)); 
+resH  = zeros(size(h));
+% RK coefficient
 [rk4a, rk4b, rk4c] = RKcoeff;
 
-% compute initial time step size
-xmin = min(abs(mesh.x(1,:)-mesh.x(2,:)));
-CFL=0.2; outstep = 0;
-FinalTime = physics.getVal('FinalTime');
-
-% eliminate zero depth in wet cell
-isWet = WetDryJudge(mesh, h, physics);
-% [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
-lamda = SWESpeed(h, q, physics, isWet);
-StoreVar(ncfile, h, q, time, lamda, outstep)
-outstep = outstep + 1;
 % outer time step loop
-while(time<FinalTime)
-    lamda = SWESpeed(h, q, physics, isWet);
-    dt = CFL/lamda*xmin;
+while(time<ftime)
+    % Runge-Kutta residual storage  
+    resQ(:) = 0; resH(:) = 0;
+    % Estimate time step
+    S  = SWESpeed(phys, h, q);
+    dt = CFL/S*dx;
     
-    % Increment time
-    if time + dt > FinalTime
-        time = FinalTime;
-        dt = FinalTime - time;
-    else
-        time = time + dt;
+    if time + dt > ftime
+        dt = ftime - time;
     end% if
 
     fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
-        time./FinalTime, dt, lamda)
-    
-    % Runge-Kutta residual storage  
-    resQ = zeros(size(q)); resH = zeros(size(h));
+        time./ftime, dt, S)
 
     for INTRK = 1:5
+        isWet  = WetDryJudge(phys, mesh, h);
         
-% subplot(3,1,1); plot(mesh.x, h+bedElva, '-b.', mesh.x, bedElva, 'k');
-% subplot(3,1,2); plot(mesh.x, q, '-r');
-% u = q./h; u(h<eps) = 0;
-% subplot(3,1,3); plot(mesh.x, u, '-b.');
-% drawnow;
-        
-        timelocal = time + dt*rk4c(INTRK);
-        
-        [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva, isWet, physics);
+        timelocal = time + dt*rk4c(INTRK);       
+        [rhsH, rhsQ] = SWERHS(phys, mesh, h, q, bot, isWet);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
@@ -57,11 +43,15 @@ while(time<FinalTime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
         
-        [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
-        isWet = WetDryJudge(mesh, h, physics);
+        [h, q] = PositivePreserving(mesh, h, q);
+        
     end
-    StoreVar(ncfile, h, q, time, lamda, outstep)
-    outstep = outstep + 1;
+    time = time + dt;
+    ncfile.putVarPart('time', isk, 1, time);
+    ncfile.putVarPart('h',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], h);
+    ncfile.putVarPart('q',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], q);
+    
+    isk = isk + 1;
 end
 
 end% func
@@ -73,11 +63,12 @@ q(h<=10^-3) = 0;
 h(h<0) = 0;
 end% func
 
-function lambda = SWESpeed(h, q, physics, isWet)
+function S = SWESpeed(phys, h, q)
 % max wave speed
-g = physics.getVal('gravity');
-u = (q./h) + sqrt(g*h);
-lambda = max( max(u(:, isWet)) );
+g           = phys.gra;
+wetEleFlag  = WetDryJudge(phys, phys.mesh, h);
+u           = (q./h) + sqrt(g*h);
+S           = max( max( u(:, wetEleFlag)) );
 end% func
 
 function [rk4a, rk4b, rk4c] = RKcoeff
