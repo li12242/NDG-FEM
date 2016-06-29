@@ -31,14 +31,15 @@ classdef RegionLine < MultiRegions.Region
             % Input:    VX   - vertice coordinate, size [nVertic  x1]
             %           EToV - element to vertice, size [nElement x2]
             obj = obj@MultiRegions.Region(line, EToV);
-            [obj.SpFToV, obj.EToE, obj.EToF] = Connect1D(obj,EToV);
-            [obj.vmapM,obj.vmapP] = BuildMap(obj,EToV, obj.EToE, obj.EToF);
-            % get node coordinate
+            
             vx = zeros(2, obj.nElement);
             vx(1,:) = VX(EToV(:,1)); vx(2,:) = VX(EToV(:,2));
-            % 
+            % get node coordinate
             [obj.x, obj.rx, obj.J] = line.getEleGeometric(vx);
             [obj.nx, obj.sJ] = line.getFaceGeometric(obj.x);
+            % get node coordinate
+            [obj.SpFToV, obj.EToE, obj.EToF] = Connect1D(obj,EToV);
+            [obj.vmapM,obj.vmapP] = BuildMap(obj,EToV, obj.EToE, obj.EToF);
             % face scal, used for surface integral
             obj.fScale = obj.sJ./obj.J(obj.vmapM);
         end% function
@@ -79,6 +80,7 @@ classdef RegionLine < MultiRegions.Region
     
         function [vmapM,vmapP] = BuildMap(obj, EToV, EToE, EToF)
             % contour the No of face node in element
+            NODETOL = 1e-10;
             nFaceNode = obj.Shape.nFaceNode;
             vmapM = zeros(nFaceNode, obj.nElement);
             vmapP = zeros(nFaceNode, obj.nElement);
@@ -86,23 +88,25 @@ classdef RegionLine < MultiRegions.Region
                 vmapM(:,ie) = obj.Shape.getFaceListToNodeList + ...
                     (ie-1)*obj.Shape.nNode;
             end
-            for ie = 1:obj.nElement
-                for iface = 1:obj.Shape.nFace
-                    % local face list
-                    localfacelist = obj.Shape.getFaceListAtFace(iface);
-                    % get next face num
-                    nextEle = EToE(ie, iface);
-                    nextFace = EToF(ie, iface);
-                    % get vertice order
-                    vn = [1; 2];
-                    % get vertice order
-                    thisOrder = EToV(ie, vn(iface,:));
-                    nextOrder = EToV(nextEle, vn(nextFace,:));
-                    % nextOrder(vorder) = thisOrder
-                    vorder = Utilities.PairData(thisOrder,nextOrder);
-                    nextlocalfacelist = ...
-                        obj.Shape.getReorderFaceListAtFace(nextFace, vorder);
-                    vmapP(localfacelist,ie) = vmapM(nextlocalfacelist, nextEle);
+            for k1 = 1:obj.nElement
+                for f1 = 1:obj.Shape.nFace
+                    k2 = EToE(k1,f1); f2 = EToF(k1,f1);
+                    
+                    flist1 = obj.Shape.getFaceListAtFace(f1);
+                    flist2 = obj.Shape.getFaceListAtFace(f2);
+
+                    % find find volume node numbers of left and right nodes 
+                    vidM = vmapM(flist1, k1); 
+                    vidP = vmapM(flist2, k2);
+                    x1   = obj.x(vidM); 
+                    x2   = obj.x(vidP);
+
+                    % Compute distance matrix
+                    D = (x1 -x2).^2;
+                    
+                    if (D<NODETOL) 
+                        vmapP(flist1, k1) = vidP;
+                    end
                 end
             end
         end% function

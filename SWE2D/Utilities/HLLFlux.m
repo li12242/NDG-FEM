@@ -114,7 +114,7 @@ Fqxs(flag) = FqxP(flag);
 Fqys(flag) = FqyP(flag);
 
 
-flag = (SM < 0) & (SP > 0);
+flag      = (SM < 0) & (SP > 0);
 Fhs(flag) = (- SM(flag).*FhP(flag)+ SP(flag).*FhM(flag)...
     + SP(flag).*SM(flag).*( hP(flag) - hM(flag) ) )...
     ./(SP(flag) - SM(flag));
