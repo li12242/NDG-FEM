@@ -1,42 +1,36 @@
-function [h ,q] = SWESetUp(nele, hDry)
-
-physics = Utilities.varGroup;
-
+function [h ,q] = SWESetUp
+%% Parameters
 % caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
 caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
 % caseName = 'TsunamiRunup';
 
-physics.incert('caseName', caseName);
 % minimum water depth
-physics.incert('minDepth', hDry);
-g = 9.81;
-physics.incert('gravity', g);
+minDepth = 1e-4;
+g        = 9.81;
+n        = 1;   % polynomial order 
+nele     = 400; % No. of elements
 
-% polynomial order and No. of elements
-ndegree = 1; %nele = 400;
+% Set to strucutre variable
+phys.name     = caseName;
+phys.minDepth = minDepth;
+phys.gra      = g;
+phys.n        = n;
+phys.ne       = nele;
 
 % Set initial conditions
-physics = SWEInit(physics, ndegree, nele);
+phys = SWEInit(phys);
 
 % set output file
-mesh = physics.getVal('mesh');
-ncfile = CreateOutputFile(mesh);
+filename = 'SWE1D.nc';
+ncfile   = CreateOutputFile(filename, phys);
 
-% save mesh nodes
-ncid = netcdf.open('SWE1D.nc','WRITE');
-mesh_id = ncfile.varid(1);
-netcdf.putVar(ncid,mesh_id,mesh.x(:))
-mesh_id = ncfile.varid(7);
-netcdf.putVar(ncid,mesh_id,mesh.x(mesh.vmapM(:)))
-netcdf.close(ncid);
 % Solve Problem
 % [h, q] = SWESolverHrefinedWetDry(physics, ncfile);
-[h, q] = SWESolver(physics, ncfile);
+[h, q]   = SWESolver(phys, ncfile);
 
-filename = ['SWE1D_', num2str(hDry), '_', num2str(nele), '.nc'];
-movefile('SWE1D.nc', filename)
+
 end% func
 
 

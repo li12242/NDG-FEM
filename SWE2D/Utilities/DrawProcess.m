@@ -32,7 +32,7 @@ end% func
 
 function DrawSurface
 %% Parameters
-filename = 'SWE2D.nc';
+filename = 'SWE2D_DamBreakDry.nc';
 varname  = 'qx';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
@@ -49,7 +49,7 @@ ist = 1;
 var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);
 p   = plot3(x(:), y(:), bot(:) + var(:), '.');
 
-for ist = 1:ntime
+for ist = 1:1:ntime
     var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);
     set(p, 'ZData', bot(:) + var(:));
     drawnow;
