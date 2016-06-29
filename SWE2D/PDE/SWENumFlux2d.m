@@ -70,6 +70,8 @@ hM  = h(mesh.vmapM);
 hP  = h(mesh.vmapP);
 
 % Lax-Friedrichs flux function
+% [Fhs, Fqxs, Fqys] = LLFFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP);
+% HLL flux function
 [Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP);
 
 % Rotate invariance
