@@ -6,7 +6,7 @@ minDepth = phys.minDepth;
 shape    = mesh.Shape;
 bot      = phys.bot;
 % find the dry nodes
-dryEleFlag = IsDry(mesh, h, minDepth);
+dryEleFlag  = IsDry(mesh, h, minDepth);
 dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
 
 % flux
@@ -21,8 +21,10 @@ dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
 dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;
 dFqx  = Fqx(mesh.vmapM).*mesh.nx + Gqx(mesh.vmapM).*mesh.ny - Fqxs;
 dFqy  = Fqy(mesh.vmapM).*mesh.nx + Gqy(mesh.vmapM).*mesh.ny - Fqys;
+
 % weak form
 divFh  = Div2D(mesh, Fh, Gh);
+% divFh(:, dryEleFlag) = 0.0;  % eliminate the dry element flux terms
 rhsH   = -divFh + Sh + shape.LIFT*(dFh.*mesh.fScale);
 
 divFh  = Div2D(mesh, Fqx, Gqx);
