@@ -8,6 +8,7 @@ FinalTime = phys.ftime;
 outStep   = 0;
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % max time step
+Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
@@ -35,6 +36,11 @@ while(time<FinalTime)
         timeloc = time + rk4c(INTRK)*dt;
         [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy);
         
+        % filter
+        rhsH  = Filt*rhsH;
+        rhsQx = Filt*rhsQx;
+        rhsQy = Filt*rhsQy;
+        
         resH  = rk4a(INTRK)*resH  + dt*rhsH;
         resQx = rk4a(INTRK)*resQx + dt*rhsQx;
         resQy = rk4a(INTRK)*resQy + dt*rhsQy;
@@ -42,11 +48,13 @@ while(time<FinalTime)
         qx    = qx + rk4b(INTRK)*resQx;
         qy    = qy + rk4b(INTRK)*resQy;
         
-        % slope limiter
+        % Slope limiter
         h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h,  flag);
         qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
         qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
         
+        % Positive-preserving limiter
+        [h, qx, qy] = PositivePreserving(phys, mesh, h, qx, qy);
     end
     
     outfile.putVarPart('time', outStep, 1, time);
@@ -93,11 +101,29 @@ end% func
 function s = PredictWaveSpeed(phys, h, Qx, Qy)
 g        = phys.gra;
 minDepth = phys.minDepth;
-dryflag  = h<minDepth;
+dryflag  = h<=minDepth;
 
 %% Estimate wave speed
 u   = Qx./h; u(dryflag) = 0.0;
 v   = Qy./h; v(dryflag) = 0.0;
 spe = sqrt(u.^2 + v.^2);
 s   = max(max( spe + sqrt(g*h) ));
+end% func
+
+function F = Fliter(shape, Nc, frac)
+
+filterdiag = ones(shape.nNode, 1);
+
+% build exponential filter
+sk = 1; N = shape.nOrder;
+for i=0:N
+  for j=0:N-i
+    if (i+j>=Nc)
+      filterdiag(sk) = frac;
+    end
+    sk = sk+1;
+  end
+end
+
+F = ( shape.VandMatrix*diag(filterdiag) )/shape.VandMatrix;
 end% func

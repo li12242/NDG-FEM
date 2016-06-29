@@ -6,7 +6,7 @@ end% func
 
 function DrawSection
 filename = 'SWE2D.nc';
-varname  = 'h';
+varname  = 'qx';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
 y        = ncread(filename, 'y');
@@ -33,7 +33,7 @@ end% func
 function DrawSurface
 %% Parameters
 filename = 'SWE2D.nc';
-varname  = 'h';
+varname  = 'qx';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
 y        = ncread(filename, 'y');
