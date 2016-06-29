@@ -30,7 +30,7 @@ casename = 'DamBreakDry';
 N = 1;
 % Number of elements on each edge
 Nx = 100;
-Ny = 10;
+Ny = 1;
 
 % # Name of test case
 phys.casename = casename;
