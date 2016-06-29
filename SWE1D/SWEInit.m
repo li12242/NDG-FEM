@@ -13,7 +13,7 @@ Ne       = phys.ne;
 %% Init test case
 switch caseName
     case 'DamBreakDry'
-        [mesh, h, q, bot, ftime, dt, dx] = DamBreakDryInit(N, Ne);
+        [mesh, h, q, bot, ftime, dt, dx] = DamBreakDryInit(phys, N, Ne);
     case 'DamBreakWet'
         [mesh, h, q, bot, ftime, dt, dx] = DamBreakWetInit(N, Ne);
     case 'FlowDump'
@@ -191,7 +191,7 @@ dt      = 1;
 end% func
 
 %% Init test case for dry dam break problem
-function [mesh, h, q, bot, ftime, dt, dx] = DamBreakDryInit(N, Ne)
+function [mesh, h, q, bot, ftime, dt, dx] = DamBreakDryInit(phys, N, Ne)
 % Init mesh for Dam break
 x1               = 0; 
 x2               = 1000; 
@@ -209,7 +209,7 @@ h       = 10.*ones(size(mesh.x));
 q       = zeros(size(mesh.x));
 dampos  = 500;
 xc      = mean(mesh.x);
-h(xc > dampos) = phys.minDepth;
+h(:, xc > dampos) = phys.minDepth;
 
 % Parameters
 ftime   = 20;

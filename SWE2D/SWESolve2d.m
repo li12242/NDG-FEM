@@ -5,24 +5,27 @@ qx        = phys.qx;   % water flux
 qy        = phys.qy;   % water flux
 mesh      = phys.mesh;
 FinalTime = phys.ftime;
+minDepth  = phys.minDepth;
 outStep   = 0;
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % max time step
 Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
+CFL       = 0.3;
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
 time = 0;
 % Runge-Kutta residual storage  
-resH = zeros(size(h));
+resH  = zeros(size(h));
 resQx = zeros(size(qx));
 resQy = zeros(size(qy));
 
 flag = true(mesh.nElement, 1);
 %% RK time stepping
 while(time<FinalTime)
-    s  = PredictWaveSpeed(phys, h, qx, qy);
-    dt = dx/s;
+    dryEleFlag  = IsDry(mesh, h, minDepth);
+    s  = PredictWaveSpeed(phys, h, qx, qy, dryEleFlag);
+    dt = CFL*dx/s;
     if(dt>dtm)
         dt = dtm;
     end% if
@@ -34,7 +37,7 @@ while(time<FinalTime)
     resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
     for INTRK = 1:5
         timeloc = time + rk4c(INTRK)*dt;
-        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy);
+        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy, dryEleFlag);
         
         % filter
         rhsH  = Filt*rhsH;
@@ -68,7 +71,7 @@ while(time<FinalTime)
     
     % Increment time
     time = time+dt;
-    fprintf('Processing %f...\n', time/FinalTime);
+    fprintf('Processing:%f, dt:%f, s:%f ...\n', time/FinalTime, dt, s);
 end
 
 %% Assignment
@@ -98,16 +101,14 @@ rk4c = [             0.0  ...
          2802321613138.0/2924317926251.0];
 end% func
 
-function s = PredictWaveSpeed(phys, h, Qx, Qy)
-g        = phys.gra;
-minDepth = phys.minDepth;
-dryflag  = h<=minDepth;
-
+function s = PredictWaveSpeed(phys, h, Qx, Qy, dryEleFlag)
+g 	= phys.gra;
 %% Estimate wave speed
-u   = Qx./h; u(dryflag) = 0.0;
-v   = Qy./h; v(dryflag) = 0.0;
-spe = sqrt(u.^2 + v.^2);
-s   = max(max( spe + sqrt(g*h) ));
+u   = Qx./h; 
+v   = Qy./h; 
+spe = sqrt(u.^2 + v.^2) + sqrt(g*h);
+spe(:, dryEleFlag) = 0.0;
+s   = max(max( spe ));
 end% func
 
 function F = Fliter(shape, Nc, frac)
