@@ -2,7 +2,7 @@ function [h, q] = SWESolver(physics, ncfile)
 % time setpping of 1D shallow water equation 
 
 mesh = physics.getVal('mesh');
-bedElva = physics.getVal('bedElva');
+bot  = physics.getVal('bedElva');
      
 time = 0;
 q = physics.getVal('flux'); 
@@ -49,7 +49,7 @@ while(time<FinalTime)
         
         timelocal = time + dt*rk4c(INTRK);
         
-        [rhsH, rhsQ] = SWERHS(mesh, h, q, bedElva, isWet, physics);
+        [rhsH, rhsQ] = SWERHS(mesh, h, q, bot, isWet, physics);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
@@ -57,7 +57,7 @@ while(time<FinalTime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
         
-        [h, q] = PositivePreserving(mesh, h, q, bedElva, isWet);
+        [h, q] = PositivePreserving(mesh, h, q, bot, isWet);
         isWet = WetDryJudge(mesh, h, physics);
     end
     StoreVar(ncfile, h, q, time, lamda, outstep)

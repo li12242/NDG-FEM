@@ -9,6 +9,7 @@ outStep   = 0;
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % max time step
 Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
+CFL       = 0.1;
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
@@ -22,13 +23,17 @@ flag = true(mesh.nElement, 1);
 %% RK time stepping
 while(time<FinalTime)
     s  = PredictWaveSpeed(phys, h, qx, qy);
-    dt = dx/s;
-    if(dt>dtm)
+    dt = CFL*dx/s;
+    if(dt<dtm)
         dt = dtm;
     end% if
     if(time+dt>FinalTime)
         dt = FinalTime - time;
     end% if
+    
+%     if outStep>=4
+%         keyboard
+%     end% if
     
     % zeros Runge-Kutta residual storage
     resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
@@ -49,10 +54,13 @@ while(time<FinalTime)
         qy    = qy + rk4b(INTRK)*resQy;
         
         % Slope limiter
-        h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h,  flag);
-        qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
-        qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
-        
+%         h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h,  flag);
+%         qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
+%         qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
+
+        h  = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, h);
+        qx = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qx);
+        qy = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qy);
         % Positive-preserving limiter
         [h, qx, qy] = PositivePreserving(phys, mesh, h, qx, qy);
     end
@@ -68,7 +76,7 @@ while(time<FinalTime)
     
     % Increment time
     time = time+dt;
-    fprintf('Processing %f...\n', time/FinalTime);
+    fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
 end
 
 %% Assignment
@@ -102,10 +110,11 @@ function s = PredictWaveSpeed(phys, h, Qx, Qy)
 g        = phys.gra;
 minDepth = phys.minDepth;
 dryflag  = h<=minDepth;
+dryEle   = any(dryflag);
 
 %% Estimate wave speed
-u   = Qx./h; u(dryflag) = 0.0;
-v   = Qy./h; v(dryflag) = 0.0;
+u   = Qx./h; u(:, dryEle) = 0.0;
+v   = Qy./h; v(:, dryEle) = 0.0;
 spe = sqrt(u.^2 + v.^2);
 s   = max(max( spe + sqrt(g*h) ));
 end% func
@@ -117,7 +126,7 @@ filterdiag = ones(shape.nNode, 1);
 % build exponential filter
 sk = 1; N = shape.nOrder;
 for i=0:N
-  for j=0:N-i
+  for j=0:N
     if (i+j>=Nc)
       filterdiag(sk) = frac;
     end
