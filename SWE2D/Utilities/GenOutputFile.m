@@ -8,19 +8,19 @@ function file = GenOutputFile(filename, phys)
 % 
 
 mesh = phys.mesh;
-time = Utilities.Netcdf.NcDim('time', 0); % unlimited dimensions
-node = Utilities.Netcdf.NcDim('node', mesh.Shape.nNode);
-nele = Utilities.Netcdf.NcDim('nele', mesh.nElement);
+time = Utilities.NetcdfClass.NcDim('time', 0); % unlimited dimensions
+node = Utilities.NetcdfClass.NcDim('node', mesh.Shape.nNode);
+nele = Utilities.NetcdfClass.NcDim('nele', mesh.nElement);
 
-x    = Utilities.Netcdf.NcVar('x', [node, nele], 'double');
-y    = Utilities.Netcdf.NcVar('y', [node, nele], 'double');
-t    = Utilities.Netcdf.NcVar('time', time, 'double');
-h    = Utilities.Netcdf.NcVar('h', [node, nele, time], 'double');
-qx   = Utilities.Netcdf.NcVar('qx', [node, nele, time], 'double');
-qy   = Utilities.Netcdf.NcVar('qy', [node, nele, time], 'double');
-bot  = Utilities.Netcdf.NcVar('bot', [node, nele], 'double');
+x    = Utilities.NetcdfClass.NcVar('x', [node, nele], 'double');
+y    = Utilities.NetcdfClass.NcVar('y', [node, nele], 'double');
+t    = Utilities.NetcdfClass.NcVar('time', time, 'double');
+h    = Utilities.NetcdfClass.NcVar('h', [node, nele, time], 'double');
+qx   = Utilities.NetcdfClass.NcVar('qx', [node, nele, time], 'double');
+qy   = Utilities.NetcdfClass.NcVar('qy', [node, nele, time], 'double');
+bot  = Utilities.NetcdfClass.NcVar('bot', [node, nele], 'double');
 
-file = Utilities.Netcdf.NcFile(filename, [node, nele, time],...
+file = Utilities.NetcdfClass.NcFile(filename, [node, nele, time],...
     [x, y, t, h, qx, qy, bot]);
 
 % initialize output file
