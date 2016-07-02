@@ -5,26 +5,27 @@ qx        = phys.qx;   % water flux
 qy        = phys.qy;   % water flux
 mesh      = phys.mesh;
 FinalTime = phys.ftime;
+minDepth  = phys.minDepth;
 outStep   = 0;
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % max time step
 Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
-CFL       = 0.1;
+CFL       = 0.3;
 
 % 5-stage Runge-Kutta coefficients
 [rk4a, rk4b, rk4c] = RK45coef;
 time = 0;
 % Runge-Kutta residual storage  
-resH = zeros(size(h));
+resH  = zeros(size(h));
 resQx = zeros(size(qx));
 resQy = zeros(size(qy));
 
 flag = true(mesh.nElement, 1);
 %% RK time stepping
 while(time<FinalTime)
-    s  = PredictWaveSpeed(phys, h, qx, qy);
+    s  = PredictWaveSpeed(phys, h, qx, qy, dryEleFlag);
     dt = CFL*dx/s;
-    if(dt<dtm)
+    if(dt>dtm)
         dt = dtm;
     end% if
     if(time+dt>FinalTime)
@@ -39,7 +40,7 @@ while(time<FinalTime)
     resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
     for INTRK = 1:5
         timeloc = time + rk4c(INTRK)*dt;
-        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy);
+        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy, dryEleFlag);
         
         % filter
         rhsH  = Filt*rhsH;
@@ -77,6 +78,7 @@ while(time<FinalTime)
     % Increment time
     time = time+dt;
     fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
+
 end
 
 %% Assignment
@@ -117,6 +119,7 @@ u   = Qx./h; u(:, dryEle) = 0.0;
 v   = Qy./h; v(:, dryEle) = 0.0;
 spe = sqrt(u.^2 + v.^2);
 s   = max(max( spe + sqrt(g*h) ));
+
 end% func
 
 function F = Fliter(shape, Nc, frac)
