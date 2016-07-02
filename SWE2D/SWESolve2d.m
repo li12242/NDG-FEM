@@ -23,7 +23,7 @@ resQy = zeros(size(qy));
 flag = true(mesh.nElement, 1);
 %% RK time stepping
 while(time<FinalTime)
-    s  = PredictWaveSpeed(phys, h, qx, qy, dryEleFlag);
+    s  = PredictWaveSpeed(phys, h, qx, qy);
     dt = CFL*dx/s;
     if(dt>dtm)
         dt = dtm;
@@ -40,7 +40,7 @@ while(time<FinalTime)
     resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
     for INTRK = 1:5
         timeloc = time + rk4c(INTRK)*dt;
-        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy, dryEleFlag);
+        [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy);
         
         % filter
         rhsH  = Filt*rhsH;
