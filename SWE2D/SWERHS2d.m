@@ -1,4 +1,4 @@
-function [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy)
+function [rhsH, rhsQx, rhsQy] = SWERHS2d(phys, mesh, h, qx, qy, dryEleFlag)
 % Calculation the RHS of SWE
 
 % parameters
@@ -6,7 +6,7 @@ minDepth = phys.minDepth;
 shape    = mesh.Shape;
 bot      = phys.bot;
 % find the dry nodes
-dryEleFlag  = IsDry(mesh, h, minDepth);
+
 dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
 
 % flux

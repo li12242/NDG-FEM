@@ -1,43 +1,38 @@
-function [SM, SP, status] = EstimateWaveSpeed(physics, hM, hP, uM, uP)
+function [SM, SP, status] = EstimateWaveSpeed(phys, hM, hP, uM, uP)
 
-[SM, SP, status] = Toro(physics, hM, hP, uM, uP);
+[SM, SP, status] = Toro(phys, hM, hP, uM, uP);
 
 end% func
 
-function [SM, SP, status] = Toro(physics, hM, hP, uM, uP)
-% output:
-%   status -    [0]: dry
-%               [1]: left (itself) is dry
-%               [2]: right (adjacent) is dry
-%               [3]: both is wet
-gra = physics.getVal('gravity');
-hDelta = physics.getVal('minDepth');
+function [SM, SP, status] = Toro(phys, hM, hP, uM, uP)
+% Estimate wave speed
+gra      = phys.gra;
+minDepth = phys.minDepth;
     
-us = 0.5*(uM + uP) + (sqrt(gra*hM) - sqrt(gra*hP));
-cs = 0.5*( sqrt(gra*hM) + sqrt(gra*hP) ) + 0.25*(uM - uP);
-
-SM = zeros(size(uM)); SP = zeros(size(uP));
-isWetM = (hM >= hDelta); isWetP = (hP >= hDelta);
-
-flag =  isWetP & ~isWetM; % left is dry
+us       = 0.5*(uM + uP) + (sqrt(gra*hM) - sqrt(gra*hP));
+cs       = 0.5*( sqrt(gra*hM) + sqrt(gra*hP) ) + 0.25*(uM - uP);
+% allocate mem
+SM       = zeros(size(uM)); 
+SP       = zeros(size(uP));
+wetM     = (hM >= minDepth); 
+wetP     = (hP >= minDepth);
+% left is dry
+flag     =  wetP & ~wetM; 
 SM(flag) = uP(flag) - 2*sqrt(gra.*hP(flag) ); % hM = 0
 SP(flag) = uP(flag) + sqrt(gra.*hP(flag) ); % hM = 0
-
 status(flag) = 1;
 
-flag = ~isWetP &  isWetM; % right is dry
+% right is dry
+flag     = ~wetP &  wetM; 
 SP(flag) = uM(flag) + 2*sqrt(gra.*hM(flag) ); % hP = 0
 SM(flag) = uM(flag) - sqrt(gra.*hM(flag) ); % hP = 0
-
 status(flag) = 2;
-
-flag =  isWetP & isWetM; % both wet
+% both wet
+flag     =  wetP & wetM; 
 SM(flag) = uM(flag) - sqrt(gra.*hM(flag));
 SM(flag) = min(SM(flag), us(flag) - cs(flag) );
-
 SP(flag) = uP(flag) + sqrt(gra.*hP(flag));
 SP(flag) = max(SP(flag), us(flag) + cs(flag) );
-
 status(flag) = 3;
 end% func
 
