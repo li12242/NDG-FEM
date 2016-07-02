@@ -5,7 +5,7 @@ DrawSurface;
 end% func
 
 function DrawSection
-filename = 'SWE2D.nc';
+filename = 'SWE2D_ParabolicBowl.nc';
 varname  = 'qx';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
@@ -33,7 +33,7 @@ end% func
 function DrawSurface
 %% Parameters
 filename = 'SWE2D.nc';
-varname  = 'h';
+varname  = 'qx';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
 y        = ncread(filename, 'y');
@@ -47,7 +47,7 @@ figure('Position', [430, 375, 660, 429]);
 
 ist = 1;
 var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);
-p   = plot3(x(:), y(:), bot(:) + var(:), 'o');
+p   = plot3(x(:), y(:), bot(:) + var(:), '.');
 
 for ist = 1:1:ntime
     var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);
