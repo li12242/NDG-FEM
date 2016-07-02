@@ -22,14 +22,26 @@ dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;
 dFqx  = Fqx(mesh.vmapM).*mesh.nx + Gqx(mesh.vmapM).*mesh.ny - Fqxs;
 dFqy  = Fqy(mesh.vmapM).*mesh.nx + Gqy(mesh.vmapM).*mesh.ny - Fqys;
 
-% weak form
+% dFqx(dFqx<1e-10) = 0;
+% dFqy(dFqx<1e-10) = 0;
+
+%% strong form
 divFh  = Div2D(mesh, Fh, Gh);
-% divFh(:, dryEleFlag) = 0.0;  % eliminate the dry element flux terms
-rhsH   = -divFh + Sh + shape.LIFT*(dFh.*mesh.fScale);
+rhsH   = - divFh + Sh + shape.LIFT*(dFh.*mesh.fScale);
 
 divFh  = Div2D(mesh, Fqx, Gqx);
-rhsQx  = -divFh + Sqx + shape.LIFT*(dFqx.*mesh.fScale);
+rhsQx   = - divFh + Sqx + shape.LIFT*(dFqx.*mesh.fScale);
 
 divFh  = Div2D(mesh, Fqy, Gqy);
-rhsQy  = -divFh + Sqy + shape.LIFT*(dFqy.*mesh.fScale);
+rhsQy   = - divFh + Sqy + shape.LIFT*(dFqy.*mesh.fScale);
+
+%% weak form
+% divFh  = DivWeak2D(mesh, Fh, Gh);
+% rhsH   = divFh + Sh - shape.LIFT*(Fhs.*mesh.fScale);
+% 
+% divFh  = DivWeak2D(mesh, Fqx, Gqx);
+% rhsQx  = divFh + Sqx - shape.LIFT*(Fqxs.*mesh.fScale);
+% 
+% divFh  = DivWeak2D(mesh, Fqy, Gqy);
+% rhsQy  = divFh + Sqy - shape.LIFT*(Fqys.*mesh.fScale);
 end

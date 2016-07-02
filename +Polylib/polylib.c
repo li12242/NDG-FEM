@@ -923,7 +923,9 @@ void GradjacobiP(int np, double *z, double *dp, int n, double alpha, double beta
   int i;
   double r;
   if(n<1){
-    dp[0] = 0;
+    for(i = 0; i<np; i++){
+      dp[i] = 0.0;
+    }
   }else{
     jacobiP(np, z, dp, n-1, alpha+1, beta+1);
     r = sqrt(n*(n+alpha+beta+1));

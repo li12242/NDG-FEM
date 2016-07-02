@@ -1,4 +1,4 @@
-function [Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP)
+function [Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryEleFlag)
 % Calculate the HLL flux function
 % Input
 %   hM    - water depth in local element 
@@ -39,7 +39,11 @@ function [Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dry
 %   [Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP)
 % 
 
-gra  = phys.gra;
+gra      = phys.gra;
+minDepth = phys.minDepth;
+dryM     = (hM <= minDepth);
+dryP     = (hP <= minDepth);
+
 
 %% Estimate wave speed
 % The wave speed is estimated from Fraccarollo and Toro (1995) basing on
@@ -58,6 +62,7 @@ gra  = phys.gra;
 % 
 % $S_L = u^+ - \sqrt{2gh^+} \quad S_R = u^+ + \sqrt{gh^+}$
 % 
+
 uM = QxM./hM; uM(dryM) = 0.0;
 uP = QxP./hP; uP(dryP) = 0.0;
 
@@ -82,9 +87,9 @@ SM(flag) = uP(flag) - 2*sqrt(gra.*hP(flag) );
 SP(flag) = uP(flag) +   sqrt(gra.*hP(flag) );
 
 % right is dry
-flag     = ~dryM & dryP;
-SP(flag) = uM(flag) + 2*sqrt(gra.*hM(flag) ); 
+flag     = ~dryM & dryP; 
 SM(flag) = uM(flag) -   sqrt(gra.*hM(flag) );
+SP(flag) = uM(flag) + 2*sqrt(gra.*hM(flag) );
 
 %% Calculate the numerical flux
 % The HLL flux function is given by 

@@ -23,9 +23,13 @@ yp    = linspace(rmin, rmax, np)';
 rp    = (xp.^2 + yp.^2);
 bp    = alpha*rp;
 % Draw pic
-time     = (0:1/6:1)*T;
-timeStr  = {'t=0', 't=T/6', 't=2T/6', 't=3T/6',...
-    't=4T/6', 't=5T/6', 't=T'};
+timeFrac = (0:1/9:1);
+time     = timeFrac*T/4;
+timeStr  = cell(numel(time), 1);
+for i = 1:numel(time)
+    timeStr{i} = ['t=',num2str(timeFrac(i)),'T',];
+end
+
 filename = 'SWE2D.nc';
 for ist = 1:numel(time)
     [He, Qxe, Qye] = ParabolicBowlExtSol(xe, ye, be, time(ist));
@@ -81,10 +85,10 @@ h        = ncread(filename, 'h',  [1,1,ist], [np, ne, 1]);
 qx       = ncread(filename, 'qx', [1,1,ist], [np, ne, 1]);
 qy       = ncread(filename, 'qy', [1,1,ist], [np, ne, 1]);
 % interpolation
-Interp = scatteredInterpolant(x(:),y(:),h(:));
+Interp = scatteredInterpolant(x(:),y(:),h(:), 'nearest');
 hs     = Interp(xe, ye);
-Interp = scatteredInterpolant(x(:),y(:),qx(:));
+Interp = scatteredInterpolant(x(:),y(:),qx(:), 'nearest');
 qxs    = Interp(xe, ye);
-Interp = scatteredInterpolant(x(:),y(:),qy(:));
+Interp = scatteredInterpolant(x(:),y(:),qy(:), 'nearest');
 qys    = Interp(xe, ye);
 end% func
