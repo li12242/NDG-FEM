@@ -29,7 +29,7 @@ function [Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWEFlux2d(phys, h, qx, qy, dryNodeFlag)
 %% Parameters and wet element flag
 g           = phys.gra;
 minDepth    = phys.minDepth;
-dryNodeFlag(h <= minDepth) = 1;
+wetNodeFlag = h > minDepth;
 
 %% Get the flux terms
 % The flux term of SWE is 
@@ -39,31 +39,32 @@ dryNodeFlag(h <= minDepth) = 1;
 % For dry elements the flux term is zeros.
 
 [r,c] = size(h);
-Fh  = zeros(r,c); Gh  = zeros(r,c);
-Fqx = zeros(r,c); Fqy = zeros(r,c);
-Gqx = zeros(r,c); Gqy = zeros(r,c);
+u   = zeros(r,c); v   = zeros(r,c);
 
-u  = qx./h; v = qy./h;
-u(dryNodeFlag) = 0;
-v(dryNodeFlag) = 0;
+% % check any zero depth in wet cells and give a warning
+% troubleCell = find(any( h(isWet) <= 0.0 ));
+% if troubleCell
+%     warning('There exists zero depth in wet cell: %d', troubleCell);
+% end% if
 
-% check any zero depth in wet cells and give a warning
-isWet       = ~dryNodeFlag;
-troubleCell = find(any( h(isWet) <= 0.0 ));
-if troubleCell
-    warning('There exists zero depth in wet cell: %d', troubleCell);
-end% if
+% flow rate
+u(wetNodeFlag)  = qx(wetNodeFlag)./h(wetNodeFlag);
+v(wetNodeFlag)  = qy(wetNodeFlag)./h(wetNodeFlag);
 
 % flux for h
-Fh(isWet) = h(isWet).*u(isWet);
-Gh(isWet) = h(isWet).*v(isWet);
+Fh = qx;
+Gh = qy;
 
 % flux for hu
-Fqx(isWet) = qx(isWet).^2./h(isWet) + 0.5.*g.*h(isWet).^2; 
-Gqx(isWet) = qx(isWet).*qy(isWet)./h(isWet);
+Fqx = u.^2.*h + 0.5.*g.*h.^2; 
+Gqx = h.*u.*v;
 
 % flux for hv
-Fqy(isWet) = qx(isWet).*qy(isWet)./h(isWet);
-Gqy(isWet) = qy(isWet).^2./h(isWet) + 0.5.*g.*h(isWet).^2; 
+Fqy = h.*u.*v;
+Gqy = v.^2.*h + 0.5.*g.*h.^2; 
+
+% eliminate dry cell flux
+Fqx(dryNodeFlag) = 0.0; Gqx(dryNodeFlag) = 0.0;
+Fqy(dryNodeFlag) = 0.0; Gqy(dryNodeFlag) = 0.0;
 
 end

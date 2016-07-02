@@ -16,7 +16,7 @@ bot      = ncread(filename, 'bot');
 ntime    = numel(time);
 
 %% Read result and interpolation
-figure('Position', [430, 375, 660, 429]);
+figure('Position', [114, 375, 660, 429]);
 
 ist = 1;
 var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);
@@ -32,8 +32,8 @@ end% func
 
 function DrawSurface
 %% Parameters
-filename = 'SWE2D_DamBreakDry.nc';
-varname  = 'qx';
+filename = 'SWE2D.nc';
+varname  = 'h';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
 y        = ncread(filename, 'y');
@@ -47,7 +47,7 @@ figure('Position', [430, 375, 660, 429]);
 
 ist = 1;
 var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);
-p   = plot3(x(:), y(:), bot(:) + var(:), '.');
+p   = plot3(x(:), y(:), bot(:) + var(:), 'o');
 
 for ist = 1:1:ntime
     var = ncread(filename, varname, [1,1,ist], [np, ne, 1]);

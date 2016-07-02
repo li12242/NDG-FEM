@@ -31,11 +31,11 @@ function [Fhs, Fqx, Fqy] = SWENumFlux2d(phys, mesh, h, qx, qy, dryEleFlag)
 
 %% Get wet/dry status of each nodes
 % extend the elements' wet/dry status to each nodes
-dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
-minDepth    = phys.minDepth;
-dryNodeFlag(h <= minDepth) = 1;
-dryM        = dryNodeFlag(mesh.vmapM);
-dryP        = dryNodeFlag(mesh.vmapP);
+% dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
+% minDepth    = phys.minDepth;
+% dryNodeFlag(h <= minDepth) = 1;
+% dryM        = dryNodeFlag(mesh.vmapM);
+% dryP        = dryNodeFlag(mesh.vmapP);
 
 %% Rotational invariance
 % The numerical flux is calculated by the rotational invariance property of
@@ -60,6 +60,7 @@ dryP        = dryNodeFlag(mesh.vmapP);
 % $Q=T\cdot U=\left(\begin{array}{c}h\cr q_x\cdot n_x+q_y\cdot n_y \cr
 % q_x\cdot -n_y +q_y\cdot n_x\end{array}\right)$
 % 
+
 QxM =  qx(mesh.vmapM).*mesh.nx + qy(mesh.vmapM).*mesh.ny;
 QyM = -qx(mesh.vmapM).*mesh.ny + qy(mesh.vmapM).*mesh.nx;
 
@@ -72,7 +73,7 @@ hP  = h(mesh.vmapP);
 % Lax-Friedrichs flux function
 % [Fhs, Fqxs, Fqys] = LLFFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP);
 % HLL flux function
-[Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP);
+[Fhs, Fqxs, Fqys] = HLLFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryEleFlag);
 
 % Rotate invariance
 Fqx = Fqxs.*mesh.nx  - Fqys.*mesh.ny;

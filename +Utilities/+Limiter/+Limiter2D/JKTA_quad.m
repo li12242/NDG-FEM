@@ -1,6 +1,6 @@
-function hlim = JKTA_quad(mesh, h)
+%% JKTA_quad
 % Slope limiting from Jawahear and Kamath and modified by Tu and Aliabadi (2005)
-
+function hlim = JKTA_quad(mesh, h)
 % 1. compute geometric information for 4 element patch containing each element
 % Build average matrix
 AVE = sum(mesh.Shape.M)/4;
