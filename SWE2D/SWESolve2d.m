@@ -25,7 +25,7 @@ flag = true(mesh.nElement, 1);
 while(time<FinalTime)
     s  = PredictWaveSpeed(phys, h, qx, qy);
     dt = CFL*dx/s;
-    if(dt>dtm)
+    if(dt<dtm)
         dt = dtm;
     end% if
     if(time+dt>FinalTime)
@@ -59,9 +59,13 @@ while(time<FinalTime)
 %         qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
 %         qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
 
-        h  = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qy);
+%         h  = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qy);
+
+        h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
+        qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
+        qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
         % Positive-preserving limiter
         [h, qx, qy] = PositivePreserving(phys, mesh, h, qx, qy);
     end
@@ -129,7 +133,7 @@ filterdiag = ones(shape.nNode, 1);
 % build exponential filter
 sk = 1; N = shape.nOrder;
 for i=0:N
-  for j=0:N
+  for j=0:N-i
     if (i+j>=Nc)
       filterdiag(sk) = frac;
     end

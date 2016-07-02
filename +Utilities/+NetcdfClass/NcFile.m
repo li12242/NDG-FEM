@@ -92,6 +92,7 @@ classdef NcFile < handle
         %% CloseFile
         % Close NetCDF file
         function CloseFile(obj)
+%             netcdf.sync(obj.fileID);
             netcdf.close(obj.fileID);
         end% func
         
