@@ -1,8 +1,8 @@
 function [h ,q] = SWEDriver
 %% Parameters
-% caseName = 'DamBreakDry';
+caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
-caseName = 'ParabolicBowl';
+% caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
 % caseName = 'TsunamiRunup';
 
@@ -22,15 +22,16 @@ phys.ne       = nele;
 % Set initial conditions
 phys = SWEInit(phys);
 
-% set output file
-filename = 'SWE1D.nc';
+%% Create output file
+filename = 'SWE1D';
 ncfile   = CreateOutputFile(filename, phys);
 
-% Solve Problem
+%% Solve Problem
 % [h, q] = SWESolverHrefinedWetDry(physics, ncfile);
 [h, q]   = SWESolver(phys, ncfile);
 
-
+%% Postprocess
+ncfile.CloseFile;
 end% func
 
 

@@ -2,19 +2,19 @@ function file = CreateOutputFile(filename, phys)
 
 mesh = phys.mesh;
 %% Define dimensions
-time = Utilities.netcdf.NcDim('time', 0); % unlimited dimensions
-node = Utilities.netcdf.NcDim('node', mesh.Shape.nNode);
-nele = Utilities.netcdf.NcDim('nele', mesh.nElement);
+time = Utilities.Netcdf.NcDim('time', 0); % unlimited dimensions
+node = Utilities.Netcdf.NcDim('node', mesh.Shape.nNode);
+nele = Utilities.Netcdf.NcDim('nele', mesh.nElement);
 
 %% Define variables
-x    = Utilities.netcdf.NcVar('x', [node, nele], 'double');
-t    = Utilities.netcdf.NcVar('time', time, 'double');
-h    = Utilities.netcdf.NcVar('h', [node, nele, time], 'double');
-q    = Utilities.netcdf.NcVar('q', [node, nele, time], 'double');
-bot  = Utilities.netcdf.NcVar('bot', [node, nele], 'double');
+x    = Utilities.Netcdf.NcVar('x', [node, nele], 'double');
+t    = Utilities.Netcdf.NcVar('time', time, 'double');
+h    = Utilities.Netcdf.NcVar('h', [node, nele, time], 'double');
+q    = Utilities.Netcdf.NcVar('q', [node, nele, time], 'double');
+bot  = Utilities.Netcdf.NcVar('bot', [node, nele], 'double');
 
 %% Define nc file
-file = Utilities.netcdf.NcFile(filename, [node, nele, time],...
+file = Utilities.Netcdf.NcFile(filename, [node, nele, time],...
     [x, t, h, q, bot]);
 
 %% Create file and put coordinate and bottom level
