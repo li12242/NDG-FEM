@@ -1,4 +1,4 @@
-function [h ,q] = SWESetUp
+function [h ,q] = SWEDriver
 %% Parameters
 % caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
