@@ -23,7 +23,7 @@ yp    = linspace(rmin, rmax, np)';
 rp    = (xp.^2 + yp.^2);
 bp    = alpha*rp;
 % Draw pic
-timeFrac = (0:1/6:1);
+timeFrac = (0:1/4:1);
 time     = timeFrac*T;
 timeStr  = cell(numel(time), 1);
 for i = 1:numel(time)
@@ -50,7 +50,7 @@ for ist = 1:numel(time)
     plot(ye, Qxe, 'k--'); hold on
     plot(yp, qxs, 'r+');
     ylim([-1.25, 1.25]);
-    ylabel('$Discharge \, q_x \, (m^2/s)$', 'Interpreter', 'Latex');
+    ylabel('$\rm{Discharge} \, q_x \, (m^2/s)$', 'Interpreter', 'Latex');
     xlabel('y (m)', 'Interpreter', 'Latex');
     title(timeStr{ist}, 'Interpreter', 'Latex');
     t = legend('Exact', 'RKDG');
@@ -61,7 +61,7 @@ for ist = 1:numel(time)
     plot(ye, Qye, 'k--'); hold on
     plot(yp, qys, 'r+');
     ylim([-1.25, 1.25]);
-    ylabel('$Discharge \, q_y \, (m^2/s)$', 'Interpreter', 'Latex');
+    ylabel('$\rm{Discharge} \, q_y \, (m^2/s)$', 'Interpreter', 'Latex');
     xlabel('y (m)', 'Interpreter', 'Latex');
     title(timeStr{ist}, 'Interpreter', 'Latex');
     t = legend('Exact', 'RKDG');

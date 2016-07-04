@@ -30,8 +30,8 @@ casename = 'ParabolicBowl';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 30;
-Ny = 30;
+Nx = 100;
+Ny = 100;
 
 % # Name of test case
 phys.casename = casename;
