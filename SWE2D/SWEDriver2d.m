@@ -30,15 +30,15 @@ casename = 'ParabolicBowl';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 100;
-Ny = 100;
+Nx = 30;
+Ny = 30;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'tri';
+phys.meshType = 'quad';
 phys.minDepth = 1e-3;
 phys.gra      = 9.81;
 % initialization
