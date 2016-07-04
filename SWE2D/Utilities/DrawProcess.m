@@ -5,7 +5,7 @@ DrawSurface;
 end% func
 
 function DrawSection
-filename = 'SWE2D_ParabolicBowl.nc';
+filename = 'SWE2D.nc';
 varname  = 'qx';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
@@ -33,7 +33,7 @@ end% func
 function DrawSurface
 %% Parameters
 filename = 'SWE2D.nc';
-varname  = 'qx';
+varname  = 'h';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
 y        = ncread(filename, 'y');

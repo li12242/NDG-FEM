@@ -24,11 +24,16 @@ qymean    = CellMean(mesh, qy);
 % Obrain positive operator
 hmin      = min(h);
 theta     = min( (hmean - ksi)./(hmean - hmin), 1);
+theta(theta<0) = 0; % in case for hmean = hmin
 
 % Reconstruction
 h  = (ones(Np, 1)*theta).*(h - ones(Np, 1)*hmean) + ones(Np, 1)*hmean;
 qx = (ones(Np, 1)*theta).*(qx - ones(Np, 1)*qxmean) + ones(Np, 1)*qxmean;
 qy = (ones(Np, 1)*theta).*(qy - ones(Np, 1)*qymean) + ones(Np, 1)*qymean;
+
+flag = h<=minDepth;
+qx(flag) = 0;
+qy(flag) = 0;
 
 % eliminate dry flux
 % hmean     = CellMean(mesh, h);

@@ -8,7 +8,7 @@ FinalTime = phys.ftime;
 minDepth  = phys.minDepth;
 outStep   = 0;
 dx        = phys.dx;   % mesh length
-dtm       = phys.dt;   % max time step
+dtm       = phys.dt;   % ideal time step
 Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
 CFL       = 0.3;
 
@@ -55,17 +55,18 @@ while(time<FinalTime)
         qy    = qy + rk4b(INTRK)*resQy;
         
         % Slope limiter
-%         h  = Utilities.Limiter.Limiter2D.BJ2D(mesh, h,  flag);
-%         qx = Utilities.Limiter.Limiter2D.BJ2D(mesh, qx, flag);
-%         qy = Utilities.Limiter.Limiter2D.BJ2D(mesh, qy, flag);
 
 %         h  = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, h);
 %         qx = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qx);
 %         qy = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qy);
 
-        h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
+%         h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
+        
+        h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
+        qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
+        qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
         % Positive-preserving limiter
         [h, qx, qy] = PositivePreserving(phys, mesh, h, qx, qy);
     end
