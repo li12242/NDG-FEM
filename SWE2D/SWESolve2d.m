@@ -64,12 +64,20 @@ while(time<FinalTime)
 %         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
 %         qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
         
-        h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
-        qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
-        qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
+%         h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
+%         qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
+%         qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
+
+        h  = Utilities.Limiter.Limiter2D.SL2(mesh, h, 2);
+        qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 2);
+        qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 2);
+
         % Positive-preserving limiter
         [h, qx, qy] = PositivePreserving(phys, mesh, h, qx, qy);
     end
+    
+    % Increment time
+    time = time+dt;
     
     outfile.putVarPart('time', outStep, 1, time);
     outfile.putVarPart('h',  [0,0,outStep], ...
@@ -80,8 +88,6 @@ while(time<FinalTime)
         [mesh.Shape.nNode,mesh.nElement,1], qy);
     outStep = outStep + 1;
     
-    % Increment time
-    time = time+dt;
     fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
 
 end

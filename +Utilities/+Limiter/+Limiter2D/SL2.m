@@ -90,7 +90,12 @@ hmax   = ones(shape.nNode, 1)*max([hmean(mesh.EToE'); hmean]);
 hmin   = ones(shape.nNode, 1)*min([hmean(mesh.EToE'); hmean]); 
 h0     = ones(shape.nNode, 1)*hmean;
 
+dx      = mesh.x - ones(shape.nNode, 1)*xc;
+dy      = mesh.y - ones(shape.nNode, 1)*yc;
 % 
+h       = h0 + dx.*(ones(shape.nNode,1)*hpx) ...
+    + dy.*(ones(shape.nNode,1)*hpy);
+
 r      = ones(size(h));
 flag   = h>hmax;
 r(flag)= (hmax(flag) - h0(flag))./(h(flag) - h0(flag));
@@ -103,9 +108,6 @@ phi    = min(varphi);  % limited coefficient in each element
 % Reconstruct the 
 phpx    = hpx.*phi;
 phpy    = hpy.*phi;
-
-dx      = mesh.x - ones(shape.nNode, 1)*xc;
-dy      = mesh.y - ones(shape.nNode, 1)*yc;
 
 hlim    = h0 + dx.*(ones(shape.nNode,1)*phpx) ...
     + dy.*(ones(shape.nNode,1)*phpy);
