@@ -23,14 +23,14 @@ yp    = linspace(rmin, rmax, np)';
 rp    = (xp.^2 + yp.^2);
 bp    = alpha*rp;
 % Draw pic
-timeFrac = (0:1/4:1);
+timeFrac = (0:1/6:1);
 time     = timeFrac*T;
 timeStr  = cell(numel(time), 1);
 for i = 1:numel(time)
     timeStr{i} = ['t=',num2str(timeFrac(i)),'T',];
 end
 
-filename = 'SWE2D_ParabolicBowl.nc';
+filename = 'SWE2D.nc';
 for ist = 1:numel(time)
     [He, Qxe, Qye] = ParabolicBowlExtSol(xe, ye, be, time(ist));
     [hs, qxs, qys] = GetResult(filename, xp, yp, time(ist));

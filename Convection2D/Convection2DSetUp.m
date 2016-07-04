@@ -8,8 +8,8 @@ function [mesh, var] = Convection2DSetUp(N, M)
 %   mesh - mesh object
 %   var - scalar variable
 
-% mesh = quadSolver(N, M);
-mesh = triSolver(N, M);
+mesh = quadSolver(N, M);
+% mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
@@ -24,49 +24,51 @@ var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile);
 % postprocess(mesh, var)
 end% func
 
-function outfile = CreateNetcdf(filename, mesh)
+function file = CreateNetcdf(filename, mesh)
 
-time = Utilities.netcdf.NcDim('time', 0); % unlimited dimensions
-node = Utilities.netcdf.NcDim('node', mesh.nNode);
+time = Utilities.NetcdfClass.NcDim('time', 0); % unlimited dimensions
+node = Utilities.NetcdfClass.NcDim('node', mesh.nNode);
 
-x = Utilities.netcdf.NcVar('x', node, 'double');
-y = Utilities.netcdf.NcVar('y', node, 'double');
-t = Utilities.netcdf.NcVar('time', time, 'double');
-var = Utilities.netcdf.NcVar('var', [node, time], 'double');
+x    = Utilities.NetcdfClass.NcVar('x', node, 'double');
+y    = Utilities.NetcdfClass.NcVar('y', node, 'double');
+t    = Utilities.NetcdfClass.NcVar('time', time, 'double');
+var  = Utilities.NetcdfClass.NcVar('var', [node, time], 'double');
 
-outfile = Utilities.netcdf.NcFile(filename, [node, time], [x, y, t, var]);
+file = Utilities.NetcdfClass.NcFile(filename,[node, time],[x, y, t, var]);
 
 % initialize output file
-outfile.CreateFile;
+file.CreateFile;
 
 % set vertex location value
-outfile.putVarPart('x', 0, mesh.nNode, mesh.x);
-outfile.putVarPart('y', 0, mesh.nNode, mesh.y);
+file.putVarPart('x', 0, mesh.nNode, mesh.x);
+file.putVarPart('y', 0, mesh.nNode, mesh.y);
 
 end% func
 
 function var = ConvectionInit(mesh)
-% var = ones(size(mesh.x));
-% var = mesh.x;
-% xc = mean(mesh.x);
-% left = xc < 0.5; right = xc > 0.5;
-% var = sin(pi*mesh.x);%.*sin(2*pi*mesh.y);
-% var = zeros(size(mesh.x));
-% var(:,left) = 1; var(:,right) = 0;
+% % Guass profile
+% sigma = 125*1e3/33^2; 
+% xc = 0; yc = 3/5;
+% var = exp(-sigma.*( (mesh.x - xc).^2 + (mesh.y - yc).^2) );
 
-sigma = 125*1e3/33^2; 
-xc = 0; yc = 3/5;
-var = exp(-sigma.*( (mesh.x - xc).^2 + (mesh.y - yc).^2) );
+% square distribution
+var = zeros(size(mesh.x));
+b   = 1/12;
+x0  = 0;   xc = mean(mesh.x); 
+y0  = 3/4; yc = mean(mesh.y);
+
+flag = ( abs(xc - x0)<b & abs(yc - y0)<b );
+var(:, flag) = 1;
 end% func
 
 function mesh = triSolver(N, M)
 
 % read triangle mesh
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/triangle');
+np   = M + 1;
+[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(np, np, -1, 1, -1, 1, 1);
 
-[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M, -1, 1, 1);
-
-tri = StdRegions.Triangle(N);
+tri  = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
 end% func
 
@@ -76,7 +78,8 @@ function mesh = quadSolver(N, M)
 % [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderQuad('Convection2D/mesh/quad');
 
 % uniform mesh
-[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(M+1, -1, 1);
+np   = M + 1;
+[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, np, -1, 1, -1, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);

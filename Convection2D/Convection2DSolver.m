@@ -32,12 +32,10 @@ while(time < FinalTime)
         var = var + rk4b(INTRK)*resVar;
         
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
-        temp = Utilities.Limiter.Limiter2D.BJ2D(mesh, var);
-        [flag, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
-        ind = find(flag);
-        var(:, ind) = temp(:, ind);
-        
+%         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
+        var = Utilities.Limiter.Limiter2D.SLLoc2(mesh, var, 2);
     end% for
+    DrawPoints(mesh, var); drawnow;
     outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);
     outfile.putVarPart('time', outStep, 1, time);
     
@@ -49,7 +47,7 @@ end% while
 % outfile.putVarPart('time', outStep, 1, time);
 %     
 % outStep = outStep + 1;
-outfile.closeFile;
+outfile.CloseFile;
 
 end% func
 
