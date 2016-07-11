@@ -1,4 +1,4 @@
-function [h, qx, qy] = ParabolicBowlExtSol(x, y, bot, t)
+function [h, qx, qy] = ParabolicBowlExtSol(x, y, t)
 % Parameters
 g     = 9.81;
 alpha = 1.6*1e-7;
