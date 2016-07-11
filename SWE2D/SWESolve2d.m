@@ -64,13 +64,13 @@ while(time<FinalTime)
 %         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
 %         qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
         
-%         h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
-%         qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
-%         qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
+        h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
+        qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
+        qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
 
-        h  = Utilities.Limiter.Limiter2D.SL2(mesh, h, 2);
-        qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 2);
-        qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 2);
+%         h  = Utilities.Limiter.Limiter2D.SL2(mesh, h,  1);
+%         qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 1);
+%         qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 1);
 
         % Positive-preserving limiter
         [h, qx, qy] = PositivePreserving(phys, mesh, h, qx, qy);
