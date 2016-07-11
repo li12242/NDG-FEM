@@ -2,21 +2,21 @@ function rhsVar = Convection2DRHS(mesh, var, u, v)
 % 2D convection problem
 % Righ Hand sides
 
-tri = mesh.Shape;
+shape = mesh.Shape;
 
 % volume flux
 [F, G] = ConvectionFlux(var, u, v);
 
 % numerical flux
-
 Fs = ConvectionLF(mesh, var, u, v);
-FM = F(mesh.vmapM); GM = G(mesh.vmapM);
+FM = F(mesh.vmapM); 
+GM = G(mesh.vmapM);
 dF = normal(mesh, FM, GM) - Fs;
 
 % strong form
-rhsVar = -( mesh.rx.*(tri.Dr*F) + mesh.sx.*(tri.Ds*F) ...
-    + mesh.ry.*(tri.Dr*G) + mesh.sy.*(tri.Ds*G) ) ...
-    + tri.LIFT*(dF.*mesh.fScale);
+rhsVar = -( mesh.rx.*(shape.Dr*F) + mesh.sx.*(shape.Ds*F) ...
+    + mesh.ry.*(shape.Dr*G) + mesh.sy.*(shape.Ds*G) ) ...
+    + shape.LIFT*(dF.*mesh.fScale);
 
 % weak form
 % rhsVar = ( mesh.rx.*(tri.Drw*F) + mesh.sx.*(tri.Dsw*F) ...

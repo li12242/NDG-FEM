@@ -33,7 +33,7 @@ while(time < FinalTime)
         
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
-        var = Utilities.Limiter.Limiter2D.SLLoc2(mesh, var, 2);
+        var = Utilities.Limiter.Limiter2D.SL2(mesh, var, 2);
     end% for
     DrawPoints(mesh, var); drawnow;
     outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);

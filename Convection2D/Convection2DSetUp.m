@@ -8,8 +8,8 @@ function [mesh, var] = Convection2DSetUp(N, M)
 %   mesh - mesh object
 %   var - scalar variable
 
-mesh = quadSolver(N, M);
-% mesh = triSolver(N, M);
+% mesh = quadSolver(N, M);
+mesh = triSolver(N, M);
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;

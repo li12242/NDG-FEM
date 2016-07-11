@@ -22,23 +22,23 @@ function SWEDriver2d
 % for further intialization
 
 % Name of test case
-% casename = 'DamBreakDry';
+casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
-casename = 'ParabolicBowl';
+% casename = 'ParabolicBowl';
 % casename = 'ParabolicBowl2'; % from Khan & Lai
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
 Nx = 100;
-Ny = 100;
+Ny = 10;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'quad';
+phys.meshType = 'tri';
 phys.minDepth = 1e-3;
 phys.gra      = 9.81;
 % initialization

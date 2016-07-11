@@ -1,4 +1,4 @@
-function ParabolicBowlVerify
+function SectionProfile
 % Compare the results with exact solution on section x=0;
 
 % Parameters
@@ -32,7 +32,7 @@ end
 
 filename = 'SWE2D.nc';
 for ist = 1:numel(time)
-    [He, Qxe, Qye] = ParabolicBowlExtSol(xe, ye, be, time(ist));
+    [He, Qxe, Qye] = ParabolicBowlExtSol(xe, ye, time(ist));
     [hs, qxs, qys] = GetResult(filename, xp, yp, time(ist));
     % draw water height
     figure('Color', 'w');
