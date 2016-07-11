@@ -94,7 +94,7 @@ dx      = mesh.x - ones(shape.nNode, 1)*xc;
 dy      = mesh.y - ones(shape.nNode, 1)*yc;
 % 
 h       = h0 + dx.*(ones(shape.nNode,1)*hpx) ...
-    + dy.*(ones(shape.nNode,1)*hpy);
+             + dy.*(ones(shape.nNode,1)*hpy);
 
 r      = ones(size(h));
 flag   = h>hmax;

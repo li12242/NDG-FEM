@@ -18,7 +18,3 @@ p = Polylib.GradJacobiP(r,alpha,beta,n);
 
 %% NDG
 p1 = GradJacobiP(r, alpha, beta, double(n));
-
-%% compare
-
-p1-p'
