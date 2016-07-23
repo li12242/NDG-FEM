@@ -1,8 +1,19 @@
 %% Postprocess
 % Class for post process
 % 
+% Meshods:
+%   Postprocess     - construction function
+%   GetVarData      - get the result of variable at spicific time
+%   GetDofs         - get the number of unknows for 1D or 2D variables
+%   NormErr         - calculate the norm error of variable
+%   ConvRate        - calculate the convergence rate
+%   Interp2D        - interpolation for input data
+%   SectProfile2D   - draw section profile for 2 dimension variables
+%   Snapshot2D      - draw snapshot of 2 dimension variables
+%   GetConvTable    - create table contains norm error and convergence rate
+% 
 % Warnning: 
-% The NetCDF files must contain 'x' or 'x' and 'y' for coordinate variables.
+%   The NetCDF files must contain 'x' or 'x' and 'y' as coordinate variables.
 % 
 classdef Postprocess < handle
     properties
@@ -24,9 +35,51 @@ classdef Postprocess < handle
             obj.nfiles  = filenum;
             obj.NcFile  = [];
             for i = 1:filenum
-                obj.NcFile  = [obj.NcFile; Utilities.PostProcess.ResultFile(filename{i})];
+                obj.NcFile  = [obj.NcFile; ...
+                    Utilities.PostProcess.ResultFile(filename{i})];
             end% for
             obj.StdCell = Utilities.PostProcess.StdCell(eleType, order);
+        end% func
+        
+        %% Get convergence rate tables
+        function PrintTable = GetConvTable(obj, varname, stime, exactFunH, varargin)
+            if mod(numel(varargin),2)
+                warning(['The number of your input is ', numel(varargin),...
+                    ',the variable names and datas do not match']);
+                error('Please check your input')
+            end
+            
+            % create table
+            PrintTable   = table;
+            % set filename in PrintTable from input varargin, such as
+            %
+            % varargin{1}       varargin{3}
+            %   -----             -----    
+            % varargin{2}       varargin{4}
+            %
+            std = 1;
+            for i = 1:numel(varargin)/2
+                % use user input str as field name
+                PrintTable.(varargin{std}) = varargin{std+1};
+                std = std + 2;
+            end
+            % get DOFs
+            PrintTable.dofs = obj.GetDofs;
+            % get norm error
+            errL2        = zeros(obj.nfiles, 1);
+            errLinf      = zeros(obj.nfiles, 1);
+            for i =1:obj.nfiles
+                errL2(i)   = obj.NormErr(varname, stime, exactFunH, 'L2', i);
+                errLinf(i) = obj.NormErr(varname, stime, exactFunH, 'Linf', i);
+            end% for
+            % convergence rate for variable
+            a2   = obj.ConvRate(varname, stime, exactFunH, 'L2');
+            ainf = obj.ConvRate(varname, stime, exactFunH, 'Linf');
+
+            PrintTable.L2   = errL2;
+            PrintTable.a2   = a2;
+            PrintTable.Linf = errLinf;
+            PrintTable.ainf = ainf;
         end% func
         
         %% Draw 2 dimensional snapshot of variables
@@ -154,7 +207,8 @@ classdef Postprocess < handle
     end% methods
 end% classdef
 
-%% subroutine function
+%% Subroutine function
+% functions for 
 function err = L2_1d(y, ey)
 err = sqrt( sum((y - ey).^2)./numel(y) );
 end% func
