@@ -8,11 +8,13 @@ time = 0;
 
 resVar = zeros(size(var));
 % compute time step size
-xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 ...
-    + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
-CFL=0.30;  
-un = max(max( sqrt(u.^2 + v.^2) ));
-dt = CFL/un*xmin; outStep = 0;
+CFL     = 0.30;
+un      = max(max( sqrt(u.^2 + v.^2) ));
+AVE     = sum(mesh.Shape.M);
+Area    = AVE*mesh.J; % area of each element
+r       = sqrt(min(Area./pi)); % radius
+dt      = CFL/un*r/mesh.Shape.nOrder; 
+outStep = 0;
 
 % store initial result
 outfile.putVarPart('var', [0, 0, outStep],...
@@ -43,15 +45,14 @@ while(time < FinalTime)
 %         var = Utilities.Limiter.Limiter2D.SL2(mesh, var, 2);
     end% for
     
-    outfile.putVarPart('var', [0, 0, outStep], ...
+    outfile.putVarPart('var', [0, 0, outStep],...
         [mesh.Shape.nNode, mesh.nElement, 1], var);
     outfile.putVarPart('time', outStep, 1, time);
     
     outStep = outStep + 1;
 end% while
-
+    
 outfile.CloseFile;
-
 end% func
 
 function [rk4a, rk4b, rk4c] = RK4Coeff
