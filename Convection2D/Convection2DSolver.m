@@ -8,10 +8,17 @@ time = 0;
 
 resVar = zeros(size(var));
 % compute time step size
-xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
+xmin = min(sqrt((mesh.x(1,:)-mesh.x(2,:)).^2 ...
+    + (mesh.y(1,:) - mesh.y(2,:)).^2 ));
 CFL=0.30;  
 un = max(max( sqrt(u.^2 + v.^2) ));
 dt = CFL/un*xmin; outStep = 0;
+
+% store initial result
+outfile.putVarPart('var', [0, 0, outStep],...
+    [mesh.Shape.nNode, mesh.nElement, 1], var);
+outfile.putVarPart('time', outStep, 1, time);
+outStep = outStep + 1;
 
 while(time < FinalTime)
     
@@ -33,20 +40,16 @@ while(time < FinalTime)
         
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
-        var = Utilities.Limiter.Limiter2D.SL2(mesh, var, 2);
+%         var = Utilities.Limiter.Limiter2D.SL2(mesh, var, 2);
     end% for
-    DrawPoints(mesh, var); drawnow;
-    outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);
+    
+    outfile.putVarPart('var', [0, 0, outStep], ...
+        [mesh.Shape.nNode, mesh.nElement, 1], var);
     outfile.putVarPart('time', outStep, 1, time);
     
     outStep = outStep + 1;
-%     plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); drawnow
 end% while
 
-% outfile.putVarPart('var', [0, outStep], [mesh.nNode, 1], var);
-% outfile.putVarPart('time', outStep, 1, time);
-%     
-% outStep = outStep + 1;
 outfile.CloseFile;
 
 end% func
