@@ -1,15 +1,20 @@
-function [mesh, var] = Convection2DSetUp(N, M)
+function [mesh, var] = Convection2DSetUp(meshtype, N, M)
 % 2D convection problem
 % dc/dt + d(uc)/dx + d(vc)/dy = 0
 % Input:
-%   N - degree of polynomial
-%   M - No. of elements on each edge
+%   meshtype - element type of mesh grid
+%   N        - degree of polynomial
+%   M        - No. of elements on each edge
 % Output:
 %   mesh - mesh object
 %   var - scalar variable
-
-% mesh = quadSolver(N, M);
-mesh = triSolver(N, M);
+% 
+switch meshtype
+    case 'quad'
+        mesh = quadSolver(N, M);
+    case 'tri'
+        mesh = triSolver(N, M);
+end% switch
 var = ConvectionInit(mesh);
 
 w = 5*pi/6;
@@ -17,7 +22,7 @@ w = 5*pi/6;
 u = -w.*mesh.y; v = w.*mesh.x;
 
 FinalTime = 2.4;
-filename = ['Convection2D_', num2str(N),'_',num2str(M)];
+filename = ['Convection2D_', meshtype, '_', num2str(N),'_',num2str(M)];
 outfile = CreateNetcdf(filename, mesh);
 
 var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile);

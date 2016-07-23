@@ -1,8 +1,9 @@
-ele = 20;
-deg = 2;
+ele      = 40;
+deg      = 1;
+meshtype = 'quad';
 
 for ie = 1:numel(ele)
     for id = 1:numel(deg)
-        Convection2DSetUp(deg(id), ele(ie));
+        Convection2DSetUp(meshtype, deg(id), ele(ie));
     end% for
 end% for
