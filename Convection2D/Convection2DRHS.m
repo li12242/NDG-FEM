@@ -31,6 +31,9 @@ uM = u(mesh.vmapM); vM = v(mesh.vmapM);
 varM = var(mesh.vmapM); varP = var(mesh.vmapP);
 un = normal(mesh, uM, vM);
 
+bclist = (mesh.vmapM == mesh.vmapP);
+varP(bclist) = 0;
+
 [FM, GM] = ConvectionFlux(varM, uM, vM);
 [FP, GP] = ConvectionFlux(varP, uM, vM);
 
@@ -39,26 +42,6 @@ FsP = normal(mesh, FP, GP);
 
 Fs = 0.5*(FsM + FsP) - 0.5.*abs(un).*(varP - varM);
 end% func
-
-% function Fs = ConvectionCentral(mesh, var, Speed)
-% % central flux
-% [FM, GM] = ConvectionFlux(var(mesh.vmapM), Speed);
-% [FP, GP] = ConvectionFlux(var(mesh.vmapP), Speed);
-% FsM = normal(mesh, FM, GM); 
-% FsP = normal(mesh, FP, GP); 
-% 
-% Fs = 0.5*(FsM + FsP);
-% end% func
-% 
-% function Fs = BoundaryCondition(mesh, Fs, time, Speed)
-% % Inflow BC
-% % c = sin(t);
-% % c = sin(- pi*time);%*sin(2*pi*mesh.y(mesh.vmapM(mesh.mapI)));
-% c = 1;
-% [F,G] = ConvectionFlux(c, Speed);
-% Fs(mesh.mapI) = F.*mesh.nx(mesh.mapI) + G.*mesh.ny(mesh.mapI);
-% end% func
-
 
 function un = normal(mesh, u, v)
 un = u.*mesh.nx + v.*mesh.ny;
