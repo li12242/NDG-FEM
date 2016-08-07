@@ -60,7 +60,7 @@ for i = 1:my % each row
         % Counterclockwise
         if flag % '/' divided
             EToV(ind1,:) = [v1, v4, v3];
-            EToV(ind2,:) = [v1, v2, v3];
+            EToV(ind2,:) = [v1, v2, v4];
         else    % '\' divided
             EToV(ind1,:) = [v1, v2, v3];
             EToV(ind2,:) = [v2, v4, v3];
