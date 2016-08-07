@@ -1,0 +1,3 @@
+function NormErr
+
+end% func
