@@ -1,3 +1,0 @@
-function NormErr
-
-end% func
