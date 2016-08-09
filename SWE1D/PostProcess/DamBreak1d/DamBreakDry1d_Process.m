@@ -1,5 +1,5 @@
 function DamBreakDry1d_Process
-filename = 'SWE1D_DamBreakDry_400.nc';
+filename = 'SWE1D_WiderGaussianMound_1000.nc';
 x = ncread(filename, 'x');
 bot = ncread(filename, 'bot');
 time = ncread(filename, 'time');
@@ -15,14 +15,15 @@ figure;
 subplot(3,1,1);
 p_h = plot(x(:), h(:)+bot(:), '-b.'); hold on;
 plot(x(:), bot(:), 'k')
+% ylim([100, 101])
 
 subplot(3,1,2);
 p_q = plot(x(:), q(:), '-b.'); hold on;
-xlim([0, 1e3]); ylim([0, 30]);
+% xlim([0, 1e3]); ylim([0, 30]);
 
 subplot(3,1,3);
 p_u = plot(x(:), u(:), '-b.');
-xlim([0, 1e3]); ylim([0, 20]);
+% xlim([0, 1e3]); ylim([0, 20]);
 
 camera_on = 0;
 if camera_on
