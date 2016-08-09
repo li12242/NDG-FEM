@@ -27,7 +27,7 @@ classdef ResultFile < handle
             end
             % get result
             % warnning: the index is C style, start from 0
-            start  = [zeros(ndim-1, 1); ist-1]; % the last dimension is time
+            start  = [zeros(ndim-1, 1); ist-1]; % the last dimension must be time
             count  = [dimlen(1:ndim-1); 1];
             data   = netcdf.getVar(ncid, varid, start, count);
             netcdf.close(ncid);
