@@ -82,6 +82,14 @@ classdef Postprocess < handle
             PrintTable.ainf = ainf;
         end% func
         
+        %% Draw 1 dimensional snapshot of variables
+        function p = Snapshot1D(obj, varname, stime, fileID, varargin)
+            x   = obj.NcFile(fileID).GetVarData('x');
+            [np, ne] = size(x);
+            var      = obj.GetVarData(varname, stime, fileID);
+            p = plot(x, var, varargin{:});
+        end% func
+        
         %% Draw 2 dimensional snapshot of variables
         function Snapshot2D(obj, varname, stime, fileID)
             x   = obj.NcFile(fileID).GetVarData('x');
@@ -189,19 +197,21 @@ classdef Postprocess < handle
             % get the Norm error
             switch errType
                 case 'L2'
-                    switch obj.StdCell.dim
-                        case 1
-                            err = L2_1d(numSol, exSol);
-                        case 2
-                            err = L2_2d(numSol, exSol);
-                    end% switch
+                    err = L2_2d(numSol, exSol);
+%                     switch obj.StdCell.dim
+%                         case 1
+%                             err = L2_1d(numSol, exSol);
+%                         case 2
+%                             err = L2_2d(numSol, exSol);
+%                     end% switch
                 case 'Linf'
-                    switch obj.StdCell.dim
-                        case 1
-                            err = Linf_1d(numSol, exSol);
-                        case 2
-                            err = Linf_2d(numSol, exSol);
-                    end% switch
+                    err = Linf_2d(numSol, exSol);
+%                     switch obj.StdCell.dim
+%                         case 1
+%                             err = Linf_1d(numSol, exSol);
+%                         case 2
+%                             err = Linf_2d(numSol, exSol);
+%                     end% switch
             end% switch
         end% func
     end% methods

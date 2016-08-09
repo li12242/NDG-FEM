@@ -1,7 +1,7 @@
 function SWE_Driver1d
 %% Parameters
-% caseName = 'DamBreakDry';
-caseName = 'DamBreakWet';
+caseName = 'DamBreakDry';
+% caseName = 'DamBreakWet';
 % caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
 % caseName = 'TsunamiRunup';
@@ -10,7 +10,7 @@ caseName = 'DamBreakWet';
 minDepth = 1e-4;
 g        = 9.81;
 n        = 1;   % polynomial order 
-nele     = 400; % No. of elements
+nele     = 300; % No. of elements
 
 % Set to strucutre variable
 phys.name     = caseName;
@@ -23,7 +23,7 @@ phys.ne       = nele;
 phys = SWE_Init1d(phys);
 
 %% Create output file
-filename = 'SWE1D';
+filename = ['SWE1D_', caseName, '_', num2str(nele)];
 ncfile   = SWE_GenOutputFile1d(filename, phys);
 
 %% Solve Problem
