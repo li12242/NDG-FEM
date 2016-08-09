@@ -25,6 +25,8 @@ switch caseName
         [mesh, h, q, bot, ftime, dt, dx] = LakeAtResrInit(N, Ne);
     case 'TsunamiRunup'
         [mesh, h, q, bot, ftime, dt, dx] = TsunamiRunupInit(N, Ne);
+    case 'WiderGaussianMound'
+        [mesh, h, q, bot, ftime, dt, dx] = WiderGaussianMound(N, Ne);
 end% switch
 
 %% Assignment
@@ -37,12 +39,37 @@ phys.dt    = dt;
 phys.dx    = dx;
 end% func
 
+function [mesh, h, q, bot, ftime, dt, dx] = WiderGaussianMound(N, Ne)
+% Init mesh
+x1                = -1920e3; 
+x2                = 1920e3;
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, Ne);
+line              = StdRegions.Line(N);
+mesh              = MultiRegions.RegionLine(line, EToV, VX);
+% Init bottom level
+r                = mesh.Shape.r;
+VB               = zeros(size(VX));
+vb               = VB(EToV');
+bot              = 0.5*( (1-r)*vb(1,:) + (r+1)*vb(2,:) );
+% Initial condition
+h       = 100.*ones(size(mesh.x)); 
+q       = zeros(size(mesh.x));
+R       = 50e3;
+eta0    = 1;
+h       = h + eta0*exp(-mesh.x.^2/R^2);
+
+% Parameters
+ftime   = 9*3600; % 9h
+dx      = (x2 - x1)./Ne/N;
+dt      = 1;
+end% func
+
 %% Init test case for Tsunami-Runup
 function [mesh, h, q, bot, ftime, dt, dx] = TsunamiRunupInit(N, Ne)
 % Init mesh
 x1                = -500; 
 x2                = 50000;
-[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, nEle);
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, Ne);
 rm                = 1.5; 
 VX                = MeshMapping(rm, Nv, x1, x2);
 line              = StdRegions.Line(N);
