@@ -22,8 +22,10 @@ PrintTable   = table;
 PrintTable.M = elenum';
 PrintTable.dofs = PostproSWE2D.GetDofs;
 for i =1:PostproSWE2D.nfiles
-    errL2(i)   = PostproSWE2D.NormErr('h', T, @ParabolicBowl2d_ExtDepth, 'L2', i);
-    errLinf(i) = PostproSWE2D.NormErr('h', T, @ParabolicBowl2d_ExtDepth, 'Linf', i);
+    errL2(i)   = ...
+        PostproSWE2D.NormErr('h', T, @ParabolicBowl2d_ExtDepth, 'L2', i);
+    errLinf(i) = ...
+        PostproSWE2D.NormErr('h', T, @ParabolicBowl2d_ExtDepth, 'Linf', i);
 end% for
 % convergence rate for H
 a2   = PostproSWE2D.ConvRate('h', T, @ParabolicBowl2d_ExtDepth, 'L2');
@@ -39,8 +41,10 @@ PrintTable
 
 % error for qx
 for i =1:PostproSWE2D.nfiles
-    errL2(i)   = PostproSWE2D.NormErr('qx', T, @ParabolicBowl2d_ExtQx, 'L2', i);
-    errLinf(i) = PostproSWE2D.NormErr('qx', T, @ParabolicBowl2d_ExtQx, 'Linf', i);
+    errL2(i)   = ...
+        PostproSWE2D.NormErr('qx', T, @ParabolicBowl2d_ExtQx, 'L2', i);
+    errLinf(i) = ...
+        PostproSWE2D.NormErr('qx', T, @ParabolicBowl2d_ExtQx, 'Linf', i);
 end% for
 % convergence rate for qx
 a2   = PostproSWE2D.ConvRate('qx', T, @ParabolicBowl2d_ExtQx, 'L2');
@@ -56,8 +60,10 @@ PrintTable
 
 % error for qy
 for i =1:PostproSWE2D.nfiles
-    errL2(i)   = PostproSWE2D.NormErr('qy', T, @ParabolicBowl2d_ExtQy, 'L2', i);
-    errLinf(i) = PostproSWE2D.NormErr('qy', T, @ParabolicBowl2d_ExtQy, 'Linf', i);
+    errL2(i)   = ...
+        PostproSWE2D.NormErr('qy', T, @ParabolicBowl2d_ExtQy, 'L2', i);
+    errLinf(i) = ...
+        PostproSWE2D.NormErr('qy', T, @ParabolicBowl2d_ExtQy, 'Linf', i);
 end% for
 % convergence rate for qy
 a2   = PostproSWE2D.ConvRate('qy', T, @ParabolicBowl2d_ExtQy, 'L2');

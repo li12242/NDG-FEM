@@ -1,4 +1,4 @@
-function [ h ] = DamBreak1d_ExactH( x,t )
+function [ h ] = DamBreakDry1d_ExactH( x,t )
 %DAMBREAK1D_EXACTH exact solution of one dimensional DamBreak problem
 %   Detailed explanation goes here
 
