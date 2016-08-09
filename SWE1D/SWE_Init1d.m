@@ -236,7 +236,7 @@ h       = 10.*ones(size(mesh.x));
 q       = zeros(size(mesh.x));
 dampos  = 500;
 xc      = mean(mesh.x);
-h(xc > dampos) = 2;
+h(:, xc > dampos) = 2;
 
 % Parameters
 ftime   = 20;
