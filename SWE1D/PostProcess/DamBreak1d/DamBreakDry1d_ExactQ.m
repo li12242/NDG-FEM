@@ -1,4 +1,4 @@
-function [ qx ] = DamBreak1d_ExactQ( x,t )
+function [ qx ] = DamBreakDry1d_ExactQ( x,t )
 %DAMBREAK1D_EXACTQ Exact solution for flux q
 %   Detailed explanation goes here
 
