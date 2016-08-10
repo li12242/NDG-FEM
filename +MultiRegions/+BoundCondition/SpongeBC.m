@@ -13,7 +13,9 @@ properties
 end
 
 methods
-    function obj = SpongeBC(BCflag, fileName)
+    %% SpongeBC 
+    % construction function of the sponge boundary condition
+    function obj = SpongeBC(BCflag, fileName, dt)
         % boundary netcdf file
         obj.BCfile = Utilities.PostProcess.ResultFile(fileName);
         % get nBV
@@ -25,6 +27,8 @@ methods
         % the connection between sponge element to computation element
         obj.nSpE = sum(BCflag);
         obj.SpEToE = find(BCflag);
+        % absorption ceofficient
+        obj.sigma_max = 0.9/dt;
     end% func
 end
     
