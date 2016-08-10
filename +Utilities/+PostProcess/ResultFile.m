@@ -26,8 +26,9 @@ classdef ResultFile < handle
                 [~, dimlen(i)] = netcdf.inqDim(ncid, dimids(i));
             end
             % get result
-            % warnning: the index is C style, start from 0
-            start  = [zeros(ndim-1, 1); ist-1]; % the last dimension must be time
+            % warnning: the index is C style, start from 0, and the last
+            % dimension must be time.
+            start  = [zeros(ndim-1, 1); ist-1];
             count  = [dimlen(1:ndim-1); 1];
             data   = netcdf.getVar(ncid, varid, start, count);
             netcdf.close(ncid);

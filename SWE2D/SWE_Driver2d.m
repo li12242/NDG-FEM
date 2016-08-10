@@ -25,7 +25,6 @@ function SWE_Driver2d
 casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
 % casename = 'ParabolicBowl';
-% casename = 'ParabolicBowl2'; % from Khan & Lai
 
 % Order of polymomials used for approximation 
 N = 1;
