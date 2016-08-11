@@ -9,9 +9,9 @@ properties
 end
 
 methods
-    function obj = SpongeBC1d(mesh, BCflag, fileName, xb, xe, deltaT)
+    function obj = SpongeBC1d(mesh, BCflag, fileName, xb, xe)
         obj = obj@MultiRegions.BoundCondition.SpongeBC...
-            (BCflag, fileName, deltaT);
+            (BCflag, fileName);
         % the connection between sponge element to the boundary vertex
         obj.SpEToBV = zeros(obj.nSpE, 1);
         xbv = obj.BCfile.GetVarData('xb');
@@ -30,10 +30,11 @@ methods
     % the coefficient is obtained from
     % $$ \sigma = \sigma_{max} \left( \frac{x - x_b}{D} \right)^2 $$
     % where $D$ is the width of sponge layer.
-    function sigma = GetAbsorpCoeff(obj, mesh)
-        sigma = zeros(mesh.x);
+    function sigma = GetAbsorpCoeff(obj, mesh, dt)
+        sigma_max = 0.9/dt;
+        sigma = zeros(size(mesh.x));
         x_spe = mesh.x(:, obj.SpEToE);
-        sigma_spe = obj.sigma_max*((x_spe - obj.xb)/obj.width)^2;
+        sigma_spe = sigma_max*((x_spe - obj.xb)/obj.width).^2;
         sigma(:, obj.SpEToE) = sigma_spe;
     end% func
     
@@ -48,9 +49,13 @@ methods
     % interpolate these external solutions as the approximation external 
     % solution.
     function var = GetBC(obj, mesh, varname, time)
+        % check input time
+        if time > obj.time(end)
+            error('The require BC time: %f is larger than that in BC files', time);
+        end% if
         % find the time step ind1 & ind2 and get the interpolation
         % coefficients
-        ind2 = find(obj.time>time, 1);
+        ind2 = find(obj.time>=time, 1);
         if ind2 ==1 
             ind1  = 1;
             coef1 = 1; coef2 = 0;
@@ -65,9 +70,10 @@ methods
         varB2 = obj.BCfile.GetTimeVarData(varname, ind2);
         varB  = varB1*coef1 + varB2*coef2;
         % get the external solution on all nodes
-        var  = zeros(mesh.x);
+        np   = mesh.Shape.nNode;
+        var  = zeros(size(mesh.x));
         var_spe = varB(obj.SpEToBV);
-        var(:, obj.SpEToE) = var_spe;
+        var(:, obj.SpEToE) = ones(np, 1)*var_spe;
     end% func
 end
     
@@ -98,7 +104,7 @@ elseif(~iscolumn(b))
     b = b';
 end
 
-temp     = b*ones(1,ra) - ones(rb,1)*a';
-[~, ind] = min(abs(temp));
+temp     = abs(ones(ra,1)*b' - a*ones(1, rb));
+[~, ind] = min(temp,[], 2);
 bindex   = ind';
 end% func

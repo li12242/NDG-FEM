@@ -1,5 +1,5 @@
 function DamBreakDry1d_Process
-filename = 'SWE1D_WiderGaussianMound_1000.nc';
+filename = 'SWE1D_LocalMovingMound_100.nc';
 x = ncread(filename, 'x');
 bot = ncread(filename, 'bot');
 time = ncread(filename, 'time');
@@ -15,7 +15,7 @@ figure;
 subplot(3,1,1);
 p_h = plot(x(:), h(:)+bot(:), '-b.'); hold on;
 plot(x(:), bot(:), 'k')
-% ylim([100, 101])
+ylim([99.8, 101])
 
 subplot(3,1,2);
 p_q = plot(x(:), q(:), '-b.'); hold on;

@@ -1,6 +1,6 @@
 %% SWE_RHS1d
 % Calculate the right hand side of one dimensional SWE.
-function [rhsH, rhsQ] = SWE_RHS1d(phys, mesh, h, q, bot, isWet)
+function [rhsH, rhsQ] = SWE_RHS1d(phys, mesh, h, q, bot, isWet, time, dt)
 % Righ Hand Side
 line = mesh.Shape;
 % numel flux
@@ -10,11 +10,21 @@ line = mesh.Shape;
 % flux term
 [Fh, Fq]    = SWE_Flux1d(phys, h, q, isWet);
 
+Sph = zeros(size(Sh));
+Spq = zeros(size(Sh));
+for i = 1:numel(phys.spl)
+    sigma = phys.spl(i).GetAbsorpCoeff(mesh, dt);
+    temp  = phys.spl(i).GetBC(mesh, 'hb', time);
+    Sph   = -sigma.*(h - temp);
+    temp  = phys.spl(i).GetBC(mesh, 'qb', time);
+    Spq   = -sigma.*(q - temp);
+end
+
 % rhs
 rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
-    - line.LIFT*(Fhs.*mesh.fScale) + Sh;
+    - line.LIFT*(Fhs.*mesh.fScale) + Sh + Sph;
 rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
-    - line.LIFT*(Fqs.*mesh.fScale) + Sq;
+    - line.LIFT*(Fqs.*mesh.fScale) + Sq + Spq;
 end% func
 
 %% SWE_LF1d
