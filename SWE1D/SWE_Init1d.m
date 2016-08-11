@@ -27,6 +27,13 @@ switch caseName
         [mesh, h, q, bot, ftime, dt, dx] = TsunamiRunupInit(N, Ne);
     case 'WiderGaussianMound'
         [mesh, h, q, bot, ftime, dt, dx] = WiderGaussianMound(N, Ne);
+    case 'LocalGaussianMound'
+        [mesh, h, q, bot, ftime, dt, dx] = LocalGaussianMound(N, Ne);
+    case 'WiderMovingMound'
+        [mesh, h, q, bot, ftime, dt, dx] = WiderMovingMound(N, Ne);
+    case 'LocalMovingMound'
+        [mesh, h, q, bot, ftime, dt, dx, spl1, spl2] = LocalMovingMound(N, Ne);
+        phys.spl = [spl1, spl2]; % add sponge layer object to struct variable
 end% switch
 
 %% Assignment
@@ -37,6 +44,98 @@ phys.bot   = bot;
 phys.ftime = ftime;
 phys.dt    = dt;
 phys.dx    = dx;
+end% func
+
+function [mesh, h, q, bot, ftime, dt, dx, spl1, spl2] = LocalMovingMound(N, Ne)
+% Init mesh
+x1                = -640e3; 
+x2                =  640e3;
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, Ne);
+line              = StdRegions.Line(N);
+mesh              = MultiRegions.RegionLine(line, EToV, VX);
+% Init bottom level
+r                = mesh.Shape.r;
+VB               = zeros(size(VX));
+vb               = VB(EToV');
+bot              = 0.5*( (1-r)*vb(1,:) + (r+1)*vb(2,:) );
+% Initial condition
+h       = 100.*ones(size(mesh.x)); 
+q       = zeros(size(mesh.x));
+R       = 50e3;
+eta0    = 1;
+x0      = -1358e3;
+h       = h + eta0*exp(-(mesh.x-x0).^2/R^2);
+
+% Parameters
+ftime   = 29*3600; % 9h
+dx      = (x2 - x1)./Ne/N;
+dt      = 1;
+
+% sponge layer
+% sponge layer #1
+xc = mean(mesh.x);
+spfilename = 'SWE1D_WiderMovingMound_500_BC1.nc';
+xb =  510e3; xe =  640e3;
+spBCflag = xc > xb; % sponge layer flags
+spl1 = MultiRegions.BoundCondition.SpongeBC1d...
+    (mesh, spBCflag, spfilename, xb, xe);
+% sponge layer #2
+spfilename = 'SWE1D_WiderMovingMound_500_BC2.nc';
+xb = -510e3; xe = -640e3;
+spBCflag = xc < xb; % sponge layer flags
+spl2 = MultiRegions.BoundCondition.SpongeBC1d...
+    (mesh, spBCflag, spfilename, xb, xe);
+end% func
+
+function [mesh, h, q, bot, ftime, dt, dx] = WiderMovingMound(N, Ne)
+% Init mesh
+x1                = -1920e3; 
+x2                = 1920e3;
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, Ne);
+line              = StdRegions.Line(N);
+mesh              = MultiRegions.RegionLine(line, EToV, VX);
+% Init bottom level
+r                = mesh.Shape.r;
+VB               = zeros(size(VX));
+vb               = VB(EToV');
+bot              = 0.5*( (1-r)*vb(1,:) + (r+1)*vb(2,:) );
+% Initial condition
+h       = 100.*ones(size(mesh.x)); 
+q       = zeros(size(mesh.x));
+R       = 50e3;
+eta0    = 1;
+xc      = -1358e3;
+h       = h + eta0*exp(-(mesh.x-xc).^2/R^2);
+
+% Parameters
+ftime   = 29*3600; % 9h
+dx      = (x2 - x1)./Ne/N;
+dt      = 1;
+end% func
+
+function [mesh, h, q, bot, ftime, dt, dx] = LocalGaussianMound(N, Ne)
+% Init mesh
+x1                = -640e3; 
+x2                =  640e3;
+[Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, Ne);
+line              = StdRegions.Line(N);
+mesh              = MultiRegions.RegionLine(line, EToV, VX);
+% Init bottom level
+r                = mesh.Shape.r;
+VB               = zeros(size(VX));
+vb               = VB(EToV');
+bot              = 0.5*( (1-r)*vb(1,:) + (r+1)*vb(2,:) );
+% Initial condition
+h       = 100.*ones(size(mesh.x)); 
+q       = zeros(size(mesh.x));
+R       = 50e3;
+eta0    = 1;
+h       = h + eta0*exp(-mesh.x.^2/R^2);
+
+% Parameters
+ftime   = 9*3600; % 9h
+dx      = (x2 - x1)./Ne/N;
+dt      = 1;
 end% func
 
 function [mesh, h, q, bot, ftime, dt, dx] = WiderGaussianMound(N, Ne)

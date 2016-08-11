@@ -36,7 +36,7 @@ while(time<ftime)
         
 
         timelocal    = time + dt*rk4c(INTRK);       
-        [rhsH, rhsQ] = SWE_RHS1d(phys, mesh, h, q, bot, isWet);
+        [rhsH, rhsQ] = SWE_RHS1d(phys, mesh, h, q, bot, isWet, timelocal, dt);
         
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         resH = rk4a(INTRK)*resH + dt*rhsH;
