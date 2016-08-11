@@ -9,7 +9,7 @@ function phys = SWE_Init1d(phys)
 caseName = phys.name;
 N        = phys.n;
 Ne       = phys.ne;
-
+phys.spl = [];
 %% Init test case
 switch caseName
     case 'DamBreakDry'

@@ -10,21 +10,31 @@ line = mesh.Shape;
 % flux term
 [Fh, Fq]    = SWE_Flux1d(phys, h, q, isWet);
 
-Sph = zeros(size(Sh));
-Spq = zeros(size(Sh));
-for i = 1:numel(phys.spl)
-    sigma = phys.spl(i).GetAbsorpCoeff(mesh, dt);
-    temp  = phys.spl(i).GetBC(mesh, 'hb', time);
-    Sph   = -sigma.*(h - temp);
-    temp  = phys.spl(i).GetBC(mesh, 'qb', time);
-    Spq   = -sigma.*(q - temp);
-end
+[Sph, Spq]  = SWE_SpongeLayerBC(phys, mesh, h, q, time, dt);
 
 % rhs
 rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
     - line.LIFT*(Fhs.*mesh.fScale) + Sh + Sph;
 rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
     - line.LIFT*(Fqs.*mesh.fScale) + Sq + Spq;
+end% func
+
+%% SWE_SpongeLayerBC
+% set external solution condition for sponge layer.
+function [Sph, Spq]  = SWE_SpongeLayerBC(phys, mesh, h, q, time, dt)
+
+if isempty(phys.spl)
+    Sph = zeros(size(mesh.x));
+    Spq = zeros(size(mesh.x));
+else
+    for i = 1:numel(phys.spl)
+        sigma = phys.spl(i).GetAbsorpCoeff(mesh, dt);
+        temp  = phys.spl(i).GetBC(mesh, 'hb', time);
+        Sph   = -sigma.*(h - temp);
+        temp  = phys.spl(i).GetBC(mesh, 'qb', time);
+        Spq   = -sigma.*(q - temp);
+    end
+end% if
 end% func
 
 %% SWE_LF1d
