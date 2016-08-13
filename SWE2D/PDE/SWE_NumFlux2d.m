@@ -1,4 +1,4 @@
-function [Fhs, Fqx, Fqy] = SWE_NumFlux2d(phys, mesh, h, qx, qy, dryEleFlag)
+function [Fhs, Fqx, Fqy] = SWE_NumFlux2d(phys, mesh, h, qx, qy)
 % Calculate the numerical flux
 % Input:
 %   phys - strucutre variable, it contains
@@ -12,12 +12,12 @@ function [Fhs, Fqx, Fqy] = SWE_NumFlux2d(phys, mesh, h, qx, qy, dryEleFlag)
 %   dryEleFlag - flag for dry element 
 %
 % Output:
-%   [Fhs, Fqxs, Fqys] - numerical flux of each eqs
+%   [Fhs, Fqxs, Fqys] - numerical flux of each face nodes
 % 
 %% Usages
 % 
 %   shape        = StdRegions.Triangle(1);
-%   [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(1,-1,1,0);
+%   [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(2,2,-1,1,-1,1,0);
 %   mesh         = MultiRegions.RegionTri(shape, EToV, VX, VY);
 %   h   = [0, 1e-4, 1e-3; 1, 1e-4, 1]';
 %   qx  = [0, 1e-3, 1e-3; 0, 1e-3, 1e-4]';
@@ -26,7 +26,8 @@ function [Fhs, Fqx, Fqy] = SWE_NumFlux2d(phys, mesh, h, qx, qy, dryEleFlag)
 % 
 %   phys.gra = 9.81;
 %   phys.mesh = mesh;
-%   [Fhs, Fqxs, Fqys] = SWENumFlux2d(phys, mesh, h, qx, qy, dryEleFlag)
+%   phys.minDepth = 1e-4;
+%   [Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy)
 % 
 
 %% Get wet/dry status of each nodes
@@ -54,29 +55,35 @@ function [Fhs, Fqx, Fqy] = SWE_NumFlux2d(phys, mesh, h, qx, qy, dryEleFlag)
 % Refer to Lai and Khan (2012) for more details.
 % 
 
+gra         = phys.gra;
+minDepth    = phys.minDepth;
 
-%% Rotate the primary variable
+[Fhs, Fqx, Fqy] = SWE_Mex_HLLFlux2d...
+    (minDepth, gra, h, qx, qy, mesh.nx, mesh.ny, mesh.vmapM, mesh.vmapP);
+
+% % Rotate the primary variable
+% % 
+% % $Q=T\cdot U=\left(\begin{array}{c}h\cr q_x\cdot n_x+q_y\cdot n_y \cr
+% % q_x\cdot -n_y +q_y\cdot n_x\end{array}\right)$
+% % 
 % 
-% $Q=T\cdot U=\left(\begin{array}{c}h\cr q_x\cdot n_x+q_y\cdot n_y \cr
-% q_x\cdot -n_y +q_y\cdot n_x\end{array}\right)$
+% QxM =  qx(mesh.vmapM).*mesh.nx + qy(mesh.vmapM).*mesh.ny;
+% QyM = -qx(mesh.vmapM).*mesh.ny + qy(mesh.vmapM).*mesh.nx;
 % 
-
-QxM =  qx(mesh.vmapM).*mesh.nx + qy(mesh.vmapM).*mesh.ny;
-QyM = -qx(mesh.vmapM).*mesh.ny + qy(mesh.vmapM).*mesh.nx;
-
-QxP =  qx(mesh.vmapP).*mesh.nx + qy(mesh.vmapP).*mesh.ny;
-QyP = -qx(mesh.vmapP).*mesh.ny + qy(mesh.vmapP).*mesh.nx;
-
-hM  = h(mesh.vmapM);
-hP  = h(mesh.vmapP);
-
-% Lax-Friedrichs flux function
-% [Fhs, Fqxs, Fqys] = LLFFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP);
-% HLL flux function
-[Fhs, Fqxs, Fqys] = SWE_HLLFlux2d(phys, hM, hP, QxM, QxP, QyM, QyP, dryEleFlag);
-
-% Rotate invariance
-Fqx = Fqxs.*mesh.nx  - Fqys.*mesh.ny;
-Fqy = Fqxs.*mesh.ny  + Fqys.*mesh.nx;
+% QxP =  qx(mesh.vmapP).*mesh.nx + qy(mesh.vmapP).*mesh.ny;
+% QyP = -qx(mesh.vmapP).*mesh.ny + qy(mesh.vmapP).*mesh.nx;
+% 
+% hM  = h(mesh.vmapM);
+% hP  = h(mesh.vmapP);
+% 
+% % Lax-Friedrichs flux function
+% % [Fhs, Fqxs, Fqys] = LLFFlux(phys, hM, hP, QxM, QxP, QyM, QyP, dryM, dryP);
+% % HLL flux function
+% [Fhs, Fqxs, Fqys] = SWE_Mex_HLL2d(minDepth, gra, hM, hP, QxM, QxP, QyM, QyP);
+% % [Fhs, Fqxs, Fqys] = SWE_HLLFlux2d(phys, hM, hP, QxM, QxP, QyM, QyP, dryEleFlag);
+% 
+% % Rotate invariance
+% Fqx = Fqxs.*mesh.nx  - Fqys.*mesh.ny;
+% Fqy = Fqxs.*mesh.ny  + Fqys.*mesh.nx;
 
 end% func

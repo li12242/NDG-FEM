@@ -33,6 +33,7 @@ classdef Line < StdRegions.LineBasic
         Mes                     % Mass Matrix of Edge, integral only of face nodes, M_{E,small}
         Mef                     % Mass Matrix of Edge, integral of all nodes, M_{E,full}
         LIFT                    % lift matrix, inv(M)*Mes
+        Fmask
     end% public properties
 %% properties private
 
@@ -53,6 +54,13 @@ classdef Line < StdRegions.LineBasic
             obj.Mes = getSmallFaceMassMatrix(obj, PointFaceShape);
             obj.Mef = getFullFaceMassMatrix(obj);
             obj.LIFT = (obj.VandMatrix*(obj.VandMatrix)')*obj.Mes;
+            
+            % Fmask
+            obj.Fmask = zeros(obj.nFace, nOrder+1);
+            for i = 1:obj.nFace
+                [~, t] = obj.getNodeListAtFace(i);
+                obj.Fmask(i, :) = t';
+            end% for
         end% func
 %% function getNodeListAtFace
 % get the spicific face local face list
