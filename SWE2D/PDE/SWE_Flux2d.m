@@ -1,4 +1,4 @@
-function [Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWE_Flux2d(phys, h, qx, qy, dryNodeFlag)
+function [Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWE_Flux2d(phys, h, qx, qy)
 % Function to obtain flux terms for 2 dimensional SWE.
 % Input :
 %   phys - strucure variable
