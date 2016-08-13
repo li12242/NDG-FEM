@@ -34,6 +34,7 @@ classdef Triangle < StdRegions.TriangleBasic
         Mes                 % face integral mass matrix of face nodes
         Mef                 % face integral mass matrix of all nodes
         LIFT                % lift matrix, inv(M)*Mes
+        Fmask               % node list on faces
     end% properties
 %% properties private
     properties(SetAccess=private, GetAccess=private)
@@ -44,17 +45,26 @@ classdef Triangle < StdRegions.TriangleBasic
         function obj = Triangle(nOrder)
             obj = obj@StdRegions.TriangleBasic(nOrder);
             obj.sName = 'Triangle';
+            
             % face element
             LineFaceShape = StdRegions.LineBasic(nOrder);
             % 3 faces of line type
             obj.nPerBoundaryNode = [LineFaceShape.nNode; LineFaceShape.nNode; ...
                 LineFaceShape.nNode];
+            
             % nFaceNode = nFace x nNode
             obj.nFaceNode = sum(obj.nPerBoundaryNode);
             obj.Mes = getSmallFaceMassMatrix(obj, LineFaceShape);
             obj.Mef = getFullFaceMassMatrix(obj);
             
             obj.LIFT = (obj.VandMatrix*(obj.VandMatrix)')*obj.Mes;
+            
+            % Fmask
+            obj.Fmask = zeros(obj.nFace, nOrder+1);
+            for i = 1:obj.nFace
+                [~, t] = obj.getNodeListAtFace(i);
+                obj.Fmask(i, :) = t';
+            end% for
         end% func
 %% function getNodeListAtFace
 % return the num of node & node indicator (counterclockwise) at spicific face

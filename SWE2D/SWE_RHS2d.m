@@ -7,15 +7,14 @@ shape    = mesh.Shape;
 bot      = phys.bot;
 % find the dry nodes
 dryEleFlag  = SWE_DryEle2d(mesh, h, minDepth);
-dryNodeFlag = repmat(dryEleFlag, mesh.Shape.nNode, 1);
 
 % flux
-[Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWE_Flux2d(phys, h, qx, qy, dryNodeFlag);
+[Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWE_Flux2d(phys, h, qx, qy);
 % source terms
 [Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, bot, dryEleFlag);
 
 % numerical flux
-[Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy, dryEleFlag);
+[Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy);
 
 % the flux difference
 dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;

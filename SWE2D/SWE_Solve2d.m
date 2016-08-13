@@ -40,9 +40,9 @@ while(time<FinalTime)
         [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy);
         
         % filter
-        rhsH  = Filt*rhsH;
-        rhsQx = Filt*rhsQx;
-        rhsQy = Filt*rhsQy;
+%         rhsH  = Filt*rhsH;
+%         rhsQx = Filt*rhsQx;
+%         rhsQy = Filt*rhsQy;
         
         resH  = rk4a(INTRK)*resH  + dt*rhsH;
         resQx = rk4a(INTRK)*resQx + dt*rhsQx;
@@ -51,7 +51,9 @@ while(time<FinalTime)
         qx    = qx + rk4b(INTRK)*resQx;
         qy    = qy + rk4b(INTRK)*resQy;
         
-        % Slope limiter
+        %% Slope limiter
+        % SLLoc2 works well with triangle mesh, while SL2 is suitable for
+        % quadrilateral mesh.
         h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
         qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
         qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
@@ -60,7 +62,7 @@ while(time<FinalTime)
 %         qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 1);
 %         qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 1);
 
-        % Positive-preserving limiter
+        %% Positive-preserving limiter
         [h, qx, qy] = SWE_PositivePreserving2d(phys, mesh, h, qx, qy);
     end
     
