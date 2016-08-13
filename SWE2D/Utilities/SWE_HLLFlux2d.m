@@ -16,7 +16,7 @@ function [Fhs, Fqxs, Fqys] = SWE_HLLFlux2d...
 %% Usages
 % 
 %   shape        = StdRegions.Triangle(1);
-%   [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(1,-1,1,0);
+%   [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(2,2,-1,1, -1, 1,0);
 %   mesh         = MultiRegions.RegionTri(shape, EToV, VX, VY);
 %   h   = [0, 1e-4, 1e-3; 1, 1e-4, 1]';
 %   qx  = [0, 1e-3, 1e-3; 0, 1e-3, 1e-4]';
