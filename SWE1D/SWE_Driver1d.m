@@ -16,7 +16,7 @@ caseName = 'LocalMovingMound';
 minDepth = 1e-4;
 g        = 9.81;
 n        = 1;   % polynomial order 
-nele     = 100; % No. of elements
+nele     = 1000; % No. of elements
 
 % Set to strucutre variable
 phys.name     = caseName;
