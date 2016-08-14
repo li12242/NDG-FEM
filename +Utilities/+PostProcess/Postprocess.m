@@ -170,14 +170,28 @@ classdef Postprocess < handle
         %% Get the result of variable
         function numSol = GetVarData(obj, varname, stime, fileID)
             time  = obj.NcFile(fileID).GetVarData('time');
-            % get the output step
-            [offsettime, ist] = min(abs(time - stime));
-            if offsettime/stime > 0.1
-                warning(['Attention: the time divergence is ', ...
-                    num2str(offsettime)]);
+            % get the output step, sk and skm1
+            if (stime > time(end))
+                error(['The input time %f is out of computation time range', ...
+                    ' [%f, %f]\n'], stime, time(1), time(end));
+            elseif (stime < time(1))
+                error(['The input time %f is out of computation time range', ...
+                    ' [%f, %f]\n'], stime, time(1), time(end));
             end% if
+            sk = find(time>=stime, 1);
+            if (sk==1)
+                skm1 = 1;
+            else 
+                skm1 = sk - 1;
+            end% if
+            dt1 = abs(stime - time(skm1));
+            dt2 = abs(stime - time(sk));
+            w1  = dt2/(dt1+dt2);
+            w2  = dt1/(dt1+dt2);
             % get the result
-            numSol = obj.NcFile(fileID).GetTimeVarData(varname, ist);
+            sol1 = obj.NcFile(fileID).GetTimeVarData(varname, skm1);
+            sol2 = obj.NcFile(fileID).GetTimeVarData(varname, sk);
+            numSol = sol1*w1 + sol2*w2;
         end% func
         
         %% Get the norm error
