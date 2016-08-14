@@ -74,13 +74,13 @@ dt      = 1;
 % sponge layer
 % sponge layer #1
 xc = mean(mesh.x);
-spfilename = 'SWE1D_WiderMovingMound_500_BC1.nc';
+spfilename = 'SWE1D_WiderMovingMound_1000_BC1.nc';
 xb =  510e3; xe =  640e3;
 spBCflag = xc > xb; % sponge layer flags
 spl1 = MultiRegions.BoundCondition.SpongeBC1d...
     (mesh, spBCflag, spfilename, xb, xe);
 % sponge layer #2
-spfilename = 'SWE1D_WiderMovingMound_500_BC2.nc';
+spfilename = 'SWE1D_WiderMovingMound_1000_BC2.nc';
 xb = -510e3; xe = -640e3;
 spBCflag = xc < xb; % sponge layer flags
 spl2 = MultiRegions.BoundCondition.SpongeBC1d...
