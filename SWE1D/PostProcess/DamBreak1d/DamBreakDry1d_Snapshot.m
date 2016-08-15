@@ -1,4 +1,4 @@
-function DamBreakDry1d_Snapshot
+ function DamBreakDry1d_Snapshot
 %DAMBREAK1D_SNAPSHOT Snapshots of one dimensional DamBreak problem
 %   The numerical solution is compared with the exact solution at various
 %   time.
@@ -7,13 +7,13 @@ function DamBreakDry1d_Snapshot
 T = 20;
 meshType = 'line';
 casename = 'DamBreakDry';
-nele     = [100, 200, 300, 400];
+nele     = [1000];
 filename = cell(numel(nele), 1);
 for i = 1:numel(nele)
     filename{i} = ['SWE1D_', casename, '_', num2str(nele(i)),'.nc'];
 end
 Postpro  = Utilities.PostProcess.Postprocess(filename, meshType, 1);
-fileID   = 4;
+fileID   = 1;
 time     = [4,8,12];
 
 ne       = 400; % number of exact solution points

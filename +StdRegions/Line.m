@@ -56,7 +56,7 @@ classdef Line < StdRegions.LineBasic
             obj.LIFT = (obj.VandMatrix*(obj.VandMatrix)')*obj.Mes;
             
             % Fmask
-            obj.Fmask = zeros(obj.nFace, nOrder+1);
+            obj.Fmask = zeros(obj.nFace, PointFaceShape.nNode);
             for i = 1:obj.nFace
                 [~, t] = obj.getNodeListAtFace(i);
                 obj.Fmask(i, :) = t';
