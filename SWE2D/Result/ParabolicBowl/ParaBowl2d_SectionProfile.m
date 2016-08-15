@@ -33,18 +33,19 @@ end
 
 %% Construct postprocess class
 meshtype = 'quad';
-elenum   = [80, 100, 120, 160, 200];
-filename = cell(numel(elenum), 1);
-for i =1:numel(elenum)
-    filename{i} = ['SWE2D_', meshtype, '_', num2str(elenum(i)), '.nc'];
-end
+% elenum   = [80, 100, 120, 160, 200];
+% filename = cell(numel(elenum), 1);
+% for i =1:numel(elenum)
+%     filename{i} = ['SWE2D_', meshtype, '_', num2str(elenum(i)), '.nc'];
+% end
+filename{1} = 'SWE2D.nc';
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
 for ist = 1:numel(time)
     varname = 'h';
-    extH    = ParabolicBowlExtDepth(xe, ye, time(ist));
+    extH    = ParabolicBowl2d_ExtDepth(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     % draw water height
@@ -60,7 +61,7 @@ for ist = 1:numel(time)
     
     % draw flux
     varname = 'qx';
-    extH    = ParabolicBowlExtQx(xe, ye, time(ist));
+    extH    = ParabolicBowl2d_ExtQx(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     figure('Color', 'w');
@@ -75,7 +76,7 @@ for ist = 1:numel(time)
     
     % draw flux
     varname = 'qy';
-    extH    = ParabolicBowlExtQx(xe, ye, time(ist));
+    extH    = ParabolicBowl2d_ExtQy(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     figure('Color', 'w');

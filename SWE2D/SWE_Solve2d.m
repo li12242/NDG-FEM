@@ -52,15 +52,16 @@ while(time<FinalTime)
         qy    = qy + rk4b(INTRK)*resQy;
         
         %% Slope limiter
-        % SLLoc2 works well with triangle mesh, while SL2 is suitable for
-        % quadrilateral mesh.
-        h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
-        qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
-        qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
+        % In ParabolicBowl test case, SL2 works well for quadrilateral 
+        % mesh, while SLLoc2 works better for triangle mesh.
+        %
+%         h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
+%         qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
+%         qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
 
-%         h  = Utilities.Limiter.Limiter2D.SL2(mesh, h,  1);
-%         qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 1);
-%         qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 1);
+        h  = Utilities.Limiter.Limiter2D.SL2(mesh, h,  1);
+        qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 1);
+        qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 1);
 
         %% Positive-preserving limiter
         [h, qx, qy] = SWE_PositivePreserving2d(phys, mesh, h, qx, qy);
