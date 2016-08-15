@@ -27,7 +27,7 @@ while(time<ftime)
     if time + dt > ftime
         dt = ftime - time;
     end% if
-
+    
     fprintf('Processing: %f, dt: %f, wave speed: %f\n',...
         time./ftime, dt, S)
 
@@ -44,7 +44,7 @@ while(time<ftime)
         q = q + rk4b(INTRK)*resQ;
         h = h + rk4b(INTRK)*resH;
         
-        [h, q] = SWE_PositivePreserving1d(mesh, h, q);
+        [h, q] = SWE_PositivePreserving1d(phys, h, q);
 
     end
     time = time + dt;

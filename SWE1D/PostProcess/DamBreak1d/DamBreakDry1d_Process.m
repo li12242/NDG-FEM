@@ -1,5 +1,5 @@
 function DamBreakDry1d_Process
-filename = 'SWE1D_LocalMovingMound_100.nc';
+filename = 'SWE1D_DamBreakDry_1000.nc';
 x = ncread(filename, 'x');
 bot = ncread(filename, 'bot');
 time = ncread(filename, 'time');
@@ -15,7 +15,7 @@ figure;
 subplot(3,1,1);
 p_h = plot(x(:), h(:)+bot(:), '-b.'); hold on;
 plot(x(:), bot(:), 'k')
-ylim([99.8, 101])
+% ylim([99.8, 101])
 
 subplot(3,1,2);
 p_q = plot(x(:), q(:), '-b.'); hold on;
@@ -35,6 +35,9 @@ end
 % time advance
 for itime = 1:numel(time)
     h = ncread(filename, 'h', [1,1,itime],[inf,inf,1]);
+    if any(any(isnan(h)))
+        keyboard;
+    end% if
     q = ncread(filename, 'q', [1,1,itime],[inf,inf,1]);
     u = q./h; u(h<=eps) = 0;
     

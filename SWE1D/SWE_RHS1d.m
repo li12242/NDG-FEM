@@ -83,50 +83,56 @@ function [Fhs, Fqs] = SWE_HLL1d(phys, mesh, h, q, isWet)
 % [2] [Song_2010] An unstructured finite volume model for dam-break 
 %     floods with wet/dry fronts over complex topography. (17-18)
 % 
-minDepth = phys.minDepth;
+% mex version
+hmin = phys.minDepth;
+gra  = phys.gra;
+[Fhs, Fqs] = SWE_Mex_HLLFlux1d(hmin, gra, h, q, mesh.nx, mesh.vmapM, mesh.vmapP);
 
-% rotate variable
-hM      = h(mesh.vmapM); 
-hP      = h(mesh.vmapP);
-qM      = mesh.nx.* q(mesh.vmapM); 
-qP      = mesh.nx.* q(mesh.vmapP);
-uM      = zeros(size(hM)); 
-uP      = zeros(size(hP));
-dryM    = hM > minDepth;
-dryP    = hP > minDepth;
 
-uM(dryM) = qM(dryM)./hM(dryM);
-uP(dryP) = qP(dryP)./hP(dryP);
-[SM, SP] = SWE_HLLWaveSpeed1d(phys, hM, hP, uM, uP);
-
-% [FhM, FqM] = SWEFlux(hM, qM, isWet, physics);
-[FhM, FqM] = SWE_Flux1d(phys, hM, qM, isWet);
-% [FhP, FqP] = SWEFlux(hP, qP, isWet, physics);
-[FhP, FqP] = SWE_Flux1d(phys, hP, qP, isWet);
-
-% Compute HLL flux
-Fhs = zeros(size(FhM)); 
-Fqs = zeros(size(FqM));
-
-sflag = (SM >= 0); 
-Fhs(sflag) = FhM(sflag); Fqs(sflag) = FqM(sflag);
-
-sflag = (SP <= 0);
-Fhs(sflag) = FhP(sflag); Fqs(sflag) = FqP(sflag);
-
-sflag = ((SM < 0) & (SP > 0));
-Fhs(sflag) = (- SM(sflag).*FhP(sflag) + SP(sflag).*FhM(sflag)...
-    + SP(sflag).*SM(sflag).*(hP(sflag)-hM(sflag)))./(SP(sflag) - SM(sflag));
-Fqs(sflag) = (- SM(sflag).*FqP(sflag) + SP(sflag).*FqM(sflag)...
-    + SP(sflag).*SM(sflag).*( qP(sflag) - qM(sflag) ) )...
-    ./(SP(sflag) - SM(sflag));
-
-% both dry
-sflag = ((~dryM) & (~dryP));
-Fhs(sflag) = 0; Fqs(sflag) = 0;
-
-% rotate invariance
-Fqs = Fqs.*mesh.nx;
+% minDepth = phys.minDepth;
+% 
+% % rotate variable
+% hM      = h(mesh.vmapM); 
+% hP      = h(mesh.vmapP);
+% qM      = mesh.nx.* q(mesh.vmapM); 
+% qP      = mesh.nx.* q(mesh.vmapP);
+% uM      = zeros(size(hM)); 
+% uP      = zeros(size(hP));
+% dryM    = hM > minDepth;
+% dryP    = hP > minDepth;
+% 
+% uM(dryM) = qM(dryM)./hM(dryM);
+% uP(dryP) = qP(dryP)./hP(dryP);
+% [SM, SP] = SWE_HLLWaveSpeed1d(phys, hM, hP, uM, uP);
+% 
+% % [FhM, FqM] = SWEFlux(hM, qM, isWet, physics);
+% [FhM, FqM] = SWE_Flux1d(phys, hM, qM, isWet);
+% % [FhP, FqP] = SWEFlux(hP, qP, isWet, physics);
+% [FhP, FqP] = SWE_Flux1d(phys, hP, qP, isWet);
+% 
+% % Compute HLL flux
+% Fhs = zeros(size(FhM)); 
+% Fqs = zeros(size(FqM));
+% 
+% sflag = (SM >= 0); 
+% Fhs(sflag) = FhM(sflag); Fqs(sflag) = FqM(sflag);
+% 
+% sflag = (SP <= 0);
+% Fhs(sflag) = FhP(sflag); Fqs(sflag) = FqP(sflag);
+% 
+% sflag = ((SM < 0) & (SP > 0));
+% Fhs(sflag) = (- SM(sflag).*FhP(sflag) + SP(sflag).*FhM(sflag)...
+%     + SP(sflag).*SM(sflag).*(hP(sflag)-hM(sflag)))./(SP(sflag) - SM(sflag));
+% Fqs(sflag) = (- SM(sflag).*FqP(sflag) + SP(sflag).*FqM(sflag)...
+%     + SP(sflag).*SM(sflag).*( qP(sflag) - qM(sflag) ) )...
+%     ./(SP(sflag) - SM(sflag));
+% 
+% % both dry
+% sflag = ((~dryM) & (~dryP));
+% Fhs(sflag) = 0; Fqs(sflag) = 0;
+% 
+% % rotate invariance
+% Fqs = Fqs.*mesh.nx;
 end% func
 
 %% SWE_HLLWaveSpeed1d
@@ -165,20 +171,26 @@ end% func
 %% SWE_Flux1d
 % calculate flux terms of SWE
 function [Fh, Fq] = SWE_Flux1d(phys, h, q, isWet)
-% Parameters
-minDepth = phys.minDepth;
-g        = phys.gra;
-% Wet/Dry status
-wetNode  = (h > minDepth);
-% flow rate
-u        = zeros(size(h)); 
-u(wetNode) = q(wetNode)./h(wetNode);
 
-% Flux terms
-Fh = q;
-Fq = g*h.^2./2 + u.^2.*h;
-% for dry elements, no flow flux
-Fq(:, ~isWet) = 0.0;
+hmin = phys.minDepth;
+gra  = phys.gra;
+
+[Fh, Fq] = SWE_Mex_Flux1d(hmin, gra, h, q);
+
+% % Parameters
+% minDepth = phys.minDepth;
+% g        = phys.gra;
+% % Wet/Dry status
+% wetNode  = (h > minDepth);
+% % flow rate
+% u        = zeros(size(h)); 
+% u(wetNode) = q(wetNode)./h(wetNode);
+% 
+% % Flux terms
+% Fh = q;
+% Fq = g*h.^2./2 + u.^2.*h;
+% % for dry elements, no flow flux
+% Fq(:, ~isWet) = 0.0;
 end% func
 
 
