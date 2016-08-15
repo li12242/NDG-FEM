@@ -48,7 +48,7 @@ classdef RegionTriBC < MultiRegions.RegionTri
     methods(Hidden)
         function map = getBoundMapList(obj,BC,phyID)
             % Input:    phyID - physical ID
-            bclist = find(BC(:,1)==phyID);
+            bclist = (BC(:,1)==phyID);
             partialBC = BC(bclist, :);
             nBC = size(partialBC,1); Nv = size(obj.SpFToV, 2);
             VToBF = spalloc(Nv, nBC, 2*nBC);

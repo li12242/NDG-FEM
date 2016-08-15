@@ -1,6 +1,6 @@
-function [h, q] = SWE_PositivePreserving1d(mesh, h, q)
+function [h, q] = SWE_PositivePreserving1d(phys, h, q)
 % Slope limiter and Positivity-preserving operator
-
+mesh = phys.mesh;
 %% slope limiter on water level and discharge
 
 % the slope limiter act on the wet cells
@@ -8,7 +8,9 @@ q = Utilities.Limiter.Limiter1D.MinmodLinear(mesh, q);
 h = Utilities.Limiter.Limiter1D.MinmodLinear(mesh, h); 
 
 %% positive preserving operator
-[h, q] = PositiveOperator(mesh, h, q);
+shape  = mesh.Shape;
+[h, q] = SWE_Mex_PositivePreserving1d(h, q, shape.M, mesh.J, phys.minDepth);
+% [h, q] = PositiveOperator(mesh, h, q);
 
 end% func
 

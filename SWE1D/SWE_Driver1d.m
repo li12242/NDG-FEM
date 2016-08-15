@@ -1,6 +1,6 @@
 function SWE_Driver1d
 %% Parameters
-% caseName = ' ';
+caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
 % caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
@@ -10,7 +10,7 @@ function SWE_Driver1d
 % caseName = 'WiderGaussianMound';
 % caseName = 'LocalGaussianMound';
 % caseName = 'WiderMovingMound';
-caseName = 'LocalMovingMound';
+% caseName = 'LocalMovingMound';
 
 % minimum water depth
 minDepth = 1e-4;
