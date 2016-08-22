@@ -7,7 +7,8 @@
 %   GetDofs         - get the number of unknows for 1D or 2D variables
 %   NormErr         - calculate the norm error of variable
 %   ConvRate        - calculate the convergence rate
-%   Interp2D        - interpolation for input data
+%   Interp1d        - interpolation for 1-dimensional data
+%   Interp2D        - interpolation for 2-dimensional data
 %   SectProfile2D   - draw section profile for 2 dimension variables
 %   Snapshot2D      - draw snapshot of 2 dimension variables
 %   GetConvTable    - create table contains norm error and convergence rate
@@ -124,7 +125,17 @@ classdef Postprocess < handle
             end% switch
         end% func
         
+        
         %% Interpolation
+        % Interp1d
+        function yb = Interp1d(obj, numSol, xb, fileID)
+            yb = zeros(size(xb));
+            x      = obj.NcFile(fileID).GetVarData('x');
+            for i = 1:numel(xb)
+                yb(i) = disInterp1d(x, numSol, xb(i));
+            end% for
+        end% func
+        
         % Interpolation for 2D variables, the variables shoule be arranged
         % the same with mesh coordinate
         function Data = Interp2D(obj, numSol, xc, yc, fileID)
@@ -174,9 +185,6 @@ classdef Postprocess < handle
             if (stime > time(end))
                 error(['The input time %f is out of computation time range', ...
                     ' [%f, %f]\n'], stime, time(1), time(end));
-            %elseif (stime < time(1))
-            %    error(['The input time %f is out of computation time range', ...
-            %        ' [%f, %f]\n'], stime, time(1), time(end));
             end% if
             sk = find(time>=stime, 1);
             if (sk==1)
@@ -230,6 +238,25 @@ classdef Postprocess < handle
         end% func
     end% methods
 end% classdef
+
+%% disInterp
+% Interpolation function for single node
+function yb = disInterp1d(x, y, xb)
+TOTAL = 1e-2;
+% the boundary point is on vertex
+ind   = abs(x-xb)<TOTAL;
+if any(any( ind ))
+    yb = mean(y(ind));
+    return;
+end% if
+dx  = (x(1, :) - xb).*(x(end, :) - xb);
+ind = find(dx < 0);
+% interpolation with linear reconstruction
+coef1 = (x(end, ind) - xb)/(x(end, ind) - x(1  , ind));
+coef2 = (x(1  , ind) - xb)/(x(1  , ind) - x(end, ind));
+
+yb    = y(1, ind)*coef1 + y(end, ind)*coef2;
+end% func
 
 %% Subroutine function
 % functions for 

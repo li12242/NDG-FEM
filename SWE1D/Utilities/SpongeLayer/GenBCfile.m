@@ -1,6 +1,9 @@
 function GenBCfile( resultFileName, BCfileName, xb )
 %MAKEBCFILE Generate boundary condition files.
-%   Make boundary files from the result nc file.
+% Make boundary files from the result nc file.
+% Usages:
+% 
+% 
 
 resultfile = Utilities.PostProcess.ResultFile(resultFileName);
 time  = resultfile.GetVarData('time');
