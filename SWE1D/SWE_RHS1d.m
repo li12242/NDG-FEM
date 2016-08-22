@@ -21,8 +21,7 @@ end% func
 
 %% SWE_SpongeLayerBC
 % set external solution condition for sponge layer.
-function [Sph, Spq]  = SWE_SpongeLayerBC(phys, mesh, h, q, time, dt)
-
+function [Sph, Spq]  = SWE_SpongeLayerBC(phys, mesh, h, q, time, dt) 
 if isempty(phys.spl)
     Sph = zeros(size(mesh.x));
     Spq = zeros(size(mesh.x));
