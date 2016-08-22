@@ -15,7 +15,7 @@ xF    = ncread(finefile, 'x');
 % Initial plot
 figure('Position', [157   247   820   455]);
 % parameters
-bMarkerSize = 8; sMakerSize = ceil(bMarkerSize/3);
+bMarkerSize = 10; sMakerSize = 3;
 gre = [0    0.4980         0];
 % plot of water depth
 subplot(2,2,1); hold on; grid on;
@@ -28,7 +28,7 @@ title('$h$', 'Interpreter', 'latex')
 hCF = GetSpatialInterpolatedResult(xC, hC, xF);
 dh  = hCF - hF;
 subplot(2,2,2); 
-pdh = plot(xF(:), dh(:), '.', 'MarkerSize', sMakerSize, ...
+pdh = plot(xF(:), dh(:), '.', 'MarkerSize', bMarkerSize, ...
     'Color', gre); grid on;
 title('$Error\, of\, h$', 'Interpreter', 'latex')
 % plot of water flux
@@ -42,7 +42,7 @@ title('$q$', 'Interpreter', 'latex')
 qCF = GetSpatialInterpolatedResult(xC, qC, xF);
 dq  = qCF - qF;
 subplot(2,2,4); 
-pdq = plot(xF(:), dq(:), 'c.', 'MarkerSize', sMakerSize, ...
+pdq = plot(xF(:), dq(:), 'c.', 'MarkerSize', bMarkerSize, ...
     'Color', gre); grid on;
 title('$Error\, of\, q$', 'Interpreter', 'latex')
 % iteration

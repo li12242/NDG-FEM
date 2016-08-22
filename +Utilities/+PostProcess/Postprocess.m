@@ -174,9 +174,9 @@ classdef Postprocess < handle
             if (stime > time(end))
                 error(['The input time %f is out of computation time range', ...
                     ' [%f, %f]\n'], stime, time(1), time(end));
-            elseif (stime < time(1))
-                error(['The input time %f is out of computation time range', ...
-                    ' [%f, %f]\n'], stime, time(1), time(end));
+            %elseif (stime < time(1))
+            %    error(['The input time %f is out of computation time range', ...
+            %        ' [%f, %f]\n'], stime, time(1), time(end));
             end% if
             sk = find(time>=stime, 1);
             if (sk==1)
