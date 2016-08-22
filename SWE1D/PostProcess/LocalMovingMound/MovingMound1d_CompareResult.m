@@ -2,8 +2,10 @@
 % 
 % 
 function MovingMound1d_CompareResult
+% coarse girds
 coarsefile = 'SWE1D_WiderMovingMound_1000.nc';
-finefile   = 'SWE1D_LocalMovingMound_1000.nc';
+% fine grids
+finefile   = 'SWE1D_LocalMovingMound_SpongeLayer_333.nc';
 coarseStru = Utilities.PostProcess.ResultFile(coarsefile);
 fineStru   = Utilities.PostProcess.ResultFile(finefile);
 
@@ -46,8 +48,13 @@ pdq = plot(xF(:), dq(:), 'c.', 'MarkerSize', bMarkerSize, ...
     'Color', gre); grid on;
 title('$Error\, of\, q$', 'Interpreter', 'latex')
 % iteration
-for i = 1:10:numel(timeF);
-    hC = GetInterTimeStep(coarseStru, 'h', timeC, timeF(i));
+dt = 963.9818;
+for i = 1:20:numel(timeF);
+    time1 = timeF(i) - dt;
+    if time1<0
+        time1 = 0;
+    end
+    hC = GetInterTimeStep(coarseStru, 'h', timeC, time1);
     hF = fineStru.GetTimeVarData('h', i);
     set(ph1, 'YData', hC(:)); set(ph2, 'YData', hF(:));
     
@@ -55,7 +62,7 @@ for i = 1:10:numel(timeF);
     dh  = hCF - hF;
     set(pdh, 'YData', dh(:));
     
-    qC = GetInterTimeStep(coarseStru, 'q', timeC, timeF(i));
+    qC = GetInterTimeStep(coarseStru, 'q', timeC, time1);
     qF = fineStru.GetTimeVarData('q', i);
     set(pq1, 'YData', qC(:)); set(pq2, 'YData', qF(:));
     

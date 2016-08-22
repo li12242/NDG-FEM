@@ -31,7 +31,7 @@ switch caseName
         [mesh, h, q, bot, ftime, dt, dx] = LocalGaussianMound(N, Ne);
     case 'WiderMovingMound'
         [mesh, h, q, bot, ftime, dt, dx] = WiderMovingMound(N, Ne);
-    case 'LocalMovingMound'
+    case 'LocalMovingMound_SpongeLayer'
         [mesh, h, q, bot, ftime, dt, dx, spl1, spl2] = LocalMovingMound(N, Ne);
         phys.spl = [spl1, spl2]; % add sponge layer object to struct variable
 end% switch
