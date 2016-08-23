@@ -48,8 +48,8 @@ end% func
 
 function [mesh, h, q, bot, ftime, dt, dx, spl1, spl2] = LocalMovingMound(N, Ne)
 % Init mesh
-x1                = -640e3; 
-x2                =  640e3;
+x1                = -561e3; 
+x2                =  561e3;
 [Nv, VX, K, EToV] = Utilities.Mesh.MeshGen1D(x1, x2, Ne);
 line              = StdRegions.Line(N);
 mesh              = MultiRegions.RegionLine(line, EToV, VX);
@@ -75,7 +75,7 @@ dt      = 1;
 % sponge layer #1
 xc = mean(mesh.x);
 spfilename = 'SWE1D_WiderMovingMound_1000_BC1.nc';
-xb =  510e3; xe =  640e3;
+xb =  510e3; xe =  561e3;
 spBCflag = xc > xb; % sponge layer flags
 spl1 = MultiRegions.BoundCondition.SpongeBC1d...
     (mesh, spBCflag, spfilename, xb, xe);

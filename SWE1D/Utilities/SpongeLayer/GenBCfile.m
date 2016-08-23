@@ -2,9 +2,8 @@ function GenBCfile( resultFileName, BCfileName, xb )
 %MAKEBCFILE Generate boundary condition files.
 % Make boundary files from the result nc file.
 % Usages:
+%   GenBCfile('SWE1D_1000.nc', 'SWE1D_1000_BC2',-510e3);
 % 
-% 
-
 resultfile = Utilities.PostProcess.ResultFile(resultFileName);
 time  = resultfile.GetVarData('time');
 ntime = numel(time);
