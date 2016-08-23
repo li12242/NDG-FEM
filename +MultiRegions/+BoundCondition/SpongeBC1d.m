@@ -31,7 +31,7 @@ methods
     % $$ \sigma = \sigma_{max} \left( \frac{x - x_b}{D} \right)^2 $$
     % where $D$ is the width of sponge layer.
     function sigma = GetAbsorpCoeff(obj, mesh, dt)
-        sigma_max = 1/dt;
+        sigma_max = .9/dt;
         sigma = zeros(size(mesh.x));
         x_spe = mesh.x(:, obj.SpEToE);
         sigma_spe = sigma_max*((x_spe - obj.xb)/obj.width).^2;
