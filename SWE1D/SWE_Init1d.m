@@ -77,14 +77,26 @@ xc = mean(mesh.x);
 spfilename = 'SWE1D_WiderMovingMound_1000_BC1.nc';
 xb =  510e3; xe =  561e3;
 spBCflag = xc > xb; % sponge layer flags
+% Generate OBC files
+if ~exist(spfilename, 'file')
+    GenBCfile('SWE1D_WiderMovingMound_1000.nc', ...
+        'SWE1D_WiderMovingMound_1000_BC1', mesh.x(:, spBCflag))
+end% if
+
 spl1 = MultiRegions.BoundCondition.SpongeBC1d...
-    (mesh, spBCflag, spfilename, xb, xe);
+    (spBCflag, spfilename, xb, xe);
 % sponge layer #2
 spfilename = 'SWE1D_WiderMovingMound_1000_BC2.nc';
 xb = -510e3; xe = -640e3;
 spBCflag = xc < xb; % sponge layer flags
+% Generate OBC files
+if ~exist(spfilename, 'file')
+    GenBCfile('SWE1D_WiderMovingMound_1000.nc', ...
+        'SWE1D_WiderMovingMound_1000_BC2', mesh.x(:, spBCflag))
+end% if
+
 spl2 = MultiRegions.BoundCondition.SpongeBC1d...
-    (mesh, spBCflag, spfilename, xb, xe);
+    (spBCflag, spfilename, xb, xe);
 end% func
 
 function [mesh, h, q, bot, ftime, dt, dx] = WiderMovingMound(N, Ne)
