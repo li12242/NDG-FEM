@@ -1,66 +1,51 @@
-function GenBCfile( resultFileName, BCfileName, xb )
+function GenBCfile( resultFileName, BCfileName, x_spl )
 %MAKEBCFILE Generate boundary condition files.
 % Make boundary files from the result nc file.
 % Usages:
 %   GenBCfile('SWE1D_1000.nc', 'SWE1D_1000_BC2',-510e3);
 % 
-resultfile = Utilities.PostProcess.ResultFile(resultFileName);
-time  = resultfile.GetVarData('time');
-ntime = numel(time);
-nBV   = numel(xb);
+
+% parameters
+eletype    = 'line';
+N          = 1;
+fileID     = 1;
+resultfile = Utilities.PostProcess.Postprocess({resultFileName}, eletype, N);
+time       = resultfile.NcFile(fileID).GetVarData('time');
+ntime      = numel(time);
+[np, ne]   = size(x_spl);
 % generate bc file
-bcfile = CreateBCFile(BCfileName, ntime, nBV, time, xb);
+bcfile = CreateBCFile(BCfileName, ntime, np, ne, time, x_spl);
 % make interpolation at each time step
-x     = resultfile.GetVarData('x');
+fprintf(['Generation of boundary file ', BCfileName, '\n']);
 for i = 1:ntime
-    t  = resultfile.GetTimeVarData('h',i);
-    tb = disInterp(x, t, xb);
-    bcfile.putVarPart('hb', [0, i-1], [nBV, 1], tb);
-    t  = resultfile.GetTimeVarData('q',i);
-    tb = disInterp(x, t, xb);
-    bcfile.putVarPart('qb', [0, i-1], [nBV, 1], tb);
+    t  = resultfile.NcFile(fileID).GetTimeVarData('h',i);
+    tb = resultfile.Interp1d(t, x_spl, fileID);
+    bcfile.putVarPart('h_spl', [0, 0, i-1], [np, ne, 1], tb);
+    t  = resultfile.NcFile(fileID).GetTimeVarData('q',i);
+    tb = resultfile.Interp1d(t, x_spl, fileID);
+    bcfile.putVarPart('q_spl', [0, 0, i-1], [np, ne, 1], tb);
 end% for
 bcfile.CloseFile;
 end
 
-function yb = disInterp(x, y, xb)
-TOTAL = 1e-4;
-% the boundary point is on vertex
-ind   = abs(x-xb)<TOTAL;
-if any( ind )
-    yb = mean(y(ind));
-    return;
-end% if
-% find which element xb belong to
-dx  = (x(1, :) - xb).*(x(end, :) - xb);
-ind = find(dx < 0);
-if(isempty(ind))
-    error('The boundary point %f is not in the computation domain !\n', xb);
-end% if
-% interpolation with linear reconstruction
-coef1 = (x(end, ind) - xb)/(x(end, ind) - x(1  , ind));
-coef2 = (x(1  , ind) - xb)/(x(1  , ind) - x(end, ind));
-
-yb    = y(1, ind)*coef1 + y(end, ind)*coef2;
-end% func
-
-function bcfile = CreateBCFile(filename, ntime, nBV, time, xb)
+function bcfile = CreateBCFile(filename, ntime, np, ne, time, x_spl)
 % Define dimensions
 tdim = Utilities.NetcdfClass.NcDim('time', ntime); % unlimited dimensions
-node = Utilities.NetcdfClass.NcDim('nBV', nBV);
+node = Utilities.NetcdfClass.NcDim('np', np);
+nele = Utilities.NetcdfClass.NcDim('ne', ne);
 
 % Define variables
-x    = Utilities.NetcdfClass.NcVar('xb',   node, 'double');
+x    = Utilities.NetcdfClass.NcVar('x_spl',[node, nele], 'double');
 tvar = Utilities.NetcdfClass.NcVar('time', tdim, 'double');
-h    = Utilities.NetcdfClass.NcVar('hb', [node, tdim], 'double');
-q    = Utilities.NetcdfClass.NcVar('qb', [node, tdim], 'double');
+h    = Utilities.NetcdfClass.NcVar('h_spl', [node, nele, tdim], 'double');
+q    = Utilities.NetcdfClass.NcVar('q_spl', [node, nele, tdim], 'double');
 
 % Define nc file
-bcfile = Utilities.NetcdfClass.NcFile(filename, [node, tdim],...
+bcfile = Utilities.NetcdfClass.NcFile(filename, [node, nele, tdim],...
     [x, tvar, h, q]);
 
 bcfile.CreateFile;
-bcfile.putVarPart('xb',   0, nBV,   xb);
+bcfile.putVarPart('x_spl',[0,0], [np, ne], x_spl);
 bcfile.putVarPart('time', 0, ntime, time);
 end% func
 

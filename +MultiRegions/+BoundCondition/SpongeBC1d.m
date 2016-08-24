@@ -3,22 +3,14 @@ classdef SpongeBC1d < MultiRegions.BoundCondition.SpongeBC
     %   Detailed explanation goes here
     
 properties
-    SpNToBVCoeff % coefficient for all nodes in sponge elements to BV
     xb    % boundary position of sponge layer
     width % width of the sponge layer
 end
 
 methods
-    function obj = SpongeBC1d(mesh, BCflag, fileName, xb, xe)
+    function obj = SpongeBC1d(BCflag, fileName, xb, xe)
         obj = obj@MultiRegions.BoundCondition.SpongeBC...
             (BCflag, fileName);
-        % the connection between sponge element to the boundary vertex
-        obj.SpEToBV = zeros(obj.nSpE, 1);
-        xbv = obj.BCfile.GetVarData('xb');
-        xp  = mesh.x(:, obj.SpEToE); % node coordinate of sponge element
-        xpc = mean(xp)'; % centre coordinate of sponge element
-        obj.SpEToBV = FindNearestNode(xpc, xbv);
-        obj.SpNToBVCoeff = ones(obj.nSpE, 1);
         % range of sponge layer
         obj.xb = xb;
         obj.width = abs(xe-xb);
@@ -68,12 +60,12 @@ methods
         % get the external solution on vertex
         varB1 = obj.BCfile.GetTimeVarData(varname, ind1);
         varB2 = obj.BCfile.GetTimeVarData(varname, ind2);
-        varB  = varB1*coef1 + varB2*coef2;
+        var_spe  = varB1*coef1 + varB2*coef2;
         % get the external solution on all nodes
-        np   = mesh.Shape.nNode;
+%         np   = mesh.Shape.nNode;
         var  = zeros(size(mesh.x));
-        var_spe = varB(obj.SpEToBV);
-        var(:, obj.SpEToE) = ones(np, 1)*var_spe;
+%         var_spe = varB(obj.SpEToBV);
+        var(:, obj.SpEToE) = var_spe;
     end% func
 end
     

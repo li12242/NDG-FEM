@@ -28,9 +28,9 @@ if isempty(phys.spl)
 else
     for i = 1:numel(phys.spl)
         sigma = phys.spl(i).GetAbsorpCoeff(mesh, dt);
-        temp  = phys.spl(i).GetBC(mesh, 'hb', time);
+        temp  = phys.spl(i).GetBC(mesh, 'h_spl', time);
         Sph   = -sigma.*(h - temp);
-        temp  = phys.spl(i).GetBC(mesh, 'qb', time);
+        temp  = phys.spl(i).GetBC(mesh, 'q_spl', time);
         Spq   = -sigma.*(q - temp);
     end
 end% if
