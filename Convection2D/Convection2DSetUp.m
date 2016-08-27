@@ -1,31 +1,46 @@
-function [mesh, var] = Convection2DSetUp(meshtype, N, M)
+function var = Convection2DSetUp(meshtype, N, M)
 % 2D convection problem
 % dc/dt + d(uc)/dx + d(vc)/dy = 0
-% Input:
+% INPUT:
 %   meshtype - element type of mesh grid
 %   N        - degree of polynomial
 %   M        - No. of elements on each edge
-% Output:
-%   mesh - mesh object
+% OUTPUT:
 %   var - scalar variable
-% 
+
+% name of different test case
+% casename = 'GaussMount';
+% casename = 'SquareMount';
+casename = 'SolidBody';
+
+phys.casename = casename;
+phys.meshtype = meshtype;
+
 switch meshtype
     case 'quad'
-        mesh = quadSolver(N, M);
+        [mesh, phys.dx] = quadSolver(N, M);
     case 'tri'
-        mesh = triSolver(N, M);
+        [mesh, phys.dx] = triSolver(N, M);
 end% switch
-var = ConvectionInit(mesh);
+phys.mesh = mesh;
+% velocity field and simulation time
+w      = 5*pi/6;
+u      = -w.*mesh.y; 
+v      = w.*mesh.x;
+phys.u = u;
+phys.v = v;
+FinalTime  = 2.4;
+phys.ftime = FinalTime;
 
-w = 5*pi/6;
-% flow rate in domain, [u, v]
-u = -w.*mesh.y; v = w.*mesh.x;
+% initial field
+phys = ConvectionInit(phys);
 
-FinalTime = 2.4;
-filename = ['Convection2D_', meshtype, '_', num2str(N),'_',num2str(M)];
-outfile = CreateNetcdf(filename, mesh);
+% output file
+filename   = ['Convection2D_', meshtype, '_', num2str(N),'_',num2str(M)];
+ncfile     = CreateNetcdf(filename, mesh);
+phys.file  = ncfile;
 
-var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile);
+var = Convection2DSolver(phys);
 end% func
 
 function file = CreateNetcdf(filename, mesh)
@@ -39,7 +54,8 @@ y    = Utilities.NetcdfClass.NcVar('y', [np, ne], 'double');
 t    = Utilities.NetcdfClass.NcVar('time', time, 'double');
 var  = Utilities.NetcdfClass.NcVar('var', [np, ne, time], 'double');
 
-file = Utilities.NetcdfClass.NcFile(filename,[np, ne, time],[x, y, t, var]);
+file = Utilities.NetcdfClass.NcFile...
+    (filename,[np, ne, time],[x, y, t, var]);
 
 % initialize output file
 file.CreateFile;
@@ -50,44 +66,83 @@ file.putVarPart('y', [0,0], [mesh.Shape.nNode, mesh.nElement], mesh.y);
 
 end% func
 
-function var = ConvectionInit(mesh)
-% Guass profile
-sigma = 125*1e3/33^2; 
-xc = 0; yc = 3/5;
-var = exp(-sigma.*( (mesh.x - xc).^2 + (mesh.y - yc).^2) );
-
-% % square distribution
-% var = zeros(size(mesh.x));
-% b   = 1/12;
-% x0  = 0;   xc = mean(mesh.x); 
-% y0  = 3/4; yc = mean(mesh.y);
-% 
-% flag = ( abs(xc - x0)<b & abs(yc - y0)<b );
-% var(:, flag) = 1;
+%% Initial functions
+function phys = ConvectionInit(phys)
+mesh = phys.mesh;
+switch phys.casename
+    case 'GaussMount'
+        var = GaussMount(mesh);
+    case 'SquareMount'
+        var = SquareMount(mesh);
+    case 'SolidBody'
+        var = SolidBody(mesh);
+end% switch
+phys.var = var;
 end% func
 
-function mesh = triSolver(N, M)
+function var = SolidBody(mesh)
+var = zeros(size(mesh.x));
+% slotted cylinder
+x0  = 0.; 
+y0  = 0.5; 
+r0  = 0.3;
+r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
+ind = ( r2<=1.0);
+ind = ind & ((abs(mesh.x - x0)>0.05) | (mesh.y > 0.7));
+var(ind) = 1.0;
+% cone
+x0  = 0; 
+y0  = -0.25;
+r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
+ind = ( r2<=1.0);
+var(ind) = 1-r2(ind);
+% hump
+x0  = -0.5;
+y0  = 0;
+r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
+ind = ( r2<=1.0);
+var(ind) = (1+cos(r2(ind)*pi))./4;
+end% func
 
-% read triangle mesh
-% [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderTriangle('Convection2D/mesh/triangle');
+function var = GaussMount(mesh)
+% Guass profile
+sigma = 125*1e3/33^2; 
+xc    = 0; 
+yc    = 3/5;
+var   = exp(-sigma.*( (mesh.x-xc).^2+(mesh.y-yc).^2) );
+end% func
+
+function var = SquareMount(mesh)
+% square distribution
+var = zeros(size(mesh.x));
+b   = 1/12;
+x0  = 0;   xc = mean(mesh.x); 
+y0  = 3/4; yc = mean(mesh.y);
+
+flag = ( abs(xc - x0)<b & abs(yc - y0)<b );
+var(:, flag) = 1;
+end% func
+
+%% solver for different type of element
+function [mesh, dx] = triSolver(N, M)
+% uniform triangle mesh
 np   = M + 1;
-[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(np, np, -1, 1, -1, 1, false);
+[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+    (np, np, -1, 1, -1, 1, false);
 
 tri  = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
+dx   = 2/np/(N+1);
 end% func
 
-function mesh = quadSolver(N, M)
-
-% read triangle mesh
-% [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReaderQuad('Convection2D/mesh/quad');
-
-% uniform mesh
+function [mesh, dx] = quadSolver(N, M)
+% uniform quadrilaterial mesh
 np   = M + 1;
-[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(np, np, -1, 1, -1, 1);
+[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
+    (np, np, -1, 1, -1, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
-
+dx   = 2/np/(N+1);
 end% func
 

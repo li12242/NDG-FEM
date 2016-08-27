@@ -1,4 +1,4 @@
-function mfunc = MinmodFun(v)
+function mfunc = minmod(v)
 % function mfunc = minmod(v)
 % Purpose: Implement the midmod function v is a vector
 

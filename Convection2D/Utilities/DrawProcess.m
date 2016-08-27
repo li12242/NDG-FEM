@@ -6,7 +6,7 @@ end% func
 
 function DrawSurface
 %% Parameters
-filename = 'Convection2D_1_20.nc';
+filename = 'Convection2D_tri_2_20.nc';
 varname  = 'var';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');

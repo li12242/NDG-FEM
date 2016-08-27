@@ -22,15 +22,15 @@ function SWE_Driver2d
 % for further intialization
 
 % Name of test case
-casename = 'DamBreakDry';
+% casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
-% casename = 'ParabolicBowl';
+casename = 'ParabolicBowl';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 100;
-Ny = 4;
+Nx = 50;
+Ny = 50;
 
 % # Name of test case
 phys.casename = casename;

@@ -32,7 +32,7 @@ for i = 1:numel(time)
 end
 
 %% Construct postprocess class
-meshtype = 'quad';
+meshtype = 'tri';
 % elenum   = [80, 100, 120, 160, 200];
 % filename = cell(numel(elenum), 1);
 % for i =1:numel(elenum)
