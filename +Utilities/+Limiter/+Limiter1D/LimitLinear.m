@@ -22,5 +22,5 @@ ux = (2./hN).*(mesh.Shape.Dr*ul);
 
 % Limit function
 ulimit = ones(Np,1)*v0 + (xl-x0).*(ones(Np,1)...
-    *Utilities.Limiter.Limiter1D.MinmodFun([ux(1,:);(vp1-v0)./h;(v0-vm1)./h]));
+    *Utilities.Limiter.Limiter1D.minmod([ux(1,:);(vp1-v0)./h;(v0-vm1)./h]));
 return

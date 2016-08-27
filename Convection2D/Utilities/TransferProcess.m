@@ -1,8 +1,8 @@
 function TransferProcess
-filename = 'Convection2D_2_20.nc';
+filename = 'Convection2D_tri_1_30.nc';
 
-% p_h = point3D(filename);
-p_h = contour2D(filename);
+p_h = point3D(filename);
+% p_h = contour2D(filename);
 end% func
 
 function p_h = point3D(filename)

@@ -1,58 +1,60 @@
-function var = Convection2DSolver(mesh, var, FinalTime, u, v, outfile)
+function var = Convection2DSolver(phys)
 % 2D convection problem
-% RK time stepping
 
-[rk4a, rk4b, rk4c] = RK4Coeff;
-time = 0;
-% Filt = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
-
-resVar = zeros(size(var));
-% compute time step size
+% parameters
+mesh    = phys.mesh;
+shape   = mesh.Shape;
+Ne      = mesh.nElement;
+Np      = shape.nNode;
+var     = phys.var;
+ftime   = phys.ftime;
+u       = phys.u;
+v       = phys.v;
+ncfile  = phys.file;
+% time step
 CFL     = 0.30;
 un      = max(max( sqrt(u.^2 + v.^2) ));
-AVE     = sum(mesh.Shape.M);
-Area    = AVE*mesh.J; % area of each element
-r       = sqrt(min(Area./pi)); % radius
-dt      = CFL/un*r/mesh.Shape.nOrder; 
-outStep = 0;
+dt      = CFL*phys.dx/un;
+
+% RK time stepping parameters
+[rk4a, rk4b, rk4c] = RK4Coeff;
+
+% variables
+time    = 0;
+resVar  = zeros(size(var));
+contour = 0;
 
 % store initial result
-outfile.putVarPart('var', [0, 0, outStep],...
-    [mesh.Shape.nNode, mesh.nElement, 1], var);
-outfile.putVarPart('time', outStep, 1, time);
-outStep = outStep + 1;
+ncfile.putVarPart('var', [0, 0, contour],[Np, Ne, 1], var);
+ncfile.putVarPart('time', contour, 1, time);
+contour = contour + 1;
 
-while(time < FinalTime)
+while(time < ftime)
     
-    if time + dt > FinalTime
-        dt = FinalTime - time;
+    if time + dt > ftime
+        dt = ftime - time;
     end
     time = time+dt;
-    
-    fprintf('Processing: %f ...\n', time./FinalTime)
+    fprintf('Processing: %f ...\n', time./ftime)
     
     for INTRK = 1:5
         rhsVar = Convection2DRHS(mesh, var, u, v);
-        
-%         % filter residual
-%         rhsVar = Filt*rhsVar;
-        
+                
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
-        var = var + rk4b(INTRK)*resVar;
+        var    = var + rk4b(INTRK)*resVar;
         
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.SL2(mesh, var, 2);
     end% for
     
-    outfile.putVarPart('var', [0, 0, outStep],...
-        [mesh.Shape.nNode, mesh.nElement, 1], var);
-    outfile.putVarPart('time', outStep, 1, time);
+    ncfile.putVarPart('var', [0, 0, contour],[Np, Ne, 1], var);
+    ncfile.putVarPart('time',contour,1,time);
     
-    outStep = outStep + 1;
+    contour = contour + 1;
 end% while
     
-outfile.CloseFile;
+ncfile.CloseFile();
 end% func
 
 function [rk4a, rk4b, rk4c] = RK4Coeff
