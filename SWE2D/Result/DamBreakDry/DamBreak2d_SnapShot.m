@@ -6,7 +6,7 @@ meshtype = 'tri';
 filename = {'SWE2D.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 fileID   = 1;
-time     = (0:0.2:1)*T;
+time     = (0:0.1:1)*T;
 
 for i = 1:numel(time)
     figure

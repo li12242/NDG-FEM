@@ -4,8 +4,8 @@ function phys = SWE_Init2d(phys)
 % Input: phys - structure variable contaions, contains
 %           |
 %           | - casename : test case name
-%           | - n : order of polynomials
-%           | - ne : number of elements on each edge
+%           | - N : order of polynomials
+%           | - Nx & Ny : number of points on each dimension
 %           | - meshType : 'tri' for triangle or 'quad' for quadrilaterals
 % 
 % Output: phys
