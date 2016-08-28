@@ -1,4 +1,4 @@
-function DrawProcess
+function Convection2d_Process
 close all;
 DrawSurface;
 
@@ -6,7 +6,7 @@ end% func
 
 function DrawSurface
 %% Parameters
-filename = 'Convection2D_tri_2_20.nc';
+filename = 'Convection2D_quad_2_30.nc';
 varname  = 'var';
 time     = ncread(filename, 'time');
 x        = ncread(filename, 'x');
