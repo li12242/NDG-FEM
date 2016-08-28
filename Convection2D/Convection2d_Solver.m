@@ -38,7 +38,7 @@ while(time < ftime)
     fprintf('Processing: %f ...\n', time./ftime)
     
     for INTRK = 1:5
-        rhsVar = Convection2DRHS(mesh, var, u, v);
+        rhsVar = Convection2d_RHS(mesh, var, u, v);
                 
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var    = var + rk4b(INTRK)*resVar;

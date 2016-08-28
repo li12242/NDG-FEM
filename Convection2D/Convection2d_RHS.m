@@ -1,14 +1,14 @@
-function rhsVar = Convection2DRHS(mesh, var, u, v)
+function rhsVar = Convection2d_RHS(mesh, var, u, v)
 % 2D convection problem
 % Righ Hand sides
 
 shape = mesh.Shape;
 
 % volume flux
-[F, G] = ConvectionFlux(var, u, v);
+[F, G] = Convection2d_Flux(var, u, v);
 
 % numerical flux
-Fs = ConvectionLF(mesh, var, u, v);
+Fs = Convection2d_LF(mesh, var, u, v);
 FM = F(mesh.vmapM); 
 GM = G(mesh.vmapM);
 dF = normal(mesh, FM, GM) - Fs;
@@ -24,13 +24,15 @@ rhsVar = -( mesh.rx.*(shape.Dr*F) + mesh.sx.*(shape.Ds*F) ...
 %     - (tri.invM*tri.Mes)*(Fs.*mesh.fScale);
 end% func
 
-function Fs = ConvectionLF(mesh, var, u, v)
+function Fs = Convection2d_LF(mesh, var, u, v)
 % L-F flux
+uM   = u(mesh.vmapM); 
+vM   = v(mesh.vmapM);
+varM = var(mesh.vmapM); 
+varP = var(mesh.vmapP);
+un   = normal(mesh, uM, vM);
 
-uM = u(mesh.vmapM); vM = v(mesh.vmapM);
-varM = var(mesh.vmapM); varP = var(mesh.vmapP);
-un = normal(mesh, uM, vM);
-
+% the boundary nodes
 bclist = (mesh.vmapM == mesh.vmapP);
 varP(bclist) = 0;
 
@@ -40,14 +42,14 @@ varP(bclist) = 0;
 FsM = normal(mesh, FM, GM);
 FsP = normal(mesh, FP, GP);
 
-Fs = 0.5*(FsM + FsP) - 0.5.*abs(un).*(varP - varM);
+Fs  = 0.5*(FsM + FsP) - 0.5.*abs(un).*(varP - varM);
 end% func
 
 function un = normal(mesh, u, v)
 un = u.*mesh.nx + v.*mesh.ny;
 end
 
-function [F,G] = ConvectionFlux(var, u, v)
+function [F,G] = Convection2d_Flux(var, u, v)
 % Cal flux
 % F = u*c; G = v*c
 F = var.*u; G = var.*v;
