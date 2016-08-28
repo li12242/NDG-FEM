@@ -1,4 +1,4 @@
-function var = Convection2DSetUp(meshtype, N, M)
+function var = Convection2d_SetUp(meshtype, N, M)
 % 2D convection problem
 % dc/dt + d(uc)/dx + d(vc)/dy = 0
 % INPUT:
@@ -33,14 +33,14 @@ FinalTime  = 2.4;
 phys.ftime = FinalTime;
 
 % initial field
-phys = ConvectionInit(phys);
+phys = Convection2d_Init(phys);
 
 % output file
 filename   = ['Convection2D_', meshtype, '_', num2str(N),'_',num2str(M)];
 ncfile     = CreateNetcdf(filename, mesh);
 phys.file  = ncfile;
 
-var = Convection2DSolver(phys);
+var = Convection2d_Solver(phys);
 end% func
 
 function file = CreateNetcdf(filename, mesh)
@@ -67,7 +67,7 @@ file.putVarPart('y', [0,0], [mesh.Shape.nNode, mesh.nElement], mesh.y);
 end% func
 
 %% Initial functions
-function phys = ConvectionInit(phys)
+function phys = Convection2d_Init(phys)
 mesh = phys.mesh;
 switch phys.casename
     case 'GaussMount'
