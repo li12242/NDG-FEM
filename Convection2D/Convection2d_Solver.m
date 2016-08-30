@@ -44,6 +44,8 @@ while(time < ftime)
         var    = var + rk4b(INTRK)*resVar;
         
 %         var    = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
+%         var    = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
+%         var    = Utilities.Limiter.Limiter2D.TVB2d(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
         var = Utilities.Limiter.Limiter2D.SLLoc2(mesh, var, 2);

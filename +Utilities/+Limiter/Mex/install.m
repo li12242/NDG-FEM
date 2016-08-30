@@ -23,3 +23,7 @@ src{2}    = 'MatrixUtilities.c';
 src{3}    = 'BasicFunction.c';
 mex('-O', src{:}, '-outdir', outdir);
 
+src{1}    = 'VB2d_Mex.c';
+src{2}    = 'MatrixUtilities.c';
+src{3}    = 'BasicFunction.c';
+mex('-O', src{:}, '-outdir', outdir);
