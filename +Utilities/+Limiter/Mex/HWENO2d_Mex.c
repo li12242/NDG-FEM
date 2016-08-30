@@ -6,9 +6,8 @@
  * 
  * Usages:
  *		shape = mesh.Shape;
- * 		hlim  = TVB2d_Mex...
- *			(h, mesh.J, mesh.sJ, shape.M, shape.Fmask, mesh.EToE, 
- *				mesh.Mes, mesh.x, mesh.y, eps_o, eps_w, gam0)
+ * 		hlim  = HWENO2d_Mex(h, mesh.J, mesh.sJ, shape.M, shape.Fmask, mesh.EToE, 
+ *							   mesh.Mes, mesh.x, mesh.y, eps_o, eps_w, gam0)
  */
 
  void mexFunction (int nlhs, mxArray *plhs[], 
@@ -115,7 +114,10 @@
 			/* Green-Gauss formulation */
 			phpx[k] += face_mean*dy;
 			phpy[k] -= face_mean*dx;
+
+			// mexPrintf("k=%d, f=%d, f_mean=%f\n", k, f1, face_mean);
 		}
+		// mexPrintf("k=%d, phpx=%f, phpy=%f\n", k, phpx[k], phpy[k]);
 	}
 
 	for(k=0;k<K;k++){
@@ -134,7 +136,6 @@
 			real a[4], f[2], grd[2];
 			/* get adjacent info */
 			if(e1 == k){ // use face info
-				real face_mean;
 				FaceMean(Nfaces, Nfp, h+k*Np, ws, sJ+k*Nfaces*Nfp+f1*Nfp, Fmask+f1,
 					&h1, &face_len);
 				FaceMean(Nfaces, Nfp, x+k*Np, ws, sJ+k*Nfaces*Nfp+f1*Nfp, Fmask+f1,
@@ -148,7 +149,6 @@
 			}
 
 			if(e2 ==k ){ // use face info
-				real face_mean;
 				FaceMean(Nfaces, Nfp, h+k*Np, ws, sJ+k*Nfaces*Nfp+f2*Nfp, Fmask+f2,
 					&h2, &face_len);
 				FaceMean(Nfaces, Nfp, x+k*Np, ws, sJ+k*Nfaces*Nfp+f2*Nfp, Fmask+f2,
@@ -167,6 +167,8 @@
 			MatrixSolver2(a, f, grd);
 			phpx_stencil[f1*2+1] = grd[0];
 			phpy_stencil[f1*2+1] = grd[1];
+
+			// mexPrintf("k=%d, phpx[%d]=%f, phpy[%d]=%f\n", k, f1*2+1, phpx_stencil[f1*2+1], f1*2+1, phpy_stencil[f1*2+1]);
 
 			if (e1 == k){ //use face vertex and centre to calculate the gradient
 				/* vertex index of face */
@@ -188,34 +190,48 @@
 				phpx_stencil[f1*2+2] = phpx[e1];
 				phpy_stencil[f1*2+2] = phpy[e1];
 			}
+
+			// mexPrintf("k=%d, phpx[%d]=%f, phpy[%d]=%f\n", k, f1*2+2, phpx_stencil[f1*2+2], f1*2+2, phpy_stencil[f1*2+2]);
 		}
 
 		real sum_w = 0.0;
+		real *hlocal = (real*) malloc(sizeof(real)*Np );
 		/* oscillation indicator and weights */
 		for(i=0;i<(2*Nfaces+1);i++){
 			polys_o[i] = phpx_stencil[i]*phpx_stencil[i] 
 					+ phpy_stencil[i]*phpy_stencil[i];
-			real sum = 0;
-			real *hlocal = (real*) malloc(sizeof(real)*Np );
+			
 			GetLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, 
 				phpx_stencil[i], phpy_stencil[i], hlocal);
-			for(j=0;j<Np;j++){
-				sk = (k*Np + i);
-				sum += w[i]*J[sk]*(hlocal[j]*hlocal[j]+eps_o[0]);
-			}
 
-			polys_o[i] /= sum;
+			// mexPrintf("hlocal=%f, %f, %f, %f\n", hlocal[0], hlocal[1], hlocal[2], hlocal[3] );
+			// real sum = 0;
+			// for(j=0;j<Np;j++){
+			// 	sk = (k*Np + j);
+			// 	sum += w[j]*J[sk]*(hlocal[j]*hlocal[j]+eps_o[0]);
+			// }
+			// sum /= area[k];
+
+			polys_o[i] /= area[k];
+			polys_o[i] = sqrt(polys_o[i]);
 			polys_w[i] = 1.0*pow(eps_w[0] + polys_o[i], -gam0[0]);
 			sum_w += polys_w[i];
+
+			// mexPrintf("k=%d, sum=%f, polys_o[%d]=%f\n", k, sum, i, polys_o[i]);
 		}
 
+		free(hlocal);
 		real phpxlim, phpylim;
 		for(i=0;i<(2*Nfaces+1);i++){
 			polys_w[i] /= sum_w;
 
 			phpxlim += polys_w[i]*phpx_stencil[i];
 			phpylim += polys_w[i]*phpy_stencil[i];
+
+			// mexPrintf("k=%d, polys_w[%d]=%f\n", k, i, polys_w[i]);
 		}
+
+		// mexPrintf("k=%d, phpxlim=%f, phpylim=%f\n", k, phpxlim, phpylim);
 
 		GetLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, 
 			phpxlim, phpylim, hlim+k*Np);
