@@ -17,8 +17,8 @@ for i = 1:numel(time)
     zlim([-.5, 1.2]);
     view(30, 32);
     zlabel('var','FontSize', 14);
-    xlabel('x','FontSize', 14);
-    ylabel('y','FontSize', 14);
+    xlabel('x'  ,'FontSize', 14);
+    ylabel('y'  ,'FontSize', 14);
     box on
 end% for
 end

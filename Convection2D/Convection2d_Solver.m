@@ -1,4 +1,4 @@
-function var = Convection2DSolver(phys)
+function var = Convection2d_Solver(phys)
 % 2D convection problem
 
 % parameters
@@ -43,9 +43,10 @@ while(time < ftime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var    = var + rk4b(INTRK)*resVar;
         
+%         var    = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
-%         var = Utilities.Limiter.Limiter2D.SL2(mesh, var, 2);
+        var = Utilities.Limiter.Limiter2D.SLLoc2(mesh, var, 2);
     end% for
     
     ncfile.putVarPart('var', [0, 0, contour],[Np, Ne, 1], var);
