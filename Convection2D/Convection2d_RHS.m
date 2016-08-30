@@ -36,8 +36,8 @@ un   = normal(mesh, uM, vM);
 bclist = (mesh.vmapM == mesh.vmapP);
 varP(bclist) = 0;
 
-[FM, GM] = ConvectionFlux(varM, uM, vM);
-[FP, GP] = ConvectionFlux(varP, uM, vM);
+[FM, GM] = Convection2d_Flux(varM, uM, vM);
+[FP, GP] = Convection2d_Flux(varP, uM, vM);
 
 FsM = normal(mesh, FM, GM);
 FsP = normal(mesh, FP, GP);
