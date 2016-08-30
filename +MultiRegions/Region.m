@@ -24,6 +24,8 @@ classdef Region
         J       % element factor: Jacobi transfer factor
         EToE    % element to element
         EToF    % element to face
+        EToV    % element to vertex
+        Nv      % number of vertex
     end
     properties(GetAccess=protected)
         SpFToV
@@ -35,6 +37,8 @@ classdef Region
             obj.Shape = shape;
             obj.nElement = size(EToV, 1);
             obj.nNode = obj.nElement*shape.nNode;
+            obj.EToV  = EToV;
+            obj.Nv    = max(max(EToV));
         end
     end
 end
