@@ -4,7 +4,7 @@ test = 1;
 
 switch test
     case 1 % quad
-        M = 2; N = 2;
+        M = 20; N = 1;
         mesh = quadSolver(N, M);
     case 2 % triangle 
         M = 2; N = 2;
@@ -20,11 +20,11 @@ plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); hold on;
 plot3(mesh.x, mesh.y, var, '.');
 
 % discontinuity detector
-[~, I] = Utilities.Limiter.Limiter2D.DisDetector(mesh, var, u, v);
+var = Utilities.Limiter.Limiter2D.TVB2d(mesh, var);
 
 figure
-xc = mean(mesh.x); yc = mean(mesh.y);
-plot3(xc, yc, I, 'r.');
+plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); hold on;
+plot3(mesh.x, mesh.y, var, '.');
 end% func
 
 
@@ -85,14 +85,14 @@ end% func
 
 function mesh = triSolver(N, M)
 
-[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M, -1, 1, 1);
+[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M+1, M+1, -1, 1, -1, 1, 0);
 tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
 end% func
 
 function mesh = quadSolver(N, M)
 % uniform mesh
-[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(M+1, -1, 1);
+[EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D(M+1, M+1, -1, 1, -1, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);

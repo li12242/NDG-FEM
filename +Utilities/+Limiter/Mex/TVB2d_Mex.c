@@ -1,5 +1,9 @@
 #include "Limiter.h"
 
+#define TOTALERR 1e-12
+
+real TVB_minmod(real a1, real a2, real dx, real factor);
+
 /**
  * @brief
  * Use minmod function to limit the gradient and get the linear 
@@ -8,13 +12,13 @@
  * Usages:
  *		shape = mesh.Shape;
  * 		hlim  = TVB2d_Mex...
- *			(h, mesh.J, mesh.sJ, shape.M, shape.Fmask, mesh.EToE, mesh.Mes, mesh.x, mesh.y)
+ *			(h, mesh.J, mesh.sJ, shape.M, shape.Fmask, mesh.EToE, mesh.Mes, mesh.x, mesh.y, factor)
  */
 void mexFunction (int nlhs, mxArray *plhs[], 
 	int nrhs, const mxArray *prhs[]){
 
 	/* check input & output */
-	if (nrhs != 9)
+	if (nrhs != 10)
 		mexErrMsgTxt("Wrong number of input arguments.");
 	if (nlhs != 1)
 		mexErrMsgTxt("Wrong number of output arguments");
@@ -29,14 +33,15 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	real *Mes  = mxGetPr(prhs[6]);
 	real *x    = mxGetPr(prhs[7]);
 	real *y    = mxGetPr(prhs[8]);
+	real *factor = mxGetPr(prhs[9]);
 
 	/* get dimensions */
 	size_t Np, K;
 	Np = mxGetM(prhs[0]); 
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[3]);
-	Nfp    = mxGetN(prhs[3]);
+	Nfaces = mxGetM(prhs[4]);
+	Nfp    = mxGetN(prhs[4]);
 
 	/* allocation of output */
 	plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
@@ -52,7 +57,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	real *ws    = (real*) malloc(sizeof(real)*Nfp); 
 
 	/* volume/interface integral coefficient */
-	int i,j,k,sk,f,f1,f2,fnp;
+	int i,j,k,sk,sp,f,f1,f2,fnp;
 	for(i=0;i<Np;i++){
 		w[i] = 0.0;
 		for(j=0;j<Np;j++){
@@ -89,34 +94,40 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	real *neigh_yc   = (real*) malloc(sizeof(real)*Nfaces );
 	real *neigh_xf   = (real*) malloc(sizeof(real)*Nfaces );
 	real *neigh_yf   = (real*) malloc(sizeof(real)*Nfaces );
-	real *neigh_yf   = (real*) malloc(sizeof(real)*Nfaces );
 	real *face_mean  = (real*) malloc(sizeof(real)*Nfaces );
-	real alpha[2];
-	real dxc[2], dyc[2], dxf, dyf;
-	real v = 1.5;
+	real *delta 	 = (real*) malloc(sizeof(real)*Nfaces );
 	
+	real alpha[2], a[4], df[2], v = 1.5;
+
 	for(k=0;k<K;k++){
 		real xc = xmean[k];
 		real yc = ymean[k];
-		real *hlim  = (real*) malloc(sizeof(real)*Np );
-		real *delta = (real*) malloc(sizeof(real)*Nfaces );
+		
 		/* calculate average on face */
 		for(f=0;f<Nfaces;f++){
 			face_mean[f] =0.0;
 			neigh_xf[f] =0.0;
 			neigh_yf[f] =0.0;
-			real len = 0.0;
-			for(fnp=0;fnp<Nfp;fnp++){
-				sk = (k*Nfaces*Nfp + f*Nfp + fnp);
-				int sp = k*Np + (int) (Fmask[f + fnp*Nfaces] - 1);
-				face_mean[f] += ws[fnp]*sJ[sk]*h[sp];
-				neigh_xf[f]  += ws[fnp]*sJ[sk]*x[sp];
-				neigh_yf[f]  += ws[fnp]*sJ[sk]*y[sp];
-				len 		 += ws[fnp]*sJ[sk];
-			}
-			face_mean[f] /= len;
-			neigh_xf[f]  /= len;
-			neigh_yf[f]  /= len;
+			real face_len = 0.0;
+
+			// for(fnp=0;fnp<Nfp;fnp++){
+			// 	sk = (k*Nfaces*Nfp + f*Nfp + fnp);
+			//   	sp = k*Np + (int) (Fmask[f + fnp*Nfaces] - 1);
+			// 	face_mean[f] += ws[fnp]*sJ[sk]*h[sp];
+			// 	neigh_xf[f]  += ws[fnp]*sJ[sk]*x[sp];
+			// 	neigh_yf[f]  += ws[fnp]*sJ[sk]*y[sp];
+			// 	face_len 	 += ws[fnp]*sJ[sk];
+			// }
+			FaceMean(Nfaces, Nfp, h+k*Np, ws, sJ+k*Nfaces*Nfp+f*Nfp, Fmask+f,
+				face_mean+f, &face_len);
+			FaceMean(Nfaces, Nfp, x+k*Np, ws, sJ+k*Nfaces*Nfp+f*Nfp, Fmask+f,
+				neigh_xf+f, &face_len);
+			FaceMean(Nfaces, Nfp, y+k*Np, ws, sJ+k*Nfaces*Nfp+f*Nfp, Fmask+f,
+				neigh_xf+f, &face_len);
+
+			// face_mean[f] /= face_len;
+			// neigh_xf[f]  /= face_len;
+			// neigh_yf[f]  /= face_len;
 
 			// averages of adjacent elements
 			int e1 = (int)EToE[k+K*f] - 1;
@@ -138,24 +149,34 @@ void mexFunction (int nlhs, mxArray *plhs[],
 			int  best_face = -1;
 			real beat_alpha[2];
 
+			// dxc[0] = neigh_xc[f1] - xc;
+			// dyc[0] = neigh_yc[f1] - yc;
+			// dxf    = neigh_xf[f1] - xc;
+			// dyf    = neigh_yf[f1] - yc;
+			a[0]  = neigh_xc[f1] - xc;
+			a[2]  = neigh_yc[f1] - yc;
+			df[0] = neigh_xf[f1] - xc;
+			df[1] = neigh_yf[f1] - yc;
+
 			for(f2=0;f2<Nfaces;f2++){
 				if(f1==f2)
 					continue;
 
 				/* calculate of alpha */
-				dxc[0] = neigh_xc[f1] - xc;
-				dxc[1] = neigh_xc[f2] - xc;
-				dyc[0] = neigh_yc[f1] - yc;
-				dyc[1] = neigh_yc[f2] - yc;
-				dxf    = neigh_xf[f1] - xc;
-				dyf    = neigh_yf[f1] - yc;
+				// dxc[1] = neigh_xc[f2] - xc;
+				// dyc[1] = neigh_yc[f2] - yc;
+				a[1] = neigh_xc[f2] - xc;
+				a[3] = neigh_yc[f2] - yc;
 
-				real det = dxc[0]*dyc[1] - dxc[1]*dyc[0];
-				alpha[0] = (dxf*dyc[1] - dyf*dxc[1])/det;
-				alpha[1] = (-dxf*dyc[0]+ dyf*dxc[0])/det;
+				MatrixSolver2(a, df, alpha);
+
+				// real det = dxc[0]*dyc[1] - dxc[1]*dyc[0];
+
+				// alpha[0] = (dxf*dyc[1] - dyf*dxc[1])/det;
+				// alpha[1] = (-dxf*dyc[0]+ dyf*dxc[0])/det;
 
 				real alpha_det = sqrt(alpha[0]*alpha[0] + alpha[1]*alpha[1]);
-				if ((alpha[0] > -1.0e-12) & (alpha[1] > -TOTALERR) & alpha[0]/alpha_det > max_alpha ){
+				if ((alpha[0] > -TOTALERR) & (alpha[1] > -TOTALERR) & alpha[0]/alpha_det > max_alpha ){
 					best_face = f2;
 					max_alpha = alpha[0]/alpha_det;
 					beat_alpha[0] = alpha[0];
@@ -169,7 +190,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 			dhf    = face_mean[f1] - hmean[k];
 			len    = sqrt( (neigh_xc[f1]-xc)*(neigh_xc[f1]-xc)+(neigh_yc[f1]-yc)*(neigh_yc[f1]-yc) );
 
-			delta[f1] = TVB_minmod(dhf, dhc, len);
+			delta[f1] = TVB_minmod(dhf, dhc, len, *factor);
 
 		}
 		/* correct the average to sum to 0.0 */
@@ -183,12 +204,12 @@ void mexFunction (int nlhs, mxArray *plhs[],
 			real neg = 0.0;
 
 			for(f=0;f<Nfaces;f++){
-				pos += max(delta, 0.0);
-				neg += max(-delta, 0.0);
+				pos += max( delta[f], 0.0);
+				neg += max(-delta[f], 0.0);
 			}
 
 			for(f=0;f<Nfaces;f++){
-				delta[f] = min(1.0, neg/pos)*max(delta[f], 0.0) - min(1.0, pos/neg)*max(-delta[f], 0.0)
+				delta[f] = min(1.0, neg/pos)*max(delta[f], 0.0) - min(1.0, pos/neg)*max(-delta[f], 0.0);
 			}
 		}
 
@@ -212,19 +233,20 @@ void mexFunction (int nlhs, mxArray *plhs[],
         qpx /= area[k];
         qpy /= area[k];
 
-        for(i=0;i<Np;i++){
-        	sk = k*Np + i;
-            real dx = x[sk] - xc;
-            real dy = y[sk] - yc;
+        GetLocalVar(Np, hmean[k], xc, yc, x+k*Np, y+k*Np, 
+			qpx, qpy, hlim+k*Np);
 
-            hlim[sk] = hmean[k] + dx*qpx + dy*qpy;
-        }
-		
+        // for(i=0;i<Np;i++){
+        // 	sk = k*Np + i;
+        //     real dx = x[sk] - xc;
+        //     real dy = y[sk] - yc;
 
-		free(delta);
-		free(hlim);
+        //     hlim[sk] = hmean[k] + dx*qpx + dy*qpy;
+        // }
+				
 	}
 
+	free(delta);
 	free(neigh_xc);
 	free(neigh_yc);
 	free(neigh_xf);
@@ -239,4 +261,20 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	free(w);
 	free(ws);
 	return;
+}
+
+/* 
+ * modified minmod function of TVB limiter.
+ * m = TVB_minmod(a1, a2)
+ */
+real TVB_minmod(real a1, real a2, real dx, real TVB_factor){
+	real m, v = 1.5;
+	real a[2];
+	if(abs(a1)<TVB_factor*dx*dx){
+		m = a1;
+	}else{
+		a[0] = a1; a[1] = a2;
+		minmod(2, a, &m);
+	}
+	return m;
 }
