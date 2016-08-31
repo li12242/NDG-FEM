@@ -1,7 +1,7 @@
 %% SL2 slope limiter
 % Slope limiter proposed by Anastasion and Chan (1997). 
 % For more details, refer to Khan and Lai (2014).
-function hlim = SL2(mesh, h, beta)
+function hlim = BJ2(mesh, h, beta)
 % Input:
 %   beta - Parameter ranges from 1 to 2 result in the minmod limiter and 
 %           Superbee limiter, respectively.
@@ -113,6 +113,6 @@ function hlim = SL2(mesh, h, beta)
 %     + dy.*(ones(shape.nNode,1)*phpy);
 
 %% mex version
-hlim = Utilities.Limiter.Limiter2D.SL2d_Mex(h, mesh.J, mesh.Shape.M,...
+hlim = Utilities.Limiter.Limiter2D.BJ2d_Mex(h, mesh.J, mesh.Shape.M,...
     mesh.Shape.Fmask, mesh.EToE, mesh.x, mesh.y, beta);
 end% func
