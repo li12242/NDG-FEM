@@ -12,7 +12,7 @@ switch test
 end
 
 var = ConvectionInit(mesh);
-u = zeros(size(mesh.x)); v = ones(size(mesh.x));
+u = ones(size(mesh.x)); v = ones(size(mesh.x));
 
 % variable distribution
 figure;
@@ -21,6 +21,7 @@ plot3(mesh.x, mesh.y, var, '.');
 
 % discontinuity detector
 % var = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
+ind = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var);
 var = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 
 figure
