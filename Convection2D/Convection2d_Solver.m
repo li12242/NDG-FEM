@@ -43,12 +43,15 @@ while(time < ftime)
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var    = var + rk4b(INTRK)*resVar;
         
-%         var    = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
+        ind    = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var);
+        flag   = ind > 0;
+        varlim = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
+        var(:, flag) = varlim(:, flag);
 %         var    = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 %         var    = Utilities.Limiter.Limiter2D.TVB2d(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
-        var = Utilities.Limiter.Limiter2D.SLLoc2(mesh, var, 2);
+%         var = Utilities.Limiter.Limiter2D.BJ2(mesh, var, 2);
     end% for
     
     ncfile.putVarPart('var', [0, 0, contour],[Np, Ne, 1], var);
