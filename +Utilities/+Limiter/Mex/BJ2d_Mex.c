@@ -1,4 +1,5 @@
 #include "mex.h"
+#include "Limiter.h"
 
 #define real double
 
@@ -6,13 +7,12 @@
 #define min(a,b)  ( (a<b)?a:b )
 
 /*
- *
  * Usages:
  * 		hlim = SLLoc2d_Mex...
  *         (h, mesh.J, mesh.Shape.M, mesh.Shape.Fmask, mesh.EToE, mesh.x, mesh.y, beta)
  */
 
-void mexFunction(int nlhs, mxArray *plhs[], 
+void mexFunction(int nlhs, mxArray *plhs[],
 	int nrhs, const mxArray *prhs[]){
 
 	/* check input & output */
@@ -33,7 +33,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 	/* get dimensions */
 	size_t Np, K;
-	Np = mxGetM(prhs[0]); 
+	Np = mxGetM(prhs[0]);
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
 	Nfaces = mxGetM(prhs[3]);
@@ -50,7 +50,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	real *yc    = (real*) malloc(sizeof(real)*K );
 
 	//elemental integral coefficient
-	real *w     = (real*) malloc(sizeof(real)*Np); 
+	real *w     = (real*) malloc(sizeof(real)*Np);
 	int i,j,k,sk;
 	for(i=0;i<Np;i++){
 		w[i] = 0.0;
@@ -69,7 +69,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		for(j=0;j<Np;j++){
 			hmean[i] += w[j]*J[sk]*h[sk];
 			area[i]  += w[j]*J[sk];
-			
+
 			/* compute the centre of cell */
             xc[i] += w[j]*J[sk]*x[sk];
             yc[i] += w[j]*J[sk]*y[sk];
@@ -101,7 +101,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			int sk1 = k*Np + v1; // global vertex indics
 			int sk2 = k*Np + v2; // global vertex indics
 
-			real hmean1;
+			real hfmean; // face average
 
 			if( e != k ){
 				real xb = (x[sk2] + x[sk1])/2.0;
@@ -113,24 +113,24 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				real w1 = d2/(d1 + d2);
 				real w2 = d1/(d1 + d2);
 
-				hmean1 = (hmean[k]*w1 + hmean[e]*w2);
+				hfmean = (hmean[k]*w1 + hmean[e]*w2);
 
 			}else{
-				hmean1 = (h[sk1] + h[sk2])/2.0;
+				hfmean = (h[sk1] + h[sk2])/2.0;
 				// mexPrintf("ele: %d, faces: %d\n", k, i);
 			}
 
 			real dx = x[sk2] - x[sk1];
 			real dy = y[sk2] - y[sk1];
 
-			phpx += hmean1*dy;
-			phpy -= hmean1*dx;
+			phpx += hfmean*dy;
+			phpy -= hfmean*dx;
 		}
 
 		phpx /= area[k];
 		phpy /= area[k];
 
-		
+
         real t, psi = 1.0;
         for(i=0;i<Np;i++){
             sk = (k*Np + i);
@@ -143,20 +143,23 @@ void mexFunction(int nlhs, mxArray *plhs[],
             }
             t   = max(min(beta*rk, 1.0), min(rk, beta));
             psi = min(psi, t);
-            
+
         }
         /* compute the limited gradient */
         phpx *= psi;
         phpy *= psi;
 
-        /* reconstruction of each element */
-        for(i=0;i<Np;i++){
-            sk = (k*Np + i);
-            real dx = (real)(x[sk] - xc[k]);
-            real dy = (real)(y[sk] - yc[k]);
+		getLocalVar(Np, hmean[k], xc[k], yc[k],
+			x+k*Np, y+k*Np, phpx, phpy, hlim+k*Np);
 
-            hlim[sk] = hmean[k] + dx*phpx + dy*phpy;
-        }
+        // /* reconstruction of each element */
+        // for(i=0;i<Np;i++){
+        //     sk = (k*Np + i);
+        //     real dx = (real)(x[sk] - xc[k]);
+        //     real dy = (real)(y[sk] - yc[k]);
+		//
+        //     hlim[sk] = hmean[k] + dx*phpx + dy*phpy;
+        // }
 
 	}
 
