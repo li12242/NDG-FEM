@@ -64,7 +64,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	}
 
 	// calculate volume mean value
-	int k,sk;
+	int k;
 	for(k=0;k<K;k++){
 		real *fld[3], cmean[3];
 		fld[0] = h+k*Np; fld[1] = x+k*Np; fld[2] = y+k*Np;
@@ -101,8 +101,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	// 	mexPrintf("n=%d, hvmin=%f, hvmax=%f\n", n, hvmin[n], hvmax[n]);
 	// }
 
-	real alpha, a[4], b[2], gra[2];
-	real dhdx, dhdy;
+	real alpha, dhdx, dhdy;
 	real *hv = (real*) malloc(sizeof(real)*Nfaces );
 	real *xv = (real*) malloc(sizeof(real)*Nfaces );
 	real *yv = (real*) malloc(sizeof(real)*Nfaces );

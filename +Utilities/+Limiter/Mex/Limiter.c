@@ -184,7 +184,6 @@ void minmod(int n, real *a, real *m){
  * s   | real |
  */
 real sign(real a){
-	real m;
 	if (a>0.0){
 		return 1.0;
 	}else if (a<0.0){
