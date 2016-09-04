@@ -4,7 +4,7 @@ test = 1;
 
 switch test
     case 1 % quad
-        M = 2; N = 1;
+        M = 5; N = 1;
         mesh = quadSolver(N, M);
     case 2 % triangle 
         M = 2; N = 2;
@@ -15,26 +15,36 @@ var = ConvectionInit(mesh);
 u = ones(size(mesh.x)); v = ones(size(mesh.x));
 
 % variable distribution
-figure;
-plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); hold on;
-plot3(mesh.x, mesh.y, var, '.');
+figure('Position', [680,1,560,975]); subplot(2,1,1); hold on;
+plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM), 'k-');
 
 % discontinuity detector
 % var = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
-ind = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var);
-var = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
+ind    = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var, 0);
+varlim = Utilities.Limiter.Limiter2D.TVB2d(mesh, var);
 
-figure
-plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM)); hold on;
-plot3(mesh.x, mesh.y, var, '.');
+subplot(2,1,2); hold on;
+plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), varlim(mesh.vmapM), 'k-');
 end% func
 
 function var = ConvectionInit(mesh)
-var = zeros(size(mesh.x));
-
-var(:, [1,2]) = mesh.x(:, [1,2]);
-var(:, (3:end)) = mesh.y(:, (3:end));
+var = Square(mesh, 0, 0, 0.3);
 end
+
+function var = Square(mesh, x0, y0, r0)
+var = zeros(size(mesh.x));
+% slotted cylinder
+ind = (abs(mesh.x-x0)<r0 & abs(mesh.y-y0)<r0);
+var(ind) = 1.0;
+end% func
+
+function var = Cylinder(mesh, x0, y0, r0)
+var = zeros(size(mesh.x));
+% slotted cylinder
+r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
+ind = ( r2<=1.0);
+var(ind) = 1.0;
+end% func
 
 % function var = ConvectionInit(mesh)
 % % initial condition
