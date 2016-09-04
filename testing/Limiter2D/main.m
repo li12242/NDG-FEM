@@ -4,7 +4,7 @@ test = 1;
 
 switch test
     case 1 % quad
-        M = 5; N = 1;
+        M = 50; N = 1;
         mesh = quadSolver(N, M);
     case 2 % triangle 
         M = 2; N = 2;
@@ -21,6 +21,7 @@ plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), var(mesh.vmapM), 'k-');
 % discontinuity detector
 % var = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
 ind    = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var, 0);
+% varlim = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 varlim = Utilities.Limiter.Limiter2D.TVB2d(mesh, var);
 
 subplot(2,1,2); hold on;
@@ -28,7 +29,7 @@ plot3(mesh.x(mesh.vmapP),mesh.y(mesh.vmapP), varlim(mesh.vmapM), 'k-');
 end% func
 
 function var = ConvectionInit(mesh)
-var = Square(mesh, 0, 0, 0.3);
+var = Cylinder(mesh, 0, 0, 0.3);
 end
 
 function var = Square(mesh, x0, y0, r0)
@@ -116,6 +117,3 @@ quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
 
 end% func
-
-
-
