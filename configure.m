@@ -90,7 +90,7 @@ cd(fullPath);
 for i = 1:numel(srcfile)
     fprintf('installing %s to %s...\n', src{i}, installpath);
     file = [srcfile(i), libfile{:}];
-    mex('-O', file{:}, '-outdir', dirPath);
+    mex('-v', 'CFLAGS="$CFLAGS -Wall"','-O', file{:}, '-outdir', dirPath);
 end% for
 
 cd(pwdPath);
