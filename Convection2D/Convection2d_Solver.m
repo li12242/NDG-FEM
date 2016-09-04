@@ -46,10 +46,10 @@ while(time < ftime)
 %         ind    = Utilities.Limiter.Limiter2D.KXRCF2d(mesh, var, u, v, 0.05);
         ind    = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var, 0.1);
         flag   = ind > 0;
-        figure('Position', [683     1   557   984]); 
-        subplot(2,1,1); hold on;
-        plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), var(mesh.vmapM), 'k-');
-        plot3(mesh.x(:, flag), mesh.y(:, flag), var(:, flag), 'ro');
+%         figure('Position', [683     1   557   984]); 
+%         subplot(2,1,1); hold on;
+%         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), var(mesh.vmapM), 'k-');
+%         plot3(mesh.x(:, flag), mesh.y(:, flag), var(:, flag), 'ro');
         
 %         varlim = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 %         varlim = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
@@ -62,8 +62,8 @@ while(time < ftime)
         
         var(:, flag) = varlim(:, flag);
         
-        subplot(2,1,2)
-        plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), var(mesh.vmapM), 'k-');
+%         subplot(2,1,2)
+%         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), var(mesh.vmapM), 'k-');
     end% for
     
     ncfile.putVarPart('var', [0, 0, contour],[Np, Ne, 1], var);
