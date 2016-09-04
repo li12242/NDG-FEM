@@ -63,7 +63,7 @@ if conf_Limit2d
         'TVB2d_Mex.c',...
         'VB2d_Mex.c',...
         'TVB_detector2d_Mex.c'};
-    libsrc = {'MatrixUtilities.c', 'BasicFunction.c'};
+    libsrc = {'Limiter.c'};
     fprintf('==============Limiter2d=================\n')
     install(localpath, installpath, src, libsrc);
     fprintf('==============Limiter2d=================\n\n')
