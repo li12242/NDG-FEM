@@ -224,7 +224,7 @@
 		}
 
 		free(hlocal);
-		real phpxlim, phpylim;
+		real phpxlim=0.0, phpylim=0.0;
 		for(i=0;i<(2*Nfaces+1);i++){
 			polys_w[i] /= sum_w;
 

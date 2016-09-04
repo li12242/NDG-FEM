@@ -57,7 +57,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	real *ws    = (real*) malloc(sizeof(real)*Nfp);
 
 	/* volume/interface integral coefficient */
-	int i,j,k,f,f1,f2;
+	int i,j,k,f,f1;
 	for(i=0;i<Np;i++){
 		w[i] = 0.0;
 		for(j=0;j<Np;j++){
@@ -73,7 +73,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	}
 	// calculate volume mean value
 	for(k=0;k<K;k++){
-		real *fld[3], cmean[3], face_len;
+		real *fld[3], cmean[3];
 		fld[0] = h+k*Np; fld[1] = x+k*Np; fld[2] = y+k*Np;
 		cellMean(Np, 3, fld, w, J+k*Np, cmean, area+k);
 		hmean[k] = cmean[0]; xmean[k] = cmean[1]; ymean[k] = cmean[2];
@@ -88,7 +88,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	// real *neigh_yf   = (real*) malloc(sizeof(real)*Nfaces );
 	// real *face_mean  = (real*) malloc(sizeof(real)*Nfaces );
 	real *delta 	 = (real*) malloc(sizeof(real)*Nfaces );
-	real alpha[2], a[4], df[2], v = 1.5;
+	real alpha[2], a[4], df[2];
 
 	for(k=0;k<K;k++){
 		real xc = xmean[k];
@@ -126,7 +126,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 			real dhv = alpha[0]*(neigh_mean[f1]-hc)+alpha[1]*(neigh_mean[f2]-hc);
 			real dx2 = df[0]*df[0] + df[1]*df[1];
 
-			delta[f1] = TVB_minmod(h[v]-hc, dhv*v, dx2, *factor);
+			delta[f1] = TVB_minmod(h[v]-hc, dhv*1.5, dx2, *factor);
 			// mexPrintf("k=%d, v=%d, dh=%f, delta_h=%f, th=%f, delta=%f\n",
 					// k, f1, h[v]-hc, dhv*v, dx2*factor[0], delta[f1]);
 		}
