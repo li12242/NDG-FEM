@@ -1,4 +1,4 @@
-#ifndef Limiter_H 
+#ifndef Limiter_H
 #define Limiter_H
 
 #include "mex.h"
@@ -9,17 +9,21 @@
 
 #define real double
 
-/* BasicFunction.c */
+
 void minmod(int n, real *a, real *m);
 real sign  (real a);
-void FaceMean(int Nfaces, int Nfp, real *h, 
-	real *ws, real *sJ, real *Fmask,
-	real *face_mean, real *face_len);
-void GetLocalVar(int Np, real hmean, real xc, real yc, 
- 	real *x, real *y, 
- 	real phpx, real phpy, real *h);
+void faceMean(int Nfaces, int Nfp, int Nfields, real **h,
+		real *ws, real *sJ, real *Fmask,
+		real *face_mean, real *face_len);
+void cellMean(int Np, int Nfields, real **h,
+    	real *w, real *J, real *cellMean, real *area);
 
+void getLocalVar(int Np, real hmean, real xc, real yc,
+ 		real *x, real *y,
+ 		real phpx, real phpy, real *h);
+void meanGradient(int Nsub, real *xv, real *yv, real *hv,
+		real xc, real yc, real hc, real *dhdx, real *dhdy);
 /* MatrixUtilities.c */
-void MatrixSolver2(real *a, real *f, real *x);
+void matrixSolver2(real *a, real *f, real *x);
 
 #endif

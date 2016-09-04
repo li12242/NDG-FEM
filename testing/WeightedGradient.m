@@ -3,7 +3,6 @@ VX = [0, 1, 1, 0]';
 VY = [0, 0, 1, 1]';
 EToV = [1,2,3,4];
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
-h = zeros(size(mesh.x));
 h = mesh.x + rand(size(mesh.x));
 
 gra = @(x, y, h) ...
@@ -26,11 +25,11 @@ for i = 1:4;
 end% for
 
 g = sum(dh.^2);
-epse = 1e-10;
+epse = 1e-12;
 % frac = g(2)*g(3)*g(4)+g(1)*g(3)*g(4)+g(2)*g(1)*g(4)+g(2)*g(3)*g(1);
-frac = sum(g.^3);
+frac = sum(g.^3)+4*epse;
 wg = ([g(2)*g(3)*g(4), g(1)*g(3)*g(4), g(2)*g(1)*g(4), ...
-    g(2)*g(3)*g(1)] + epse)/(frac+3*epse);
+    g(2)*g(3)*g(1)] + epse)/(frac);
 
 dhlim = sum(repmat(wg, 2, 1).*dh, 2);
 
@@ -40,3 +39,15 @@ figure('Color', 'w')
 p1 = plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM)); hold on;
 p2 = plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), hlim(mesh.vmapM));
 legend([p1, p2], {'original', 'limited'}, 'Location', 'NorthWest', 'box', 'off')
+
+%% Eliminate high order terms
+h = mesh.x + rand(size(mesh.x));
+hq = quad.VandMatrix\h;
+hp = zeros(size(h));
+hp([1,2,quad.nOrder+2]) = hq([1,2,quad.nOrder+2]);
+hlim = quad.VandMatrix*hp;
+figure('Color', 'w')
+p1 = plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM)); hold on;
+p2 = plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), hlim(mesh.vmapM));
+legend([p1, p2], {'original', 'limited'}, 'Location', 'NorthWest', 'box', 'off')
+

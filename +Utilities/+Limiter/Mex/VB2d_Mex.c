@@ -3,20 +3,19 @@
 #define INFITY 10e10
 #define TOTALERR 1e-12
 
-
 /**
  * @brief
- * Use minmod function to limit the gradient and get the linear 
+ * Use minmod function to limit the gradient and get the linear
  * limited result.
- * 
+ *
  * Usages:
  *		shape = mesh.Shape;
  * 		hlim  = VB2d_Mex...
- *			(h, mesh.J, shape.M, mesh.EToV, mesh.Shape.Fmask, 
+ *			(h, mesh.J, shape.M, mesh.EToV, mesh.Shape.Fmask,
  *				mesh.Nv, mesh.x, mesh.y)
  */
 
-void mexFunction(int nlhs, mxArray *plhs[], 
+void mexFunction(int nlhs, mxArray *plhs[],
 	int nrhs, const mxArray *prhs[]){
 
 	/* check input & output */
@@ -38,7 +37,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	int Nvert = (int) Nv;
 	/* get dimensions */
 	size_t Np, K;
-	Np = mxGetM(prhs[0]); 
+	Np = mxGetM(prhs[0]);
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
 	Nfaces = mxGetM(prhs[4]);
@@ -54,7 +53,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	real *xmean = (real*) malloc(sizeof(real)*K );
 	real *ymean = (real*) malloc(sizeof(real)*K );
 	//elemental integral coefficient
-	real *w     = (real*) malloc(sizeof(real)*Np); 
+	real *w     = (real*) malloc(sizeof(real)*Np);
 	/* volume integral coefficient */
 	int i,j;
 	for(i=0;i<Np;i++){
@@ -67,20 +66,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	// calculate volume mean value
 	int k,sk;
 	for(k=0;k<K;k++){
-		area [k] = 0.0;
-		hmean[k] = 0.0;
-		xmean[k] = 0.0;
-		ymean[k] = 0.0;
-		for(i=0;i<Np;i++){
-			sk = (k*Np + i);
-			hmean[k] += w[i]*J[sk]*h[sk];
-			area [k] += w[i]*J[sk];
-			xmean[k] += w[i]*J[sk]*x[sk];
-			ymean[k] += w[i]*J[sk]*y[sk];
-		}
-		hmean[k] /= area[k];
-		xmean[k] /= area[k];
-		ymean[k] /= area[k];
+		real *fld[3], cmean[3];
+		fld[0] = h+k*Np; fld[1] = x+k*Np; fld[2] = y+k*Np;
+		cellMean(Np, 3, fld, w, J+k*Np, cmean, area+k);
+		hmean[k] = cmean[0];
+		xmean[k] = cmean[1];
+		ymean[k] = cmean[2];
 	}
 
 	// mexPrintf("Nv=%d\n", Nvert);
@@ -101,8 +92,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			i = (int) EToV[k + f*K]-1; // vertex index
 			hvmax[i] = max( hvmax[i], hmean[k]);
 			hvmin[i] = min( hvmin[i], hmean[k]);
-
-			// mexPrintf("k=%d, v=%d, hmean=%f, max=%f, min=%f\n", 
+			// mexPrintf("k=%d, v=%d, hmean=%f, max=%f, min=%f\n",
 				// k, f, hmean[k],hvmax[i], hvmin[i]);
 		}
 	}
@@ -112,6 +102,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	// }
 
 	real alpha, a[4], b[2], gra[2];
+	real dhdx, dhdy;
 	real *hv = (real*) malloc(sizeof(real)*Nfaces );
 	real *xv = (real*) malloc(sizeof(real)*Nfaces );
 	real *yv = (real*) malloc(sizeof(real)*Nfaces );
@@ -122,33 +113,32 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		real yc = ymean[k];
 		for(f=0;f<Nfaces;f++){
 			i = k*Np + (int) Fmask[f]-1; // node index
-			v = (int) EToV[k + f*K]-1; // vertex index
-
 			xv[f] = x[i];
 			yv[f] = y[i];
-			if (h[i] > hc*(1+TOTALERR) ){
-				alpha = min(alpha, ( hvmax[v]-hc )/(h[i] - hc) );
-			}else if(h[i] < hc*(1-TOTALERR)){
-				alpha = min(alpha, ( hvmin[v]-hc )/(h[i] - hc) );
-			}
-
-			// mexPrintf("k=%d, v=%d, ind=%d, hi=%f, hmax=%f, hmin=%f, alpha=%f\n", 
-				// k, f, v, h[i], hvmax[v], hvmin[v], alpha);
+			hv[f] = h[i];
 		}
-		// mexPrintf("k=%d, alpha=%f\n",k, alpha);
-		// get new veretx
+
+		meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
+		// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
+		getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
+
 		for(f=0;f<Nfaces;f++){
 			i = k*Np + (int) Fmask[f]-1; // node index
-			hv[f] = hc + alpha*(h[i] - hc);
+			v = (int) EToV[k + f*K]-1; // vertex index
+			if (hlim[i] > hc*(1+TOTALERR) ){
+				alpha = min(alpha, ( hvmax[v]-hc )/(hlim[i] - hc) );
+			}else if(hlim[i] < hc*(1-TOTALERR)){
+				alpha = min(alpha, ( hvmin[v]-hc )/(hlim[i] - hc) );
+			}
+			// mexPrintf("k=%d, v=%d, ind=%d, hi=%f, hmax=%f, hmin=%f, alpha=%f\n",
+			// 	k, f, v, h[i], hvmax[v], hvmin[v], alpha);
 		}
-		// calculate the new gradient
-		a[0] = xv[0] - xc; a[1] = yv[0] - yc;
-		a[2] = xv[1] - xc; a[3] = yv[1] - yc;
-		b[0] = hv[0] - hc; b[1] = hv[1] - hc;
-		MatrixSolver2(a, b, gra);
-		// mexPrintf("k=%d, phpx=%f, phpy=%f\n", k, gra[0], gra[1]);
-		// new local variable
-		GetLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, gra[0], gra[1], hlim+k*Np);
+		// mexPrintf("k=%d, alpha=%f\n",k, alpha);
+		// get limited gradient
+		dhdx *= alpha;
+		dhdy *= alpha;
+		// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
+		getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
 	}
 
 	free(w);
