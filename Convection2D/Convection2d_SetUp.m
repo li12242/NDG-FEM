@@ -25,8 +25,8 @@ end% switch
 phys.mesh = mesh;
 % velocity field and simulation time
 w      = 5*pi/6;
-u      = -w.*mesh.y; 
-v      = w.*mesh.x;
+u      = w.*(0.5-mesh.y); 
+v      = w.*(mesh.x-0.5);
 phys.u = u;
 phys.v = v;
 FinalTime  = 2.4;
@@ -83,22 +83,22 @@ end% func
 function var = SolidBody(mesh)
 var = zeros(size(mesh.x));
 % slotted cylinder
-x0  = 0.; 
-y0  = 0.5; 
-r0  = 0.3;
+x0  = 0.5; 
+y0  = 0.75; 
+r0  = 0.15;
 r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
 ind = ( r2<=1.0);
-ind = ind & ((abs(mesh.x - x0)>0.05) | (mesh.y > 0.7));
+ind = ind & ((abs(mesh.x - x0)>=0.025) | (mesh.y >= 0.85));
 var(ind) = 1.0;
 % cone
-x0  = 0; 
-y0  = -0.25;
+x0  = 0.5; 
+y0  = 0.25;
 r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
 ind = ( r2<=1.0);
 var(ind) = 1-r2(ind);
 % hump
-x0  = -0.5;
-y0  = 0;
+x0  = 0.25;
+y0  = 0.5;
 r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
 ind = ( r2<=1.0);
 var(ind) = (1+cos(r2(ind)*pi))./4;
@@ -128,7 +128,7 @@ function [mesh, dx] = triSolver(N, M)
 % uniform triangle mesh
 np   = M + 1;
 [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
-    (np, np, -1, 1, -1, 1, false);
+    (np, np, 0, 1, 0, 1, false);
 
 tri  = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
@@ -139,7 +139,7 @@ function [mesh, dx] = quadSolver(N, M)
 % uniform quadrilaterial mesh
 np   = M + 1;
 [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
-    (np, np, -1, 1, -1, 1);
+    (np, np, 0, 1, 0, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
