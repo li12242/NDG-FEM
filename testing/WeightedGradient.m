@@ -1,4 +1,4 @@
-quad = StdRegions.Quad(2);
+quad = StdRegions.Quad(3);
 VX = [0, 1, 1, 0]';
 VY = [0, 0, 1, 1]';
 EToV = [1,2,3,4];
@@ -15,6 +15,7 @@ xc = sum(w.*mesh.J.*mesh.x)/area;
 yc = sum(w.*mesh.J.*mesh.y)/area;
 hc = sum(w.*mesh.J.*h)/area;
 
+%%
 dh = zeros(2,4);
 for i = 1:4;
     l1 = i; l2 = mod(i, 4)+1;
@@ -34,6 +35,52 @@ wg = ([g(2)*g(3)*g(4), g(1)*g(3)*g(4), g(2)*g(1)*g(4), ...
 dhlim = sum(repmat(wg, 2, 1).*dh, 2);
 
 hlim = (mesh.x-xc).*dhlim(1) + (mesh.y-yc).*dhlim(2) + hc;
+
+%%
+dh   = mesh.rx.*(quad.Dr*h) + mesh.sx.*(quad.Ds*h);
+dhc  = sum(w.*mesh.J.*dh)/area;
+ddh = zeros(2,4);
+for i = 1:4;
+    l1 = i; l2 = mod(i, 4)+1;
+    x1 = mesh.x(vertlist(l1)); x2 = mesh.x(vertlist(l2));
+    y1 = mesh.y(vertlist(l1)); y2 = mesh.y(vertlist(l2));
+    h1 = dh(vertlist(l1));     h2 = dh(vertlist(l2));
+    ddh(:, i) = gra([x1, x2, xc], [y1, y2, yc], [h1, h2, hc]);
+end% for
+g = sum(ddh.^2);
+epse = 1e-12;
+% frac = g(2)*g(3)*g(4)+g(1)*g(3)*g(4)+g(2)*g(1)*g(4)+g(2)*g(3)*g(1);
+frac = sum(g.^3)+4*epse;
+wg = ([g(2)*g(3)*g(4), g(1)*g(3)*g(4), g(2)*g(1)*g(4), ...
+    g(2)*g(3)*g(1)] + epse)/(frac);
+
+dhlim = sum(repmat(wg, 2, 1).*ddh, 2);
+
+hlim = hlim + (mesh.x-xc).^2.*dhlim(1) ...
+    + (mesh.x-xc).*(mesh.y-yc).*dhlim(2);
+
+
+dh = mesh.ry.*(quad.Dr*h) + mesh.sy.*(quad.Ds*h);
+dhc  = sum(w.*mesh.J.*dh)/area;
+ddh = zeros(2,4);
+for i = 1:4;
+    l1 = i; l2 = mod(i, 4)+1;
+    x1 = mesh.x(vertlist(l1)); x2 = mesh.x(vertlist(l2));
+    y1 = mesh.y(vertlist(l1)); y2 = mesh.y(vertlist(l2));
+    h1 = dh(vertlist(l1));     h2 = dh(vertlist(l2));
+    ddh(:, i) = gra([x1, x2, xc], [y1, y2, yc], [h1, h2, hc]);
+end% for
+g = sum(ddh.^2);
+epse = 1e-12;
+% frac = g(2)*g(3)*g(4)+g(1)*g(3)*g(4)+g(2)*g(1)*g(4)+g(2)*g(3)*g(1);
+frac = sum(g.^3)+4*epse;
+wg = ([g(2)*g(3)*g(4), g(1)*g(3)*g(4), g(2)*g(1)*g(4), ...
+    g(2)*g(3)*g(1)] + epse)/(frac);
+
+dhlim = sum(repmat(wg, 2, 1).*ddh, 2);
+
+hlim = hlim + (mesh.x-xc).*(mesh.y-yc).*dhlim(1) ...
+    + (mesh.y-yc).^2.*dhlim(2);
 
 figure('Color', 'w')
 p1 = plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM)); hold on;

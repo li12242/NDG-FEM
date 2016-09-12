@@ -5,7 +5,7 @@ function Convection2d_Snapshot
 T        = 2.4;
 meshtype = 'quad';
 order    = 1;
-filename = {'Convection2D_quad_1_40.nc'};
+filename = {'Convection2D_quad_1_100.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
 time     = [(1e-12:0.1:1)*T, T];
