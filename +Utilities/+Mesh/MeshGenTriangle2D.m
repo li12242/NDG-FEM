@@ -15,9 +15,12 @@ function [VX,VY,EToV] = MeshGenTriangle2D(nx, ny, xmin, xmax, ymin, ymax, flag)
 % (n+2) ----------------------------------------- 2(n+1)
 %
 % INPUT
-%    ne      = No. of elements on each edge
-%    start_coor = start coordinate
-%    end_coor   = end coordinate
+%    nx     No. of points along x coordinate
+%    ny     No. of points along x coordinate
+%    xmin   min x coordinate
+%    xmax   max x coordinate
+%    ymin   min y coordinate
+%    ymax   max y coordinate
 %    flag   = partination type [flag=false, "\", flag=true, "/"]
 %
 % OUTPUT

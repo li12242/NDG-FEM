@@ -55,19 +55,31 @@ while(time<FinalTime)
         % In ParabolicBowl test case, SL2 works well for quadrilateral 
         % mesh, while SLLoc2 works better for triangle mesh.
         
-%         h  = Utilities.Limiter.Limiter2D.SLLoc2(mesh, h, 1);
-%         qx = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qx, 1);
-%         qy = Utilities.Limiter.Limiter2D.SLLoc2(mesh, qy, 1);
+        h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
+        qx = Utilities.Limiter.Limiter2D.VB2d(mesh, qx);
+        qy = Utilities.Limiter.Limiter2D.VB2d(mesh, qy);
 
-%         h  = Utilities.Limiter.Limiter2D.SL2(mesh, h,  1);
-%         qx = Utilities.Limiter.Limiter2D.SL2(mesh, qx, 1);
-%         qy = Utilities.Limiter.Limiter2D.SL2(mesh, qy, 1);
+%         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  1);
+%         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 1);
+%         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 1);
 
-        h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
+%         h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
         %% Positive-preserving limiter
         [h, qx, qy] = SWE_PositivePreserving2d(phys, mesh, h, qx, qy);
+        
+%         figure('Position', [627     1   561   984]);
+%         subplot(3,1,1);
+%         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM), 'k.-');
+%         view([53.7, 52.4])
+%         subplot(3,1,2);
+%         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qx(mesh.vmapM), 'k.-');
+%         view([53.7, 52.4])
+%         subplot(3,1,3);
+%         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qy(mesh.vmapM), 'k.-');
+%         view([53.7, 52.4])
+        
     end
     
     % Increment time

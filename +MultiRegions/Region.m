@@ -27,7 +27,7 @@ classdef Region
         EToV    % element to vertex
         Nv      % number of vertex
     end
-    properties(GetAccess=protected)
+    properties(SetAccess=protected)
         SpFToV
     end% properties
     

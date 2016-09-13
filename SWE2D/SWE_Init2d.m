@@ -38,6 +38,9 @@ switch casename
     case 'ParabolicBowl'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
             ParabolicBowl(phys, N, Nx, Ny, meshType);
+    case 'PartialDamBreak'
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
+            PartialDamBreak(phys, N, meshType);
 end% switch
 
 %% Assignments
@@ -50,6 +53,53 @@ phys.dx    = dx;
 phys.ftime = ftime;
 phys.bot   = botLevel; % bottom elevation
 phys.mesh  = mesh;
+
+end% func
+
+
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx] = PartialDamBreak(phys, N, meshtype)
+switch meshtype
+    case 'tri'
+        filename = 'PartialDamBreakTri';
+        [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
+    case 'quad'
+        filename = 'PartialDamBreakQuad';
+        [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
+    otherwise
+        error('Unknown mesh type "%s"', meshType);
+end% switch
+
+NTOL = 1e-12;
+% substitute 1 (Wall) for 19, 3 (Outflow) for 18
+bind = abs(BC(:, 1) - 19) < NTOL;
+BC(bind,  1) = 1;
+BC(~bind, 1) = 3;
+
+%% Initialize mesh
+switch meshtype
+    case 'tri'
+        shape = StdRegions.Triangle(N);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
+    case 'quad'
+        shape = StdRegions.Quad(N);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, BC);
+end
+%% Initialize bottom level
+botLevel = zeros(size(mesh.x));
+
+%% Initialize variables
+h      = zeros(size(mesh.x));
+wetind = abs(EToR(:, 1) - 21) < NTOL;
+h(:,  wetind) = 5;
+h(:, ~wetind) = 1e-12;
+qx     = zeros(size(mesh.x));
+qy     = zeros(size(mesh.x));
+dt     = 1e-4;
+ftime  = 10;
+% element length scal
+w      = sum(shape.M)';
+area   = sum(repmat(w, 1, mesh.nElement).*mesh.J);
+dx     = min( area/pi/(N+1) );
 
 end% func
 
