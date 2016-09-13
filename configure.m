@@ -70,6 +70,16 @@ if conf_Limit2d
 end
 %% SWE2d
 if conf_SWE2d
+    localpath = 'SWE2d/Mex';
+    installpath = localpath;
+    src = {'SWE_Mex_BC2d.c', ...
+        'SWE_Mex_Flux2d.c',...
+        'SWE_Mex_HLLFlux2d.c',...
+        'SWE_Mex_PositivePreserving2d.c'};
+    libsrc = {'SWE2d.c'};
+    fprintf('==============SWE2d=================\n')
+    install(localpath, installpath, src, libsrc);
+    fprintf('==============SWE2d=================\n\n')
 end
 
 end% func

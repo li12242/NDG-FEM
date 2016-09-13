@@ -16,13 +16,13 @@ dryEleFlag  = SWE_DryEle2d(mesh, h, minDepth);
 % numerical flux
 [Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy);
 
+% Boundary condition
+[Fhs, Fqxs, Fqys] = SWE_BC2d(phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys);
+
 % the flux difference
 dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;
 dFqx  = Fqx(mesh.vmapM).*mesh.nx + Gqx(mesh.vmapM).*mesh.ny - Fqxs;
 dFqy  = Fqy(mesh.vmapM).*mesh.nx + Gqy(mesh.vmapM).*mesh.ny - Fqys;
-
-% dFqx(dFqx<1e-10) = 0;
-% dFqy(dFqx<1e-10) = 0;
 
 %% strong form
 divFh  = Div2D(mesh, Fh, Gh);
@@ -44,3 +44,29 @@ rhsQy   = - divFh + Sqy + shape.LIFT*(dFqy.*mesh.fScale);
 % divFh  = DivWeak2D(mesh, Fqy, Gqy);
 % rhsQy  = divFh + Sqy - shape.LIFT*(Fqys.*mesh.fScale);
 end
+
+function [Fhs, Fqxs, Fqys] = SWE_BC2d(phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys)
+%% Parameters
+gra  = phys.gra;
+hmin = phys.minDepth;
+
+%% Wall
+nodeWallM = mesh.vmapM(mesh.mapW);
+
+nx  = mesh.nx(mesh.mapW);
+ny  = mesh.ny(mesh.mapW);
+% no-slip wall condition
+hM  = h(nodeWallM);   hP  = hM;
+qxM = qx(nodeWallM);  qxP = -qxM;
+qyM = qy(nodeWallM);  qyP = -qyM;
+
+[Fh, Fqx, Fqy] = SWE_Mex_BC2d...
+    (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
+% assignment to numerical flux
+Fhs(mesh.mapW)  = Fh;
+Fqxs(mesh.mapW) = Fqx;
+Fqys(mesh.mapW) = Fqy;
+%% Outflow
+
+%% Inflow
+end% func

@@ -1,7 +1,7 @@
-function DamBreak2d_SnapShot
+function PartialDamBreak2d_SnapShot
 
 %% Parameter
-T        = 20;
+T        = 15;
 meshtype = 'tri';
 filename = {'SWE2D.nc'};
 order    = 1;
