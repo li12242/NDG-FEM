@@ -92,7 +92,7 @@ classdef Postprocess < handle
         end% func
         
         %% Draw 2 dimensional snapshot of variables
-        function Snapshot2D(obj, varname, stime, fileID)
+        function ph = Snapshot2D(obj, varname, stime, fileID)
             x   = obj.NcFile(fileID).GetVarData('x');
             y   = obj.NcFile(fileID).GetVarData('y');
             [np, ne] = size(x);
@@ -101,8 +101,22 @@ classdef Postprocess < handle
             bclist   = obj.StdCell.bclist';
             EToV     = ones(ne, 1)*bclist;
             EToV     = EToV + (np*(0:ne-1))'*ones(size(bclist));
-            patch('Vertices', vertex, 'Faces', EToV, 'FaceColor', [0.8, 0.9, 1])
+            ph = patch('Vertices', vertex, 'Faces', EToV,...
+                'FaceColor', [0.8, 0.9, 1]);
         end% func
+        
+        function ph = SnapshotConst2D(obj, varname, fileID)
+            x   = obj.NcFile(fileID).GetVarData('x');
+            y   = obj.NcFile(fileID).GetVarData('y');
+            [np, ne] = size(x);
+            var      = obj.NcFile(fileID).GetVarData(varname);
+            vertex   = [x(:), y(:), var(:)];
+            bclist   = obj.StdCell.bclist';
+            EToV     = ones(ne, 1)*bclist;
+            EToV     = EToV + (np*(0:ne-1))'*ones(size(bclist));
+            ph = patch('Vertices', vertex, 'Faces', EToV,...
+                'FaceColor', [0.8, 0.9, 1]);
+        end
         
         %% Draw section profile for 2 dimensional variables
         % Usages:
