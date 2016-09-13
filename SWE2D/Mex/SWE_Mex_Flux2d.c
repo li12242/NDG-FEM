@@ -1,11 +1,4 @@
-#include "mex.h"
-
-#define real double
-
-void SWE_NodalFlux2d(real hcrit, real gra,
-                     real h, real qx, real qy,
-                     real *Eh, real *Eqx, real *Eqy,
-                     real *Gh, real *Gqx, real *Gqy);
+#include "SWE2d.h"
 
 /* Computation of the flux term for two dimensional SWE.
  * Usages:
@@ -13,19 +6,6 @@ void SWE_NodalFlux2d(real hcrit, real gra,
  */
 void mexFunction(int nlhs, mxArray *plhs[], 
 	int nrhs, const mxArray *prhs[]){
-
-	// #define hmin prhs[0]
-	// #define gra  prhs[1]
-	// #define h    prhs[2]
-	// #define qx   prhs[3]
-	// #define qy   prhs[4]
-
-	// #define Fh   plhs[0]
-	// #define Fqx  plhs[1]
-	// #define Fqy  plhs[2]
-	// #define Gh   plhs[3]
-	// #define Gqx  plhs[4]
-	// #define Gqx  plhs[5]
 
 	/* check input & output */
 	if (nrhs != 5)
@@ -68,25 +48,4 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	}
     
     return;
-}
-
-
-
-
-void SWE_NodalFlux2d(real hcrit, real gra,
-                     real h, real qx, real qy,
-                     real *Eh, real *Eqx, real *Eqy,
-                     real *Gh, real *Gqx, real *Gqy){
-
-    if(h>hcrit){
-        *Eh  = qx;
-        *Eqx = (real)(qx*qx/h + 0.5*gra*h*h);
-        *Eqy = qx*qy/h;
-        *Gh  = qy;
-        *Gqx = qx*qy/h;
-        *Gqy = (real)(qy*qy/h + 0.5*gra*h*h);
-    }else{
-        *Eh  = 0; *Eqx = 0; *Eqy = 0;
-        *Gh  = 0; *Gqx = 0; *Gqy = 0;
-    }
 }
