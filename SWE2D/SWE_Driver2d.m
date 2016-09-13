@@ -25,22 +25,23 @@ function SWE_Driver2d
 % casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
 % casename = 'ParabolicBowl';
-casename = 'PartialDamBreak';
-% casename = ''
+% casename = 'PartialDamBreak';
+casename = 'FlowOver3BumpsUniform';
+% casename = 'FlowOver3Bumps';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 50;
-Ny = 50;
+Nx = 75;
+Ny = 30;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'tri';
-phys.minDepth = 1e-3;
+phys.meshType = 'quad';
+phys.minDepth = 1e-9;
 phys.gra      = 9.81;
 % initialization
 phys = SWE_Init2d(phys);

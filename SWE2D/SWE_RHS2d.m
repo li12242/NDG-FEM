@@ -45,7 +45,8 @@ rhsQy   = - divFh + Sqy + shape.LIFT*(dFqy.*mesh.fScale);
 % rhsQy  = divFh + Sqy - shape.LIFT*(Fqys.*mesh.fScale);
 end
 
-function [Fhs, Fqxs, Fqys] = SWE_BC2d(phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys)
+function [Fhs, Fqxs, Fqys] = SWE_BC2d...
+    (phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys)
 %% Parameters
 gra  = phys.gra;
 hmin = phys.minDepth;
@@ -69,4 +70,5 @@ Fqys(mesh.mapW) = Fqy;
 %% Outflow
 
 %% Inflow
+
 end% func
