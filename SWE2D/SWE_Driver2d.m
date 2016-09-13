@@ -24,7 +24,9 @@ function SWE_Driver2d
 % Name of test case
 % casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
-casename = 'ParabolicBowl';
+% casename = 'ParabolicBowl';
+casename = 'PartialDamBreak';
+casename = ''
 
 % Order of polymomials used for approximation 
 N = 1;

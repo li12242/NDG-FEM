@@ -46,7 +46,7 @@ if conf_Limit1d
     localpath = '+Utilities/+Limiter/Mex';
     installpath = '+Utilities/+Limiter/+Limiter1D';
     src = {'Minmod1d_Mex.c'};
-    libsrc = {'MatrixUtilities.c', 'BasicFunction.c'};
+    libsrc = {'Limiter.c'};
     fprintf('==============Limiter2d=================\n')
     install(localpath, installpath, src, libsrc);
     fprintf('==============Limiter2d=================\n\n')
