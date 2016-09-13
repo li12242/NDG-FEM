@@ -45,7 +45,7 @@ classdef RegionTri < MultiRegions.Region
                 = shape.getEleGeometric(vx, vy);
             [obj.nx, obj.ny, obj.sJ] = shape.getFaceGeometric(obj.x, obj.y);
             
-            [obj.EToE, obj.EToF] = Connect2D(obj,EToV);
+            obj = Connect2D(obj,EToV);
             [obj.vmapM,obj.vmapP] = BuildMap(obj, VX, VY, EToV, obj.EToE, obj.EToF);
             
             obj.fScale = obj.sJ./obj.J(obj.vmapM);
@@ -90,7 +90,7 @@ classdef RegionTri < MultiRegions.Region
         end %function
         
         % Connect 2D
-        function [EToE, EToF] = Connect2D(obj,EToV)
+        function obj = Connect2D(obj,EToV)
             Nfaces = 3;
             % Find number of elements and vertices
             K = obj.nElement; Nv = max(max(EToV));
@@ -120,6 +120,9 @@ classdef RegionTri < MultiRegions.Region
             ind = sub2ind([K, Nfaces], element1, face1);
             EToE = (1:K)'*ones(1,Nfaces); EToF = ones(K,1)*(1:Nfaces);
             EToE(ind) = element2; EToF(ind) = face2;
+            % Set property
+            obj.EToE = EToE;
+            obj.EToF = EToF;
         end% function
     end% methods
 end% classedf
