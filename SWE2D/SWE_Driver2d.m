@@ -32,8 +32,8 @@ casename = 'FlowOver3BumpsUniform';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 75;
-Ny = 30;
+Nx = 100;
+Ny = 45;
 
 % # Name of test case
 phys.casename = casename;
@@ -41,7 +41,7 @@ phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
 phys.meshType = 'quad';
-phys.minDepth = 1e-9;
+phys.minDepth = 1e-2;
 phys.gra      = 9.81;
 % initialization
 phys = SWE_Init2d(phys);
