@@ -3,6 +3,7 @@ function phys = SWE_Solve2d(phys, outfile)
 h         = phys.h;    % water depth
 qx        = phys.qx;   % water flux
 qy        = phys.qy;   % water flux
+bot       = phys.bot;  % topography
 mesh      = phys.mesh;
 FinalTime = phys.ftime;
 minDepth  = phys.minDepth;
@@ -55,7 +56,10 @@ while(time<FinalTime)
         % In ParabolicBowl test case, SL2 works well for quadrilateral 
         % mesh, while SLLoc2 works better for triangle mesh.
         
-        h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
+        zeta = h+bot;
+        zeta = Utilities.Limiter.Limiter2D.VB2d(mesh, zeta);
+        h    = zeta-bot;
+%         h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
         qx = Utilities.Limiter.Limiter2D.VB2d(mesh, qx);
         qy = Utilities.Limiter.Limiter2D.VB2d(mesh, qy);
 
