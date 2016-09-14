@@ -48,7 +48,7 @@ classdef RegionQuadBC < MultiRegions.RegionQuad
             % Input:    phyID - physical ID
             bclist = (BC(:,1)==phyID);
             partialBC = BC(bclist, :);
-            nBC = size(partialBC,1); Nv = size(obj.SpFToV, 2);
+            nBC = size(partialBC,1); Nv = obj.Nv;
             VToBF = spalloc(Nv, nBC, 2*nBC);
             for ib = 1:nBC
                 VToBF(partialBC(ib,[2,3]),ib) = 1;
@@ -56,7 +56,7 @@ classdef RegionQuadBC < MultiRegions.RegionQuad
             FToBF = obj.SpFToV*VToBF;
             [faces1, ~] = find(FToBF == 2);
             
-            Nfaces = 3;
+            Nfaces = obj.Shape.nFace;
             element1 = floor( (faces1-1)/Nfaces )  + 1; 
             face1    =   mod( (faces1-1), Nfaces ) + 1;
             
