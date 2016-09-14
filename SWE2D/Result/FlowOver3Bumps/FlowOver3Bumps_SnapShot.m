@@ -1,7 +1,7 @@
 function FlowOver3Bumps_SnapShot
 
 %% Parameter
-T        = 16;
+T        = 20;
 meshtype = 'quad';
 filename = {'SWE2D.nc'};
 order    = 1;
@@ -11,9 +11,12 @@ time     = (0:0.1:1)*T;
 for i = 1:numel(time)
     figure; hold on;
     bh = PostproTri.SnapshotConst2D('bot',fileID);
-    bot = get(bh, 'Verti')
-    ph = PostproTri.Snapshot2D('h', time(i), fileID);
     set(bh, 'FaceColor', [0.4, 0.4, .4]);
+    bot = get(bh, 'Vertices'); % get topography
+    ph = PostproTri.Snapshot2D('h', time(i), fileID);
+    h   = get(ph, 'Vertices');
+    h(:, 3) = h(:, 3) + bot(:, 3);
+    set(ph, 'Vertices', h);
     zlim([0, 5]);
     view(18, 24);
     zlabel('ˮλ (m)','FontSize', 14);

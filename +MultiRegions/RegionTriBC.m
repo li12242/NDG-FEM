@@ -39,9 +39,11 @@ classdef RegionTriBC < MultiRegions.RegionTri
             obj = obj@MultiRegions.RegionTri(shape, EToV, VX, VY);
             
             MultiRegions.BCType
-            obj.mapO = getBoundMapList(obj, BC, OUTFLOW);
-            obj.mapI = getBoundMapList(obj, BC, INFLOW);
-            obj.mapW = getBoundMapList(obj, BC, WALL);
+            if ~isempty(BC)
+                obj.mapO = getBoundMapList(obj, BC, OUTFLOW);
+                obj.mapI = getBoundMapList(obj, BC, INFLOW);
+                obj.mapW = getBoundMapList(obj, BC, WALL);
+            end% if
         end% function
     end% methods
     
