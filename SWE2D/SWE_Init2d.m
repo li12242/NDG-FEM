@@ -193,6 +193,10 @@ switch meshtype
     case 'quad'
         filename = 'PartialDamBreakQuad';
         [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
+        % change the vertex order
+        temp = EToV(:, 4);
+        EToV(:, 4) = EToV(:, 3);
+        EToV(:, 3) = temp;
     otherwise
         error('Unknown mesh type "%s"', meshType);
 end% switch
