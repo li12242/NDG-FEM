@@ -97,7 +97,7 @@ classdef Postprocess < handle
             y   = obj.NcFile(fileID).GetVarData('y');
             [np, ne] = size(x);
             var      = obj.GetVarData(varname, stime, fileID);
-            var(var<1e-2) = nan;
+%             var(var<1e-2) = nan;
             vertex   = [x(:), y(:), var(:)];
             bclist   = obj.StdCell.bclist';
             EToV     = ones(ne, 1)*bclist;
