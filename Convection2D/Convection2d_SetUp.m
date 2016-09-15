@@ -10,8 +10,8 @@ function var = Convection2d_SetUp(meshtype, N, M)
 
 % name of different test case
 % casename = 'GaussMount';
-% casename = 'SquareMount';
-casename = 'SolidBody';
+casename = 'SquareMount';
+% casename = 'SolidBody';
 
 phys.casename = casename;
 phys.meshtype = meshtype;
@@ -106,18 +106,21 @@ end% func
 
 function var = GaussMount(mesh)
 % Guass profile
-sigma = 125*1e3/33^2; 
-xc    = 0; 
-yc    = 3/5;
-var   = exp(-sigma.*( (mesh.x-xc).^2+(mesh.y-yc).^2) );
+var = zeros(size(mesh.x));
+r0  = 0.15;
+x0  = 0.25; 
+y0  = 0.5;
+r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
+ind = ( r2<=1.0);
+var(ind) = (1+cos(r2(ind)*pi))./2;
 end% func
 
 function var = SquareMount(mesh)
 % square distribution
 var = zeros(size(mesh.x));
 b   = 1/12;
-x0  = 0;   xc = mean(mesh.x); 
-y0  = 3/4; yc = mean(mesh.y);
+x0  = 0.50; xc = mean(mesh.x); 
+y0  = 0.75; yc = mean(mesh.y);
 
 flag = ( abs(xc - x0)<b & abs(yc - y0)<b );
 var(:, flag) = 1;
