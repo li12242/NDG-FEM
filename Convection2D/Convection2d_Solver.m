@@ -44,22 +44,23 @@ while(time < ftime)
         var    = var + rk4b(INTRK)*resVar;
         
 %         ind    = Utilities.Limiter.Limiter2D.KXRCF2d(mesh, var, u, v, 0.05);
-        ind    = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var, 0.05);
-        flag   = ind > 0;
+%         ind    = Utilities.Limiter.Limiter2D.TVB_detector2d(mesh, var, 0.05);
+%         flag   = ind > 0;
 %         figure('Position', [683     1   557   984]); 
 %         subplot(2,1,1); hold on;
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), var(mesh.vmapM), 'k-');
 %         plot3(mesh.x(:, flag), mesh.y(:, flag), var(:, flag), 'ro');
         
-        varlim = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
+%         varlim = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 %         varlim = Utilities.Limiter.Limiter2D.TVB2d(mesh, var);
 %         varlim = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.BJ2(mesh, var, 1);
+        var = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.BJLoc2(mesh, var, 1);
 %         var = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
         
-        var(:, flag) = varlim(:, flag);
+%         var(:, flag) = varlim(:, flag);
         
 %         subplot(2,1,2)
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), var(mesh.vmapM), 'k-');
