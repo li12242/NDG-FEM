@@ -45,7 +45,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 	//elemental integral coefficient
 	real *w     = (real*) malloc(sizeof(real)*Np); 
-	int i,j,k,sk,ind;
+	int i,j,sk,ind;
 	for(i=0;i<Np;i++){
 		w[i] = 0.0;
 		for(j=0;j<Np;j++){
