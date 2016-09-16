@@ -59,6 +59,9 @@ void meanGradient(int Nsub, real *xv, real *yv, real *hv,
 
     *dhdx = 0.0; *dhdy = 0.0;
     for(i=0;i<Nsub;i++){
+    	// real w = pow(sqrt(gra_det[i])+eps, -2.0);
+    	// frac += w;
+
         real w = 1.0;
         for(j=0;j<Nsub;j++){
             if(j==i) {continue;}

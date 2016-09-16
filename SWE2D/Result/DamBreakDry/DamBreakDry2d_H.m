@@ -1,6 +1,6 @@
 %% DamBreakQx
 % Exact solution for water depth
-function h = DamBreak2d_H(x, y, t)
+function h = DamBreakDry2d_H(x, y, t)
 h0    = 10;
 xc    = 500;
 theta = (x - xc)/t;
