@@ -5,11 +5,13 @@ if nargin == 0
     conf_Limit1d = true;
     conf_Limit2d = true;
     conf_SWE2d   = true;
+    conf_Mesh    = true;
 else
     conf_Polylib = false;
     conf_Limit1d = false;
     conf_Limit2d = false;
     conf_SWE2d   = false;
+    conf_Mesh    = false;
     for i = nargin
         switch varargin{i}
             case 'Polylib'
@@ -20,6 +22,8 @@ else
                 conf_Limit2d = true;
             case 'SWE2d'
                 conf_SWE2d = true;
+            case 'Mesh'
+                conf_Mesh = true;
             otherwise
                 error(['No options for %s, please choose one of\n'...
                     ,'  Polylib\n  Limiter\n  SWE2d\n'], varargin{i})
@@ -41,6 +45,18 @@ if conf_Polylib
     install(localpath, installpath, src, libsrc);
     fprintf('==============Polylib=================\n\n')
 end
+
+%% Mesh
+if conf_Mesh
+    localpath = '+Utilities/+Mesh/Mex';
+    installpath = '+Utilities/+Mesh/';
+    src = {'ResortVertex_Mex.c'};
+    libsrc = {'VertexSort.c'};
+    fprintf('==============Mesh=================\n')
+    install(localpath, installpath, src, libsrc);
+    fprintf('==============Mesh=================\n\n')
+end% if
+
 %% Limiter1d
 if conf_Limit1d
     localpath = '+Utilities/+Limiter/Mex';
