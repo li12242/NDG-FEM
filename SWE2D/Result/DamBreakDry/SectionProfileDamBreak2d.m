@@ -1,4 +1,4 @@
-function DamBreak2d_SectionProfile
+function SectionProfileDamBreak2d
 % Compare the results with exact solution on section x=0;
 
 %% Parameters
@@ -25,18 +25,18 @@ end
 
 %% Construct postprocess class
 meshtype = 'quad';
-filename = {'SWE2D_quad_DamBreak.nc'};
+filename = {'SWE2D.nc'};
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
-meshtype = 'tri';
-filename = {'SWE2D_tri_DamBreak.nc'};
+meshtype = 'quad';
+filename = {'SWE2D.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 markerSize  = 12;
 for ist = 1:numel(time)
     varname = 'h';
-    extH    = DamBreakH(xe, ye, time(ist));
+    extH    = DamBreak2d_H(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     % draw water height
@@ -55,7 +55,7 @@ for ist = 1:numel(time)
     
     % draw flux
     varname = 'qx';
-    extH    = DamBreakQx(xe, ye, time(ist));
+    extH    = DamBreak2d_Qx(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     figure('Color', 'w');

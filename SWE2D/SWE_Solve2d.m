@@ -56,10 +56,10 @@ while(time<FinalTime)
         % In ParabolicBowl test case, SL2 works well for quadrilateral 
         % mesh, while SLLoc2 works better for triangle mesh.
         
-        zeta = h+bot;
-        zeta = Utilities.Limiter.Limiter2D.VB2d(mesh, zeta);
-        h    = zeta-bot;
-%         h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
+%         zeta = h+bot;
+%         zeta = Utilities.Limiter.Limiter2D.VB2d(mesh, zeta);
+%         h    = zeta-bot;
+        h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
         qx = Utilities.Limiter.Limiter2D.VB2d(mesh, qx);
         qy = Utilities.Limiter.Limiter2D.VB2d(mesh, qy);
 

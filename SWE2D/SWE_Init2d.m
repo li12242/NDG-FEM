@@ -289,12 +289,12 @@ switch meshType
         shape = StdRegions.Triangle(N);
         [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2,false);
-        mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
     case 'quad'
         shape = StdRegions.Quad(N);
         [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2);
-        mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, []);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
@@ -328,12 +328,12 @@ switch meshType
         shape = StdRegions.Triangle(N);
         [VX,VY,EToV] = ...
             Utilities.Mesh.MeshGenTriangle2D(Nx,Ny,rmin,rmax,-width/2,width/2,false);
-        mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
     case 'quad'
         shape = StdRegions.Quad(N);
         [EToV, VX, VY] = ...
             Utilities.Mesh.MeshGenRectangle2D(Nx,Ny,rmin,rmax,-width/2,width/2);
-        mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, []);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
