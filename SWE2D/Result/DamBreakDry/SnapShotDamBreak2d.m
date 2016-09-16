@@ -1,8 +1,8 @@
-function DamBreak2d_SnapShot
+function SnapShotDamBreak2d
 
 %% Parameter
 T        = 20;
-meshtype = 'tri';
+meshtype = 'quad';
 filename = {'SWE2D.nc'};
 order    = 1;
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
