@@ -1,6 +1,6 @@
 %% DamBreakQx
 % Exact solution for flux qx
-function qx = DamBreak2d_Qx(x, y, t)
+function qx = DamBreakDry2d_Qx(x, y, t)
 h0    = 10;
 xc    = 500;
 theta = (x - xc)/t;
