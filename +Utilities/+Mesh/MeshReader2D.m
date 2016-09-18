@@ -39,6 +39,8 @@ EToV = Ele(:,(2:Nvertex+1));
 EToR = Ele(:,Nvertex+2); % region index of each element
 fclose(fig);
 
+EToV = Utilities.Mesh.ResortVertex_Mex(EToV, VX, VY);
+
 %% read *.edge file
 edgefile = [fileHead, '.edge'];
 fig      = fopen(edgefile);

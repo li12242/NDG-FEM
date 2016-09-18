@@ -10,9 +10,9 @@
  *
  * Usages:
  *		shape = mesh.Shape;
- * 		hlim  = VB2d_Mex...
- *			(h, mesh.J, shape.M, mesh.EToV, mesh.Shape.Fmask,
- *				mesh.Nv, mesh.x, mesh.y)
+ * 		hlim  = VB2d_Mex(h, mesh.J, shape.M, mesh.EToV, ...
+ *			mesh.Shape.Fmask, mesh.Nv, mesh.x, mesh.y)
+ *				
  */
 
 void mexFunction(int nlhs, mxArray *plhs[],
@@ -143,7 +143,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		// dhdx *= alpha;
 		// dhdy *= alpha;
 		// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
-		getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
+		// getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
 	}
 
 	free(w);
