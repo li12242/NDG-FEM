@@ -37,35 +37,44 @@ void meanGradient(int Nsub, real *xv, real *yv, real *hv,
     real frac = Nsub*eps;
     int i,j;
     for(i=0;i<Nsub;i++){
+        /* vertex index */
         int l1 = i;
         int l2 = (i+1)%Nsub;
+        /* coefficient matrix and rhs */
         a[0] = xv[l1] - xc; a[1] = yv[l1] - yc;
         a[2] = xv[l2] - xc; a[3] = yv[l2] - yc;
         f[0] = hv[l1] - hc; f[1] = hv[l2] - hc;
         // mexPrintf("Nfaces=%d, x1=%f, y1=%f, h1=%f, x2=%f, y2=%f, h2=%f\n",
         //     i, xv[l1], yv[l1], hv[l1], xv[l2], yv[l2], hv[l2]);
+        /* get local gradient x=(dhdx, dhdy) of ith subdomain */
         matrixSolver2(a, f, x);
         gra_x[i] = x[0]; gra_y[i] = x[1];
         gra_det[i] = x[0]*x[0] + x[1]*x[1];
         // mexPrintf("Nfaces=%d, dhdx=%f, dhdy=%f, det=%f\n",
         //     i, gra_x[i], gra_y[i], gra_det[i]);
 
-        frac += pow(gra_det[i], (Nsub-1.0));
+        // frac += pow(gra_det[i], (Nsub-1.0));
     }
     // mexPrintf("frac=%f\n", frac);
 
     *dhdx = 0.0; *dhdy = 0.0;
     for(i=0;i<Nsub;i++){
-        real w = 1.0/frac;
+    	// real w = pow(sqrt(gra_det[i])+eps, -2.0);
+    	// frac += w;
+
+        real w = 1.0;
         for(j=0;j<Nsub;j++){
-            if(j==i) continue;
+            if(j==i) {continue;}
             w *= gra_det[j];
         }
+        frac += w;
         w += eps;
         // mexPrintf("Nfaces=%d, w=%f\n", i, w);
         *dhdx += w*gra_x[i];
         *dhdy += w*gra_y[i];
     }
+    *dhdx /= frac;
+    *dhdy /= frac;
 
     free(gra_x);
     free(gra_y);
