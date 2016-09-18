@@ -1,4 +1,4 @@
-function NormErrDamBreakWet2d
+function NormErr_DamBreakWet2d
 %NORMERRDAMBREAKDRY2D Summary of this function goes here
 %   Detailed explanation goes here
 

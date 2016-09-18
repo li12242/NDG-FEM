@@ -1,13 +1,13 @@
-function SnapShotDamBreak2d
+function SnapShot_PartialDamBreak2d
 
 %% Parameter
-T        = 20;
+T        = 10;
 meshtype = 'quad';
 filename = {'SWE2D.nc'};
 order    = 1;
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
-time     = (0:0.1:1)*T;
+time     = [(1e-12:0.1:1)*T, T];
 
 for i = 1:numel(time)
     figure
