@@ -1,4 +1,4 @@
-function [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy)
+function [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy, time)
 % Calculation the RHS of SWE
 
 % parameters
@@ -17,7 +17,7 @@ dryEleFlag  = SWE_DryEle2d(mesh, h, minDepth);
 [Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy);
 
 % Boundary condition
-[Fhs, Fqxs, Fqys] = SWE_BC2d(phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys);
+[Fhs, Fqxs, Fqys] = SWE_BC2d(phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys, time);
 
 % the flux difference
 dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;
@@ -46,7 +46,7 @@ rhsQy   = - divFh + Sqy + shape.LIFT*(dFqy.*mesh.fScale);
 end
 
 function [Fhs, Fqxs, Fqys] = SWE_BC2d...
-    (phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys)
+    (phys, mesh, h, qx, qy, Fhs, Fqxs, Fqys, time)
 %% Parameters
 gra  = phys.gra;
 hmin = phys.minDepth;
@@ -70,5 +70,10 @@ Fqys(mesh.mapW) = Fqy;
 %% Outflow
 
 %% Inflow
+if ~isempty(mesh.mapI)
+    hin = interp1(phys.inWave(1,:),phys.inWave(2,:),time,'linear');
+    u = Fhs(mesh.mapI)./h(mesh.vmapM((mesh.mapI)));
+    Fhs(mesh.mapI) = hin.*u;
+end% if
 
 end% func

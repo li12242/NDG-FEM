@@ -36,38 +36,10 @@ classdef RegionQuadBC < MultiRegions.RegionQuad
             
             MultiRegions.BCType
             if ~isempty(BC)
-                obj.mapO = getBoundMapList(obj, BC, OUTFLOW);
-                obj.mapI = getBoundMapList(obj, BC, INFLOW);
-                obj.mapW = getBoundMapList(obj, BC, WALL);
+                obj.mapO = MultiRegions.GetBoundMapList(obj, BC, OUTFLOW);
+                obj.mapI = MultiRegions.GetBoundMapList(obj, BC, INFLOW);
+                obj.mapW = MultiRegions.GetBoundMapList(obj, BC, WALL);
             end% if
         end% function
-    end% methods
-    
-    methods(Hidden)
-        function map = getBoundMapList(obj,BC,phyID)
-            % Input:    phyID - physical ID
-            bclist = (BC(:,1)==phyID);
-            partialBC = BC(bclist, :);
-            nBC = size(partialBC,1); Nv = obj.Nv;
-            VToBF = spalloc(Nv, nBC, 2*nBC);
-            for ib = 1:nBC
-                VToBF(partialBC(ib,[2,3]),ib) = 1;
-            end
-            FToBF = obj.SpFToV*VToBF;
-            [faces1, ~] = find(FToBF == 2);
-            
-            Nfaces = obj.Shape.nFace;
-            element1 = floor( (faces1-1)/Nfaces )  + 1; 
-            face1    =   mod( (faces1-1), Nfaces ) + 1;
-            
-            Nfp = obj.Shape.nFaceNode/obj.Shape.nFace; 
-            map = zeros(Nfp, nBC);
-            for i=1:nBC
-                localfacelist = obj.Shape.getFaceListAtFace(face1(i));
-                facelist = (element1(i)-1)*obj.Shape.nFaceNode + localfacelist;
-                map(:,i) = facelist;
-            end
-        end% function
-        
     end% methods
 end% class

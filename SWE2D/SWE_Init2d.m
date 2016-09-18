@@ -41,13 +41,17 @@ switch casename
             ParabolicBowl(phys, N, Nx, Ny, meshType);
     case 'PartialDamBreak'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
-            PartialDamBreak(phys, N, meshType);
+            PartialDamBreak(N, meshType);
     case 'FlowOver3BumpsUniform'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
-            FlowOver3BumpsUniform(phys, N, Nx, Ny, meshType);
+            FlowOver3BumpsUniform(N, Nx, Ny, meshType);
     case 'FlowOver3Bumps'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
             FlowOver3Bumps(N, meshType);
+    case 'TsuamiRunup'
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx, inWave] = ...
+            TsuamiRunup(N, Nx, Ny, meshType);
+        phys.inWave = inWave;
 end% switch
 
 % Assign the obtained variables to structure variable phys
@@ -59,9 +63,75 @@ phys.dx    = dx;
 phys.ftime = ftime;
 phys.bot   = botLevel; % bottom elevation
 phys.mesh  = mesh;
-
 end% func
 
+%% Tsuami Runup on complex shoreline
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx, inWave] = ...
+    TsuamiRunup(N, Nx, Ny, meshType)
+% Parameters
+rmin = 0;
+rmax = 5.488;
+smin = 0;
+smax = 3.402;
+
+% Boundary condition
+BC = zeros((Nx-1)*2+(Ny-1)*2, 3);
+% solid wall - the up, bottom, right side.
+BC(1:((Nx-1)*2+(Ny-1)), 1) = 1;
+BC(1:(Nx-1), 2) =  1:(Nx-1);
+BC(1:(Nx-1), 3) = (1:(Nx-1))+1;
+BC(Nx:(Nx-1)+(Nx-1), 2) = (1:(Nx-1))+Nx*(Ny-1);
+BC(Nx:(Nx-1)+(Nx-1), 3) = (1:(Nx-1))+Nx*(Ny-1)+1;
+BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 2) = linspace(Nx,Nx*(Ny-1),Ny-1);
+BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 3) = linspace(Nx*2,Nx*Ny,  Ny-1);
+
+% inflow boundary
+BC(((Nx-1)*2+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 1) = 2;
+BC((2*(Nx-1)+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 2) = linspace(1,Nx*(Ny-2)+1,Ny-1);
+BC((2*(Nx-1)+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 3) = linspace(Nx+1,Nx*(Ny-1)+1,Ny-1);
+
+% Create mesh grid
+switch meshType
+    case 'tri'
+        shape = StdRegions.Triangle(N);
+        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+            (Nx,Ny,rmin,rmax,smin,smax,false);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
+    case 'quad'
+        shape = StdRegions.Quad(N);
+        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
+            (Nx,Ny,rmin,rmax,smin,smax);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, BC);
+end% switch
+
+% Initialize bottom level
+bathymetryFile = 'SWE2D/mesh/TsunamiRunup/Benchmark_2_Bathymetry.txt';
+fp = fopen(bathymetryFile);
+fgetl(fp);
+data = fscanf(fp, '%e %e %e', [3, inf]);
+fclose(fp);
+interp = TriScatteredInterp(data(1,:)',data(2,:)',-data(3,:)','linear');
+botLevel = interp(mesh.x, mesh.y);
+% Initialize variables
+zeta = zeros(size(mesh.x));
+h    = zeta - botLevel;
+h(h<0) = 0;
+qx   = zeros(size(mesh.x));
+qy   = zeros(size(mesh.x));
+dx   = min((rmax - rmin)./Nx/(N+1), (smax - smin)./Ny/(N+1));
+dt   = 0.025;
+
+ftime = 22.5;
+
+% Inflow water elevation
+inputFile = 'SWE2D/mesh/TsunamiRunup/Benchmark_2_input.txt';
+fp = fopen(inputFile);
+fgetl(fp);
+inWave = fscanf(fp, '%e %e', [2, inf]);
+fclose(fp);
+end
+
+%% FlowOver3Bumps
 function [mesh, h, qx, qy, botLevel, ftime, dt, dx] ...
     = FlowOver3Bumps(N, meshType)
 
@@ -124,8 +194,9 @@ dx     = min( area/pi/(N+1) );
 
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt, dx] ...
-    = FlowOver3BumpsUniform(phys, N, Nx, Ny, meshType)
+% Uniform grids
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx] =...
+    FlowOver3BumpsUniform(N, Nx, Ny, meshType)
 %% Parameters
 rmin  = 0; 
 rmax  = 75;
@@ -184,8 +255,9 @@ dx     = min((rmax - rmin)./Nx/(N+1), (width)./Ny/(N+1));
 
 end% func
 
-function [mesh, h, qx, qy, botLevel, ftime, dt, dx] ...
-    = PartialDamBreak(phys, N, meshtype)
+%% Partial DamBreak
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
+    PartialDamBreak(N, meshtype)
 switch meshtype
     case 'tri'
         filename = 'PartialDamBreakTri';
@@ -235,10 +307,10 @@ dx     = min( area/pi/(N+1) );
 
 end% func
 
-function [mesh, h, qx, qy, bot, ftime, dt, dx] ...
-    = ParabolicBowl(phys, N, Nx, Ny, meshType)
-%% Initialize for ParabolicBowl test
-% Parameters
+%% ParabolicBowl
+function [mesh, h, qx, qy, bot, ftime, dt, dx] = ...
+    ParabolicBowl(phys, N, Nx, Ny, meshType)
+% Initialize for parameters.
 g     = phys.gra;
 alpha = 1.6*1e-7;
 w     = sqrt(8*g*alpha);
@@ -252,13 +324,13 @@ rmax  =  4000;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = ...
-            Utilities.Mesh.MeshGenTriangle2D(Nx,Ny,rmin,rmax,rmin,rmax,false);
+        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+            (Nx,Ny,rmin,rmax,rmin,rmax,false);
         mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
     case 'quad'
         shape = StdRegions.Quad(N);
-        [EToV, VX, VY] = ...
-            Utilities.Mesh.MeshGenRectangle2D(Nx,Ny,rmin,rmax,rmin,rmax);
+        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
+            (Nx,Ny,rmin,rmax,rmin,rmax);
         mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
@@ -277,9 +349,10 @@ ftime  = T;
 dx     = min((rmax - rmin)./Nx/(N+1), (rmax - rmin)./Ny/(N+1));
 end% func
 
+%% Ideal DamBreak
 function [mesh, h, qx, qy, bot, ftime, dt, dx] ...
     = DamBreakDry(N, Nx, Ny, meshType)
-%% Initialize the mesh grid
+% Initialize the mesh grid.
 % The grid range is and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
 % be obtains a uniform mesh grid.
@@ -293,12 +366,12 @@ switch meshType
         shape = StdRegions.Triangle(N);
         [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2,false);
-        mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
     case 'quad'
         shape = StdRegions.Quad(N);
         [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2);
-        mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, []);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
@@ -318,7 +391,7 @@ end% func
 
 function [mesh, h, qx, qy, bot, ftime, dt, dx] ...
     = DamBreakWet(N, Nx, Ny, meshType)
-%% Initialize the mesh grid
+% Initialize the mesh grid.
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
 % The elements of mesh grid can be triangles or quadrialterals and 
 % be obtains a uniform mesh grid.
@@ -330,14 +403,14 @@ damPosition = 500;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = ...
-            Utilities.Mesh.MeshGenTriangle2D(Nx,Ny,rmin,rmax,-width/2,width/2,false);
-        mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
+        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+            (Nx,Ny,rmin,rmax,-width/2,width/2,false);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
     case 'quad'
         shape = StdRegions.Quad(N);
-        [EToV, VX, VY] = ...
-            Utilities.Mesh.MeshGenRectangle2D(Nx,Ny,rmin,rmax,-width/2,width/2);
-        mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
+        [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
+            (Nx,Ny,rmin,rmax,-width/2,width/2);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, []);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
