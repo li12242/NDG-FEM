@@ -1,4 +1,4 @@
-function SectionProfileDamBreak2d
+function SectionProfile_DamBreak2d
 % Compare the results with exact solution on section x=0;
 
 %% Parameters
