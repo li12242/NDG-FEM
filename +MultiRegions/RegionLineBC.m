@@ -45,41 +45,9 @@ methods
         obj = obj@MultiRegions.RegionLine(line, EToV, VX);
 
         MultiRegions.BCType(); % include boundary type ID
-        obj.mapO = getBoundMapList(obj,BC,OUTFLOW);
-        obj.mapI = getBoundMapList(obj,BC,INFLOW);
-        obj.mapW = getBoundMapList(obj,BC,WALL);
+        obj.mapO = MultiRegions.GetBoundMapList(obj,BC,OUTFLOW);
+        obj.mapI = MultiRegions.GetBoundMapList(obj,BC,INFLOW);
+        obj.mapW = MultiRegions.GetBoundMapList(obj,BC,WALL);
     end
 end% methods public
-
-methods(Hidden)
-    %% getBoundMapList
-    % 
-    %
-    function map = getBoundMapList(obj,BC,phyID)
-        bclist = (BC(:,1)==phyID);
-        partialBC = BC(bclist, :);
-        nBC = size(partialBC,1); 
-        Nv = size(obj.SpFToV, 2); % number of vertice
-        VToBF = spalloc(Nv, nBC, 2*nBC);
-        for ib = 1:nBC
-            VToBF(partialBC(ib,2),ib) = 1;
-        end
-        FToBF = obj.SpFToV*VToBF;
-        [faces1, ~] = find(FToBF ==1);
-
-        Nfaces = 2;
-        element1 = floor( (faces1-1)/Nfaces )  + 1; 
-        face1    =   mod( (faces1-1), Nfaces ) + 1;
-
-        Nfp = obj.Shape.nFaceNode/obj.Shape.nFace; 
-        map = zeros(Nfp, nBC);
-        for i=1:nBC
-            localfacelist = obj.Shape.getFaceListAtFace(face1(i));
-            facelist = (element1(i)-1)*obj.Shape.nFaceNode ...
-                + localfacelist;
-            map(:,i) = facelist;
-        end
-    end% function
-
-end %methods private
 end %classdef Region1D
