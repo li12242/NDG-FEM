@@ -38,7 +38,7 @@ while(time<FinalTime)
     resQx(:) = 0; resQy(:) = 0; resH(:) = 0;
     for INTRK = 1:5
         timeloc = time + rk4c(INTRK)*dt;
-        [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy);
+        [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy, timeloc);
         
         % filter
 %         rhsH  = Filt*rhsH;
@@ -74,10 +74,10 @@ while(time<FinalTime)
         [h, qx, qy] = SWE_PositivePreserving2d(phys, mesh, h, qx, qy);
         
 %         figure('Position', [627     1   561   984]);
-%         subplot(3,1,1);
+%         subplot(2,1,1);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM), 'k.-');
 %         view([53.7, 52.4])
-%         subplot(3,1,2);
+%         subplot(2,1,2);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qx(mesh.vmapM), 'k.-');
 %         view([53.7, 52.4])
 %         subplot(3,1,3);

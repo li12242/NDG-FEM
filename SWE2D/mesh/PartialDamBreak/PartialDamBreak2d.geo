@@ -30,4 +30,5 @@ Line Loop(17) = {13, 5, 6, 7, 8, 9};
 Plane Surface(17) = {17};
 Physical Line(18) = {1, 7};
 Physical Line(19) = {2, 3, 4, 5, 6, 8, 9, 10, 11, 12};
-Physical Surface(20) = {15, 17};
+Physical Surface(21) = {15};
+Physical Surface(20) = {17};
