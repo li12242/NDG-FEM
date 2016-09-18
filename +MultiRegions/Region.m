@@ -26,10 +26,8 @@ classdef Region
         EToF    % element to face
         EToV    % element to vertex
         Nv      % number of vertex
-    end
-    properties(SetAccess=protected)
         SpFToV
-    end% properties
+    end
     
     methods
         function obj = Region(shape, EToV)

@@ -5,7 +5,7 @@ function SectionProfileDamBreakWet2d
 rmin  = 0; 
 rmax  = 1000;
 ne    = 1000;   % number of exact solution
-np    = 60;    % number of interpolated solutions
+np    = 60;     % number of interpolated solutions
 T     = 20;
 
 %% Get points coordinate

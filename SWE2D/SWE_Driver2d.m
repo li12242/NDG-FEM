@@ -1,10 +1,7 @@
 function SWE_Driver2d
 %% Introduction
 % Solving the 2D shallow water equation
-% Todo:
 % 
-% # time step formula
-% # 
 
 %% Initialization
 % Assignment parameters of the test case to the struct variable `phys`. 
@@ -23,17 +20,18 @@ function SWE_Driver2d
 
 % Name of test case
 % casename = 'DamBreakDry';
-casename = 'DamBreakWet';
+% casename = 'DamBreakWet';
 % casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
+casename = 'TsuamiRunup';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
 Nx = 100;
-Ny = 10;
+Ny = 50;
 
 % # Name of test case
 phys.casename = casename;
@@ -50,8 +48,8 @@ phys = SWE_Init2d(phys);
 outfile = SWE_GenOutputFile2d('SWE2D', phys);
 
 %% Solve the eqs
-% The strucut variable 'phys' will be passed to function SWERHS2d and get
-% the derived solutions of h (water depth) and q (water flux)
+% The strucut variable 'phys' will be passed to function SWERHS2d 
+% and get the derived solutions of h (water depth) and q (water flux)
 
 phys = SWE_Solve2d(phys, outfile);
 
