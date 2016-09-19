@@ -21,13 +21,13 @@ nt       = numel(time);
 % plot water surface at spicific position
 for i = 1:3
     subplot(3,1,i); hold on;
-    plot(ndata(1,:),ndata(1+i,:),'r-');
+    plot(ndata(1,:),ndata(1+i,:)/100,'r-');
     hp = zeros(nt, 1);
     for t = 1:nt
         h     = Postpro.NcFile(fileID).GetTimeVarData('h', t);
         eta   = h+bot;
         hp(t) = Postpro.Interp2D(eta, xp(i), yp(i), fileID);
-        fprintf('Processing...%f\n', t*i/nt/3);
+        fprintf('Processing...%f\n', t/nt/3+(i-1)/3);
     end% for
     plot(time, hp, 'b.-');
 end% func
