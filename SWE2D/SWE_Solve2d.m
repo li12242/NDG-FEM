@@ -10,7 +10,10 @@ minDepth  = phys.minDepth;
 outStep   = 0;
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % ideal time step
-Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
+% Parameters
+Np        = mesh.Shape.nNode; % No. of nodes in each element
+Ne        = mesh.nElement; % No. of element
+% Filt      = Fliter(mesh.Shape, mesh.Shape.nOrder, 0.9);
 CFL       = 0.3;
 
 % 5-stage Runge-Kutta coefficients
@@ -21,7 +24,6 @@ resH  = zeros(size(h));
 resQx = zeros(size(qx));
 resQy = zeros(size(qy));
 
-flag = true(mesh.nElement, 1);
 %% RK time stepping
 while(time<FinalTime)
     s  = SWE_PredictWaveSpeed2d(phys, h, qx, qy);
@@ -90,12 +92,9 @@ while(time<FinalTime)
     time = time+dt;
     
     outfile.putVarPart('time', outStep, 1, time);
-    outfile.putVarPart('h',  [0,0,outStep], ...
-        [mesh.Shape.nNode,mesh.nElement,1], h);
-    outfile.putVarPart('qx', [0,0,outStep], ...
-        [mesh.Shape.nNode,mesh.nElement,1], qx);
-    outfile.putVarPart('qy', [0,0,outStep], ...
-        [mesh.Shape.nNode,mesh.nElement,1], qy);
+    outfile.putVarPart('h',  [0,0,outStep], [Np,Ne,1], h);
+    outfile.putVarPart('qx', [0,0,outStep], [Np,Ne,1], qx);
+    outfile.putVarPart('qy', [0,0,outStep], [Np,Ne,1], qy);
     outStep = outStep + 1;
     
     fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
@@ -143,20 +142,20 @@ spe = sqrt(u.^2 + v.^2);
 s   = max(max( spe + sqrt(g*h) ));
 end% func
 
-function F = Fliter(shape, Nc, frac)
-
-filterdiag = ones(shape.nNode, 1);
-
-% build exponential filter
-sk = 1; N = shape.nOrder;
-for i=0:N
-  for j=0:N-i
-    if (i+j>=Nc)
-      filterdiag(sk) = frac;
-    end
-    sk = sk+1;
-  end
-end
-
-F = ( shape.VandMatrix*diag(filterdiag) )/shape.VandMatrix;
-end% func
+% function F = Fliter(shape, Nc, frac)
+% 
+% filterdiag = ones(shape.nNode, 1);
+% 
+% % build exponential filter
+% sk = 1; N = shape.nOrder;
+% for i=0:N
+%   for j=0:N-i
+%     if (i+j>=Nc)
+%       filterdiag(sk) = frac;
+%     end
+%     sk = sk+1;
+%   end
+% end
+% 
+% F = ( shape.VandMatrix*diag(filterdiag) )/shape.VandMatrix;
+% end% func
