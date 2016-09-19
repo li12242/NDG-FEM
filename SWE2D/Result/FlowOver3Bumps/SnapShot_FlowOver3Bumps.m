@@ -1,4 +1,4 @@
-function FlowOver3Bumps_SnapShot
+function SnapShot_FlowOver3Bumps
 
 %% Parameter
 T        = 20;

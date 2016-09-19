@@ -1,5 +1,5 @@
 function WaterSurface_TsunamiRunup
-filename = 'output_ch5-7-9.xls';
+filename = 'output_ch5-7-9.txt';
 fp = fopen(filename);
 fgetl(fp);
 ndata = fscanf(fp, '%f %f %f %f', [4, inf]);
@@ -15,20 +15,19 @@ order    = 1;
 Postpro  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
 time     = Postpro.NcFile(fileID).GetVarData('time');
-x        = Postpro.NcFile(fileID).GetVarData('x');
-y        = Postpro.NcFile(fileID).GetVarData('y');
 bot      = Postpro.NcFile(fileID).GetVarData('bot');
-interp   = TriScatteredInterp(x(:), y(:), bot(:), 'linear');
+nt       = numel(time);
 
 % plot water surface at spicific position
 for i = 1:3
     subplot(3,1,i); hold on;
     plot(ndata(1,:),ndata(1+i,:),'r-');
-    hp = zeros(size(time), 1);
-    for t = 1:numel(time)
-        h = Postpro.NcFile(fileID).GetTimeVarData('h', t);
-        interp.V = h(:) + bot(:);
-        hp(t) = interp(xp(i), yp(i));
+    hp = zeros(nt, 1);
+    for t = 1:nt
+        h     = Postpro.NcFile(fileID).GetTimeVarData('h', t);
+        eta   = h+bot;
+        hp(t) = Postpro.Interp2D(eta, xp(i), yp(i), fileID);
+        fprintf('Processing...%f\n', t*i/nt/3);
     end% for
     plot(time, hp, 'b.-');
 end% func
