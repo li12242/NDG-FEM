@@ -30,16 +30,18 @@ casename = 'TsuamiRunup';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 50;
-Ny = 20;
+Nx = 100;
+Ny = 60;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
+phys.ManningCoeff = 1e-2;
 phys.meshType = 'quad';
-phys.minDepth = 1e-2;
+phys.minDepth = 3e-3;
+phys.minht    = 3e-3;
 phys.gra      = 9.81;
 % initialization
 phys = SWE_Init2d(phys);

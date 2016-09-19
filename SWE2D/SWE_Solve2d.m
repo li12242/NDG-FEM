@@ -7,7 +7,8 @@ bot       = phys.bot;  % topography
 mesh      = phys.mesh;
 FinalTime = phys.ftime;
 minDepth  = phys.minDepth;
-outStep   = 0;
+contour   = 0;
+outStep   = 1;
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % ideal time step
 % Parameters
@@ -90,13 +91,14 @@ while(time<FinalTime)
     
     % Increment time
     time = time+dt;
-    
-    outfile.putVarPart('time', outStep, 1, time);
-    outfile.putVarPart('h',  [0,0,outStep], [Np,Ne,1], h);
-    outfile.putVarPart('qx', [0,0,outStep], [Np,Ne,1], qx);
-    outfile.putVarPart('qy', [0,0,outStep], [Np,Ne,1], qy);
-    outStep = outStep + 1;
-    
+    if ~mod(contour, 10)
+        outfile.putVarPart('time', outStep, 1, time);
+        outfile.putVarPart('h',  [0,0,outStep], [Np,Ne,1], h);
+        outfile.putVarPart('qx', [0,0,outStep], [Np,Ne,1], qx);
+        outfile.putVarPart('qy', [0,0,outStep], [Np,Ne,1], qy);
+        outStep = outStep + 1;
+    end
+    contour = contour + 1;
     fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
 
 end
@@ -131,7 +133,7 @@ end% func
 function s = SWE_PredictWaveSpeed2d(phys, h, Qx, Qy)
 % parameters
 g        = phys.gra;
-minDepth = phys.minDepth;
+minDepth = phys.minht;
 dryflag  = h<=minDepth;
 dryEle   = any(dryflag);
 
