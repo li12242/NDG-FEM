@@ -45,8 +45,8 @@ classdef RegionTri < MultiRegions.Region
                 = shape.getEleGeometric(vx, vy);
             [obj.nx, obj.ny, obj.sJ] = shape.getFaceGeometric(obj.x, obj.y);
             
-            [obj.EToE, obj.EToF,  obj] = MultiRegions.Connect2D(obj,EToV);
-            [obj.vmapM,obj.vmapP, obj] = MultiRegions.BuildMap...
+            [obj] = MultiRegions.Connect2D(obj,EToV);
+            [obj] = MultiRegions.BuildMap...
                 (obj, VX, VY, EToV, obj.EToE, obj.EToF);
             
             obj.fScale = obj.sJ./obj.J(obj.vmapM);

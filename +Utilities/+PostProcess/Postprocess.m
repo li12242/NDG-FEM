@@ -154,11 +154,26 @@ classdef Postprocess < handle
         % Interpolation for 2D variables, the variables shoule be arranged
         % the same with mesh coordinate
         function Data = Interp2D(obj, numSol, xc, yc, fileID)
-            % check for variable dimensions
+            % check for input variable
+            if isrow(xc)
+                xc = xc';
+            elseif isrow(yc)
+                yc = yc';
+            end% if
+            % get position
             x      = obj.NcFile(fileID).GetVarData('x');
             y      = obj.NcFile(fileID).GetVarData('y');
-            Interp = scatteredInterpolant(x(:),y(:),numSol(:), 'linear');
-            Data   = Interp(xc, yc);
+            locVertList = obj.StdCell.verlist;
+            % determine the cell inside
+            flag   = Utilities.PostProcess.FindLocCell_Mex...
+                (x,y,locVertList,xc,yc);
+            
+            % interpolation
+            Data = zeros(size(xc));
+            for i = 1:numel(xc)
+                ind = find(flag == i);
+                Data(i) = interp2(x(:,ind),y(:,ind),numSol(:,ind),xc,yc);
+            end% for
         end% func
         
         %% Get the convergence rate
