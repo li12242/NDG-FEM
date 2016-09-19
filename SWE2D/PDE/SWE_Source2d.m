@@ -1,4 +1,4 @@
-function [Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, bot, dryEleFlag)
+function [Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, qx, qy, bot)
 % Calculation of source terms
 % Input: 
 %   phys - structure variable, it contains
@@ -9,7 +9,6 @@ function [Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, bot, dryEleFlag)
 %   h    - water depth
 %   bot  - bottom elvation
 %   dryEleFlag - flag for dry elements
-% 
 % Output:
 %   [Sh, Sqx, Sqy] - source terms for all eqs
 % 
@@ -30,7 +29,9 @@ function [Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, bot, dryEleFlag)
 % 
 
 % get parameters
-g   = phys.gra;
+g         = phys.gra;
+MannCoeff = phys.ManningCoeff;
+dryNode   = h<phys.minDepth;
 
 % calculate the gradient of bottom level
 Sh  = zeros(size(h));
@@ -40,8 +41,13 @@ Sh  = zeros(size(h));
 Sqx = -g*(h.*Sqx);
 Sqy = -g*(h.*Sqy);
 
+qn  = sqrt(qx.^2+qy.^2);
+p   = 7/3;
+Sqx = Sqx + -g.*MannCoeff.^2.*qx.*qn./(h.^p);
+Sqy = Sqy + -g.*MannCoeff.^2.*qy.*qn./(h.^p);
+
 % eleminate dry element terms
-Sqx(:, dryEleFlag) = 0;
-Sqy(:, dryEleFlag) = 0;
+Sqx(dryNode) = 0;
+Sqy(dryNode) = 0;
 
 end% func

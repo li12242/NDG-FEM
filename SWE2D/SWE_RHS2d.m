@@ -5,13 +5,14 @@ function [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy, time)
 minDepth = phys.minDepth;
 shape    = mesh.Shape;
 bot      = phys.bot;
+
 % find the dry nodes
-dryEleFlag  = SWE_DryEle2d(mesh, h, minDepth);
+% dryEleFlag  = SWE_DryEle2d(mesh, h, minDepth);
 
 % flux
 [Fh, Fqx, Fqy, Gh, Gqx, Gqy] = SWE_Flux2d(phys, h, qx, qy);
 % source terms
-[Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, bot, dryEleFlag);
+[Sh, Sqx, Sqy] = SWE_Source2d(phys, mesh, h, qx, qy, bot);
 
 % numerical flux
 [Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy);
@@ -73,7 +74,7 @@ Fqys(mesh.mapW) = Fqy;
 %% Inflow
 nodeInM = mesh.vmapM(mesh.mapI);
 
-if (time>phys.inWave(1,end))
+if (time<phys.inWave(1,end))
     nx  = mesh.nx(mesh.mapI);
     ny  = mesh.ny(mesh.mapI);
     % input water height
