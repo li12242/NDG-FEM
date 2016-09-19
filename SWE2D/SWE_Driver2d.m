@@ -30,8 +30,8 @@ casename = 'TsuamiRunup';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 100;
-Ny = 50;
+Nx = 50;
+Ny = 20;
 
 % # Name of test case
 phys.casename = casename;

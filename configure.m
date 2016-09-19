@@ -6,12 +6,14 @@ if nargin == 0
     conf_Limit2d = true;
     conf_SWE2d   = true;
     conf_Mesh    = true;
+    conf_Post    = true;
 else
     conf_Polylib = false;
     conf_Limit1d = false;
     conf_Limit2d = false;
     conf_SWE2d   = false;
     conf_Mesh    = false;
+    conf_Post    = false;
     for i = nargin
         switch varargin{i}
             case 'Polylib'
@@ -24,6 +26,8 @@ else
                 conf_SWE2d = true;
             case 'Mesh'
                 conf_Mesh = true;
+            case 'Post'
+                conf_Post = true;
             otherwise
                 error(['No options for %s, please choose one of\n'...
                     ,'  Polylib\n  Limiter\n  SWE2d\n'], varargin{i})
@@ -98,6 +102,16 @@ if conf_SWE2d
     fprintf('==============SWE2d=================\n\n')
 end
 
+%% Postprocess
+if conf_Post
+    localpath = '+Utilities/+PostProcess/Mex';
+    installpath = '+Utilities/+PostProcess';
+    src = {'FindLocCell_Mex.c'};
+    libsrc = {'VectorOperator.c'};
+    fprintf('==============Postprocess=================\n')
+    install(localpath, installpath, src, libsrc);
+    fprintf('==============Postprocess=================\n\n')
+end% if
 end% func
 
 %% install function
