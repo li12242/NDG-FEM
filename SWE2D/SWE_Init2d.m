@@ -119,7 +119,7 @@ h(h<0) = 0;
 qx   = zeros(size(mesh.x));
 qy   = zeros(size(mesh.x));
 dx   = min((rmax - rmin)./Nx/(N+1), (smax - smin)./Ny/(N+1));
-dt   = 0.0020;
+dt   = 0.00010;
 
 ftime = 22.5;
 

@@ -31,4 +31,11 @@ file.putVarPart('x',   [0, 0], [mesh.Shape.nNode, mesh.nElement], mesh.x);
 file.putVarPart('y',   [0, 0], [mesh.Shape.nNode, mesh.nElement], mesh.y);
 file.putVarPart('bot', [0, 0], [mesh.Shape.nNode, mesh.nElement], phys.bot);
 
+step = 0;
+Np   = mesh.Shape.nNode; % No. of nodes in each element
+Ne   = mesh.nElement; % No. of element
+file.putVarPart('time', step, 1, 0);
+file.putVarPart('h',  [0,0,step], [Np,Ne,1], phys.h);
+file.putVarPart('qx', [0,0,step], [Np,Ne,1], phys.qx);
+file.putVarPart('qy', [0,0,step], [Np,Ne,1], phys.qy);
 end% func

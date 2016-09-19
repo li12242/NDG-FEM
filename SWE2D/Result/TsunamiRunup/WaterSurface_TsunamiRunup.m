@@ -29,6 +29,6 @@ for i = 1:3
         hp(t) = Postpro.Interp2D(eta, xp(i), yp(i), fileID);
         fprintf('Processing...%f\n', t/nt/3+(i-1)/3);
     end% for
-    plot(time, hp, 'b.-');
+    plot(time-0.65, hp, 'b.-');
 end% func
 end% func
