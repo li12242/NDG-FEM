@@ -172,7 +172,9 @@ classdef Postprocess < handle
             Data = zeros(size(xc));
             for i = 1:numel(xc)
                 ind = find(flag == i);
-                Data(i) = interp2(x(:,ind),y(:,ind),numSol(:,ind),xc,yc);
+                interp  = TriScatteredInterp...
+                    (x(:,ind),y(:,ind),numSol(:,ind), 'linear');
+                Data(i) = interp(xc,yc);
             end% for
         end% func
         
