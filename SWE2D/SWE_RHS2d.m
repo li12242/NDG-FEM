@@ -17,7 +17,8 @@ dryEleFlag  = SWE_DryEle2d(mesh, h, minDepth);
 [Fhs, Fqxs, Fqys] = SWE_NumFlux2d(phys, mesh, h, qx, qy);
 
 % Boundary condition
-[Fhs, Fqxs, Fqys] = SWE_BC2d(phys, mesh, h, qx, qy, bot, Fhs, Fqxs, Fqys, time);
+[Fhs, Fqxs, Fqys] = SWE_BC2d...
+    (phys, mesh, h, qx, qy, bot, Fhs, Fqxs, Fqys, time);
 
 % the flux difference
 dFh   = Fh(mesh.vmapM).*mesh.nx + Gh(mesh.vmapM).*mesh.ny   - Fhs;
@@ -72,19 +73,19 @@ Fqys(mesh.mapW) = Fqy;
 %% Inflow
 nodeInM = mesh.vmapM(mesh.mapI);
 
-nx  = mesh.nx(mesh.mapI);
-ny  = mesh.ny(mesh.mapI);
-% input water height
-hin = interp1(phys.inWave(1,:),phys.inWave(2,:),time,'linear');
-hM  = h(nodeInM);   hP  = hin - bot(nodeInM);
-qxM = qx(nodeInM);  qxP = qxM;
-qyM = qy(nodeInM);  qyP = qyM;
+if (time>phys.inWave(1,end))
+    nx  = mesh.nx(mesh.mapI);
+    ny  = mesh.ny(mesh.mapI);
+    % input water height
+    hin = interp1(phys.inWave(1,:),phys.inWave(2,:),time,'linear');
+    hM  = h(nodeInM);   hP  = hin - bot(nodeInM);
+    qxM = qx(nodeInM);  qxP = qxM;
+    qyM = qy(nodeInM);  qyP = qyM;
 
-[Fh, ~, ~] = SWE_Mex_BC2d...
-    (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
-% assignment to numerical flux
-Fhs(mesh.mapI)  = Fh;
-% Fqxs(mesh.mapW) = Fqx;
-% Fqys(mesh.mapW) = Fqy;
+    [Fh, ~, ~] = SWE_Mex_BC2d...
+        (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
+    % assignment to numerical flux
+    Fhs(mesh.mapI)  = Fh;
+end% if
 
 end% func
