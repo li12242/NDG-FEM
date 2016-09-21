@@ -25,7 +25,8 @@ function SWE_Driver2d
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
-casename = 'TsuamiRunup';
+% casename = 'TsuamiRunup';
+casename = 'ObliqueHydraulicJump';
 
 % Order of polymomials used for approximation 
 N = 1;
@@ -38,10 +39,10 @@ phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.ManningCoeff = 1e-2;
-phys.meshType = 'quad';
-phys.minDepth = 3e-3;
-phys.minht    = 3e-3;
+phys.ManningCoeff = 0;
+phys.meshType = 'tri';
+phys.minDepth = 1e-2;
+phys.minht    = 1e-2;
 phys.gra      = 9.81;
 % initialization
 phys = SWE_Init2d(phys);
