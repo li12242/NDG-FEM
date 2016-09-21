@@ -58,10 +58,18 @@ nodeWallM = mesh.vmapM(mesh.mapW);
 
 nx  = mesh.nx(mesh.mapW);
 ny  = mesh.ny(mesh.mapW);
-% no-slip wall condition
+
 hM  = h(nodeWallM);   hP  = hM;
-qxM = qx(nodeWallM);  qxP = -qxM;
-qyM = qy(nodeWallM);  qyP = -qyM;
+% no-slip wall condition
+% qxM = qx(nodeWallM);  qxP = -qxM;
+% qyM = qy(nodeWallM);  qyP = -qyM;
+
+% slip condition
+qxM = qx(nodeWallM); qyM = qy(nodeWallM);
+qnM =  0; % outward normal flux
+qvM = -qxM.*ny + qyM.*nx; % outward tangential flux
+qxP = (-qnM).*nx - qvM.*ny;
+qyP = (-qnM).*ny + qvM.*nx;
 
 [Fh, Fqx, Fqy] = SWE_Mex_BC2d...
     (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
@@ -73,20 +81,36 @@ Fqys(mesh.mapW) = Fqy;
 
 %% Inflow
 nodeInM = mesh.vmapM(mesh.mapI);
-
-if (time<phys.inWave(1,end))
+if (strncmp(phys.casename, 'ObliqueHydraulicJump', 20))
     nx  = mesh.nx(mesh.mapI);
     ny  = mesh.ny(mesh.mapI);
-    % input water height
-    hin = interp1(phys.inWave(1,:),phys.inWave(2,:),time,'linear');
-    hM  = h(nodeInM);   hP  = hin - bot(nodeInM);
-    qxM = qx(nodeInM);  qxP = qxM;
-    qyM = qy(nodeInM);  qyP = qyM;
-
+    hM  = h(nodeInM);   hP  = 2.*phys.hin - hM;
+    qxM = qx(nodeInM);  qxP = 2.*hP.*phys.uin - qxM;
+    qyM = qy(nodeInM);  qyP = 2.*qyM - qyM;
     [Fh, ~, ~] = SWE_Mex_BC2d...
         (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
     % assignment to numerical flux
     Fhs(mesh.mapI)  = Fh;
+    Fqxs(mesh.mapW) = Fqx;
+    Fqys(mesh.mapW) = Fqy;
+end% if
+
+if (strncmp(phys.casename, 'TsuamiRunup', 11))
+    if (time<phys.inWave(1,end))
+        nx  = mesh.nx(mesh.mapI);
+        ny  = mesh.ny(mesh.mapI);
+        % input water height
+        hin = interp1(phys.inWave(1,:),phys.inWave(2,:),time,'linear');
+        hM  = h(nodeInM);   hP  = hin - bot(nodeInM);
+        qxM = qx(nodeInM);  qxP = qxM;
+        qyM = qy(nodeInM);  qyP = 0;
+
+        [Fh, ~, ~] = SWE_Mex_BC2d...
+            (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
+        % assignment to numerical flux
+        Fhs(mesh.mapI)  = Fh;
+    end% if
+    return;
 end% if
 
 end% func

@@ -52,6 +52,11 @@ switch casename
         [mesh, h, qx, qy, botLevel, ftime, dt, dx, inWave] = ...
             TsuamiRunup(N, Nx, Ny, meshType);
         phys.inWave = inWave;
+    case 'ObliqueHydraulicJump'
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx, hin, uin] = ...
+            ObliqueHydraulicJump(N, meshType);
+        phys.hin = hin;
+        phys.uin = uin;
 end% switch
 
 % Assign the obtained variables to structure variable phys
@@ -63,6 +68,51 @@ phys.dx    = dx;
 phys.ftime = ftime;
 phys.bot   = botLevel; % bottom elevation
 phys.mesh  = mesh;
+end% func
+
+%% ObliqueHydraulicJump
+% For details please refer to Ghostine, Kesserwani and Mose (2009)
+function [mesh, h, qx, qy, botLevel, ftime, dt, dx, hin, uin] = ...
+            ObliqueHydraulicJump(N, meshType)
+
+switch meshType
+    case 'tri'
+        filename = 'ObliqueHydraulicJumpTri';
+        [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
+    case 'quad'
+        filename = 'ObliqueHydraulicJumpQuad';
+        [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
+    otherwise
+        error('Unknown mesh type "%s"', meshType);
+end% switch
+
+% Initialize mesh
+switch meshType
+    case 'tri'
+        shape = StdRegions.Triangle(N);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
+    case 'quad'
+        shape = StdRegions.Quad(N);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, BC);
+end
+
+% inflow condition
+hin    = 1.0;
+uin    = 8.57;
+
+% Bottom level
+botLevel = zeros(size(mesh.x));
+
+% Initialize variables
+h      = ones(size(mesh.x)).*hin;
+qx     = ones(size(mesh.x)).*uin;
+qy     = zeros(size(mesh.x));
+dt     = 1e-4;
+ftime  = 0.5;
+% element length scal
+w      = sum(shape.M)';
+area   = sum(repmat(w, 1, mesh.nElement).*mesh.J);
+dx     = min( area/pi/(N+1) );
 end% func
 
 %% Tsuami Runup on complex shoreline

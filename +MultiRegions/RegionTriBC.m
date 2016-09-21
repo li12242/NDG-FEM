@@ -40,9 +40,9 @@ classdef RegionTriBC < MultiRegions.RegionTri
             
             MultiRegions.BCType
             if ~isempty(BC)
-                obj.mapO = MultiRegions.getBoundMapList(obj, BC, OUTFLOW);
-                obj.mapI = MultiRegions.getBoundMapList(obj, BC, INFLOW);
-                obj.mapW = MultiRegions.getBoundMapList(obj, BC, WALL);
+                obj.mapO = MultiRegions.GetBoundMapList(obj, BC, OUTFLOW);
+                obj.mapI = MultiRegions.GetBoundMapList(obj, BC, INFLOW);
+                obj.mapW = MultiRegions.GetBoundMapList(obj, BC, WALL);
             end% if
         end% function
     end% methods
