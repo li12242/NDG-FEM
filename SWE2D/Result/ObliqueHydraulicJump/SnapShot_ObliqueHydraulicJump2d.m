@@ -1,7 +1,7 @@
 function SnapShot_ObliqueHydraulicJump2d
 
 %% Parameter
-T        = 0.49;
+T        = 20;
 meshtype = 'tri';
 filename = {'SWE2D.nc'};
 order    = 1;
