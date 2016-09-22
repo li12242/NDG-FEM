@@ -57,11 +57,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
             qxMf = qxM[sk]; qyMf = qyM[sk];
             qxPf = qxP[sk]; qyPf = qyP[sk];
 
-            qnM =  qxMf*nxf + qxMf*nyf;
-            qvM = -qxMf*nyf + qxMf*nxf;
+            qnM =  qxMf*nxf + qyMf*nyf;
+            qvM = -qxMf*nyf + qyMf*nxf;
 
             qnP =  qxPf*nxf + qyPf*nyf;
             qvP = -qxPf*nyf + qyPf*nxf;
+
+            // mexPrintf("t=%d,hM=%f,hP=%f,qnM=%f,qnP=%f,qvM=%f,qvP=%f\n",
+            // 	sk,hMf,hPf,qnM,qnP,qvM,qvP);
 
             SWE_HLL2d(hmin, gra, hMf, hPf, qnM, qnP, qvM, qvP, 
                 &Fhns, &Fqns, &Fqyns);
