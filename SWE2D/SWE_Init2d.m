@@ -105,10 +105,10 @@ botLevel = zeros(size(mesh.x));
 
 % Initialize variables
 h      = ones(size(mesh.x)).*hin;
-qx     = ones(size(mesh.x)).*uin;
+qx     = ones(size(mesh.x)).*uin.*hin;
 qy     = zeros(size(mesh.x));
-dt     = 1e-4;
-ftime  = 0.5;
+dt     = 1e-5;
+ftime  = 20;
 % element length scal
 w      = sum(shape.M)';
 area   = sum(repmat(w, 1, mesh.nElement).*mesh.J);
