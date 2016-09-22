@@ -66,7 +66,7 @@ hM  = h(nodeWallM);   hP  = hM;
 
 % slip condition
 qxM = qx(nodeWallM); qyM = qy(nodeWallM);
-qnM =  0; % outward normal flux
+qnM =  qxM.*nx + qyM.*ny; % outward normal flux
 qvM = -qxM.*ny + qyM.*nx; % outward tangential flux
 qxP = (-qnM).*nx - qvM.*ny;
 qyP = (-qnM).*ny + qvM.*nx;
@@ -79,14 +79,14 @@ Fqxs(mesh.mapW) = Fqx;
 Fqys(mesh.mapW) = Fqy;
 %% Outflow
 
-%% Inflow
+%% Inflow BC for different test case
 nodeInM = mesh.vmapM(mesh.mapI);
 if (strncmp(phys.casename, 'ObliqueHydraulicJump', 20))
     nx  = mesh.nx(mesh.mapI);
     ny  = mesh.ny(mesh.mapI);
-    hM  = h(nodeInM);   hP  = 2.*phys.hin - hM;
-    qxM = qx(nodeInM);  qxP = 2.*hP.*phys.uin - qxM;
-    qyM = qy(nodeInM);  qyP = 2.*qyM - qyM;
+    hM  = h(nodeInM);   hP  = phys.hin;
+    qxM = qx(nodeInM);  qxP = 2*phys.hin.*phys.uin-qxM;
+    qyM = qy(nodeInM);  qyP = 0;
     [Fh, ~, ~] = SWE_Mex_BC2d...
         (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
     % assignment to numerical flux

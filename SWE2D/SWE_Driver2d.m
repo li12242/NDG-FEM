@@ -41,8 +41,8 @@ phys.ny       = Ny + 1; % number of points
 phys.n        = N;
 phys.ManningCoeff = 0;
 phys.meshType = 'tri';
-phys.minDepth = 1e-2;
-phys.minht    = 1e-2;
+phys.minDepth = 1e-4;
+phys.minht    = 1e-4;
 phys.gra      = 9.81;
 % initialization
 phys = SWE_Init2d(phys);

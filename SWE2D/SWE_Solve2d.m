@@ -9,6 +9,7 @@ FinalTime = phys.ftime;
 minDepth  = phys.minDepth;
 contour   = 0;
 outStep   = 1;
+stride    = 20;  % output stride
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % ideal time step
 % Parameters
@@ -66,9 +67,9 @@ while(time<FinalTime)
         qx = Utilities.Limiter.Limiter2D.VB2d(mesh, qx);
         qy = Utilities.Limiter.Limiter2D.VB2d(mesh, qy);
 
-%         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  1);
-%         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 1);
-%         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 1);
+%         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  2);
+%         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 2);
+%         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 2);
 
 %         h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
 %         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
@@ -91,7 +92,7 @@ while(time<FinalTime)
     
     % Increment time
     time = time+dt;
-    if ~mod(contour, 10)
+    if ~mod(contour, stride)
         outfile.putVarPart('time', outStep, 1, time);
         outfile.putVarPart('h',  [0,0,outStep], [Np,Ne,1], h);
         outfile.putVarPart('qx', [0,0,outStep], [Np,Ne,1], qx);
