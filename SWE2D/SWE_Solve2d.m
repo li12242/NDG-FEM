@@ -6,7 +6,6 @@ qy        = phys.qy;   % water flux
 bot       = phys.bot;  % topography
 mesh      = phys.mesh;
 FinalTime = phys.ftime;
-minDepth  = phys.minDepth;
 contour   = 0;
 outStep   = 1;
 stride    = 20;  % output stride
@@ -80,13 +79,10 @@ while(time<FinalTime)
 %         figure('Position', [627     1   561   984]);
 %         subplot(2,1,1);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM), 'k.-');
-%         view([53.7, 52.4])
 %         subplot(2,1,2);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qx(mesh.vmapM), 'k.-');
-%         view([53.7, 52.4])
 %         subplot(3,1,3);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qy(mesh.vmapM), 'k.-');
-%         view([53.7, 52.4])
         
     end
     

@@ -107,12 +107,12 @@ botLevel = zeros(size(mesh.x));
 h      = ones(size(mesh.x)).*hin;
 qx     = ones(size(mesh.x)).*uin.*hin;
 qy     = zeros(size(mesh.x));
-dt     = 1e-5;
-ftime  = 20;
+dt     = 1e-3;
+ftime  = 10;
 % element length scal
 w      = sum(shape.M)';
 area   = sum(repmat(w, 1, mesh.nElement).*mesh.J);
-dx     = min( area/pi/(N+1) );
+dx     = min( sqrt(area/pi)/(N+1) );
 end% func
 
 %% Tsuami Runup on complex shoreline
