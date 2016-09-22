@@ -2,7 +2,6 @@ function [rhsH, rhsQx, rhsQy] = SWE_RHS2d(phys, mesh, h, qx, qy, time)
 % Calculation the RHS of SWE
 
 % parameters
-minDepth = phys.minDepth;
 shape    = mesh.Shape;
 bot      = phys.bot;
 
@@ -58,8 +57,7 @@ nodeWallM = mesh.vmapM(mesh.mapW);
 
 nx  = mesh.nx(mesh.mapW);
 ny  = mesh.ny(mesh.mapW);
-
-hM  = h(nodeWallM);   hP  = hM;
+hM  = h(nodeWallM); hP  = hM;
 % no-slip wall condition
 % qxM = qx(nodeWallM);  qxP = -qxM;
 % qyM = qy(nodeWallM);  qyP = -qyM;
@@ -84,9 +82,9 @@ nodeInM = mesh.vmapM(mesh.mapI);
 if (strncmp(phys.casename, 'ObliqueHydraulicJump', 20))
     nx  = mesh.nx(mesh.mapI);
     ny  = mesh.ny(mesh.mapI);
-    hM  = h(nodeInM);   hP  = phys.hin;
-    qxM = qx(nodeInM);  qxP = 2*phys.hin.*phys.uin-qxM;
-    qyM = qy(nodeInM);  qyP = 0;
+    hM  = h(nodeInM);   hP  = 2*phys.hin - hM;
+    qxM = qx(nodeInM);  qxP = 2*hP.*phys.uin-qxM;
+    qyM = qy(nodeInM);  qyP = qyM;
     [Fh, ~, ~] = SWE_Mex_BC2d...
         (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
     % assignment to numerical flux
