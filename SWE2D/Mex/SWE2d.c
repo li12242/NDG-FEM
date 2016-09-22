@@ -78,6 +78,8 @@ void SWE_HLL2d(real hmin, real gra, real hM, real hP,
 
         sM = (real)min(unM-sqrt(gra*hM), us-cs);
         sP = (real)max(unP+sqrt(gra*hP), us+cs);
+
+        // mexPrintf("us=%f,cs=%f,sM=%f,sP=%f\n",us,cs,sM,sP);
     }else if ( (hM>hmin) & (hP<=hmin) ){
         unM=qnM/hM;
         sM = (real)(unM -  sqrt(gra*hM) );
@@ -97,6 +99,8 @@ void SWE_HLL2d(real hmin, real gra, real hM, real hP,
         *Fhn  = (sP*EhM  - sM*EhP  + sM*sP*(hP  - hM ))/(sP - sM);
         *Fqxn = (sP*EqnM - sM*EqnP + sM*sP*(qnP - qnM))/(sP - sM);
         *Fqyn = (sP*EqvM - sM*EqvP + sM*sP*(qvP - qvM))/(sP - sM);
+
+        // mexPrintf("EhM=%f,EhP=%f,Fhs=%f\n",EhM,EhP,*Fhn);
     }else if( (sM<0)&(sP<=0) ){
         *Fhn = EhP; *Fqxn = EqnP; *Fqyn = EqvP;
     }else if( (sM==0) & (sP==0) ){
