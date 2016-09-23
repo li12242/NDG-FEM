@@ -79,9 +79,9 @@ Fqys(mesh.mapW) = Fqy;
 
 %% Inflow BC for different test case
 nodeInM = mesh.vmapM(mesh.mapI);
+nx  = mesh.nx(mesh.mapI);
+ny  = mesh.ny(mesh.mapI);
 if (strncmp(phys.casename, 'ObliqueHydraulicJump', 20))
-    nx  = mesh.nx(mesh.mapI);
-    ny  = mesh.ny(mesh.mapI);
     hM  = h(nodeInM);   hP  = 2*phys.hin - hM;
     qxM = qx(nodeInM);  qxP = 2*hP.*phys.uin-qxM;
     qyM = qy(nodeInM);  qyP = qyM;
@@ -94,21 +94,20 @@ if (strncmp(phys.casename, 'ObliqueHydraulicJump', 20))
 end% if
 
 if (strncmp(phys.casename, 'TsuamiRunup', 11))
+    hM  = h(nodeInM);
     if (time<phys.inWave(1,end))
-        nx  = mesh.nx(mesh.mapI);
-        ny  = mesh.ny(mesh.mapI);
         % input water height
         hin = interp1(phys.inWave(1,:),phys.inWave(2,:),time,'linear');
-        hM  = h(nodeInM);   hP  = hin - bot(nodeInM);
-        qxM = qx(nodeInM);  qxP = qxM;
-        qyM = qy(nodeInM);  qyP = 0;
-
-        [Fh, ~, ~] = SWE_Mex_BC2d...
-            (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
-        % assignment to numerical flux
-        Fhs(mesh.mapI)  = Fh;
+        hP  = hin - bot(nodeInM);
+    else
+        hP  = hM;
     end% if
-    return;
+    qxM = qx(nodeInM);  qxP = qxM;
+    qyM = qy(nodeInM);  qyP = qyM; 
+    [Fh, ~, ~] = SWE_Mex_BC2d...
+        (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
+    % assignment to numerical flux
+    Fhs(mesh.mapI)  = Fh;
 end% if
 
 end% func
