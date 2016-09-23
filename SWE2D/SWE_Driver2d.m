@@ -39,11 +39,19 @@ phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.ManningCoeff = 0;
 phys.meshType = 'quad';
-phys.minDepth = 1e-4;
-phys.minht    = 1e-4;
 phys.gra      = 9.81;
+
+if (strncmp(phys.casename, 'TsuamiRunup', 11)) % spicific coefficient
+    phys.ManningCoeff = 0.01;
+    phys.minDepth = 5e-4;
+    phys.minht    = 5e-4;
+else % coefficient for other test case
+    phys.ManningCoeff = 0;
+    phys.minDepth = 1e-4;
+    phys.minht    = 1e-4;
+end% if
+
 % initialization
 phys = SWE_Init2d(phys);
 
