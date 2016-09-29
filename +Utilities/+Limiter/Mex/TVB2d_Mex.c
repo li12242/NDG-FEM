@@ -33,7 +33,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	real *Mes  = mxGetPr(prhs[6]);
 	real *x    = mxGetPr(prhs[7]);
 	real *y    = mxGetPr(prhs[8]);
-	real *factor = mxGetPr(prhs[9]);
+	real factor = mxGetScalar(prhs[9]);
 
 	/* get dimensions */
 	size_t Np, K;
@@ -74,9 +74,13 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	// calculate volume mean value
 	for(k=0;k<K;k++){
 		real *fld[3], cmean[3];
-		fld[0] = h+k*Np; fld[1] = x+k*Np; fld[2] = y+k*Np;
+		fld[0] = h+k*Np; 
+		fld[1] = x+k*Np; 
+		fld[2] = y+k*Np;
 		cellMean(Np, 3, fld, w, J+k*Np, cmean, area+k);
-		hmean[k] = cmean[0]; xmean[k] = cmean[1]; ymean[k] = cmean[2];
+		hmean[k] = cmean[0]; 
+		xmean[k] = cmean[1]; 
+		ymean[k] = cmean[2];
 	}
 
 	real *neigh_mean = (real*) malloc(sizeof(real)*Nfaces );
@@ -95,8 +99,11 @@ void mexFunction (int nlhs, mxArray *plhs[],
 		real yc = ymean[k];
 		real hc = hmean[k];
 
+		// get the adjacent cell averages
 		real *fv[3], face_len;
-		fv[0] = h+k*Np; fv[1] = x+k*Np; fv[2] = y+k*Np;
+		fv[0] = h+k*Np; 
+		fv[1] = x+k*Np; 
+		fv[2] = y+k*Np;
 		for(f=0;f<Nfaces;f++){
 			int e1 = (int) EToE[k+f*K] - 1;
 			if(e1==k){
@@ -112,6 +119,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 			}
 		}
 
+		// TVB limited vertex value
 		for(f1=0;f1<Nfaces;f1++){
 			int v  = k*Np + (int) (Fmask[f1]-1);
 			int f2 = (int) (f1+Nfaces-1)%Nfaces;
@@ -124,9 +132,9 @@ void mexFunction (int nlhs, mxArray *plhs[],
 			matrixSolver2(a, df, alpha);
 
 			real dhv = alpha[0]*(neigh_mean[f1]-hc)+alpha[1]*(neigh_mean[f2]-hc);
-			real dx2 = df[0]*df[0] + df[1]*df[1];
+			real dx2 = sqrt(df[0]*df[0] + df[1]*df[1]);
 
-			delta[f1] = TVB_minmod(h[v]-hc, dhv*1.5, dx2, *factor);
+			delta[f1] = TVB_minmod(h[v]-hc, dhv*1.5, dx2, factor);
 			// mexPrintf("k=%d, v=%d, dh=%f, delta_h=%f, th=%f, delta=%f\n",
 					// k, f1, h[v]-hc, dhv*v, dx2*factor[0], delta[f1]);
 		}

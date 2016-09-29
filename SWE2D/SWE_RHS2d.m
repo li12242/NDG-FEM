@@ -76,11 +76,37 @@ Fhs(mesh.mapW)  = Fh;
 Fqxs(mesh.mapW) = Fqx;
 Fqys(mesh.mapW) = Fqy;
 %% Outflow
+nodeInM = mesh.vmapM(mesh.mapO);
+nx  = mesh.nx(mesh.mapI);
+ny  = mesh.ny(mesh.mapI);
+if (strncmp(phys.casename, 'DamBreakWet', 11))
+    hM  = h(nodeInM);   hP  = 2*phys.hout - hM;
+    qxM = qx(nodeInM);  qxP = qxM;
+    qyM = qy(nodeInM);  qyP = qyM;
+    [Fh, ~, ~] = SWE_Mex_BC2d...
+        (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
+    % assignment to numerical flux
+    Fhs(mesh.mapI)  = Fh;
+    Fqxs(mesh.mapW) = Fqx;
+    Fqys(mesh.mapW) = Fqy;
+end% if
 
 %% Inflow BC for different test case
 nodeInM = mesh.vmapM(mesh.mapI);
 nx  = mesh.nx(mesh.mapI);
 ny  = mesh.ny(mesh.mapI);
+if (strncmp(phys.casename, 'DamBreakWet', 11))
+    hM  = h(nodeInM);   hP  = 2*phys.hin - hM;
+    qxM = qx(nodeInM);  qxP = qxM;
+    qyM = qy(nodeInM);  qyP = qyM;
+    [Fh, ~, ~] = SWE_Mex_BC2d...
+        (hmin, gra, hM, hP, qxM, qxP, qyM, qyP, nx, ny);
+    % assignment to numerical flux
+    Fhs(mesh.mapI)  = Fh;
+    Fqxs(mesh.mapW) = Fqx;
+    Fqys(mesh.mapW) = Fqy;
+end% if
+
 if (strncmp(phys.casename, 'ObliqueHydraulicJump', 20))
     hM  = h(nodeInM);   hP  = 2*phys.hin - hM;
     qxM = qx(nodeInM);  qxP = 2*hP.*phys.uin-qxM;

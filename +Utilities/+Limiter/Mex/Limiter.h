@@ -8,6 +8,7 @@
 #define min(a,b)  ( (a<b)?a:b )
 
 #define real double
+#define EPSILON 1.0e-12
 
 
 void minmod(int n, real *a, real *m);
