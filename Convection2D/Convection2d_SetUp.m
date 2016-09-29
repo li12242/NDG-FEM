@@ -9,8 +9,8 @@ function var = Convection2d_SetUp(meshtype, N, M)
 %   var - scalar variable
 
 % name of different test case
-% casename = 'GaussMount';
-casename = 'SquareMount';
+casename = 'GaussMount';
+% casename = 'SquareMount';
 % casename = 'SolidBody';
 
 phys.casename = casename;

@@ -8,7 +8,7 @@ mesh      = phys.mesh;
 FinalTime = phys.ftime;
 contour   = 0;
 outStep   = 1;
-stride    = 20;  % output stride
+stride    = 1;  % output stride
 dx        = phys.dx;   % mesh length
 dtm       = phys.dt;   % ideal time step
 % Parameters
@@ -62,23 +62,32 @@ while(time<FinalTime)
 %         zeta = h+bot;
 %         zeta = Utilities.Limiter.Limiter2D.VB2d(mesh, zeta);
 %         h    = zeta-bot;
-        h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.VB2d(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.VB2d(mesh, qy);
+%         h  = Utilities.Limiter.Limiter2D.VB2d(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.VB2d(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.VB2d(mesh, qy);
+        
+%         h  = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, h,  0.);
+%         qx = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, qx, 0.);
+%         qy = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, qy, 0.);
 
 %         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  2);
 %         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 2);
 %         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 2);
 
-%         h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
-%         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
-%         qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
+        h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
+        qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
+        qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
+        
+%         h  = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qy);
         %% Positive-preserving limiter
         [h, qx, qy] = SWE_PositivePreserving2d(phys, mesh, h, qx, qy);
         
 %         figure('Position', [627     1   561   984]);
 %         subplot(2,1,1);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), h(mesh.vmapM), 'k.-');
+%         view([60, 33])
 %         subplot(2,1,2);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qx(mesh.vmapM), 'k.-');
 %         subplot(3,1,3);

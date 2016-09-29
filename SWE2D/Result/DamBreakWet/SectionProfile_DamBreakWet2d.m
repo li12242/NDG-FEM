@@ -1,9 +1,10 @@
-function SectionProfileDamBreakWet2d
+function SectionProfile_DamBreakWet2d
 % Compare the results with exact solution on section x=0;
 
 %% Parameters
-rmin  = 0; 
-rmax  = 1000;
+EPS   = 1e-12;
+rmin  = EPS; 
+rmax  = 1000-EPS;
 ne    = 1000;   % number of exact solution
 np    = 60;     % number of interpolated solutions
 T     = 20;
@@ -24,27 +25,27 @@ for i = 1:numel(time)
 end
 
 %% Construct postprocess class
-meshtype = 'quad';
-filename = {'SWE2D.nc'};
+meshtype = 'tri';
+filename = {'SWE2D_400.nc'};
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
-meshtype = 'quad';
-filename = {'SWE2D.nc'};
+meshtype = 'tri';
+filename = {'SWE2D_400.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 markerSize  = 12;
 for ist = 1:numel(time)
     varname = 'h';
     extH    = DamBreakWet2d_H(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
-    numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
+    numH    = Interp2D(PostproQuad, numSol, xp, yp, fileID);
     % draw water height
     figure('Color', 'w');
     plot(xe, extH, 'k--', 'LineWidth', 1.5); hold on
     plot(xp, numH, 'r+', 'MarkerSize', markerSize);
     numSol  = PostproTri.GetVarData(varname, time(ist), fileID);
-    numH    = PostproTri.Interp2D(numSol, xp, yp, fileID);
+    numH    = Interp2D(PostproQuad, numSol, xp, yp, fileID);
     plot(xp, numH, 'bx', 'MarkerSize', markerSize);
     ylabel('ˮλ (m)','FontSize', 16);
     xlabel('y (m)','FontSize', 16);
@@ -72,3 +73,12 @@ for ist = 1:numel(time)
 %     set(t, 'box', 'off', 'FontSize', 16);
     
 end% for
+
+end
+
+function hp = Interp2D(PostproQuad, numSol, xp, yp, fileID)
+    x = PostproQuad.NcFile(fileID).GetVarData('x');
+    y = PostproQuad.NcFile(fileID).GetVarData('y');
+    interp = TriScatteredInterp(x(:), y(:), numSol(:));
+    hp = interp(xp, yp);
+end% func
