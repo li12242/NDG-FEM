@@ -5,7 +5,7 @@ function NormErrGuassMount2d
 %% parameters
 meshtype = 'quad';
 N        = 1;
-elenum   = [50, 100];
+elenum   = [50];
 filename = cell(numel(elenum), 1);
 for i =1:numel(elenum)
     filename{i} = ['Convection2D_', ...

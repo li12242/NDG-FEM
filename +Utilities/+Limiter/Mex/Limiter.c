@@ -8,6 +8,14 @@
  */
 #include "Limiter.h"
 
+/* private function */
+void HWENO_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
+    real *dhdx, real *dhdy, real r);
+void VA_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
+    real *dhdx, real *dhdy);
+void JK_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
+    real *dhdx, real *dhdy);
+
 /**
  * @brief Calculate the mean gradient through n sub-domian
  * @param [int] Nsub number of subdomain
@@ -27,15 +35,14 @@
 void meanGradient(int Nsub, real *xv, real *yv, real *hv,
     real xc, real yc, real hc, real *dhdx, real *dhdy){
 
-    real eps = 1.0e-12;
     real *gra_x, *gra_y, *gra_det;
     gra_x = (real *) calloc(Nsub, sizeof(real));
     gra_y = (real *) calloc(Nsub, sizeof(real));
     gra_det = (real *) calloc(Nsub, sizeof(real));
 
     real a[4],x[2],f[2];
-    real frac = Nsub*eps;
-    int i,j;
+    // real frac = Nsub*eps;
+    int i;
     for(i=0;i<Nsub;i++){
         /* vertex index */
         int l1 = i;
@@ -52,34 +59,78 @@ void meanGradient(int Nsub, real *xv, real *yv, real *hv,
         gra_det[i] = x[0]*x[0] + x[1]*x[1];
         // mexPrintf("Nfaces=%d, dhdx=%f, dhdy=%f, det=%f\n",
         //     i, gra_x[i], gra_y[i], gra_det[i]);
-
-        // frac += pow(gra_det[i], (Nsub-1.0));
     }
-    // mexPrintf("frac=%f\n", frac);
 
-    *dhdx = 0.0; *dhdy = 0.0;
-    for(i=0;i<Nsub;i++){
-    	// real w = pow(sqrt(gra_det[i])+eps, -2.0);
-    	// frac += w;
-
-        real w = 1.0;
-        for(j=0;j<Nsub;j++){
-            if(j==i) {continue;}
-            w *= gra_det[j];
-        }
-        frac += w;
-        w += eps;
-        // mexPrintf("Nfaces=%d, w=%f\n", i, w);
-        *dhdx += w*gra_x[i];
-        *dhdy += w*gra_y[i];
-    }
-    *dhdx /= frac;
-    *dhdy /= frac;
+    VA_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
+    // HWENO_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy, 2.0);
+    // JK_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
 
     free(gra_x);
     free(gra_y);
     free(gra_det);
     return;
+}
+
+/* weights of Hermite WENO limiter */
+void HWENO_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
+    real *dhdx, real *dhdy, real r){
+    int i;
+    real frac=0;
+    for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
+        real w = pow(sqrt(gra_det[i])+EPSILON, -r);
+        frac += w;
+        *dhdx += w*gra_x[i];
+        *dhdy += w*gra_y[i];
+    }
+    *dhdx /= frac;
+    *dhdy /= frac;
+}
+
+/* the weights of van Albada limiter */
+void VA_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
+    real *dhdx, real *dhdy){
+    real frac=Nsub*EPSILON;;
+    int i,j;
+    
+    for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
+
+        real w = 1.0;
+        for(j=0;j<Nsub;j++){
+            if(i==j) 
+                continue;
+            w = w*gra_det[j];
+        }
+        frac += w;
+        w += EPSILON;
+        *dhdx += w*gra_x[i];
+        *dhdy += w*gra_y[i];
+    }
+    *dhdx /= frac;
+    *dhdy /= frac;
+}
+
+/* the modified weights in Jawahar and Kamath (2000) */
+void JK_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
+    real *dhdx, real *dhdy){
+    real frac=Nsub*EPSILON;
+    int i,j;
+    for(i=0;i<Nsub;i++){
+        frac += pow(gra_det[i], (Nsub-1.0));
+    }
+
+    for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
+        real w = 1.0;
+        for(j=0;j<Nsub;j++){
+            if(i==j) 
+                continue;
+            w = w*gra_det[j];
+        }
+        w += EPSILON;
+        *dhdx += w*gra_x[i];
+        *dhdy += w*gra_y[i];
+    }
+    *dhdx /= frac;
+    *dhdy /= frac;
 }
 
 /**

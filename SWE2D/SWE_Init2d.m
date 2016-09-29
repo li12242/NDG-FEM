@@ -34,8 +34,10 @@ switch casename
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
             DamBreakDry(N, Nx, Ny, meshType);
     case 'DamBreakWet'
-        [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
+        [mesh, h, qx, qy, botLevel, ftime, dt, dx, hin, hout] = ...
             DamBreakWet(N, Nx, Ny, meshType);
+        phys.hin = hin;
+        phys.hout = hout;
     case 'ParabolicBowl'
         [mesh, h, qx, qy, botLevel, ftime, dt, dx] = ...
             ParabolicBowl(phys, N, Nx, Ny, meshType);
@@ -128,14 +130,14 @@ smax = 3.402;
 BC = zeros((Nx-1)*2+(Ny-1)*2, 3);
 % solid wall - the up, bottom, right side.
 BC(1:((Nx-1)*2+(Ny-1)), 1) = 1;
-BC(1:(Nx-1), 2) =  1:(Nx-1);
+BC(1:(Nx-1), 2) =  1:(Nx-1);    % bottom
 BC(1:(Nx-1), 3) = (1:(Nx-1))+1;
-BC(Nx:(Nx-1)+(Nx-1), 2) = (1:(Nx-1))+Nx*(Ny-1);
+BC(Nx:(Nx-1)+(Nx-1), 2) = (1:(Nx-1))+Nx*(Ny-1);   % up
 BC(Nx:(Nx-1)+(Nx-1), 3) = (1:(Nx-1))+Nx*(Ny-1)+1;
-BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 2) = linspace(Nx,Nx*(Ny-1),Ny-1);
+BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 2) = linspace(Nx,Nx*(Ny-1),Ny-1); % right
 BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 3) = linspace(Nx*2,Nx*Ny,  Ny-1);
 
-% inflow boundary
+% inflow boundary - the left side
 BC(((Nx-1)*2+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 1) = 2;
 BC((2*(Nx-1)+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 2) = linspace(1,Nx*(Ny-2)+1,Ny-1);
 BC((2*(Nx-1)+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 3) = linspace(Nx+1,Nx*(Ny-1)+1,Ny-1);
@@ -439,7 +441,7 @@ dx        = min((rmax - rmin)./Nx/(N+1), width./Ny/(N+1));
 
 end% func
 
-function [mesh, h, qx, qy, bot, ftime, dt, dx] ...
+function [mesh, h, qx, qy, bot, ftime, dt, dx, hin, hout] ...
     = DamBreakWet(N, Nx, Ny, meshType)
 % Initialize the mesh grid.
 % The grid range is [-1, 1] and simulation ends at ftime (seconds).
@@ -450,17 +452,29 @@ rmax  = 1000;
 width = 200;
 ftime = 20;
 damPosition = 500;
+
+% BC list
+BC = zeros((Ny-1)*2, 3);
+% inflow
+BC(1:(Ny-1), 1) = 2;
+BC(1:(Ny-1), 2) = linspace(1,Nx*(Ny-2)+1,Ny-1);
+BC(1:(Ny-1), 3) = linspace(Nx+1,Nx*(Ny-1)+1,Ny-1);
+% outflow
+BC(Ny:(Ny-1)*2, 1) = 3;
+BC(Ny:(Ny-1)*2, 2) = linspace(Nx,Nx*(Ny-1),Ny-1);
+BC(Ny:(Ny-1)*2, 3) = linspace(Nx*2,Nx*Ny,  Ny-1);
+
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
         [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2,false);
-        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
     case 'quad'
         shape = StdRegions.Quad(N);
         [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2);
-        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, []);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, BC);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
@@ -471,10 +485,14 @@ qx  = zeros(size(mesh.x));
 qy  = zeros(size(mesh.x));
 bot = zeros(size(mesh.x));
 
+% Boundary condition
+hin  = 10;
+hout = 2;
+
 xc        = mean(mesh.x); 
 ind       = xc < damPosition;
 h(:, ind) = 10;
-dt        = 1e-1;
+dt        = 1e-4;
 dx        = min((rmax - rmin)./Nx/(N+1), width./Ny/(N+1));
 
 end% func
