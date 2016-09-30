@@ -31,7 +31,7 @@ casename = 'DamBreakWet';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 100;
+Nx = 300;
 Ny = 10;
 
 % # Name of test case
@@ -39,7 +39,7 @@ phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'tri';
+phys.meshType = 'quad';
 phys.gra      = 9.81;
 
 if (strncmp(phys.casename, 'TsuamiRunup', 11)) % spicific coefficient
