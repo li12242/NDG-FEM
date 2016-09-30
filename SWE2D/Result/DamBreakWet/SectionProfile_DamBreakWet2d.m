@@ -25,14 +25,14 @@ for i = 1:numel(time)
 end
 
 %% Construct postprocess class
-meshtype = 'tri';
-filename = {'SWE2D_400.nc'};
+meshtype = 'quad';
+filename = {'SWE2D_300.nc'};
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
-meshtype = 'tri';
-filename = {'SWE2D_400.nc'};
+meshtype = 'quad';
+filename = {'SWE2D_300.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 markerSize  = 12;
 for ist = 1:numel(time)

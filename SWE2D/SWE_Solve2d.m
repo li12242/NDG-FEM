@@ -69,14 +69,19 @@ while(time<FinalTime)
 %         h  = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, h,  0.);
 %         qx = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, qx, 0.);
 %         qy = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, qy, 0.);
+        
+        h  = Utilities.Limiter.Limiter2D.TVB_quad2d(mesh, h,  2);
+        qx = Utilities.Limiter.Limiter2D.TVB_quad2d(mesh, qx, 2);
+        qy = Utilities.Limiter.Limiter2D.TVB_quad2d(mesh, qy, 2);
+
 
 %         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  2);
 %         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 2);
 %         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 2);
 
-        h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
+%         h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qy);
         
 %         h  = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, h);
 %         qx = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, qx);
