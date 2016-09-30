@@ -82,6 +82,7 @@ if conf_Limit2d
         'KXRCF_detector2d_Mex.c',...
         'TVB2d_Mex.c',...
         'TVB_tri2d_Mex.c', ....
+        'TVB_quad2d_Mex.c',...
         'VB2d_Mex.c',...
         'TVB_detector2d_Mex.c'};
     libsrc = {'Limiter.c'};
@@ -131,7 +132,7 @@ cd(fullPath);
 for i = 1:numel(srcfile)
     fprintf('installing %s to %s...\n', src{i}, installpath);
     file = [srcfile(i), libfile{:}];
-    mex('-v', 'CFLAGS="$CFLAGS -Wall"','-O', file{:}, '-outdir', dirPath);
+    mex('CFLAGS="$CFLAGS -Wall"','-O', file{:}, '-outdir', dirPath);
 end% for
 
 cd(pwdPath);
