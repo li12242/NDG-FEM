@@ -153,7 +153,7 @@ void mexFunction (int nlhs, mxArray *plhs[],
 		double qpx = 0.0;
         double qpy = 0.0;
 
-        meanGradient(Nfaces, xf, yf, delta, xc, yc, hc, &qpx, &qpy);
+        VA_meanGradient(Nfaces, xf, yf, delta, xc, yc, hc, &qpx, &qpy);
         getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, qpx, qpy, hlim+k*Np);
 
 	}

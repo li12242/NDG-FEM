@@ -22,8 +22,14 @@ void cellMean(int Np, int Nfields, real **h,
 void getLocalVar(int Np, real hmean, real xc, real yc,
  		real *x, real *y,
  		real phpx, real phpy, real *h);
-void meanGradient(int Nsub, real *xv, real *yv, real *hv,
-		real xc, real yc, real hc, real *dhdx, real *dhdy);
+// void meanGradient(int Nsub, real *xv, real *yv, real *hv,
+// 		real xc, real yc, real hc, real *dhdx, real *dhdy);
+void VA_meanGradient(int Nsub, real *xv, real *yv, real *hv,
+    real xc, real yc, real hc, real *dhdx, real *dhdy);
+void JK_meanGradient(int Nsub, real *xv, real *yv, real *hv,
+    real xc, real yc, real hc, real *dhdx, real *dhdy);
+void HWENO_meanGradient(int Nsub, real *xv, real *yv, real *hv,
+    real xc, real yc, real hc, real *dhdx, real *dhdy);
 /* MatrixUtilities.c */
 void matrixSolver2(real *a, real *f, real *x);
 
