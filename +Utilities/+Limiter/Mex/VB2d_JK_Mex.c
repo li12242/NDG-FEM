@@ -123,7 +123,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			}
 		}
 
-		meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
+		JK_meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
 		// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
 		getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
 

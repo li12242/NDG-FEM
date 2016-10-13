@@ -8,14 +8,14 @@
  *		shape = mesh.Shape;
  * 		ind  = KXRCF_detector2d_Mex(h, u, v, mesh.J, mesh.sJ, 
  *							   shape.M, shape.Fmask, mesh.vmapM, mesh.vmapP, 
- *							   shape.Mes, mesh.x, mesh.y, mesh.nx, mesh.ny, distol)
+ *							   shape.Mes, mesh.nx, mesh.ny, distol)
  */
 
  void mexFunction (int nlhs, mxArray *plhs[], 
 	int nrhs, const mxArray *prhs[]){
 
  	/* check input & output */
-	if (nrhs != 15)
+	if (nrhs != 13)
 		mexErrMsgTxt("Wrong number of input arguments.");
 	if (nlhs != 1)
 		mexErrMsgTxt("Wrong number of output arguments");
@@ -31,11 +31,9 @@
 	real *vmapM= mxGetPr(prhs[7]);
 	real *vmapP= mxGetPr(prhs[8]);
 	real *Mes  = mxGetPr(prhs[9]);
-	real *x    = mxGetPr(prhs[10]);
-	real *y    = mxGetPr(prhs[11]);
-	real *nx   = mxGetPr(prhs[12]);
-	real *ny   = mxGetPr(prhs[13]);
-	real *distol   = mxGetPr(prhs[14]);
+	real *nx   = mxGetPr(prhs[10]);
+	real *ny   = mxGetPr(prhs[11]);
+	real *distol   = mxGetPr(prhs[12]);
 
 	/* get dimensions */
 	size_t Np, K;
@@ -69,7 +67,7 @@
 		}
 	}
 	// loop for all elements
-	int k,f1,f2,e2,p;
+	int k,f1,p;
 	for(k=0;k<K;k++){
 		real indicator = 0.0;
 		real integral  = 0.0;

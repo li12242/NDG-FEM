@@ -10,7 +10,8 @@ yp = [1.196, 1.696, 2.196];
 
 % result
 meshtype = 'quad';
-filename = {'SWE2D.nc'};
+filepath = '/Volumes/Install OS /';
+filename = {[filepath,'SWE2D_TsuamiRunup_200_3e3.nc']};
 order    = 1;
 Postpro  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;

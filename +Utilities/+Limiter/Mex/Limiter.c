@@ -8,13 +8,33 @@
  */
 #include "Limiter.h"
 
+typedef void (* weight_fun_t)(int, real *, real *, real *, real *, real *);
+
 /* private function */
 void HWENO_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
-    real *dhdx, real *dhdy, real r);
+    real *dhdx, real *dhdy);
 void VA_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
     real *dhdx, real *dhdy);
 void JK_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
     real *dhdx, real *dhdy);
+void meanGradient(int Nsub, real *xv, real *yv, real *hv,
+        real xc, real yc, real hc, real *dhdx, real *dhdy, weight_fun_t);
+
+// interface
+void VA_meanGradient(int Nsub, real *xv, real *yv, real *hv,
+    real xc, real yc, real hc, real *dhdx, real *dhdy){
+    meanGradient(Nsub, xv, yv, hv, xc, yc, hc, dhdx, dhdy, VA_Weighted);
+}
+
+void JK_meanGradient(int Nsub, real *xv, real *yv, real *hv,
+    real xc, real yc, real hc, real *dhdx, real *dhdy){
+    meanGradient(Nsub, xv, yv, hv, xc, yc, hc, dhdx, dhdy, JK_Weighted);
+}
+
+void HWENO_meanGradient(int Nsub, real *xv, real *yv, real *hv,
+    real xc, real yc, real hc, real *dhdx, real *dhdy){
+    meanGradient(Nsub, xv, yv, hv, xc, yc, hc, dhdx, dhdy, HWENO_Weighted);
+}
 
 /**
  * @brief Calculate the mean gradient through n sub-domian
@@ -33,7 +53,7 @@ void JK_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
  * dhdx | real* | averaged gradient for y coordinate
  */
 void meanGradient(int Nsub, real *xv, real *yv, real *hv,
-    real xc, real yc, real hc, real *dhdx, real *dhdy){
+    real xc, real yc, real hc, real *dhdx, real *dhdy, weight_fun_t weight_fun){
 
     real *gra_x, *gra_y, *gra_det;
     gra_x = (real *) calloc(Nsub, sizeof(real));
@@ -61,8 +81,8 @@ void meanGradient(int Nsub, real *xv, real *yv, real *hv,
         //     i, gra_x[i], gra_y[i], gra_det[i]);
     }
 
-    VA_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
-    // HWENO_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy, 2.0);
+    weight_fun(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
+    // HWENO_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
     // JK_Weighted(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
 
     free(gra_x);
@@ -73,9 +93,10 @@ void meanGradient(int Nsub, real *xv, real *yv, real *hv,
 
 /* weights of Hermite WENO limiter */
 void HWENO_Weighted(int Nsub, real *gra_x, real *gra_y, real *gra_det,
-    real *dhdx, real *dhdy, real r){
+    real *dhdx, real *dhdy){
     int i;
-    real frac=0;
+    real frac=0.0;
+    real r   =2.0; // a positive number
     for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
         real w = pow(sqrt(gra_det[i])+EPSILON, -r);
         frac += w;
