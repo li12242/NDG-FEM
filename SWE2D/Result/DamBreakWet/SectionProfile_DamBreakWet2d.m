@@ -17,21 +17,22 @@ yp    = zeros(np, 1);
 xp    = linspace(rmin, rmax, np)';
 
 %% spicific time
-timeFrac = (1/4:1/4:1);
-time     = timeFrac*T;
+% timeFrac = (1/4:1/4:1);
+% time     = timeFrac*T;
+time     = [4, 12, 20];
 timeStr  = cell(numel(time), 1);
 for i = 1:numel(time)
     timeStr{i} = ['t= ',num2str(time(i)),' s',];
 end
 
 %% Construct postprocess class
-meshtype = 'quad';
+meshtype = 'tri';
 filename = {'SWE2D_300.nc'};
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
-meshtype = 'quad';
+meshtype = 'tri';
 filename = {'SWE2D_300.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 markerSize  = 12;

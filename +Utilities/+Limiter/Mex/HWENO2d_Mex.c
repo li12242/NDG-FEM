@@ -7,14 +7,14 @@
  * Usages:
  *		shape = mesh.Shape;
  * 		hlim  = HWENO2d_Mex(h, mesh.J, mesh.sJ, shape.M, shape.Fmask, mesh.EToE,
- *							   mesh.Mes, mesh.x, mesh.y, eps_o, eps_w, gam0)
+ *							   mesh.Mes, mesh.x, mesh.y, eps_w, gam0)
  */
 
  void mexFunction (int nlhs, mxArray *plhs[],
 	int nrhs, const mxArray *prhs[]){
 
  	/* check input & output */
-	if (nrhs != 12)
+	if (nrhs != 11)
 		mexErrMsgTxt("Wrong number of input arguments.");
 	if (nlhs != 1)
 		mexErrMsgTxt("Wrong number of output arguments");
@@ -29,9 +29,8 @@
 	real *Mes  = mxGetPr(prhs[6]);
 	real *x    = mxGetPr(prhs[7]);
 	real *y    = mxGetPr(prhs[8]);
-	real *eps_o    = mxGetPr(prhs[9]);
-	real *eps_w    = mxGetPr(prhs[10]);
-	real *gam0     = mxGetPr(prhs[11]);
+	real *eps_w    = mxGetPr(prhs[9]);
+	real *gam0     = mxGetPr(prhs[10]);
 
 	/* get dimensions */
 	size_t Np, K;
@@ -78,7 +77,7 @@
 	real *polys_o = (real*) malloc(sizeof(real)*(2*Nfaces+1));
 	real *polys_w = (real*) malloc(sizeof(real)*(2*Nfaces+1));
 
-	int k,sk,sp,f1,f2,e1,e2,fnp;
+	int k,f1,f2,e1,e2;
 	/* cell averages */
 	for(k=0;k<K;k++){
         real *fld[3], cmean[3];
