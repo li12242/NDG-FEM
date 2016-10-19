@@ -1,7 +1,7 @@
 %% MeshGenTriangle2D
 % Generate uniform mesh with triangle elements
 % 
-function [VX,VY,EToV] = MeshGenTriangle2D(nx, ny, xmin, xmax, ymin, ymax, flag)
+function [EToV,VX,VY] = MeshGenTriangle2D(nx, ny, xmin, xmax, ymin, ymax, flag)
 % DESCRIPTION
 %   domain [start_coor, end_coor]x[start_coor, end_coor];
 %   ne - No. of element on each edge

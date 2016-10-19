@@ -1,4 +1,4 @@
-function ParaBowl2d_SectionProfile
+function SectionProfile_ParaBowl2d
 % Compare the results with exact solution on section x=0;
 
 %% Parameters
@@ -6,11 +6,11 @@ g     = 9.81;
 alpha = 1.6*1e-7;
 w     = sqrt(8*g*alpha);
 T     = 2*pi/w;
-rmin  = -4000; 
-rmax  =  4000;
+delta = 0.5;
+rmin  = -4000+delta; 
+rmax  =  4000-delta;
 ne    = 1000;   % number of exact solution
 np    = 100;    % number of interpolated solutions
-
 
 %% Get points coordinate
 xe    = zeros(ne, 1);
@@ -32,13 +32,13 @@ for i = 1:numel(time)
 end
 
 %% Construct postprocess class
-meshtype = 'tri';
+meshtype = 'quad';
 % elenum   = [80, 100, 120, 160, 200];
 % filename = cell(numel(elenum), 1);
 % for i =1:numel(elenum)
 %     filename{i} = ['SWE2D_', meshtype, '_', num2str(elenum(i)), '.nc'];
 % end
-filename{1} = 'SWE2D.nc';
+filename{1} = 'SWE2D_60.nc';
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
@@ -83,7 +83,7 @@ for ist = 1:numel(time)
     plot(ye, extH, 'k--'); hold on
     plot(yp, numH, 'r+');
     ylim([-1.25, 1.25]);
-    ylabel('$\rm{Discharge} \, q_x \, (m^2/s)$', 'Interpreter', 'Latex');
+    ylabel('$\rm{Discharge} \, q_y \, (m^2/s)$', 'Interpreter', 'Latex');
     xlabel('y (m)', 'Interpreter', 'Latex');
     title(timeStr{ist}, 'Interpreter', 'Latex');
     t = legend('Exact', 'RKDG');
