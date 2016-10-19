@@ -3,9 +3,10 @@
 % The domain is of [xmin, xmax]x[ymin, ymax], 
 
 function [EToV, VX, VY] = MeshGenRectangle2D(nx, ny, xmin, xmax, ymin, ymax)
+
 % Input:
-%   nx     - No of vertice along x
-%   ny     - No of vertice along y
+%   nx     - No of points along x
+%   ny     - No of points along y
 %   xmin   - start position of x
 %   xmax   - end position of x
 %   ymin   - start position of y

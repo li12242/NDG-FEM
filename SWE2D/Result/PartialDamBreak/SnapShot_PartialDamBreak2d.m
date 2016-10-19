@@ -3,7 +3,7 @@ function SnapShot_PartialDamBreak2d
 %% Parameter
 T        = 10;
 meshtype = 'quad';
-filename = {'SWE2D.nc'};
+filename = {'SWE2D_60.nc'};
 order    = 1;
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
