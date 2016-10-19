@@ -110,6 +110,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		real hc = hmean[k];
 		real xc = xmean[k];
 		real yc = ymean[k];
+		int flag = 0;
 		for(f=0;f<Nfaces;f++){
 			i = k*Np + (int) Fmask[f]-1; // node index
 			v = (int) EToV[k + f*K]-1; // vertex index
@@ -118,32 +119,20 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			hv[f] = h[i];
 			if(hv[f]>hvmax[v]){
 				hv[f]=hvmax[v];
+				flag = 1;
 			}else if(hv[f]<hvmin[v]){
 				hv[f]=hvmin[v];
+				flag = 1;
 			}
 		}
-
-		VA_meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
-		// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
-		getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
-
-		// for(f=0;f<Nfaces;f++){
-		// 	i = k*Np + (int) Fmask[f]-1; // node index
-		// 	v = (int) EToV[k + f*K]-1; // vertex index
-		// 	if (hlim[i] > hc*(1+TOTALERR) ){
-		// 		alpha = min(alpha, ( hvmax[v]-hc )/(hlim[i] - hc) );
-		// 	}else if(hlim[i] < hc*(1-TOTALERR)){
-		// 		alpha = min(alpha, ( hvmin[v]-hc )/(hlim[i] - hc) );
-		// 	}
-		// 	// mexPrintf("k=%d, v=%d, ind=%d, hi=%f, hmax=%f, hmin=%f, alpha=%f\n",
-		// 	// 	k, f, v, h[i], hvmax[v], hvmin[v], alpha);
+		// if (flag){
+			VA_meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
+			// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
+			getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
+		// }else{
+			// for(i=0;i<Np;i++)
+				// hlim[i+k*Np] = h[i+k*Np];
 		// }
-		// // mexPrintf("k=%d, alpha=%f\n",k, alpha);
-		// // get limited gradient
-		// dhdx *= alpha;
-		// dhdy *= alpha;
-		// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
-		// getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
 	}
 
 	free(w);

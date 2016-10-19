@@ -128,25 +128,29 @@ smax = 3.402;
 
 % Boundary condition
 BC = zeros((Nx-1)*2+(Ny-1)*2, 3);
-% solid wall - the up, bottom, right side.
-BC(1:((Nx-1)*2+(Ny-1)), 1) = 1;
-BC(1:(Nx-1), 2) =  1:(Nx-1);    % bottom
-BC(1:(Nx-1), 3) = (1:(Nx-1))+1;
-BC(Nx:(Nx-1)+(Nx-1), 2) = (1:(Nx-1))+Nx*(Ny-1);   % up
-BC(Nx:(Nx-1)+(Nx-1), 3) = (1:(Nx-1))+Nx*(Ny-1)+1;
-BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 2) = linspace(Nx,Nx*(Ny-1),Ny-1); % right
-BC((2*(Nx-1)+1):((Nx-1)*2+(Ny-1)), 3) = linspace(Nx*2,Nx*Ny,  Ny-1);
-
-% inflow boundary - the left side
-BC(((Nx-1)*2+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 1) = 2;
-BC((2*(Nx-1)+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 2) = linspace(1,Nx*(Ny-2)+1,Ny-1);
-BC((2*(Nx-1)+(Ny-1)+1):((Nx-1)*2+(Ny-1)*2), 3) = linspace(Nx+1,Nx*(Ny-1)+1,Ny-1);
+stride = [Nx-1, Nx-1, Ny-1, Ny-1];
+% south - wall
+start = 1; stop = start + stride(1) - 1;
+BC(start:stop, 1) = 1;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'south');
+% north - wall
+start = start + stride(1); stop = start + stride(2) - 1;
+BC(start:stop, 1) = 1;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'north');
+% east - wall
+start = start + stride(2); stop = start + stride(3) - 1;
+BC(start:stop, 1) = 1;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'east');
+% west - inflow
+start = start + stride(3); stop = start + stride(4) - 1;
+BC(start:stop, 1) = 2;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'west');
 
 % Create mesh grid
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+        [EToV,VX,VY] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,smin,smax,false);
         mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
     case 'quad'
@@ -259,7 +263,7 @@ damPosition = 16;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+        [EToV,VX,VY] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2,false);
         mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
     case 'quad'
@@ -317,10 +321,6 @@ switch meshtype
     case 'quad'
         filename = 'PartialDamBreakQuad';
         [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
-        % change the vertex order
-        temp = EToV(:, 4);
-        EToV(:, 4) = EToV(:, 3);
-        EToV(:, 3) = temp;
     otherwise
         error('Unknown mesh type "%s"', meshType);
 end% switch
@@ -372,18 +372,43 @@ Y     = -0.41884;
 
 rmin  = -4000; 
 rmax  =  4000;
+
+% Boundary condition
+BC = zeros((Nx-1)*2+(Ny-1)*2, 3);
+stride = [Ny-1, Ny-1, Nx-1, Nx-1]; % No. of nodes on each BC
+% west
+start = 1; stop = start + stride(1) - 1;
+BC(start:stop, 1) = 3;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'west');
+
+% east
+start = start + stride(1); stop = start + stride(2) - 1;
+BC(start:stop, 1) = 3;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'east');
+
+% north
+start = start + stride(2); stop = start + stride(3) - 1;
+BC(start:stop, 1) = 3;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'north');
+
+% south
+start = start + stride(3); stop = start + stride(4) - 1;
+BC(start:stop, 1) = 3;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'south');
+
+
 % Initialize mesh
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+        [EToV,VX,VY] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,rmin,rmax,false);
-        mesh = MultiRegions.RegionTri(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
     case 'quad'
         shape = StdRegions.Quad(N);
         [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
             (Nx,Ny,rmin,rmax,rmin,rmax);
-        mesh = MultiRegions.RegionQuad(shape, EToV, VX, VY);
+        mesh = MultiRegions.RegionQuadBC(shape, EToV, VX, VY, BC);
     otherwise
         error('DamBreakDry error: unknown mesh type "%s"', meshType)
 end% switch
@@ -455,14 +480,16 @@ damPosition = 500;
 
 % BC list
 BC = zeros((Ny-1)*2, 3);
-% inflow
-BC(1:(Ny-1), 1) = 2;
-BC(1:(Ny-1), 2) = linspace(1,Nx*(Ny-2)+1,Ny-1);
-BC(1:(Ny-1), 3) = linspace(Nx+1,Nx*(Ny-1)+1,Ny-1);
-% outflow
-BC(Ny:(Ny-1)*2, 1) = 3;
-BC(Ny:(Ny-1)*2, 2) = linspace(Nx,Nx*(Ny-1),Ny-1);
-BC(Ny:(Ny-1)*2, 3) = linspace(Nx*2,Nx*Ny,  Ny-1);
+stride = [Ny-1, Ny-1];
+% west - inflow
+start = 1; stop = start + stride(1) - 1;
+BC(start:stop, 1) = 2;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'west');
+
+% east - outflow
+start = start + stride(1); stop = start + stride(2) - 1;
+BC(start:stop, 1) = 3;
+[BC(start:stop, 2), BC(start:stop, 3)] = UniformMeshNodes(Nx, Ny, 'east');
 
 switch meshType
     case 'tri'
@@ -495,4 +522,21 @@ h(:, ind) = 10;
 dt        = 1e-4;
 dx        = min((rmax - rmin)./Nx/(N+1), width./Ny/(N+1));
 
+end% func
+
+function [id1, id2] = UniformMeshNodes(Nx, Ny, location)
+switch location
+    case 'west'
+        id1 = linspace(1, Nx*(Ny-2)+1, Ny-1);
+        id2 = linspace(Nx+1, Nx*(Ny-1)+1, Ny-1);
+    case 'east'
+        id1 = linspace(Nx, Nx*(Ny-1), Ny-1);
+        id2 = linspace(Nx*2, Nx*Ny, Ny-1);
+    case 'north'
+        id1 = (1:(Nx-1))+Nx*(Ny-1);
+        id2 = (1:(Nx-1))+Nx*(Ny-1)+1;
+    case 'south'
+        id1 = 1:(Nx-1);
+        id2 = (1:(Nx-1))+1;
+end% switch
 end% func

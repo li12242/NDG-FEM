@@ -165,16 +165,16 @@ classdef Postprocess < handle
             y      = obj.NcFile(fileID).GetVarData('y');
             locVertList = obj.StdCell.verlist;
             % determine the cell inside
-            flag   = Utilities.PostProcess.FindLocCell_Mex...
+            eleId   = Utilities.PostProcess.FindLocCell_Mex...
                 (x,y,locVertList,xc,yc);
             
             % interpolation
             Data = zeros(size(xc));
             for i = 1:numel(xc)
-                ind = find(flag == i);
+                ind = eleId(i);
                 interp  = TriScatteredInterp...
                     (x(:,ind),y(:,ind),numSol(:,ind), 'linear');
-                Data(i) = interp(xc,yc);
+                Data(i) = interp(xc(i),yc(i));
             end% for
         end% func
         
