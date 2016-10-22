@@ -2,8 +2,9 @@ function SectionProfile_DamBreak2d
 % Compare the results with exact solution on section x=0;
 
 %% Parameters
-rmin  = 0; 
-rmax  = 1000;
+delta = .5;
+rmin  = 0+delta; 
+rmax  = 1000-delta;
 ne    = 1000;   % number of exact solution
 np    = 60;    % number of interpolated solutions
 T     = 20;
@@ -25,27 +26,28 @@ end
 
 %% Construct postprocess class
 meshtype = 'quad';
-filename = {'SWE2D.nc'};
+filename = {'SWE2D_DamBreakDry_quad_80.nc'};
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
-meshtype = 'quad';
-filename = {'SWE2D.nc'};
+meshtype = 'tri';
+filename = {'SWE2D_DamBreakDry_tri_80.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
-markerSize  = 12;
+lineWidth   = 2;
+markerSize  = 8;
 for ist = 1:numel(time)
     varname = 'h';
-    extH    = DamBreak2d_H(xe, ye, time(ist));
+    extH    = DamBreakDry2d_H(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     % draw water height
     figure('Color', 'w');
     plot(xe, extH, 'k--', 'LineWidth', 1.5); hold on
-    plot(xp, numH, 'r+', 'MarkerSize', markerSize);
+    plot(xp, numH, 'ro-', 'LineWidth', lineWidth, 'MarkerSize', markerSize);
     numSol  = PostproTri.GetVarData(varname, time(ist), fileID);
     numH    = PostproTri.Interp2D(numSol, xp, yp, fileID);
-    plot(xp, numH, 'bx', 'MarkerSize', markerSize);
+    plot(xp, numH, 'bs-', 'LineWidth', lineWidth, 'MarkerSize', markerSize);
     ylabel('水位 (m)','FontSize', 16);
     xlabel('y (m)','FontSize', 16);
     title(timeStr{ist}, 'Interpreter', 'Latex', 'FontSize', 18);
@@ -55,15 +57,15 @@ for ist = 1:numel(time)
     
     % draw flux
     varname = 'qx';
-    extH    = DamBreak2d_Qx(xe, ye, time(ist));
+    extH    = DamBreakDry2d_Qx(xe, ye, time(ist));
     numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
     numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
     figure('Color', 'w');
     plot(xe, extH, 'k--', 'LineWidth', 1.5); hold on
-    plot(xp, numH, 'r+', 'MarkerSize', markerSize);
+    plot(xp, numH, 'ro-', 'LineWidth', lineWidth, 'MarkerSize', markerSize);
     numSol  = PostproTri.GetVarData(varname, time(ist), fileID);
     numH    = PostproTri.Interp2D(numSol, xp, yp, fileID);
-    plot(xp, numH, 'bx', 'MarkerSize', markerSize);
+    plot(xp, numH, 'bs-', 'LineWidth', lineWidth, 'MarkerSize', markerSize);
     ylabel('流量 q_x (m^2/s)','FontSize', 16);
     xlabel('y (m)','FontSize', 16);
     ylim([-1, 30]);
