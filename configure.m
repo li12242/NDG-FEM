@@ -29,8 +29,9 @@ else
             case 'Post'
                 conf_Post = true;
             otherwise
-                error(['No options for %s, please choose one of\n'...
-                    ,'  Polylib\n  Limiter\n  SWE2d\n'], varargin{i})
+                error(['No options for %s, please choose one of\n',...
+                    '  Polylib\n  Limiter1d\n  Limiter2d\n  SWE2d\n',...
+                    '  Mesh\n  Post\n'], varargin{i})
         end% switch
     end% for
 end% if
