@@ -441,7 +441,7 @@ damPosition = 500;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+        [EToV,VX,VY] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2,false);
         mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, []);
     case 'quad'

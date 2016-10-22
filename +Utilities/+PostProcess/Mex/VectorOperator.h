@@ -2,6 +2,7 @@
 #define VECTOROPERATOR_H
 
 #include "mex.h"
+#include <math.h>
 
 typedef struct{
 	double x, y; // coordinate
