@@ -88,6 +88,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				}
 			}
 		}
+
+		if( fabs(isInside[m])<TOLERR ){
+			mexPrintf("#%d Point is out of region\n", m+1);
+			return;
+		}
 	}
 
 	return;
