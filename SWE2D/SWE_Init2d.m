@@ -79,7 +79,7 @@ function [mesh, h, qx, qy, botLevel, ftime, dt, dx, hin, uin] = ...
 
 switch meshType
     case 'tri'
-        filename = 'ObliqueHydraulicJumpTri';
+        filename = 'ObliqueHydraulicJumpTriCorser';
         [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
     case 'quad'
         filename = 'ObliqueHydraulicJumpQuad';
@@ -110,7 +110,7 @@ h      = ones(size(mesh.x)).*hin;
 qx     = ones(size(mesh.x)).*uin.*hin;
 qy     = zeros(size(mesh.x));
 dt     = 1e-3;
-ftime  = 10;
+ftime  = 15;
 % element length scal
 w      = sum(shape.M)';
 area   = sum(repmat(w, 1, mesh.nElement).*mesh.J);

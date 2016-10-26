@@ -13,9 +13,10 @@ time     = PostproTri.NcFile(1).GetVarData('time');
 %% Create animationi
 videoName = 'DamBreakDry.avi';
 writerObj = VideoWriter(videoName);
-writerObj.FrameRate=10;
+writerObj.FrameRate=15;
 open(writerObj)
 
+figure('Color', 'w');
 for i = 1:numel(time)-1
     PostproTri.Snapshot2D('h', time(i), fileID); drawnow;
     zlim([0, 11]);
@@ -23,7 +24,7 @@ for i = 1:numel(time)-1
     zlabel('ˮλ (m)','FontSize', 14);
     xlabel('x (m)','FontSize', 14);
     ylabel('y (m)','FontSize', 14);
-    box on;
+    grid on;
     
     frame = getframe(gcf);
     writeVideo(writerObj,frame);
