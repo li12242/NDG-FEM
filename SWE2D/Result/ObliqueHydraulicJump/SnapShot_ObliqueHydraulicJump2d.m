@@ -1,9 +1,9 @@
 function SnapShot_ObliqueHydraulicJump2d
 
 %% Parameter
-T        = 2.5;
-meshtype = 'quad';
-filename = {'SWE2D_60.nc'};
+T        = 15;
+meshtype = 'tri';
+filename = {'SWE2D_ObliqueHydraulicJump_tri_80.nc'};
 order    = 1;
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
@@ -14,10 +14,11 @@ for i = 1:numel(time)
     PostproTri.Snapshot2D('h', time(i), fileID);
     xlim([0, 40]);
     ylim([0,30]);
-    view(30, 32);
+    view(16, 52);
     zlabel('ˮλ (m)','FontSize', 14);
     xlabel('x (m)','FontSize', 14);
     ylabel('y (m)','FontSize', 14);
-    box on
+    box on;
+    grid on;
 end% for
 end% func
