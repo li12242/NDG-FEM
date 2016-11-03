@@ -9,12 +9,12 @@ classdef BaseElement < handle
     end
     
     methods
-        function obj = BaseElement(dim, vertice, order, nface)
+        function obj = BaseElement(dim, nVertex, order, nFace)
         % nNode sName is defined by subclass
             obj.nDim = dim;
-            obj.nVertice = vertice;
+            obj.nVertice = nVertex;
             obj.nOrder = order;
-            obj.nFace = nface;
+            obj.nFace = nFace;
         end
     end
 end
