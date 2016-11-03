@@ -79,10 +79,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				isInside[m] = k+1;
 				break;
 			}
+            
+            if(f<0) {
+                continue;
+            }
 
 			if(fabs(f)<TOLERR) { // f=0, p is on line AB
 				double temp = dot(AB, AP);
-				if ( temp>0.0 & temp <= dot(AB, AB) ){ // p is on edge AB
+				if ( (temp>0.0) & (temp<= dot(AB, AB)) ){ // p is on edge AB
 					isInside[m] = k+1;
 					break;
 				}

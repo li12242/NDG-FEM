@@ -252,20 +252,8 @@ classdef Postprocess < handle
             switch errType
                 case 'L2'
                     err = L2_2d(numSol, exSol);
-%                     switch obj.StdCell.dim
-%                         case 1
-%                             err = L2_1d(numSol, exSol);
-%                         case 2
-%                             err = L2_2d(numSol, exSol);
-%                     end% switch
                 case 'Linf'
                     err = Linf_2d(numSol, exSol);
-%                     switch obj.StdCell.dim
-%                         case 1
-%                             err = Linf_1d(numSol, exSol);
-%                         case 2
-%                             err = Linf_2d(numSol, exSol);
-%                     end% switch
             end% switch
         end% func
     end% methods
