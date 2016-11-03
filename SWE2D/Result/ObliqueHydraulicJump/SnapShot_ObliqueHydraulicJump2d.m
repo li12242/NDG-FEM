@@ -3,7 +3,7 @@ function SnapShot_ObliqueHydraulicJump2d
 %% Parameter
 T        = 15;
 meshtype = 'tri';
-filename = {'SWE2D_ObliqueHydraulicJump_tri_80.nc'};
+filename = {'SWE2D_ObliqueHydraulicJump_VBJK_tri.nc'};
 order    = 1;
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
