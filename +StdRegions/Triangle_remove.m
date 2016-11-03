@@ -1,4 +1,4 @@
-classdef Triangle < StdRegions.TriangleBasic
+classdef Triangle_remove < StdRegions.TriangleBasic
     % Stdandard Element Triangle
     % Triangle properties(Inherit):
     %   nDim        - the dimension of element
@@ -42,7 +42,7 @@ classdef Triangle < StdRegions.TriangleBasic
     end% properties private
     methods
 %% function Triangle
-        function obj = Triangle(nOrder)
+        function obj = Triangle_remove(nOrder)
             obj = obj@StdRegions.TriangleBasic(nOrder);
             obj.sName = 'Triangle';
             
