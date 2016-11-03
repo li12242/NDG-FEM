@@ -494,8 +494,10 @@ BC(start:stop, 1) = 3;
 switch meshType
     case 'tri'
         shape = StdRegions.Triangle(N);
-        [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
+        [EToV, VX,VY] = Utilities.Mesh.MeshGenTriangle2D...
             (Nx,Ny,rmin,rmax,-width/2,width/2,false);
+%         filename = 'DamBreakWet';
+%         [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
         mesh = MultiRegions.RegionTriBC(shape, EToV, VX, VY, BC);
     case 'quad'
         shape = StdRegions.Quad(N);

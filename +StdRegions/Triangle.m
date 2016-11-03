@@ -69,22 +69,6 @@ classdef Triangle < StdRegions.TriangleBasic
 %% function getNodeListAtFace
 % return the num of node & node indicator (counterclockwise) at spicific face
 % 
-%   tri = StdRegions.Triangle(5);
-%   [n, temp] = tri.getNodeListAtFace(3)
-% 
-%   n =
-%      6
-% 
-%   temp =
-%       21
-%       19
-%       16
-%       12
-%        7
-%        1
-% 
-% <</Users/mac/Documents/MATLAB/NDG-FEM/+StdRegions/@Triangle/fig/getNodeListAtFace.png>>
-% 
         function [n, nodelist] = getNodeListAtFace(obj,iface)
             facelist = obj.getFaceListAtFace(iface);
             faceListToNodeList = getFaceListToNodeList(obj);
@@ -94,14 +78,6 @@ classdef Triangle < StdRegions.TriangleBasic
 %% function getFaceListAtFace
 % return the face list at spicific face
 % 
-%   tri = StdRegions.Triangle(5);
-%   [temp] = tri.getFaceListAtFace(3)
-% 
-%   temp =
-%       13    14    15    16    17    18
-%
-% <</Users/mac/Documents/MATLAB/NDG-FEM/+StdRegions/@Triangle/fig/getFaceListAtFace.png>>
-%
         function facelist = getFaceListAtFace(obj,iface)    
             if (iface ==1 )
                 contour = 0;
@@ -113,40 +89,29 @@ classdef Triangle < StdRegions.TriangleBasic
         
         
         function nodelist = getVertexNodeList(obj)
-            % return the nodelist of vertice in element
+            % return the node index of the vertice in element
             Nfp = obj.nFaceNode/obj.nFace;   % No. of node on sigle face
-%             ids = [1;Nfp;2*Nfp]; % facelist No. of vertex node
-%             facelist = getFaceListToNodeList(obj);
-%             nodelist = facelist(ids);
             nodelist = [1, Nfp, obj.nNode]';
         end% function
         
         function FacelistToNodelist = getFaceListToNodeList(obj)
             % return the node list of face node counterclockwise
-%             MAXERROR = 10^-10;
             perfaceNode = obj.nFaceNode/3;   % No. of node on sigle face
             FacelistToNodelist = zeros(obj.nFaceNode,1);
             array = perfaceNode:-1:1;
             % face 1, s = -1
             FacelistToNodelist(1:perfaceNode) = 1:perfaceNode;
-%             FacelistToNodelist(1:perfaceNode) = ...
-%                 find(abs(obj.s - -1)< MAXERROR);
             % face 3, r = -1
             temp = ones(perfaceNode, 1);
             for irow = 2:perfaceNode
                 temp(irow) = temp(irow - 1) + array(irow-1);
             end
             FacelistToNodelist(3*perfaceNode:-1:2*perfaceNode+1) = temp;
-%             FacelistToNodelist(2*perfaceNode+1:3*perfaceNode) = ...
-%                 find(abs(obj.r - -1)< MAXERROR);
             % face 2, r+s = 0
             temp2 = perfaceNode*ones(perfaceNode, 1);
             temp2(2:end-1) = temp(3:end) -1; 
             temp2(end) = temp(end);
             FacelistToNodelist(perfaceNode+1:2*perfaceNode) = temp2;
-%             FacelistToNodelist(perfaceNode+1:2*perfaceNode) = ...
-%                 find(abs(obj.r + obj.s)< MAXERROR);
-            
         end% function
         
         function [nx, ny, sJ] = getFaceGeometric(obj, x, y)
