@@ -2,7 +2,7 @@
 tol = 1e-12;
 
 %% Test 1: N = 3
-V_ext = load('VandMatrix_3.cc');
+V_ext = load('VandMatrix_Test/VandMatrix_3.cc');
 
 % triangle shape
 N = 3;
@@ -13,5 +13,23 @@ for i = 1:tri.nNode^2
 end
 
 %% Test 2: N = 4
+V_ext = load('VandMatrix_Test/VandMatrix_4.cc');
+
+% triangle shape
+N = 4;
+tri = StdRegions.Triangle(N);
+
+for i = 1:tri.nNode^2
+    assert( abs(tri.V(i) - V_ext(i)) <= tol);
+end
 
 %% Test 3: N = 5
+V_ext = load('VandMatrix_Test/VandMatrix_5.cc');
+
+% triangle shape
+N = 5;
+tri = StdRegions.Triangle(N);
+
+for i = 1:tri.nNode^2
+    assert( abs(tri.V(i) - V_ext(i)) <= tol);
+end
