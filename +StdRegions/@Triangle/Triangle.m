@@ -1,7 +1,7 @@
 classdef Triangle < StdRegions.BaseElement
     %TRIANGLE 二维标准单元
-    %   标准三角形单元，采用节点基函数(nodal basis)，对应节点为LGL节点分布(Hesthaven 
-    %   and Warburton, 2008)
+    %   标准三角形单元，采用节点基函数（nodal basis），对应节点为LGL节点分布
+    %   （Hesthaven and Warburton, 2008）
     
     properties
         r       % 标准单元节点x坐标
@@ -33,7 +33,7 @@ classdef Triangle < StdRegions.BaseElement
             % 边界上节点编号
             
             % Vandermonde矩阵
-            obj.V = GetVandMatrix(order,obj.r,obj.s);
+            obj.V = obj.GetVandMatrix(order,obj.r,obj.s);
             obj.invV = inv(obj.V);
             % 质量矩阵
             obj.M = obj.invV'*obj.invV;
@@ -42,6 +42,8 @@ classdef Triangle < StdRegions.BaseElement
             
         end% func
         
+        % 计算Vandermonde矩阵
+        V = GetVandMatrix(obj, order, r, s);
     end
     
 end
