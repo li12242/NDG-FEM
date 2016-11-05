@@ -5,7 +5,7 @@ nFaceNode = obj.Shape.nFaceNode; % total number on all edges
 vmapM = zeros(nFaceNode, obj.nElement);
 vmapP = zeros(nFaceNode, obj.nElement);
 for k1 = 1:obj.nElement
-    vmapM(:,k1) = obj.Shape.getFaceListToNodeList + (k1-1)*obj.Shape.nNode;
+    vmapM(:,k1) = obj.Shape.GetFaceListToNodeList + (k1-1)*obj.Shape.nNode;
 end
 
 one = ones(1, obj.Shape.nFaceNode./obj.Shape.nFace);
@@ -14,8 +14,8 @@ for k1 = 1:obj.nElement
         % find neighbor
         k2 = EToE(k1,f1); f2 = EToF(k1,f1);
 
-        flist1 = obj.Shape.getFaceListAtFace(f1);
-        flist2 = obj.Shape.getFaceListAtFace(f2);
+        flist1 = obj.Shape.GetFaceListAtFace(f1);
+        flist2 = obj.Shape.GetFaceListAtFace(f2);
 
         % reference length of edge
         v1 = EToV(k1,f1); v2 = EToV(k1, 1+mod(f1, obj.Shape.nFace));

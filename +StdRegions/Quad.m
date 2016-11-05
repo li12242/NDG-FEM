@@ -58,10 +58,10 @@ classdef Quad < StdRegions.QuadBasic
             obj.LIFT = (obj.VandMatrix*(obj.VandMatrix)')*obj.Mes;
             
             % Fmask
-            obj.Fmask = zeros(obj.nFace, LineFaceShape.nNode);
+            obj.Fmask = zeros(LineFaceShape.nNode, obj.nFace);
             for i = 1:obj.nFace
                 [~, t] = obj.getNodeListAtFace(i);
-                obj.Fmask(i, :) = t';
+                obj.Fmask(:,i) = t;
             end% for
         end% func
         

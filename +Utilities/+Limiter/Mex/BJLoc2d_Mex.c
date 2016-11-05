@@ -36,8 +36,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	Np = mxGetM(prhs[0]); 
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[3]);
-	Nfp    = mxGetN(prhs[3]);
+	Nfp    = mxGetM(prhs[3]);
+	Nfaces = mxGetN(prhs[3]);
 
 	/* allocation of output */
 	plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
@@ -84,8 +84,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			hmin = min(hmin, hmean[e]);
 			hmax = max(hmax, hmean[e]);
 
-			int v1 = (int) Fmask[i] - 1;
-			int v2 = (int) Fmask[i+(Nfp-1)*Nfaces] - 1;
+			// int v1 = (int) Fmask[i] - 1;
+			// int v2 = (int) Fmask[i+(Nfp-1)*Nfaces] - 1;
+			int v1 = (int) Fmask[Nfp*i] - 1; // local vertex indics
+			int v2 = (int) Fmask[Nfp*i + (Nfp-1)] - 1;
 
 			int sk1 = k*Np + v1;
 			int sk2 = k*Np + v2;
