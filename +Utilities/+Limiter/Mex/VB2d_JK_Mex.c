@@ -40,8 +40,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	Np = mxGetM(prhs[0]);
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[4]);
-	Nfp    = mxGetN(prhs[4]);
+	Nfp    = mxGetM(prhs[4]);
+	Nfaces = mxGetN(prhs[4]);
+
 
 	/* allocation of output */
 	plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
@@ -111,7 +112,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		real xc = xmean[k];
 		real yc = ymean[k];
 		for(f=0;f<Nfaces;f++){
-			i = k*Np + (int) Fmask[f]-1; // node index
+			i = k*Np + (int) Fmask[f*Nfp]-1; // node index
 			v = (int) EToV[k + f*K]-1; // vertex index
 			xv[f] = x[i];
 			yv[f] = y[i];

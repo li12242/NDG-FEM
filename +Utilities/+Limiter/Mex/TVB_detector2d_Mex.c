@@ -34,8 +34,8 @@
 	Np = mxGetM(prhs[0]); 
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[3]);
-	Nfp    = mxGetN(prhs[3]);
+	Nfp    = mxGetM(prhs[3]);
+	Nfaces = mxGetN(prhs[3]);
 
 	/* allocation of output */
 	plhs[0] = mxCreateDoubleMatrix((mwSize)1, (mwSize)K, mxREAL);
@@ -80,10 +80,10 @@
 			if(e2 == k)
 				continue;
 
-			real face_max = h[k*Np + (int)(*(Fmask+f) - 1)];
-			real face_min = h[k*Np + (int)(*(Fmask+f) - 1)];
+			real face_max = h[k*Np + (int)(*(Fmask+f*Nfp) - 1)];
+			real face_min = h[k*Np + (int)(*(Fmask+f*Nfp) - 1)];
 			for(p=0;p<Nfp;p++){
-				int sk = k*Np + (int) (*(Fmask+f+p*Nfaces) - 1);
+				int sk = k*Np + (int) (*(Fmask+f*Nfp+p) - 1);
 				face_max = max(face_max, h[sk]);
 				face_min = min(face_min, h[sk]);
 			}

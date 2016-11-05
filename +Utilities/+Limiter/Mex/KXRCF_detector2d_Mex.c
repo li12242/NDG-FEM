@@ -40,8 +40,8 @@
 	Np = mxGetM(prhs[0]); 
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[6]);
-	Nfp    = mxGetN(prhs[6]);
+	Nfp    = mxGetM(prhs[6]);
+	Nfaces = mxGetN(prhs[6]);
 
 	/* allocation of output */
 	plhs[0] = mxCreateDoubleMatrix((mwSize)1, (mwSize)K, mxREAL);
@@ -87,7 +87,7 @@
 
             real flow_integral=0.0;
             for(p=0;p<Nfp;p++){
-            	int sk = k*Np + (int) (*(Fmask+f1+p*Nfaces) - 1); // local index of face
+            	int sk = k*Np + (int) (*(Fmask+f1*Nfp+p) - 1); // local index of face
             	int fk = k*Nfaces*Nfp+f1*Nfp+p;
             	real vn= nx[fk]*u[sk]+ny[fk]*v[sk];
             	flow_integral += ws[p]*sJ[fk]*vn;

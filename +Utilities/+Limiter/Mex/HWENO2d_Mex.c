@@ -37,8 +37,9 @@
 	Np = mxGetM(prhs[0]);
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[4]);
-	Nfp    = mxGetN(prhs[4]);
+	Nfp    = mxGetM(prhs[4]);
+	Nfaces = mxGetN(prhs[4]);
+	
 
 	/* allocation of output */
 	plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
@@ -94,15 +95,15 @@
         hv[0] = h+k*Np;
 		for(f1=0;f1<Nfaces;f1++){
 			/* vertex index of face */
-            int l1 = k*Np + (int) (Fmask[f1 + 0*Nfaces] - 1);
-            int l2 = k*Np + (int) (Fmask[f1 + (Nfp-1)*Nfaces] - 1);
+            int l1 = k*Np + (int) (Fmask[f1*Nfp] - 1);
+            int l2 = k*Np + (int) (Fmask[f1*Nfp + (Nfp-1)] - 1);
 
             /* mean value on edge */
             real dx = (real) (x[l2] - x[l1]);
             real dy = (real) (y[l2] - y[l1]);
             real face_len, face_mean;
 
- 			faceMean(Nfaces, Nfp, 1, hv, ws, sJ+k*Nfaces*Nfp+f1*Nfp, Fmask+f1,
+ 			faceMean(Nfaces, Nfp, 1, hv, ws, sJ+k*Nfaces*Nfp+f1*Nfp, Fmask+f1*Nfp,
 				&face_mean, &face_len);
 
 			/* Green-Gauss formulation */
