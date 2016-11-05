@@ -21,8 +21,8 @@ classdef StdCell < handle
                     obj.dim = 2;
                     shape   = StdRegions.Triangle(order);
                     obj.np  = shape.nNode;
-                    obj.bclist = shape.getFaceListToNodeList;
-                    obj.verlist = shape.getVertexNodeList; 
+                    obj.bclist = shape.GetFaceListToNodeList;
+                    obj.verlist = shape.GetVertexNodeList; 
                 case 'quad'
                     obj.dim = 2;
                     shape   = StdRegions.Quad(order);
