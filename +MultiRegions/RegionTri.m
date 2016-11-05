@@ -42,8 +42,8 @@ classdef RegionTri < MultiRegions.Region
             % get node coordiante
             vx = VX(EToV'); vy = VY(EToV');
             [obj.x, obj.y, obj.rx, obj.sx, obj.ry, obj.sy, obj.J]  ...
-                = shape.getEleGeometric(vx, vy);
-            [obj.nx, obj.ny, obj.sJ] = shape.getFaceGeometric(obj.x, obj.y);
+                = shape.GetEleGeometric(vx, vy);
+            [obj.nx, obj.ny, obj.sJ] = shape.GetFaceGeometric(obj.x, obj.y);
             
             [obj] = MultiRegions.Connect2D(obj,EToV);
             [obj] = MultiRegions.BuildMap...

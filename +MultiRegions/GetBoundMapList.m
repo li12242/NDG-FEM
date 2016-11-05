@@ -22,7 +22,7 @@ face1    =   mod( (faces1-1), Nfaces ) + 1;
 Nfp = obj.Shape.nFaceNode/obj.Shape.nFace; 
 map = zeros(Nfp, nBC);
 for i=1:nBC
-    localfacelist = obj.Shape.getFaceListAtFace(face1(i));
+    localfacelist = obj.Shape.GetFaceListAtFace(face1(i));
     facelist = (element1(i)-1)*obj.Shape.nFaceNode + localfacelist;
     map(:,i) = facelist;
 end

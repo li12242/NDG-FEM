@@ -311,7 +311,7 @@ void faceMean(int Nfaces, int Nfp, int Nfields, real **h,
 
     int fnp,sp;
 	for(fnp=0;fnp<Nfp;fnp++){
-	  	sp = (int) (*(Fmask + fnp*Nfaces) - 1); // local index of face
+	  	sp = (int) (*(Fmask + fnp) - 1); // local index of face
         real w=ws[fnp], j=sJ[fnp];
         // mexPrintf("fnp=%d, w*j=%f, ", fnp, w*j);
         for(fld=0;fld<Nfields;fld++){

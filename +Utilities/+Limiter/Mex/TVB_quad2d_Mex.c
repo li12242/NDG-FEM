@@ -39,8 +39,8 @@ void mexFunction (int nlhs, mxArray *plhs[],
 	Np = mxGetM(prhs[0]);
 	K  = mxGetN(prhs[0]);
 	size_t Nfaces,Nfp;
-	Nfaces = mxGetM(prhs[4]);
-	Nfp    = mxGetN(prhs[4]);
+	Nfp    = mxGetM(prhs[4]);
+	Nfaces = mxGetN(prhs[4]);
 
 	if(Nfaces!=4){
 		mexPrintf("Wrong number of Nfaces=%d for TVB_tri limiter", Nfaces);
@@ -105,9 +105,8 @@ void mexFunction (int nlhs, mxArray *plhs[],
 		
 		for(f=0;f<Nfaces;f++){
 			/* calculate average on face */
-			faceMean(Nfaces, Nfp, 3, p, 
-				ws, sJ+k*Nfaces*Nfp+f*Nfp, 
-				Fmask+f, fmean, &face_len);
+			faceMean(Nfaces, Nfp, 3, p, ws, sJ+k*Nfaces*Nfp+f*Nfp, 
+				Fmask+f*Nfp, fmean, &face_len);
 			hf[f] = fmean[0]; 
 			xf[f] = fmean[1]; 
 			yf[f] = fmean[2];
