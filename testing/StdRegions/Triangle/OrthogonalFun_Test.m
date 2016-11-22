@@ -7,7 +7,7 @@ tol = 1e-10;
 
 % 顶点坐标
 vert = load('TriGaussQaud/triGauss8x8_r.txt');
-vx = vert(:, 1); 
+vx = vert(:, 1);
 vy = vert(:, 2);
 
 % 高斯积分点坐标
@@ -17,6 +17,7 @@ y = points(:, 2);
 
 % 权重系数
 w = load('TriGaussQaud/triGauss8x8_w.txt');
+J = 2/sum(w); % Jacobi 转换系数 - 标准三角形单元面积为2
 
 % 转换为面积坐标
 L1 = y;
@@ -29,74 +30,74 @@ r = -L2 + L3 - L1; s = -L2 - L3 + L1;
 % 最大积分阶数
 MaxDeg = 64;
 
-%% Test 1: N = 2
+%% Tri: N = 2
 N = 2;
 tri = StdRegions.Triangle(N);
 V = tri.GetVandMatrix(N, r, s);
 
 for i = 1:tri.nNode
     for j = 1:tri.nNode
-        temp = sum(w.*V(:,i).*V(:,j));
-        assert( abs(temp - (i==j)*0.5)<tol )
+        temp = J*sum(w.*V(:,i).*V(:,j));
+        assert( abs(temp - (i==j))<tol )
     end
 end
 
-%% Test 2: N = 3
+%% Tri: N = 3
 N = 3;
 tri = StdRegions.Triangle(N);
 V = tri.GetVandMatrix(N, r, s);
 
 for i = 1:tri.nNode
     for j = 1:tri.nNode
-        temp = sum(w.*V(:,i).*V(:,j));
-        assert( abs(temp - (i==j)*0.5)<tol )
+        temp = J*sum(w.*V(:,i).*V(:,j));
+        assert( abs(temp - (i==j))<tol )
     end
 end
 
-%% Test 3: N = 4
+%% Tri: N = 4
 N = 4;
 tri = StdRegions.Triangle(N);
 V = tri.GetVandMatrix(N, r, s);
 
 for i = 1:tri.nNode
     for j = 1:tri.nNode
-        temp = sum(w.*V(:,i).*V(:,j));
-        assert( abs(temp - (i==j)*0.5)<tol )
+        temp = J*sum(w.*V(:,i).*V(:,j));
+        assert( abs(temp - (i==j))<tol )
     end
 end
 
-%% Test 4: N = 5
+%% Tri: N = 5
 N = 5;
 tri = StdRegions.Triangle(N);
 V = tri.GetVandMatrix(N, r, s);
 
 for i = 1:tri.nNode
     for j = 1:tri.nNode
-        temp = sum(w.*V(:,i).*V(:,j));
-        assert( abs(temp - (i==j)*0.5)<tol )
+        temp = J*sum(w.*V(:,i).*V(:,j));
+        assert( abs(temp - (i==j))<tol )
     end
 end
 
-%% Test 4: N = 6
+%% Tri: N = 6
 N = 6;
 tri = StdRegions.Triangle(N);
 V = tri.GetVandMatrix(N, r, s);
 
 for i = 1:tri.nNode
     for j = 1:tri.nNode
-        temp = sum(w.*V(:,i).*V(:,j));
-        assert( abs(temp - (i==j)*0.5)<tol )
+        temp = J*sum(w.*V(:,i).*V(:,j));
+        assert( abs(temp - (i==j))<tol )
     end
 end
 
-%% Test 4: N = 7
+%% Tri: N = 7
 N = 7;
 tri = StdRegions.Triangle(N);
 V = tri.GetVandMatrix(N, r, s);
 
 for i = 1:tri.nNode
     for j = 1:tri.nNode
-        temp = sum(w.*V(:,i).*V(:,j));
-        assert( abs(temp - (i==j)*0.5)<tol )
+        temp = J*sum(w.*V(:,i).*V(:,j));
+        assert( abs(temp - (i==j))<tol )
     end
 end

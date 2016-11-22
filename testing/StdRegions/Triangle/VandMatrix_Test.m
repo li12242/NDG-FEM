@@ -1,7 +1,7 @@
 % test of Vandermonde matrix
 tol = 1e-12;
 
-%% Test 1: N = 3
+%% Tri: N = 3
 V_ext = load('VandMatrix_Test/VandMatrix_3.cc');
 
 % triangle shape
@@ -12,7 +12,7 @@ for i = 1:tri.nNode^2
     assert( abs(tri.V(i) - V_ext(i)) <= tol);
 end
 
-%% Test 2: N = 4
+%% Tri: N = 4
 V_ext = load('VandMatrix_Test/VandMatrix_4.cc');
 
 % triangle shape
@@ -23,7 +23,7 @@ for i = 1:tri.nNode^2
     assert( abs(tri.V(i) - V_ext(i)) <= tol);
 end
 
-%% Test 3: N = 5
+%% Tri: N = 5
 V_ext = load('VandMatrix_Test/VandMatrix_5.cc');
 
 % triangle shape

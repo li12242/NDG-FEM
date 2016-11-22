@@ -1,20 +1,28 @@
+% Class for NetCDF files
+% methods:
+%   GetVarData - 获取变量值
+%   GetTimeVarData - 获取某个时间步变量值
+% 
 classdef ResultFile < handle
     properties
         filename
     end% properties
     
     methods
+        %% construction
         function obj = ResultFile(filename)
             obj.filename = filename;
         end% func
         
-        %% Get variable data 
+        %% methods
         function data = GetVarData(obj, varName)
+            % Get variable data 
             data = ncread(obj.filename, varName);
         end% func
         
-        %% Get variable data at spicific time step
         function data = GetTimeVarData(obj, varName, ist)
+            % Get variable data at spicific time step
+            
             % get number of dimensions
             ncid   = netcdf.open(obj.filename);
             varid  = netcdf.inqVarID(ncid, varName);
