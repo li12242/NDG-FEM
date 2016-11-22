@@ -24,6 +24,7 @@ end% if
 
 if test_StdRegions
     filepath{1} = 'testing/StdRegions/Triangle';
+    filepath{2} = 'testing/StdRegions/Quad';
     testDir(filepath);
 end
 
@@ -36,7 +37,7 @@ for f = 1:numel(filepath) % 遍历所有文件路径
     for i = 1:numel(file) % 遍历路径下所有文件
         [~, ~, ext] = fileparts(file(i).name); 
         if strcmp(ext, '.m') % 文件后缀为.m则执行测试
-            results = runtests(fullfile(filepath, file(i).name));
+            results = runtests(fullfile(filepath{f}, file(i).name));
             table(results)
         end
     end

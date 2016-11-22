@@ -5,7 +5,7 @@ function [ fval ] = OrthogonalFun( r,s,order,ind )
 % 坐标投影到矩阵
 [a,b] = rstoab(r,s);
 
-% 基函数序号转换为矩阵内函数编号（i，j）
+% 基函数序号转换为矩形内正交函数编号（i，j）
 [i, j] = TransInd(order,ind);
 fval = Simplex2DP(a,b,i,j);
 end
