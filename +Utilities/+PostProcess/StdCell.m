@@ -15,8 +15,8 @@ classdef StdCell < handle
                     obj.dim = 1;
                     shape   = StdRegions.Line(order);
                     obj.np  = shape.nNode;
-                    obj.bclist  = shape.getFaceListToNodeList;
-                    obj.verlist = shape.getVertexNodeList; 
+                    obj.bclist  = shape.GetFaceListToNodeList;
+                    obj.verlist = shape.GetVertexNodeList; 
                 case 'tri'
                     obj.dim = 2;
                     shape   = StdRegions.Triangle(order);
@@ -27,8 +27,8 @@ classdef StdCell < handle
                     obj.dim = 2;
                     shape   = StdRegions.Quad(order);
                     obj.np  = shape.nNode;
-                    obj.bclist = shape.getFaceListToNodeList;
-                    obj.verlist = shape.getVertexNodeList; 
+                    obj.bclist = shape.GetFaceListToNodeList;
+                    obj.verlist = shape.GetVertexNodeList; 
                 otherwise
                     error(['The input element type must be one of "line",',...
                         ' "tri" or "quad"'])

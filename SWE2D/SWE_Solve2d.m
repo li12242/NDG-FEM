@@ -59,9 +59,9 @@ while(time<FinalTime)
         % In ParabolicBowl test case, SL2 works well for quadrilateral 
         % mesh, while SLLoc2 works better for triangle mesh.
         
-%         zeta = h+bot;
-%         zeta = Utilities.Limiter.Limiter2D.VB2d(mesh, zeta);
-%         h    = zeta-bot;
+        zeta = h+bot;
+        zeta = Utilities.Limiter.Limiter2D.BJ2(mesh, zeta, 1);
+        h    = zeta-bot;
 %         h  = Utilities.Limiter.Limiter2D.VB2d_VA(mesh, h);
 %         qx = Utilities.Limiter.Limiter2D.VB2d_VA(mesh, qx);
 %         qy = Utilities.Limiter.Limiter2D.VB2d_VA(mesh, qy);
@@ -70,9 +70,9 @@ while(time<FinalTime)
 %         qx = Utilities.Limiter.Limiter2D.VB2d_JK(mesh, qx);
 %         qy = Utilities.Limiter.Limiter2D.VB2d_JK(mesh, qy);
 
-        h  = Utilities.Limiter.Limiter2D.VB2d_HWENO(mesh, h);
-        qx = Utilities.Limiter.Limiter2D.VB2d_HWENO(mesh, qx);
-        qy = Utilities.Limiter.Limiter2D.VB2d_HWENO(mesh, qy);
+%         h  = Utilities.Limiter.Limiter2D.VB2d_HWENO(mesh, h);
+%         qx = Utilities.Limiter.Limiter2D.VB2d_HWENO(mesh, qx);
+%         qy = Utilities.Limiter.Limiter2D.VB2d_HWENO(mesh, qy);
 
 %         h  = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, h,  0.);
 %         qx = Utilities.Limiter.Limiter2D.TVB_tri2d(mesh, qx, 0.);
@@ -83,8 +83,8 @@ while(time<FinalTime)
 %         qy = Utilities.Limiter.Limiter2D.TVB_quad2d(mesh, qy, 2);
 
 %         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  1);
-%         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 1);
-%         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 1);
+        qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 1);
+        qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 1);
 
 %         h  = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, h);
 %         qx = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, qx);
