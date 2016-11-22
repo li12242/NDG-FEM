@@ -1,6 +1,6 @@
 tol = 1e-10;
 
-%% Test 1: N = 3
+%% Tri: N = 3
 N = 3;
 tri = StdRegions.Triangle(N);
 Dr_ext = load('DrDs_Test/Dr_3.cc');
@@ -12,7 +12,7 @@ for i = 1:tri.nNode^2
 end
 
 
-%% Test 2: N = 4
+%% Tri: N = 4
 N = 4;
 tri = StdRegions.Triangle(N);
 Dr_ext = load('DrDs_Test/Dr_4.cc');
@@ -23,7 +23,7 @@ for i = 1:tri.nNode^2
     assert( abs(tri.Ds(i) - Ds_ext(i)) <= tol);
 end
 
-%% Test 3: N = 5
+%% Tri: N = 5
 N = 5;
 tri = StdRegions.Triangle(N);
 Dr_ext = load('DrDs_Test/Dr_5.cc');

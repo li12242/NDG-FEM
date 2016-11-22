@@ -20,10 +20,10 @@ function SWE_Driver2d
 
 % Name of test case
 % casename = 'DamBreakDry';
-casename = 'DamBreakWet';
+% casename = 'DamBreakWet';
 % casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
-% casename = 'FlowOver3BumpsUniform';
+casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
 % casename = 'TsuamiRunup';
 % casename = 'ObliqueHydraulicJump';
@@ -31,15 +31,15 @@ casename = 'DamBreakWet';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 300;
-Ny = 1;
+Nx = 100;
+Ny = 50;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'tri';
+phys.meshType = 'quad';
 phys.gra      = 9.81;
 
 if (strncmp(phys.casename, 'TsuamiRunup', 11)) % spicific coefficient
