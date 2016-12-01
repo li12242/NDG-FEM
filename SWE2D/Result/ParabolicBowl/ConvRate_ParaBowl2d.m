@@ -1,12 +1,20 @@
 function ConvRate_ParaBowl2d
-meshtype = 'tri';
-elenum   = [80, 100, 120, 160, 200];
+elenum   = [20, 40, 80, 160];
 filename = cell(numel(elenum), 1);
+% triangles
+meshtype = 'tri';
 for i =1:numel(elenum)
-    filename{i} = ['SWE2D_', meshtype, '_', num2str(elenum(i)), '.nc'];
+    filename{i} = ['SWE2D_ParabolicBowl_', meshtype, '_', ...
+        num2str(elenum(i)), '.nc'];
 end
-
-PostproSWE2D = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
+PostproTri  = Utilities.PostProcess.Postprocess(filename, 'tri', 1);
+% quadrilaterals
+meshtype = 'quad';
+for i =1:numel(elenum)
+    filename{i} = ['SWE2D_ParabolicBowl_', meshtype, '_', ...
+        num2str(elenum(i)), '.nc'];
+end
+PostproQuad = Utilities.PostProcess.Postprocess(filename, 'quad', 1);
 
 % time period
 g     = 9.81;
@@ -14,79 +22,47 @@ alpha = 1.6*1e-7;
 w     = sqrt(8*g*alpha);
 T     = 2*pi/w;
 
-head = {'M', elenum'};
-PrintTable = PostproSWE2D.GetConvTable('h', T, ...
-    @ParabolicBowl2d_ExtDepth, head);
-PrintTable
+figure('color', 'w'); hold on;
+box on;
+grid on;
+markersize = 6;
+linewidth = 1.5;
 
-PrintTable = PostproSWE2D.GetConvTable('qx', T, ...
-    @ParabolicBowl2d_ExtQx, head);
-PrintTable
+tableTri = PostproTri.GetConvTable('h', T, @ParabolicBowl2d_ExtDepth,...
+    'M', elenum');
+tableQuad = PostproQuad.GetConvTable('h', T, @ParabolicBowl2d_ExtDepth,...
+    'M', elenum');
+tableTri
+plot(tableTri.dofs, tableTri.L2, 'bo-', 'MarkerFaceColor', 'b',...
+    'MarkerSize', markersize, 'LineWidth', linewidth)
+plot(tableQuad.dofs, tableQuad.L2, 'ro-', 'MarkerFaceColor', 'r',...
+    'MarkerSize', markersize, 'LineWidth', linewidth)
 
-PrintTable = PostproSWE2D.GetConvTable('qy', T, ...
-    @ParabolicBowl2d_ExtQy, head);
-PrintTable
+tableTri = PostproTri.GetConvTable('qx', T, @ParabolicBowl2d_ExtQx,...
+    'M', elenum');
+tableQuad = PostproQuad.GetConvTable('qx', T, @ParabolicBowl2d_ExtQx,...
+    'M', elenum');
+tableTri
+plot(tableTri.dofs, tableTri.L2, 'bs-', 'MarkerFaceColor', 'b',...
+    'MarkerSize', markersize, 'LineWidth', linewidth)
+plot(tableQuad.dofs, tableQuad.L2, 'rs-', 'MarkerFaceColor', 'r',...
+    'MarkerSize', markersize, 'LineWidth', linewidth)
 
-% errL2        = zeros(PostproSWE2D.nfiles, 1);
-% errLinf      = zeros(PostproSWE2D.nfiles, 1);
-% 
-% % error for H
-% PrintTable   = table;
-% PrintTable.M = elenum';
-% PrintTable.dofs = PostproSWE2D.GetDofs;
-% for i =1:PostproSWE2D.nfiles
-%     errL2(i)   = ...
-%         PostproSWE2D.NormErr('h', T, @ParabolicBowl2d_ExtDepth, 'L2', i);
-%     errLinf(i) = ...
-%         PostproSWE2D.NormErr('h', T, @ParabolicBowl2d_ExtDepth, 'Linf', i);
-% end% for
-% % convergence rate for H
-% a2   = PostproSWE2D.ConvRate('h', T, @ParabolicBowl2d_ExtDepth, 'L2');
-% ainf = PostproSWE2D.ConvRate('h', T, @ParabolicBowl2d_ExtDepth, 'Linf');
-% 
-% PrintTable.L2   = errL2;
-% PrintTable.a2   = a2;
-% PrintTable.Linf = errLinf;
-% PrintTable.ainf = ainf;
-% 
-% fprintf('The error for water depth');
-% PrintTable
-% 
-% % error for qx
-% for i =1:PostproSWE2D.nfiles
-%     errL2(i)   = ...
-%         PostproSWE2D.NormErr('qx', T, @ParabolicBowl2d_ExtQx, 'L2', i);
-%     errLinf(i) = ...
-%         PostproSWE2D.NormErr('qx', T, @ParabolicBowl2d_ExtQx, 'Linf', i);
-% end% for
-% % convergence rate for qx
-% a2   = PostproSWE2D.ConvRate('qx', T, @ParabolicBowl2d_ExtQx, 'L2');
-% ainf = PostproSWE2D.ConvRate('qx', T, @ParabolicBowl2d_ExtQx, 'Linf');
-% 
-% PrintTable.L2   = errL2;
-% PrintTable.a2   = a2;
-% PrintTable.Linf = errLinf;
-% PrintTable.ainf = ainf;
-% 
-% fprintf('The error for flow flux x');
-% PrintTable
-% 
-% % error for qy
-% for i =1:PostproSWE2D.nfiles
-%     errL2(i)   = ...
-%         PostproSWE2D.NormErr('qy', T, @ParabolicBowl2d_ExtQy, 'L2', i);
-%     errLinf(i) = ...
-%         PostproSWE2D.NormErr('qy', T, @ParabolicBowl2d_ExtQy, 'Linf', i);
-% end% for
-% % convergence rate for qy
-% a2   = PostproSWE2D.ConvRate('qy', T, @ParabolicBowl2d_ExtQy, 'L2');
-% ainf = PostproSWE2D.ConvRate('qy', T, @ParabolicBowl2d_ExtQy, 'Linf');
-% 
-% PrintTable.L2   = errL2;
-% PrintTable.a2   = a2;
-% PrintTable.Linf = errLinf;
-% PrintTable.ainf = ainf;
-% 
-% fprintf('The error for flow flux y');
-% PrintTable
+tableTri = PostproTri.GetConvTable('qy', T, @ParabolicBowl2d_ExtQy,...
+    'M', elenum');
+tableQuad = PostproQuad.GetConvTable('qy', T, @ParabolicBowl2d_ExtQy,...
+    'M', elenum');
+tableTri
+plot(tableTri.dofs, tableTri.L2, 'b^-', 'MarkerFaceColor', 'b',...
+    'MarkerSize', markersize, 'LineWidth', linewidth)
+plot(tableQuad.dofs, tableQuad.L2, 'r^-', 'MarkerFaceColor', 'r',...
+    'MarkerSize', markersize, 'LineWidth', linewidth)
+
+set(gca, 'XScale', 'log', 'YScale', 'log')
+legend({'$h (\rm{Quad})$', '$h (\rm{Tri})$', '$q_x$', '$q_x$', '$q_y$', '$q_y$'},...
+    'Location', 'NorthWest', 'box', 'off', 'FontSize', 14,...
+    'Interpreter', 'Latex')
+xlabel('$\sqrt{DOFs}$', 'FontSize', 16, 'Interpreter', 'Latex')
+ylabel('$L_2$', 'FontSize', 16, 'Interpreter', 'Latex')
+
 end% func

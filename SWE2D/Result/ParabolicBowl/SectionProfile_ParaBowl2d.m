@@ -10,7 +10,7 @@ delta = 0.5;
 rmin  = -4000+delta; 
 rmax  =  4000-delta;
 ne    = 100;   % number of exact solution
-np    = 40;    % number of interpolated solutions
+np    = 50;    % number of interpolated solutions
 
 %% Get points coordinate
 xe    = zeros(ne, 1);
@@ -53,13 +53,13 @@ for ist = 1:numel(time)
     plot(ye, extH+be, 'k--', 'LineWidth',lineWidth); hold on
     plot(yp, numH1+bp, 'ro-', 'MarkerSize', markerSize,...
         'LineWidth',lineWidth, 'MarkerFaceColor', 'r');
-    plot(yp, numH2+bp, 'bs-', 'MarkerSize', markerSize,...
+    plot(yp, numH2+bp, 'b^-', 'MarkerSize', markerSize,...
         'LineWidth',lineWidth, 'MarkerFaceColor', 'b');
     plot(ye, be, 'k', 'LineWidth',lineWidth);
-    ylabel('水位 (m)', 'FontSize', 14);
+    ylabel('\eta (m)', 'FontSize', 14);
     xlabel('y (m)', 'FontSize', 14);
     title(timeStr{ist}, 'FontSize', 14);
-    legend({'Exact', '四边形', '三角形'}, 'box', 'off','FontSize', 14);
+    legend({'Exact', 'Quad', 'Tri'}, 'box', 'off','FontSize', 14);
     
     % draw flux qx
     varname = 'qx';
@@ -70,13 +70,13 @@ for ist = 1:numel(time)
     plot(ye, extH, 'k--', 'LineWidth',lineWidth); hold on
     plot(yp, numH1, 'ro-', 'MarkerSize', markerSize, 'LineWidth',lineWidth,...
         'MarkerFaceColor', 'r');
-    plot(yp, numH2, 'bs-', 'MarkerSize', markerSize, 'LineWidth',lineWidth,...
+    plot(yp, numH2, 'b^-', 'MarkerSize', markerSize, 'LineWidth',lineWidth,...
         'MarkerFaceColor', 'b');
     ylim([-1.25, 1.25]);
-    ylabel('流量 q_x (m^2/s)', 'FontSize', 14);
+    ylabel('q_x (m^2/s)', 'FontSize', 14);
     xlabel('y (m)', 'FontSize', 14);
     title(timeStr{ist}, 'FontSize', 14);
-    legend({'Exact', '四边形', '三角形'}, 'box', 'off','FontSize', 14);
+    legend({'Exact', 'Quad', 'Tri'}, 'box', 'off','FontSize', 14);
     
     % draw flux qy
     varname = 'qy';
@@ -90,10 +90,10 @@ for ist = 1:numel(time)
     plot(yp, numH2, 'bs-', 'MarkerSize', markerSize, 'LineWidth',lineWidth,...
         'MarkerFaceColor', 'b');
     ylim([-1.25, 1.25]);
-    ylabel('流量 q_y (m^2/s)', 'FontSize', 14);
+    ylabel('q_y (m^2/s)', 'FontSize', 14);
     xlabel('y (m)', 'FontSize', 14);
     title(timeStr{ist}, 'FontSize', 14);
-    legend({'Exact', '四边形', '三角形'}, 'box', 'off', 'FontSize', 14);
+    legend({'Exact', 'Quad', 'Tri'}, 'box', 'off', 'FontSize', 14);
 end% for
 end% func
 
