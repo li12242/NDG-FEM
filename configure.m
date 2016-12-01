@@ -1,5 +1,5 @@
 function configure(varargin)
-
+% CONFIGURE Installation of Mex files
 if nargin == 0
     conf_Polylib = true;
     conf_Limit1d = true;

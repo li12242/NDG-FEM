@@ -79,7 +79,7 @@ function [mesh, h, qx, qy, botLevel, ftime, dt, dx, hin, uin] = ...
 
 switch meshType
     case 'tri'
-        filename = 'ObliqueHydraulicJumpTriCorser';
+        filename = 'ObliqueHydraulicJumpTri';
         [EToV, VX, VY, EToR, BC] = Utilities.Mesh.MeshReader2D(filename);
     case 'quad'
         filename = 'ObliqueHydraulicJumpQuad';
