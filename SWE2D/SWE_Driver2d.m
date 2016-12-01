@@ -21,25 +21,25 @@ function SWE_Driver2d
 % Name of test case
 % casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
-casename = 'ParabolicBowl';
+% casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
 % casename = 'TsuamiRunup';
-% casename = 'ObliqueHydraulicJump';
+casename = 'ObliqueHydraulicJump';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 160;
-Ny = 160;
+Nx = 50;
+Ny = 30;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'quad';
+phys.meshType = 'tri';
 phys.gra      = 9.81;
 
 if (strncmp(phys.casename, 'TsuamiRunup', 11)) % spicific coefficient
@@ -67,7 +67,6 @@ phys = SWE_Solve2d(phys, outfile);
 
 %% Post process
 % outfile.CloseFile;
-% DrawPoints(phys.mesh, phys.h, phys.qx, phys.qy);
 end% func
 
 
