@@ -306,7 +306,7 @@ h(:, ind) = 1.875;
 qx     = zeros(size(mesh.x));
 qy     = zeros(size(mesh.x));
 dt     = 1e-4;
-ftime  = 20;
+ftime  = 30;
 dx     = min((rmax - rmin)./Nx/(N+1), (width)./Ny/(N+1));
 
 end% func

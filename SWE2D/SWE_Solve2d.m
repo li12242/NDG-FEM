@@ -26,6 +26,7 @@ resQx = zeros(size(qx));
 resQy = zeros(size(qy));
 
 %% RK time stepping
+tic
 while(time<FinalTime)
     s  = SWE_PredictWaveSpeed2d(phys, h, qx, qy);
     dt = CFL*dx/s;
@@ -59,9 +60,9 @@ while(time<FinalTime)
         % In ParabolicBowl test case, SL2 works well for quadrilateral 
         % mesh, while SLLoc2 works better for triangle mesh.
         
-        zeta = h+bot;
-        zeta = Utilities.Limiter.Limiter2D.BJ2(mesh, zeta, 1);
-        h    = zeta-bot;
+%         zeta = h+bot;
+%         zeta = Utilities.Limiter.Limiter2D.BJ2(mesh, zeta, 1);
+%         h    = zeta-bot;
 %         h  = Utilities.Limiter.Limiter2D.VB2d_VA(mesh, h);
 %         qx = Utilities.Limiter.Limiter2D.VB2d_VA(mesh, qx);
 %         qy = Utilities.Limiter.Limiter2D.VB2d_VA(mesh, qy);
@@ -82,7 +83,7 @@ while(time<FinalTime)
 %         qx = Utilities.Limiter.Limiter2D.TVB_quad2d(mesh, qx, 2);
 %         qy = Utilities.Limiter.Limiter2D.TVB_quad2d(mesh, qy, 2);
 
-%         h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  1);
+        h  = Utilities.Limiter.Limiter2D.BJ2(mesh, h,  1);
         qx = Utilities.Limiter.Limiter2D.BJ2(mesh, qx, 1);
         qy = Utilities.Limiter.Limiter2D.BJ2(mesh, qy, 1);
 
@@ -120,7 +121,8 @@ while(time<FinalTime)
     fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
 
 end
-
+tElapsed = toc;
+outfile.putVarPart('elapsedTime', 0, 1, tElapsed);
 %% Assignment
 phys.h  = h;
 phys.qx = qx;
