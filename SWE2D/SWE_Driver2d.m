@@ -26,13 +26,13 @@ casename = 'DamBreakWet';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
 % casename = 'TsuamiRunup';
-% casename = 'ObliqueHydraulicJump';
+casename = 'ObliqueHydraulicJump';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 300;
-Ny = 2;
+Nx = 50;
+Ny = 30;
 
 % # Name of test case
 phys.casename = casename;
@@ -67,7 +67,6 @@ phys = SWE_Solve2d(phys, outfile);
 
 %% Post process
 % outfile.CloseFile;
-% DrawPoints(phys.mesh, phys.h, phys.qx, phys.qy);
 end% func
 
 

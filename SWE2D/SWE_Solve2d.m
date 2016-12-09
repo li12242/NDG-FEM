@@ -26,6 +26,7 @@ resQx = zeros(size(qx));
 resQy = zeros(size(qy));
 
 %% RK time stepping
+tic
 while(time<FinalTime)
     s  = SWE_PredictWaveSpeed2d(phys, h, qx, qy);
     dt = CFL*dx/s;
@@ -120,7 +121,8 @@ while(time<FinalTime)
     fprintf('Processing:%f, dt:%f, s:%f...\n', time/FinalTime, dt, s);
 
 end
-
+tElapsed = toc;
+outfile.putVarPart('elapsedTime', 0, 1, tElapsed);
 %% Assignment
 phys.h  = h;
 phys.qx = qx;
