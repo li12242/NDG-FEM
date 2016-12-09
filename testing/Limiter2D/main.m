@@ -1,11 +1,11 @@
 function main
 close all
 % test of 2D slope limiter
-test = 2; 
+test = 1; 
 
 switch test
     case 1 % quad
-        M = 50; N = 1;
+        M = 2; N = 1;
         mesh = quadSolver(N, M);
     case 2 % triangle 
         M = 2; N = 1;
@@ -62,51 +62,6 @@ ind = ( r2<=1.0);
 var(ind) = 1.0;
 end% func
 
-% function var = ConvectionInit(mesh)
-% % initial condition
-% % refer to Krivodonova (2007) for more details
-% var = zeros(size(mesh.x));
-% 
-% % up left
-% delta = 0.15;
-% beta = log(2)./delta^2;
-% 
-% temp = G(mesh.x, mesh.y, beta, -.5, 0.5);
-% 
-% x1 = -0.8; x2 = -0.2; y1 = 0.2; y2 = 0.8;
-% xm = (x1 + x2)./2; ym = (y1 + y2)./2;
-% R = (x1 - xm).^2 + (y1 - ym).^2;
-% ind = ( (mesh.x - xm).^2 + (mesh.y - ym).^2 ) < R;
-% var(ind) = temp(ind);
-% 
-% % up right
-% x1 = 0.25; x2 = 0.75; y1 = 0.25; y2 = 0.75;
-% xc = mean(mesh.x); yc = mean(mesh.y);
-% ind = (xc > x1) & (xc < x2) ...
-%     & ( yc > y1 ) & (yc < y2);
-% var(:, ind) = 1;
-% 
-% % down left
-% x1 = -0.25; x2 = -0.75; y1 = -0.75; y2 = -0.25;
-% xm = (x1 + x2)./2; ym = (y1 + y2)./2;
-% R = (x1 - xm).^2 + (y1 - ym).^2;
-% ind = ( (mesh.x - xm).^2 + (mesh.y - ym).^2 ) < R;
-% 
-% temp = 1 - sqrt( ((mesh.x - xm).^2 + (mesh.y - ym).^2)./R );
-% var(ind) = temp(ind);
-% 
-% % down right
-% x1 = 0.25; x2 = 0.75; y1 = -0.75; y2 = -0.25;
-% xm = (x1 + x2)./2; ym = (y1 + y2)./2;
-% R = (x1 - xm).^2 + (y1 - ym).^2;
-% ind = ( (mesh.x - xm).^2 + (mesh.y - ym).^2 ) < R;
-% 
-% alpha = 10;
-% xm = 0.5; ym = -0.5;
-% temp = F(mesh.x, mesh.y, alpha, xm, ym);
-% var(ind) = temp(ind);
-% end% func
-
 function g = G(x, y, beta, x0, y0)
 r2 = (x - x0).^2 + (y - y0).^2;
 g = exp( -beta*r2 );
@@ -119,7 +74,7 @@ end% func
 
 function mesh = triSolver(N, M)
 
-[VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D(M+1, M+1, -1, 1, -1, 1, 0);
+[EToV, VX,VY] = Utilities.Mesh.MeshGenTriangle2D(M+1, M+1, -1, 1, -1, 1, 0);
 tri = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
 end% func

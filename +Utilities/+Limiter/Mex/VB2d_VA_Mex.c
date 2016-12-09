@@ -30,7 +30,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	real *M    = mxGetPr(prhs[2]);
 	real *EToV = mxGetPr(prhs[3]);
 	real *Fmask= mxGetPr(prhs[4]);
-	real  Nv   = mxGetScalar(prhs[5]);
+	real Nv    = mxGetScalar(prhs[5]);
 	real *x    = mxGetPr(prhs[6]);
 	real *y    = mxGetPr(prhs[7]);
 
@@ -93,7 +93,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			hvmax[i] = max( hvmax[i], hmean[k]);
 			hvmin[i] = min( hvmin[i], hmean[k]);
 			// mexPrintf("k=%d, v=%d, hmean=%f, max=%f, min=%f\n",
-				// k, f, hmean[k],hvmax[i], hvmin[i]);
+			// 	k, i, hmean[k],hvmax[i], hvmin[i]);
 		}
 	}
 
@@ -124,15 +124,18 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				hv[f]=hvmin[v];
 				flag = 1;
 			}
+
+			// mexPrintf("k=%d, f=%d, v=%d, i=%d, hv=%f\n", 
+			// 	k, f, v, i, hv[f]);
 		}
-		// if (flag){
-			VA_meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
-			// mexPrintf("k=%d, dhdx=%f, dhdy=%f\n", k, dhdx, dhdy);
-			getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
-		// }else{
-			// for(i=0;i<Np;i++)
-				// hlim[i+k*Np] = h[i+k*Np];
+		
+		VA_meanGradient(Nfaces, xv, yv, hv, xc, yc, hc, &dhdx, &dhdy);
+		getLocalVar(Np, hc, xc, yc, x+k*Np, y+k*Np, dhdx, dhdy, hlim+k*Np);
+
+		// for(i=0; i<Nfaces; i++){
+		// 	mexPrintf("k=%d, dhdx=%f, dhdy=%f, h[%d]=%f\n", k, dhdx, dhdy, i, hlim[k*Np+i]);
 		// }
+		
 	}
 
 	free(w);
