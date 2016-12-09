@@ -4,9 +4,10 @@ function PrintTable = GetConvTable(obj, varname, stime, exactFunH, varargin)
 %   meshtype = 'tri';
 %   elenum   = [80, 100, 120, 160, 200];
 %   PostproSWE2D = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
-%   head = {'M', elenum'};
+%   head = 'M', elenum';
 % 
-%   PrintTable = PostproSWE2D.GetConvTable('h', T, @ParabolicBowl2d_ExtDepth, head);
+%   PrintTable = PostproSWE2D.GetConvTable('h', T, ...
+%                @ParabolicBowl2d_ExtDepth, 'M', elenum');
 %   PrintTable
 % 
 

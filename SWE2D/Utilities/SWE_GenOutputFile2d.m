@@ -11,6 +11,7 @@ mesh = phys.mesh;
 time = Utilities.NetcdfClass.NcDim('time', 0); % unlimited dimensions
 node = Utilities.NetcdfClass.NcDim('node', mesh.Shape.nNode);
 nele = Utilities.NetcdfClass.NcDim('nele', mesh.nElement);
+one  = Utilities.NetcdfClass.NcDim('one', 1);
 
 x    = Utilities.NetcdfClass.NcVar('x', [node, nele], 'double');
 y    = Utilities.NetcdfClass.NcVar('y', [node, nele], 'double');
@@ -19,9 +20,10 @@ h    = Utilities.NetcdfClass.NcVar('h', [node, nele, time], 'double');
 qx   = Utilities.NetcdfClass.NcVar('qx', [node, nele, time], 'double');
 qy   = Utilities.NetcdfClass.NcVar('qy', [node, nele, time], 'double');
 bot  = Utilities.NetcdfClass.NcVar('bot', [node, nele], 'double');
+elapseTime = Utilities.NetcdfClass.NcVar('elapsedTime', one, 'double');
 
-file = Utilities.NetcdfClass.NcFile(filename, [node, nele, time],...
-    [x, y, t, h, qx, qy, bot]);
+file = Utilities.NetcdfClass.NcFile(filename, [node, nele, time, one],...
+    [x, y, t, h, qx, qy, bot, elapseTime]);
 
 % initialize output file
 file.CreateFile;
@@ -31,6 +33,7 @@ file.putVarPart('x',   [0, 0], [mesh.Shape.nNode, mesh.nElement], mesh.x);
 file.putVarPart('y',   [0, 0], [mesh.Shape.nNode, mesh.nElement], mesh.y);
 file.putVarPart('bot', [0, 0], [mesh.Shape.nNode, mesh.nElement], phys.bot);
 
+% initial value
 step = 0;
 Np   = mesh.Shape.nNode; % No. of nodes in each element
 Ne   = mesh.nElement; % No. of element
