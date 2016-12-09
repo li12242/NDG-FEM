@@ -1,7 +1,7 @@
 function Snapshot_DamBreak2d
 %% Construct postprocess class
-meshtype = 'quad';
-filename = {'SWE2D_DamBreakWet_quad_300.nc'};
+meshtype = 'tri';
+filename = {'SWE2D_DamBreakWet_VA_tri_300.nc'};
 fileID   = 1;
 
 % create post process class for quad
@@ -13,7 +13,7 @@ cmap = colormap('winter');
 p_h = Postpro.Snapshot2D(...
     'h',time(1)+eps, 1,'value', ...
     cmap(end,:), cmap(1, :), [0, 10],...
-    'EdgeColor', 'none',... % 其他参数，包括边颜色，透明度等
+    'EdgeColor', 'k',... % 其他参数，包括边颜色，透明度等
     'FaceAlpha', 0.8);
 box on;
 grid on;
