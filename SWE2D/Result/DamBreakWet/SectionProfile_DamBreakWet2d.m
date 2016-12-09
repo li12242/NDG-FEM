@@ -35,26 +35,30 @@ PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 meshtype = 'quad';
 filename = {'SWE2D_DamBreakWet_quad_300.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
-markerSize  = 6;
+markerSize  = 8;
 for ist = 1:numel(time)
+    figure('Color', 'w'); hold on;
+    box on;
+    grid on;
     varname = 'h';
+    % quadrilateral
     extH    = DamBreakWet2d_H(xe, ye, time(ist));
-    numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
-    numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
-    % draw water height
-    figure('Color', 'w');
-    plot(xe, extH, 'k--', 'LineWidth', 1.5); hold on
-    plot(xp, numH, 'r+', 'MarkerSize', markerSize);
+    plot(xe, extH, 'k--', 'LineWidth', 1.5);
+
     numSol  = PostproTri.GetVarData(varname, time(ist), fileID);
     numH    = PostproTri.Interp2D(numSol, xp, yp, fileID);
-    plot(xp, numH, 'bx', 'MarkerSize', markerSize);
-    ylabel('水位 (m)','FontSize', 16);
+    plot(xp, numH, 'bx', 'MarkerSize', markerSize, 'LineWidth', 1.5);
+    % triangle
+    numSol  = PostproQuad.GetVarData(varname, time(ist), fileID);
+    numH    = PostproQuad.Interp2D(numSol, xp, yp, fileID);
+    plot(xp, numH, 'ro', 'MarkerSize', 6, 'LineWidth', 1.5);
+    
+    ylabel('\eta (m)','FontSize', 16);
     xlabel('y (m)','FontSize', 16);
     title(timeStr{ist}, 'Interpreter', 'Latex', 'FontSize', 18);
     ylim([0, 11])
-    t = legend('Exact', '三角形', '四边形');
+    t = legend('Exact', 'Quad', 'Tri');
     set(t, 'box', 'off', 'FontSize', 16);
-    
 end% for
 
 end
