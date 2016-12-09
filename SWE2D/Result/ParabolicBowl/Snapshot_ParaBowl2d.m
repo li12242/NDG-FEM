@@ -1,10 +1,12 @@
-function SnapShot_FlowOver3Bumps
+function Snapshot_ParaBowl2d
+%SNAPSHOT_PARABOWL2D Summary of this function goes here
+%   Detailed explanation goes here
 % Parameter
 T        = 20;
 % casename = 'SWE2D_FlowOver3BumpsUniform_';
 meshtype = 'quad';
 % filename = {[casename, meshtype, '_100.nc']};
-filename = {'SWE2D_FlowOver3BumpsUniform_quad_100.nc'};
+filename = {'SWE2D_ParabolicBowl_quad_80.nc'};
 order    = 1;
 Postpro  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
@@ -15,7 +17,6 @@ figure('color', 'w')
 bot = Postpro.NcFile(1).GetVarData('bot');
 bh = Postpro.SnapshotConst2D('bot',fileID);
 set(bh, 'FaceColor', [.8, .8, .8]);
-colorbar('southoutside');
 
 hold on;
 box on;
@@ -30,7 +31,8 @@ p_h = Postpro.Snapshot2D(...
     'FaceAlpha', 0.8);
 
 % set axes properties
-set(gca, 'DataAspectRatio', [10,10,1])
+set(gca, 'DataAspectRatio', [1000,1000,1])
+xlim([0, 4000])
 zlim([0, 5]);
 zlabel('\eta (m)','FontSize', 10);
 xlabel('x (m)','FontSize', 10);
@@ -39,7 +41,7 @@ view(-40, 24);
 
 is_Camera_on = 1; % 设定是否生成动画
 if is_Camera_on;
-    writerObj = VideoWriter([pwd,'/FlowOver3Bumps_quad_100.avi']);
+    writerObj = VideoWriter([pwd,'/ParaBowl2d_quad_80.avi']);
     writerObj.FrameRate=15; % 设定动画帧率
     open(writerObj);	
 end
@@ -66,4 +68,6 @@ end% for
 if is_Camera_on
     close(writerObj);
 end
-end% func
+
+end
+
