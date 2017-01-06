@@ -1,32 +1,40 @@
-function rhsVar = Convection2d_RHS(mesh, var, u, v)
+function rhsT = Convection2d_RHS(mesh, T, u, v, Dx, Dy)
 % 2D convection problem
 % Righ Hand sides
 
 shape = mesh.Shape;
 
-% volume flux
-[F, G] = Convection2d_Flux(var, u, v);
+dT = (T(mesh.vmapM)-T(mesh.vmapP))/2.0;
+p = Dx.*( mesh.rx.*(shape.Dr*T) + mesh.sx.*(shape.Ds*T)...
+    - shape.LIFT*(mesh.fScale.*(mesh.nx.*dT)) );
+q = Dy.*( mesh.ry.*(shape.Dr*T) + mesh.sy.*(shape.Ds*T)...
+    - shape.LIFT*(mesh.fScale.*(mesh.ny.*dT)) );
+
+dp = (p(mesh.vmapM)-p(mesh.vmapP))/2.0;
+dq = (q(mesh.vmapM)-q(mesh.vmapP))/2.0;
+dps = mesh.nx.*dp + mesh.ny.*dq;
+% flux term
+[F, G] = Convection2d_Flux(T, u, v);
 
 % numerical flux
-Fs = Convection2d_LF(mesh, var, u, v);
-FM = F(mesh.vmapM); 
-GM = G(mesh.vmapM);
+Fs = Convection2d_LF(mesh, T, u, v);
+FM = F(mesh.vmapM); GM = G(mesh.vmapM);
 dF = normal(mesh, FM, GM) - Fs;
 
 % strong form
-rhsVar = -( mesh.rx.*(shape.Dr*F) + mesh.sx.*(shape.Ds*F) ...
+rhsT = -( ...
+    + mesh.rx.*(shape.Dr*F) + mesh.sx.*(shape.Ds*F) ...
     + mesh.ry.*(shape.Dr*G) + mesh.sy.*(shape.Ds*G) ) ...
     + shape.LIFT*(dF.*mesh.fScale);
-
-% weak form
-% rhsVar = ( mesh.rx.*(tri.Drw*F) + mesh.sx.*(tri.Dsw*F) ...
-%     + mesh.ry.*(tri.Drw*G) + mesh.sy.*(tri.Dsw*G) ) ...
-%     - (tri.invM*tri.Mes)*(Fs.*mesh.fScale);
+    
+rhsT = rhsT + mesh.rx.*(shape.Dr*p) + mesh.sx.*(shape.Ds*p)...
+    + mesh.ry.*(shape.Dr*q) + mesh.sy.*(shape.Ds*q)...
+    - shape.LIFT*(mesh.fScale.*dps);
 end% func
 
 function Fs = Convection2d_LF(mesh, var, u, v)
 % L-F flux
-uM   = u(mesh.vmapM); 
+uM   = u(mesh.vmapM);
 vM   = v(mesh.vmapM);
 varM = var(mesh.vmapM); 
 varP = var(mesh.vmapP);

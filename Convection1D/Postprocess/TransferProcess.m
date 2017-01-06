@@ -1,5 +1,5 @@
 function TransferProcess
-filename = 'Convection1D_2_100.nc';
+filename = 'Convection1D_4_8.nc';
 
 time = ncread(filename, 'time');
 % timestep = numel(time)
@@ -11,9 +11,9 @@ end% func
 function p_h = point1D(filename, x, time)
 % ind = 1:6:numel(x);
 itime = 1;
-var = ncread(filename, 'var', [1, itime],[inf, 1]);
+var = ncread(filename, 'var', [1, 1, itime],[inf, inf, 1]);
 
-p_h = plot(x, var, '.');
+p_h = plot(x(:), var(:), '.-');
 ylim([-0.5, 1.2]);
 
 camera_on = 0;
@@ -25,9 +25,9 @@ end
 
 for itime = 1:1:numel(time)
     
-    var = ncread(filename, 'var', [1, itime],[inf, 1]);
+    var = ncread(filename, 'var', [1, 1, itime],[inf, inf 1]);
     
-    set(p_h, 'YData', var);
+    set(p_h, 'YData', var(:));
     drawnow;
     
     if camera_on

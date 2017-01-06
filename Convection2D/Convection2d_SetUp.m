@@ -9,9 +9,8 @@ function var = Convection2d_SetUp(meshtype, N, M)
 %   var - scalar variable
 
 % name of different test case
-casename = 'GaussMount';
-% casename = 'SquareMount';
-% casename = 'SolidBody';
+% casename = 'Rotation';
+casename = 'AdvectionDiffusion';
 
 phys.casename = casename;
 phys.meshtype = meshtype;
@@ -23,27 +22,18 @@ switch meshtype
         [mesh, phys.dx] = triSolver(N, M);
 end% switch
 phys.mesh = mesh;
-% velocity field and simulation time
-w      = 5*pi/6;
-u      = w.*(0.5-mesh.y); 
-v      = w.*(mesh.x-0.5);
-phys.u = u;
-phys.v = v;
-FinalTime  = 2.4;
-phys.ftime = FinalTime;
-
 % initial field
 phys = Convection2d_Init(phys);
 
 % output file
 filename   = ['Convection2D_', meshtype, '_', num2str(N),'_',num2str(M)];
-ncfile     = CreateNetcdf(filename, mesh);
+ncfile     = Convection2d_output(filename, mesh);
 phys.file  = ncfile;
 
 var = Convection2d_Solver(phys);
 end% func
 
-function file = CreateNetcdf(filename, mesh)
+function file = Convection2d_output(filename, mesh)
 
 time = Utilities.NetcdfClass.NcDim('time', 0); % unlimited dimensions
 np   = Utilities.NetcdfClass.NcDim('np', mesh.Shape.nNode);
@@ -70,41 +60,20 @@ end% func
 function phys = Convection2d_Init(phys)
 mesh = phys.mesh;
 switch phys.casename
-    case 'GaussMount'
-        var = GaussMount(mesh);
-    case 'SquareMount'
-        var = SquareMount(mesh);
-    case 'SolidBody'
-        var = SolidBody(mesh);
+    case 'Rotation'
+        [var,u,v,ftime,Dx,Dy] = Rotation_Init(mesh);
+    case 'AdvectionDiffusion'
+        [var,u,v,ftime,Dx,Dy] = AdvectDiff_Init(mesh);
 end% switch
 phys.var = var;
+phys.u = u;
+phys.v = v;
+phys.ftime = ftime;
+phys.Dx = Dx;
+phys.Dy = Dy;
 end% func
 
-function var = SolidBody(mesh)
-var = zeros(size(mesh.x));
-% slotted cylinder
-x0  = 0.5; 
-y0  = 0.75; 
-r0  = 0.15;
-r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
-ind = ( r2<=1.0);
-ind = ind & ((abs(mesh.x - x0)>=0.025) | (mesh.y >= 0.85));
-var(ind) = 1.0;
-% cone
-x0  = 0.5; 
-y0  = 0.25;
-r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
-ind = ( r2<=1.0);
-var(ind) = 1-r2(ind);
-% hump
-x0  = 0.25;
-y0  = 0.5;
-r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
-ind = ( r2<=1.0);
-var(ind) = (1+cos(r2(ind)*pi))./4;
-end% func
-
-function var = GaussMount(mesh)
+function [var, u, v, ftime, Dx, Dy] = Rotation_Init(mesh)
 % Guass profile
 var = zeros(size(mesh.x));
 r0  = 0.15;
@@ -113,39 +82,57 @@ y0  = 0.5;
 r2  = sqrt((mesh.x-x0).^2+(mesh.y-y0).^2)./r0;
 ind = ( r2<=1.0);
 var(ind) = (1+cos(r2(ind)*pi))./2;
+% velocity field
+w      = 5*pi/6;
+u      = w.*(0.5-mesh.y); 
+v      = w.*(mesh.x-0.5);
+% final time
+ftime  = 2.4;
+% diffusion parameter
+Dx = 0; 
+Dy = 0;
 end% func
 
-function var = SquareMount(mesh)
-% square distribution
-var = zeros(size(mesh.x));
-b   = 1/12;
-x0  = 0.50; xc = mean(mesh.x); 
-y0  = 0.75; yc = mean(mesh.y);
-
-flag = ( abs(xc - x0)<b & abs(yc - y0)<b );
-var(:, flag) = 1;
-end% func
+function [var, u, v, ftime, Dx, Dy] = AdvectDiff_Init(mesh)
+% diffusion parameter
+Dx = 0.01; 
+Dy = 0.01;
+% velocity field
+u = 0.5.*ones(size(mesh.x));
+v = 0.5.*ones(size(mesh.x));
+% Guass profile
+x0  = -0.5;
+y0  = -0.5;
+t = -(mesh.x-x0).^2/Dx -(mesh.y-y0).^2/Dy;
+var = exp(t);
+% final time
+ftime = 0.5;
+end
 
 %% solver for different type of element
 function [mesh, dx] = triSolver(N, M)
 % uniform triangle mesh
 np   = M + 1;
 [VX,VY,EToV] = Utilities.Mesh.MeshGenTriangle2D...
-    (np, np, 0, 1, 0, 1, false);
+    (np, np, -1, 1, -1, 1, false);
 
 tri  = StdRegions.Triangle(N);
 mesh = MultiRegions.RegionTri(tri, EToV, VX, VY);
-dx   = 2/np/(N+1);
+wv = sum(tri.M);
+vol = (wv*mesh.J);
+dx = min(sqrt(vol/pi));
 end% func
 
 function [mesh, dx] = quadSolver(N, M)
 % uniform quadrilaterial mesh
 np   = M + 1;
 [EToV, VX, VY] = Utilities.Mesh.MeshGenRectangle2D...
-    (np, np, 0, 1, 0, 1);
+    (np, np, -1, 1, -1, 1);
 
 quad = StdRegions.Quad(N);
 mesh = MultiRegions.RegionQuad(quad, EToV, VX, VY);
-dx   = 2/np/(N+1);
+wv = sum(quad.M);
+vol = (wv*mesh.J);
+dx = min(sqrt(vol/pi));
 end% func
 

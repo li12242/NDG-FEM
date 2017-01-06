@@ -1,15 +1,19 @@
-function var = Convection1DSolver(mesh, var, FinalTime, a, outfile)
+function phys = Convection1d_Solver(phys)
 
 [rk4a, rk4b, rk4c] = getRK_coefficient;
 
 % set time interval
-xm = abs(mesh.x(2) - mesh.x(1)); CFL = 0.5;
-dt = CFL*(xm./a);
+xm = abs(phys.mesh.x(2) - phys.mesh.x(1)); 
+CFL = 0.25;
+dt = CFL*min(xm./phys.u(1), xm.^2/sqrt(phys.Dx));
 
-time = 0; outStep = 0; nx = numel(mesh.x);
+time = 0; outStep = 0;
 
-resVar = zeros(size(var));
-u = a*ones(size(mesh.x));
+resT      = zeros(size(phys.var));
+FinalTime = phys.ftime;
+var       = phys.var;
+Np        = phys.mesh.Shape.nNode;
+Ne        = phys.mesh.nElement;
 while(time < FinalTime)
     
     if time + dt > FinalTime
@@ -20,29 +24,29 @@ while(time < FinalTime)
     fprintf('Processing: %f ...\n', time./FinalTime)
     
     for INTRK = 1:5
-        rhsVar = Convection1DRHS(mesh, var, a);
+        rhsT = Convection1d_RHS(phys, var);
                 
-        resVar = rk4a(INTRK)*resVar + dt*rhsVar;
-        var = var + rk4b(INTRK)*resVar;
+        resT = rk4a(INTRK)*resT + dt*rhsT;
+        var = var + rk4b(INTRK)*resT;
         
         
-        temp = Utilities.Limiter.Limiter1D.BJ1D(mesh,var);
-        [flag, I] = Utilities.Limiter.Limiter1D.DisDetector(mesh, var, u);
-        ind = find(flag);
-        var(:, ind) = temp(:, ind);
+%         var = Utilities.Limiter.Limiter1D.BJ1D(mesh,var);
+%         [flag, I] = Utilities.Limiter.Limiter1D.DisDetector(mesh, var, u);
+%         ind = find(flag);
+%         var(:, ind) = temp(:, ind);
 %         var = Utilities.Limiter.Limiter1D.MomentBDF(mesh, var);
 %         var = Utilities.Limiter.Limiter1D.TVB1D(mesh, var, 1000);
 %         var = Utilities.Limiter.Limiter1D.GKTVB1D(mesh, var);
     end% for
 
-    outfile.putVarPart('var', [0, outStep], [nx, 1], var);
-    outfile.putVarPart('time', outStep, 1, time);
+    phys.file.putVarPart('var', [0, 0, outStep],[Np, Ne, 1], var);
+    phys.file.putVarPart('time', outStep, 1, time);
     outStep = outStep + 1;
-    
+    plot(phys.mesh.x, var); drawnow;
 end% while
 
+phys.var = var;
 end% func
-
 
 function [rk4a, rk4b, rk4c] = getRK_coefficient
 % rk4c = [0, 1/2, 1/2, 1];
