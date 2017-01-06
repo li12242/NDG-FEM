@@ -10,11 +10,13 @@ var     = phys.var;
 ftime   = phys.ftime;
 u       = phys.u;
 v       = phys.v;
+Dx      = phys.Dx;
+Dy      = phys.Dy;
 ncfile  = phys.file;
 % time step
-CFL     = 0.30;
+CFL     = 0.25;
 un      = max(max( sqrt(u.^2 + v.^2) ));
-dt      = CFL*phys.dx/un;
+dt      = min(CFL*phys.dx/un, CFL*phys.dx.^2/sqrt(phys.Dx));
 
 % RK time stepping parameters
 [rk4a, rk4b, rk4c] = RK4Coeff;
@@ -38,7 +40,7 @@ while(time < ftime)
     fprintf('Processing: %f ...\n', time./ftime)
     
     for INTRK = 1:5
-        rhsVar = Convection2d_RHS(mesh, var, u, v);
+        rhsVar = Convection2d_RHS(mesh, var, u, v, Dx, Dy);
                 
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var    = var + rk4b(INTRK)*resVar;
@@ -56,7 +58,7 @@ while(time < ftime)
 %         varlim = Utilities.Limiter.Limiter2D.JKTA_tri(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.JKTA_quad(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.BJ2(mesh, var, 1);
-        var = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
+%         var = Utilities.Limiter.Limiter2D.VB2d(mesh, var);
 %         var = Utilities.Limiter.Limiter2D.BJLoc2(mesh, var, 1);
 %         var = Utilities.Limiter.Limiter2D.HWENO2d(mesh, var);
         
