@@ -1,4 +1,4 @@
-function PrintTable = GetConvTable(obj, varname, stime, exactFunH, varargin)
+function PrintTable = GetConvTable(obj, varname, stime, exactFunH, dofs, varargin)
 % 
 % Usages:
 %   meshtype = 'tri';
@@ -32,7 +32,8 @@ for i = 1:numel(varargin)/2
     std = std + 2;
 end
 % get DOFs
-PrintTable.dofs = obj.GetDofs;
+% PrintTable.dofs = obj.GetDofs;
+PrintTable.dofs = dofs;
 % get norm error
 errL2        = zeros(obj.nfiles, 1);
 errLinf      = zeros(obj.nfiles, 1);
