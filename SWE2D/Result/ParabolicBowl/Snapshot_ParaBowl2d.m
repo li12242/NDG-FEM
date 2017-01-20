@@ -2,15 +2,15 @@ function Snapshot_ParaBowl2d
 %SNAPSHOT_PARABOWL2D Summary of this function goes here
 %   Detailed explanation goes here
 % Parameter
-T        = 20;
+T        = 1773.1;
 % casename = 'SWE2D_FlowOver3BumpsUniform_';
 meshtype = 'quad';
 % filename = {[casename, meshtype, '_100.nc']};
-filename = {'SWE2D_ParabolicBowl_quad_80.nc'};
+filename = {'swe2d_quad_1_81.0-1.nc'};
 order    = 1;
 Postpro  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
-time     = (0:0.005:1)*T;
+time     = linspace(eps, 1-eps, 7)*T;
 
 figure('color', 'w')
 % plot bottom topography
@@ -34,12 +34,12 @@ p_h = Postpro.Snapshot2D(...
 set(gca, 'DataAspectRatio', [1000,1000,1])
 xlim([0, 4000])
 zlim([0, 5]);
-zlabel('\eta (m)','FontSize', 10);
-xlabel('x (m)','FontSize', 10);
-ylabel('y (m)','FontSize', 10);
+zlabel('$\eta (m)$','FontSize', 10, 'Interpreter', 'Latex', 'FontSize', 16);
+xlabel('$x (m)$','FontSize', 10, 'Interpreter', 'Latex', 'FontSize', 16);
+ylabel('$y (m)$','FontSize', 10, 'Interpreter', 'Latex', 'FontSize', 16);
 view(-40, 24);
 
-is_Camera_on = 1; % 设定是否生成动画
+is_Camera_on = 0; % 设定是否生成动画
 if is_Camera_on;
     writerObj = VideoWriter([pwd,'/ParaBowl2d_quad_80.avi']);
     writerObj.FrameRate=15; % 设定动画帧率
