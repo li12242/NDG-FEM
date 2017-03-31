@@ -5,7 +5,9 @@ function warp = Warpfactor(N, rout)
 [LGLr,~] = Polylib.zwglj(N+1); req = linspace(-1,1,N+1)';
 
 % Compute V based on req
-Veq = StdRegions.Line.getVandMatrix(N, req);
+%Veq = StdRegions.Line.GetVandMatrix(N, req);
+obj=StdRegions.Line(N);
+Veq = obj.GetVandMatrix(N, req);
 % Evaluate Lagrange polynomial at rout
 Nr = length(rout); %Lmat=zeros(N+1,Nr); 
 Pmat = zeros(N+1,Nr);
