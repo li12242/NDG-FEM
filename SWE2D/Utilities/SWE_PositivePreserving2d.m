@@ -5,8 +5,6 @@ function [h, qx, qy] = SWE_PositivePreserving2d(phys, mesh, h, qx, qy)
 
 % Parameters
 minDepth  = phys.minDepth;
-[h, qx, qy] = SWE_Mex_PositivePreserving2d(h, qx, qy, mesh.Shape.M, ...
-    mesh.J, minDepth);
 % ksi       = 0.0;
 % Np        = mesh.Shape.nNode;
 % 
@@ -36,18 +34,21 @@ minDepth  = phys.minDepth;
 % flag = h<=minDepth;
 % qx(flag) = 0;
 % qy(flag) = 0;
-
-% eliminate dry flux
+% 
+% % eliminate dry flux
 % hmean     = CellMean(mesh, h);
 % dis       = hmean<minDepth;
 % qx(:,dis) = 0;
 % qy(:,dis) = 0;
+
+[h, qx, qy] = SWE_Mex_PositivePreserving2d(h, qx, qy, mesh.Shape.M, ...
+    mesh.J, minDepth);
 end% func
 
 %% Compute cell averages
 % The cell average is obtained by dividing the Vandermonde matrix.
 function v = CellMean(mesh, u)
-V  = mesh.Shape.VandMatrix;
+V  = mesh.Shape.V;
 Np = mesh.Shape.nNode;
 
 uh         = V\u;  

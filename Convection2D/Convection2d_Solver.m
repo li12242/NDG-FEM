@@ -6,6 +6,7 @@ mesh    = phys.mesh;
 shape   = mesh.Shape;
 Ne      = mesh.nElement;
 Np      = shape.nNode;
+N       = shape.nOrder;
 var     = phys.var;
 ftime   = phys.ftime;
 u       = phys.u;
@@ -16,7 +17,7 @@ ncfile  = phys.file;
 % time step
 CFL     = 0.25;
 un      = max(max( sqrt(u.^2 + v.^2) ));
-dt      = min(CFL*phys.dx/un, CFL*phys.dx.^2/sqrt(phys.Dx));
+dt      = min(CFL*phys.dx/un, CFL*phys.dx.^2/(phys.Dx)/(N+1)^2/4);
 
 % RK time stepping parameters
 [rk4a, rk4b, rk4c] = RK4Coeff;
@@ -37,10 +38,10 @@ while(time < ftime)
         dt = ftime - time;
     end
     time = time+dt;
-    fprintf('Processing: %f ...\n', time./ftime)
+    fprintf('Processing: %f ...\r', time./ftime)
     
     for INTRK = 1:5
-        rhsVar = Convection2d_RHS(mesh, var, u, v, Dx, Dy);
+        [rhsVar, p, q] = Convection2d_RHS(mesh, var, u, v, Dx, Dy);
                 
         resVar = rk4a(INTRK)*resVar + dt*rhsVar;
         var    = var + rk4b(INTRK)*resVar;
@@ -69,6 +70,8 @@ while(time < ftime)
     end% for
     
     ncfile.putVarPart('var', [0, 0, contour],[Np, Ne, 1], var);
+    ncfile.putVarPart('p', [0, 0, contour],[Np, Ne, 1], p);
+    ncfile.putVarPart('q', [0, 0, contour],[Np, Ne, 1], q);
     ncfile.putVarPart('time',contour,1,time);
     
     contour = contour + 1;

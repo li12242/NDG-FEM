@@ -20,19 +20,19 @@ function SWE_Driver2d
 
 % Name of test case
 % casename = 'DamBreakDry';
-casename = 'DamBreakWet';
-% casename = 'ParabolicBowl';
+% casename = 'DamBreakWet';
+casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
 % casename = 'TsuamiRunup';
-casename = 'ObliqueHydraulicJump';
+% casename = 'ObliqueHydraulicJump';
 
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 50;
-Ny = 30;
+Nx = 80;
+Ny = 80;
 
 % # Name of test case
 phys.casename = casename;
