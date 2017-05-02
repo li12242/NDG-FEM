@@ -10,7 +10,7 @@ dropAVE = eye(mesh.Shape.nNode)-ones(mesh.Shape.nNode,1)*AVE;
 dx   = dropAVE*mesh.x; dy = dropAVE*mesh.y;
 
 % Extract coordinates of vertices and centers of elements
-ids = mesh.Shape.getVertexNodeList;
+ids = mesh.Shape.GetVertexNodeList;
 xv = mesh.x(ids, :);
 yv = mesh.y(ids, :);
 
@@ -87,11 +87,11 @@ dVdyC1 = dVdyC0(E1); dVdyC2 = dVdyC0(E2); dVdyC3 = dVdyC0(E3); dVdyC4 = dVdyC0(E
 g1 = (dVdxC1.^2 + dVdyC1.^2); g2 = (dVdxC2.^2 + dVdyC2.^2); 
 g3 = (dVdxC3.^2 + dVdyC3.^2); g4 = (dVdxC4.^2 + dVdyC4.^2);
 
-epse = 1e-10; fac = g1.^3 + g2.^3 + g3.^3 + g4.^3;
-w1 = (g2.*g3.*g4+epse)./(fac+4*epse);
-w2 = (g1.*g3.*g4+epse)./(fac+4*epse);
-w3 = (g1.*g2.*g4+epse)./(fac+4*epse);
-w4 = (g1.*g2.*g3+epse)./(fac+4*epse);
+epse = 1e-10; fac = g1.^2 + g2.^2 + g3.^2 + g4.^2;
+w1 = ( (g2.^2 + g3.^2 + g4.^2)/3 +epse)./(fac+4*epse);
+w2 = ( (g1.^2 + g3.^2 + g4.^2)/3 +epse)./(fac+4*epse);
+w3 = ( (g1.^2 + g2.^2 + g4.^2)/3 +epse)./(fac+4*epse);
+w4 = ( (g1.^2 + g2.^2 + g3.^2)/3 +epse)./(fac+4*epse);
 
 % Limit gradients
 LdVdxC0 = w1.*dVdxC1 + w2.*dVdxC2 + w3.*dVdxC3 + w4.*dVdxC4;

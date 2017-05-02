@@ -43,9 +43,11 @@ x    = Utilities.NetcdfClass.NcVar('x', [np, ne], 'double');
 y    = Utilities.NetcdfClass.NcVar('y', [np, ne], 'double');
 t    = Utilities.NetcdfClass.NcVar('time', time, 'double');
 var  = Utilities.NetcdfClass.NcVar('var', [np, ne, time], 'double');
+p  = Utilities.NetcdfClass.NcVar('p', [np, ne, time], 'double');
+q  = Utilities.NetcdfClass.NcVar('q', [np, ne, time], 'double');
 
 file = Utilities.NetcdfClass.NcFile...
-    (filename,[np, ne, time],[x, y, t, var]);
+    (filename,[np, ne, time],[x, y, t, var, p, q]);
 
 % initialize output file
 file.CreateFile;
