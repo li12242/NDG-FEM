@@ -1,4 +1,4 @@
-function rhsT = Convection2d_RHS(mesh, T, u, v, Dx, Dy)
+function [rhsT, p, q] = Convection2d_RHS(mesh, T, u, v, Dx, Dy)
 % 2D convection problem
 % Righ Hand sides
 
