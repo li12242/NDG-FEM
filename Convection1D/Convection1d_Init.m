@@ -12,7 +12,7 @@ end% func
 function var = AdvectionDiffusion_Init(phys)
 x1 = phys.xlim(1); 
 x2 = phys.xlim(2); 
-x0 = x1 + 0.25*(x2 - x1);
+x0 = x1 + 0.75*(x2 - x1);
 
 mesh = phys.mesh;
 Dx = phys.Dx;

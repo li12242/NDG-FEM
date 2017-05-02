@@ -10,7 +10,7 @@ dropAVE = eye(mesh.Shape.nNode)-ones(mesh.Shape.nNode,1)*AVE;
 dx   = dropAVE*mesh.x; dy = dropAVE*mesh.y;
 
 % Extract coordinates of vertices and centers of elements
-ids = mesh.Shape.getVertexNodeList;
+ids = mesh.Shape.GetVertexNodeList;
 xv = mesh.x(ids, :);
 yv = mesh.y(ids, :);
 

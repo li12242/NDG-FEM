@@ -4,7 +4,7 @@ T        = 0.5;
 nt = 100;
 time     = linspace(eps, T, nt);
 fileID   = 1; % index of result file to draw
-ele      = [20];
+ele      = 50;
 deg      = 2;
 meshtype = 'quad';
 filename = cell(numel(ele), 1);
@@ -20,15 +20,16 @@ Postpro = Utilities.PostProcess.Postprocess(filename, meshtype, deg);
 x = Postpro.NcFile(fileID).GetVarData('x');
 y = Postpro.NcFile(fileID).GetVarData('y');
 
-p_h = Postpro.Snapshot2D('var', time(1), fileID, 'default');
+p_h = Postpro.Snapshot2D('p', time(1), fileID, 'default');
 view(-29, 20);
-xlim([-1, 1]); ylim([-1, 1]); zlim([-0.1, 1.5]);
+xlim([-1, 1]); ylim([-1, 1]); 
+%zlim([-0.1, 1.5]);
 xlabel('$x$', 'Interpreter', 'latex')
 ylabel('$y$', 'Interpreter', 'latex')
 zlabel('$C$', 'Interpreter', 'latex')
 
 for i = 1:numel(time)
-    val = Postpro.GetVarData('var', time(i), fileID);
+    val = Postpro.GetVarData('p', time(i), fileID);
     
     vertex = [x(:), y(:), val(:)];
     % 同时更新节点颜色

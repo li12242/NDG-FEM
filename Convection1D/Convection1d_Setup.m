@@ -1,7 +1,7 @@
 function Convection1d_Setup
 % parameters
-phys.N = 4; 
-phys.K = 20;
+phys.N = 2; 
+phys.K = 40;
 phys.xlim = [-1, 1];
 
 % casename = 'Advection';
@@ -13,8 +13,8 @@ line = StdRegions.Line(phys.N);
     (phys.xlim(1), phys.xlim(2), phys.K);
 mesh = MultiRegions.RegionLine(line, EToV, VX);
 % periodic boundary condition
-mesh.vmapP(1) = numel(mesh.x);
-mesh.vmapP(end) = 1;
+% mesh.vmapP(1) = numel(mesh.x);
+% mesh.vmapP(end) = 1;
 
 % physical structure variable
 phys.casename = casename;
