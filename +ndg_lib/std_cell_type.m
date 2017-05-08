@@ -1,4 +1,4 @@
-classdef std_cell_type < int8
+classdef std_cell_type < double
     enumeration
         Point   (0)
         Line    (1)

@@ -1,4 +1,4 @@
-classdef ndg_list
+classdef (HandleCompatible = true) ndg_list
     %NDG_LIST 生成二维链表数组
     %   二维链表按列存储
     %
@@ -38,8 +38,8 @@ classdef ndg_list
         function disp(obj)
             sk = 1;
             for n = 1:obj.ndim
-                disp(['list[', num2str(n), ']']);
-                disp( obj.var( sk:(sk+obj.dim(n)-1) )' );
+                disp(['list(:, ', num2str(n), ')']);
+                disp( obj.var( sk:(sk+obj.dim(n)-1) ) );
                 sk = sk + obj.dim(n);
             end
         end% func
