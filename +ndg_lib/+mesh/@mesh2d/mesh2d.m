@@ -25,7 +25,14 @@ classdef mesh2d < ndg_lib.mesh.mesh
     end
     
     properties(SetAccess=private)
+        eidM, eidP
+        eidtype
+        eidfscal
+    end
+    
+    properties(SetAccess=private)
         Nedge
+        Nnode
         kM, kP
         fM, fP
         ftype
@@ -42,7 +49,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
         [EToE, EToF] = ele_connect(obj, EToV)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
         [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
-        [Nedge, kM, kP, fM, fP, ftype, ...
+        [Nedge, Nnode, kM, kP, fM, fP, ftype, ...
             idM, idP, fpM, fpP, fscal, fnxM, fnyM, fnzM] = ...
             edge_connect(obj, EToV, EToE, EToF, EToBS)
     end% methods
@@ -80,10 +87,12 @@ classdef mesh2d < ndg_lib.mesh.mesh
             [obj.nx, obj.ny, obj.nz, obj.Js] = ...
                 ele_suf_factor(obj, obj.vx, obj.vy, obj.EToV);
             
-            [obj.Nedge, obj.kM, obj.kP, obj.fM, obj.fP, obj.ftype, ...
+            [obj.Nedge, obj.Nnode, obj.kM, obj.kP, obj.fM, obj.fP, obj.ftype, ...
                 obj.idM, obj.idP, obj.fpM, obj.fpP, obj.fscal, ...
                 obj.fnxM, obj.fnyM, obj.fnzM] = ...
                 edge_connect(obj, obj.EToV, obj.EToE, obj.EToF, obj.EToBS);
+            
+            [obj.eidM, obj.eidP, obj.eidtype, obj.eidfscal] = ele_suf_connect(obj);
         end% func
     end% methods
     
