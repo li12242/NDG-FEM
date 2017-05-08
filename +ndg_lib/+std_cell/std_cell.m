@@ -1,18 +1,18 @@
-classdef std_cell < handle
+classdef std_cell
     %STD_CELL Summary of this class goes here
     %   Detailed explanation goes here
     
     %% 全局属性
     properties(Abstract)
         N   % 基函数阶数
-        type % 单元类型
     end
     
     % 基本属性
-    properties(Abstract, SetAccess = private)
-        Np % 节点个数
+    properties(Constant, Abstract)
+        type % 单元类型
         Nv
         vr, vs, vt
+        Nfv
         FToV
         Nface
         faceType
@@ -20,6 +20,7 @@ classdef std_cell < handle
     
     % 体积属性
     properties(Abstract, SetAccess = private)
+        Np % 节点个数
         r, s, t
         V
         M
@@ -34,10 +35,13 @@ classdef std_cell < handle
     end
     
     %% 方法
-    methods(Abstract) % 虚函数
+    methods(Abstract, Access=protected) % 虚函数
         [r,s,t] = node_coor_func(obj, N)
         fun = orthogonal_func(obj, N, ind, r, s, t)
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
+    end
+    
+    methods
         node_val = project_vert2node(obj, vert_val);
     end
    
@@ -68,12 +72,14 @@ classdef std_cell < handle
         end% func
         
         function Fmask = Face_node(obj)
-            Fmask = ndg_utility.ndg_list(obj.Nfp);
+            maxnfp = max(obj.Nfp);
+            Fmask = zeros(maxnfp, obj.Nface);
             for f = 1:obj.Nface
+                nfv = obj.Nfv(f);
                 % get vertex index on face f
-                rv = obj.vr(obj.FToV(:, f));
-                sv = obj.vs(obj.FToV(:, f));
-                tv = obj.vt(obj.FToV(:, f));
+                rv = obj.vr(obj.FToV(1:nfv, f));
+                sv = obj.vs(obj.FToV(1:nfv, f));
+                tv = obj.vt(obj.FToV(1:nfv, f));
                 if(isrow(rv)) rv = rv'; end
                 if(isrow(sv)) sv = sv'; end
                 if(isrow(tv)) tv = tv'; end
