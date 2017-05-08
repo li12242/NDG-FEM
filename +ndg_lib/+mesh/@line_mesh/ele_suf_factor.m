@@ -3,7 +3,7 @@ function [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
 %   Detailed explanation goes here
 
 xb = obj.x(obj.cell.Fmask, :);
-nx = ones(obj.cell.Nface, obj.K);
+nx = ones(obj.cell.Nfptotal, obj.K);
 % Define outward normals
 [~, ind] = min(xb);
 nx(ind, :) = -1;

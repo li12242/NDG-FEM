@@ -4,7 +4,7 @@ function phys = Convection1d_Solver(phys)
 
 % set time interval
 xm = abs(phys.mesh.x(2) - phys.mesh.x(1)); 
-CFL = 0.25;
+CFL = 0.3;
 dt = CFL*min(xm./phys.u(1), xm.^2/sqrt(phys.Dx));
 
 time = 0; outStep = 0;
@@ -30,19 +30,19 @@ while(time < FinalTime)
         var = var + rk4b(INTRK)*resT;
         
         
-%         var = Utilities.Limiter.Limiter1D.BJ1D(mesh,var);
+%         var = Utilities.Limiter.Limiter1D.BJ1D(phys.mesh,var);
 %         [flag, I] = Utilities.Limiter.Limiter1D.DisDetector(mesh, var, u);
 %         ind = find(flag);
 %         var(:, ind) = temp(:, ind);
-%         var = Utilities.Limiter.Limiter1D.MomentBDF(mesh, var);
-%         var = Utilities.Limiter.Limiter1D.TVB1D(mesh, var, 1000);
-%         var = Utilities.Limiter.Limiter1D.GKTVB1D(mesh, var);
+%         var = Utilities.Limiter.Limiter1D.MomentBDF(phys.mesh, var);
+%         var = Utilities.Limiter.Limiter1D.TVB1D(phys.mesh, var, 1000);
+%         var = Utilities.Limiter.Limiter1D.GKTVB1D(phys.mesh, var);
     end% for
 
-    phys.file.putVarPart('var', [0, 0, outStep],[Np, Ne, 1], var);
-    phys.file.putVarPart('time', outStep, 1, time);
+%     phys.file.putVarPart('var', [0, 0, outStep],[Np, Ne, 1], var);
+%     phys.file.putVarPart('time', outStep, 1, time);
     outStep = outStep + 1;
-    plot(phys.mesh.x, q); drawnow;
+    plot(phys.mesh.x, var); drawnow;
 end% while
 
 phys.var = var;

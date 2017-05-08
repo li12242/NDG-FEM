@@ -10,7 +10,8 @@ classdef tri < ndg_lib.std_cell.std_cell
     % 基本属性
     properties(Constant)
         type = ndg_lib.std_cell_type.Tri % 单元类型
-        Nv = 3;
+        Nv = 3
+        vol = 2
         vr = [-1,  1, -1]'
         vs = [-1, -1,  1]'
         vt = [ 0,  0,  0]'
