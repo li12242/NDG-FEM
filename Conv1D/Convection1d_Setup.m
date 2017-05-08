@@ -1,11 +1,11 @@
 function Convection1d_Setup
 % parameters
-phys.N = 2; 
-phys.K = 40;
-phys.xlim = [-1, 1];
+phys.N = 1; 
+phys.K = 5;
+phys.xlim = [0, 1];
 
-% casename = 'Advection';
-casename = 'AdvectionDiffusion';
+casename = 'Advection';
+% casename = 'AdvectionDiffusion';
 
 % standard element and mesh object
 line = StdRegions.Line(phys.N);
@@ -21,8 +21,8 @@ phys.casename = casename;
 phys.mesh = mesh;
 
 phys.ftime = 1; % final time
-phys.u = 1*ones(size(mesh.x)); % flow rate
-phys.Dx = 0.01; % diffusion parameter
+phys.u = ones(size(mesh.x)); % flow rate
+phys.Dx = 0.00; % diffusion parameter
 
 % initial condition
 phys = Convection1d_Init(phys);

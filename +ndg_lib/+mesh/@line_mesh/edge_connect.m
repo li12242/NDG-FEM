@@ -1,4 +1,4 @@
-function [Nedge, kM, kP, fM, fP, ftype, idM, idP, fpM, fpP, fscal, ...
+function [Nedge, Nnode, kM, kP, fM, fP, ftype, idM, idP, fpM, fpP, fscal, ...
     fnxM, fnyM, fnzM] = edge_connect(obj, EToV, EToE, EToF, EToBS)
 %MESH_EDGE_CONNECT Summary of this function goes here
 %   Detailed explanation goes here
@@ -7,7 +7,7 @@ function [Nedge, kM, kP, fM, fP, ftype, idM, idP, fpM, fpP, fscal, ...
 [Nedge, kM, kP, fM, fP, ftype] = face_connect(obj, EToV, EToE, EToF, EToBS);
 
 % collect the local and adjacent node index of each edge nodes
-[idM, idP, fpM, fpP, fscal, fnxM, fnyM] = ...
+[Nnode, idM, idP, fpM, fpP, fscal, fnxM, fnyM] = ...
     node_connect(obj, Nedge, kM, kP, fM, fP);
 
 fnzM = zeros(size(fnxM));
@@ -35,7 +35,7 @@ fP = EToF(id); % adjacent face index
 ftype = EToBS(id); % face type
 end% func
 
-function [idM, idP, fpM, fpP, fscal, fnxM, fnyM] = ...
+function [Nnode, idM, idP, fpM, fpP, fscal, fnxM, fnyM] = ...
     node_connect(obj, Nedge, kM, kP, fM, fP)
 
 % calculate the total nodes
@@ -73,7 +73,7 @@ for f = 1:Nedge
         idP(sk) = (k2-1)*Np + Fmask(m, f2);
         fpP(sk) = faceIndexStart(f2)+list(m);
         
-        fscal(sk) = obj.J( idM(sk)  )./obj.Js(f1, k1);
+        fscal(sk) = obj.Js(f1, k1)./obj.J( idM(sk)  );
         fnxM(sk) = obj.nx(f1, k1);
         fnyM(sk) = obj.ny(f1, k1);
         sk = sk+1;

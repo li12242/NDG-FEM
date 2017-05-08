@@ -22,7 +22,7 @@ maxu = max(u);
 
 dx = mesh.J(1, :)*2; K = 100;
 
-ids = find( (maxu > maxv | minu < minv) & (maxu - minu) > K.*dx.^2);
+ids = find( (maxu > maxv | minu < minv) & (maxu - minu) > K.*dx);
 
 % Check to see if any elements require limiting
 if(~isempty(ids))

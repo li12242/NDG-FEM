@@ -11,6 +11,7 @@ classdef line < ndg_lib.std_cell.std_cell
     properties(Constant)
         type = ndg_lib.std_cell_type.Line % 单元类型
         Nv = 2
+        vol = 2
         vr = [-1, 1]'
         vs = [ 0, 0]'; 
         vt = [ 0, 0]'; 
