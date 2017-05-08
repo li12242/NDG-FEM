@@ -120,9 +120,10 @@ end% if
 end% func
 
 %% install function
-% Compile the source file and put into spicific directory.
+
 function install(localpath, installpath, src, libsrc)
-% 
+% Compile the source file and put into spicific directory.
+
 pwdPath  = pwd;
 fullPath = fullfile(pwd, localpath);
 dirPath  = fullfile(pwd, installpath);
