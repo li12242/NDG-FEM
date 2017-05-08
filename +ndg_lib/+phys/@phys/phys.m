@@ -5,7 +5,8 @@ classdef phys
     properties(Abstract)
         cell    % 标准单元对象
         mesh    % 网格对象
-        Nfield  % 物理量
+        Nfield  % 变量个数
+        f_Q     % 变量
         f_extQ  % 外部值
     end
     

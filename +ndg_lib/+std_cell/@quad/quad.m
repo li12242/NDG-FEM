@@ -11,6 +11,7 @@ classdef quad < ndg_lib.std_cell.std_cell
     properties(Constant)
         type = ndg_lib.std_cell_type.Quad   % 单元类型
         Nv = 4
+        vol = 4
         vr = [-1,  1,  1, -1]'
         vs = [-1, -1,  1,  1]'
         vt = [ 0,  0,  0,  0]'

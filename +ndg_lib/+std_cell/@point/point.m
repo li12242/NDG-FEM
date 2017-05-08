@@ -10,6 +10,7 @@ classdef point < ndg_lib.std_cell.std_cell
     properties(Constant)
         type = ndg_lib.std_cell_type.Point % 单元类型
         Nv = 1      % 单元顶点个数
+        vol = 0
         vr = 0      % 顶点x坐标，列优先
         vs = 0      % 顶点y坐标，列优先
         vt = 0      % 顶点z坐标，列优先

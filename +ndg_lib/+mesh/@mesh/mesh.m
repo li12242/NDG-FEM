@@ -22,6 +22,12 @@ classdef mesh
         J
     end
     
+    properties(Abstract, SetAccess=private)
+        eidM, eidP
+        eidtype
+        eidfscal
+    end
+    
     % elemental edge information
     properties(Abstract, SetAccess=private)
         nx, ny, nz
@@ -31,6 +37,7 @@ classdef mesh
     % edge information
     properties(Abstract, SetAccess=private)
         Nedge
+        Nnode
         kM, kP
         fM, fP
         ftype
@@ -81,6 +88,37 @@ classdef mesh
             y = obj.proj_vert2node(vy);
             z = obj.proj_vert2node(vz);
         end% func
+        
+        function [eidM, eidP, eidtype, eidfscal] = ele_suf_connect(obj)
+            Nfptotal = obj.cell.Nfptotal;
+            eidM = zeros(Nfptotal, obj.K);
+            eidP = zeros(Nfptotal, obj.K);
+            eidtype = zeros(Nfptotal, obj.K);
+            eidfscal = zeros(Nfptotal, obj.K);
+            faceIndexStart = ones(obj.cell.Nface, 1); % start index of each face node
+            for f = 2:obj.cell.Nface
+                faceIndexStart(f) = faceIndexStart(f-1) + obj.cell.Nfp(f-1);
+            end
+            sk = 1;
+            for f = 1:obj.Nedge
+                Nfp = obj.cell.Nfp(obj.fM(f));
+                k1 = obj.kM(f);
+                %ind = faceIndexStart(f1):(faceIndexStart(f1)+Nfp-1);
+                list = sk:(sk+Nfp-1);
+                eidM(obj.fpM(list), k1) = obj.idM(list);
+                eidP(obj.fpM(list), k1) = obj.idP(list);
+                eidtype(obj.fpM(list), k1) = obj.ftype(f);
+                eidfscal(obj.fpM(list), k1) = obj.fscal(list);
+                % adjacent element
+                k2 = obj.kP(f);
+                %ind = faceIndexStart(f2):(faceIndexStart(f2)+Nfp-1);
+                eidM(obj.fpP(list), k2) = obj.idP(list);
+                eidP(obj.fpP(list), k2) = obj.idM(list);
+                eidtype(obj.fpP(list), k2) = obj.ftype(f);
+                eidfscal(obj.fpP(list), k2) = obj.fscal(list);
+                sk = sk + Nfp;
+            end
+        end
         
     end
     

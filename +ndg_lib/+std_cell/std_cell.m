@@ -12,6 +12,7 @@ classdef std_cell
         type % 单元类型
         Nv
         vr, vs, vt
+        vol % 标准单元长度/面积/体积
         Nfv
         FToV
         Nface
