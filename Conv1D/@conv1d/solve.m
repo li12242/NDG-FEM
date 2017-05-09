@@ -21,20 +21,22 @@ rk4c = [             0.0  ...
 time = 0;
 ftime = obj.ftime;
 c    = obj.c;
+miu  = obj.miu;
+dt   = obj.time_interval;
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
 while(time < ftime)
-    dt   = obj.time_interval;
     if(time + dt > ftime)
         dt = ftime - time;
     end
     for INTRK = 1:5
         tloc = time + rk4c(INTRK)*dt;
-        rhsQ = rhs_term(obj, c, tloc);
+        rhsQ = rhs_term(obj, c, miu, tloc);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         c = c + rk4b(INTRK)*resQ;
     end
     time = time + dt;
+    plot(obj.mesh.x, c, '.-'); drawnow;
 end
 end
 

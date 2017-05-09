@@ -21,10 +21,10 @@ while(time < FinalTime)
     end
     time = time+dt;
     
-    fprintf('Processing: %f ...\n', time./FinalTime)
+%     fprintf('Processing: %f ...\n', time./FinalTime)
     
     for INTRK = 1:5
-        [rhsT, q] = Convection1d_RHS(phys, var);
+        [rhsT] = Convection1d_RHS(phys, var);
                 
         resT = rk4a(INTRK)*resT + dt*rhsT;
         var = var + rk4b(INTRK)*resT;
@@ -41,8 +41,8 @@ while(time < FinalTime)
 
 %     phys.file.putVarPart('var', [0, 0, outStep],[Np, Ne, 1], var);
 %     phys.file.putVarPart('time', outStep, 1, time);
-    outStep = outStep + 1;
-    plot(phys.mesh.x, var); drawnow;
+%     outStep = outStep + 1;
+%     plot(phys.mesh.x, var); drawnow;
 end% while
 
 phys.var = var;
