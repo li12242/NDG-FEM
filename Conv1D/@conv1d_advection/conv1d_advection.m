@@ -6,7 +6,6 @@ classdef conv1d_advection < conv1d
     end
     
     methods
-        [ c ] = solve( obj )
         
         function obj = conv1d_advection(mesh)
             obj = obj@conv1d(mesh);
@@ -17,7 +16,7 @@ classdef conv1d_advection < conv1d
             obj.dt = obj.time_interval;
         end% func
         
-        function [obj] = init(obj) % get the initial value
+        function [ obj ] = init(obj) % get the initial value
             K = obj.mesh.K;
             Np = obj.mesh.cell.Np;
             c = zeros(Np, K);
@@ -34,11 +33,11 @@ classdef conv1d_advection < conv1d
 %             x21 = (x2 + 3*x0)/4; x22 = (3*x2 + x0)/4;
 %             flag = (x >= x21) & (x <= x22);
 %             c(flag) = 1;
-            obj.u = ones(Np, K);
+            obj.u = 0.25*ones(Np, K);
             obj.c = c;
         end% func
         
-        function dt = time_interval(obj)
+        function [ dt ] = time_interval(obj)
             dx = obj.mesh.cell.vol * obj.mesh.J;
             dt = obj.cfl*min(dx(:)./obj.u(:));
         end
