@@ -21,18 +21,36 @@ classdef conv1d < matlab.mixin.SetGet
         dt = time_interval(obj) % get the time interval dt
     end
     
-    % private function
-    methods(Access=protected)
+    % function - matlab
+    methods(Access=protected) % private 
         cP = nei_node_val(obj, cM, cP, c_extM, ftype) % adjacent node value
         E  = flux_term( obj, u, c ) % get the flux terms
         flux = num_flux(obj, cM, uM, cP, uP, nx) % get numerical flux
-        rhs  = rhs_term(obj, c, time) % get the r.h.s term
+        rhs  = rhs_term(obj, c, miu, time) % get the r.h.s term
+    end
+    methods % matlab solver
+        c = solve(obj)
+    end
+    % function - mat-mex
+    methods(Access=protected) % private
+    end
+    methods % mex solver
+    end
+    
+    % private function - mat-gpu
+    methods(Access=protected) % private
+    end
+    methods % gpu solver
+    end
+    
+    % private function - cuda-gpu
+    methods(Access=protected) % private
+    end
+    methods % cuda solver
     end
     
     % public function
     methods        
-        c = solve(obj)
-        
         function draw(obj)
             plot(obj.mesh.x, obj.c, '.-');
         end

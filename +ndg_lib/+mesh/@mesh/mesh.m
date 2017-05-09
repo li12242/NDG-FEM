@@ -24,7 +24,7 @@ classdef mesh
     
     properties(Abstract, SetAccess=private)
         eidM, eidP
-        eidtype
+        eidtype@uint8
         eidfscal
     end
     
@@ -40,7 +40,7 @@ classdef mesh
         Nnode
         kM, kP
         fM, fP
-        ftype
+        ftype@uint8
         idM, idP
         fpM, fpP
         fscal
@@ -93,7 +93,7 @@ classdef mesh
             Nfptotal = obj.cell.Nfptotal;
             eidM = zeros(Nfptotal, obj.K);
             eidP = zeros(Nfptotal, obj.K);
-            eidtype = zeros(Nfptotal, obj.K);
+            eidtype = uint8(zeros(Nfptotal, obj.K));
             eidfscal = zeros(Nfptotal, obj.K);
             faceIndexStart = ones(obj.cell.Nface, 1); % start index of each face node
             for f = 2:obj.cell.Nface
@@ -103,7 +103,6 @@ classdef mesh
             for f = 1:obj.Nedge
                 Nfp = obj.cell.Nfp(obj.fM(f));
                 k1 = obj.kM(f);
-                %ind = faceIndexStart(f1):(faceIndexStart(f1)+Nfp-1);
                 list = sk:(sk+Nfp-1);
                 eidM(obj.fpM(list), k1) = obj.idM(list);
                 eidP(obj.fpM(list), k1) = obj.idP(list);
@@ -111,7 +110,6 @@ classdef mesh
                 eidfscal(obj.fpM(list), k1) = obj.fscal(list);
                 % adjacent element
                 k2 = obj.kP(f);
-                %ind = faceIndexStart(f2):(faceIndexStart(f2)+Nfp-1);
                 eidM(obj.fpP(list), k2) = obj.idP(list);
                 eidP(obj.fpP(list), k2) = obj.idM(list);
                 eidtype(obj.fpP(list), k2) = obj.ftype(f);

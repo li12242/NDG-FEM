@@ -1,7 +1,7 @@
 function Convection1d_Setup
 % parameters
-phys.N = 1; 
-phys.K = 5;
+phys.N = 4; 
+phys.K = 200;
 phys.xlim = [0, 1];
 
 casename = 'Advection';

@@ -1,4 +1,4 @@
-classdef bc_type < double
+classdef bc_type < uint8
     %BC_TYPE 开边界枚举类型
     %   Detailed explanation goes here
     
