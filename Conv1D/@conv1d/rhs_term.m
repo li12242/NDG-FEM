@@ -1,4 +1,4 @@
-function rhs = rhs_term(obj, c, time)
+function rhs = rhs_term(obj, c, miu, time)
 %RHS_TERM Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,6 +20,6 @@ fluxS = num_flux(obj, cM, uM, cP, uP, obj.mesh.nx); % numerical flux
 fluxM = flux_term(obj, uM, cM); % local flux term
 dflux = fluxM.*obj.mesh.nx - fluxS; % deviation of flux term
 
-rhs = rhs + obj.mesh.cell.LIFT*( obj.mesh.eidfscal.*(dflux) );
+rhs = rhs + obj.mesh.cell.LIFT*( obj.mesh.eidfscal.*dflux );
 end
 

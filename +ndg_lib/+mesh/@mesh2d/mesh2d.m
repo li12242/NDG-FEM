@@ -26,7 +26,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
     
     properties(SetAccess=private)
         eidM, eidP
-        eidtype
+        eidtype@uint8
         eidfscal
     end
     
@@ -35,7 +35,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
         Nnode
         kM, kP
         fM, fP
-        ftype
+        ftype@uint8
         idM, idP
         fpM, fpP
         fscal

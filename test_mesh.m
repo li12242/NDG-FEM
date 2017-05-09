@@ -1,5 +1,5 @@
 %% line
-line = ndg_lib.std_cell.line(1);
+line = ndg_lib.std_cell.line(2);
 
 K = 100;
 Nv = K+1;
