@@ -29,7 +29,7 @@ classdef conv1d < matlab.mixin.SetGet
         rhs  = rhs_term(obj, c, miu, time) % get the r.h.s term
     end
     methods % matlab solver
-        c = solve(obj)
+        c = RK45_solve(obj)
     end
     % function - mat-mex
     methods(Access=protected) % private
