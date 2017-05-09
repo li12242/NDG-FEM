@@ -1,6 +1,6 @@
 function ComEfficient_ParaBowl2d
 %% Parameter
-elenum   = [20, 40, 80, 160];
+elenum   = [80, 100, 120, 140];
 fileTri  = cell(numel(elenum), 1);
 fileQuad = cell(numel(elenum), 1);
 degree   = 1;
@@ -17,36 +17,47 @@ markerSize = 8;
 linewidth = 1.5;
 
 % triangle
-PrintTable.dofs = PostproTri.GetDofs;
+PrintTableTri   = table;
+PrintTableTri.M = elenum';
+PrintTableTri.dofs = PostproTri.GetDofs;
 for i =1:PostproTri.nfiles
-    time(i)   = PostproTri.NcFile(i).GetVarData('elapsedTime');
+    time(i) = PostproTri.NcFile(i).GetVarData('elapse');
 end% for
-PrintTable.time = time*1.1;
-PrintTable
+PrintTableTri.time = time;
+PrintTableTri
 
 figure('Color', 'w'); hold on;
-plot(PrintTable.dofs.*PrintTable.dofs, PrintTable.time, 'bo-', ...
+plot(PrintTableTri.dofs.*PrintTableTri.dofs, PrintTableTri.time, 'bo-', ...
     'Markersize', markerSize, 'LineWidth', linewidth, ...
     'MarkerFaceColor', 'b')
 
 % quadrilateral
-PrintTable   = table;
-PrintTable.M = elenum';
-PrintTable.dofs = PostproQuad.GetDofs;
+PrintTableQuad   = table;
+PrintTableQuad.M = elenum';
+PrintTableQuad.dofs = PostproQuad.GetDofs;
 for i =1:PostproQuad.nfiles
-    time(i)   = PostproQuad.NcFile(i).GetVarData('elapsedTime');
+    time(i) = PostproQuad.NcFile(i).GetVarData('elapse');
 end% for
-PrintTable.time = time;
-PrintTable
+PrintTableQuad.time = time;
+PrintTableQuad
 
-plot(PrintTable.dofs.*PrintTable.dofs, PrintTable.time, 'rs-', ...
+ptri  = polyfit(PrintTableTri.dofs.^2, PrintTableTri.time, 1);
+pquad = polyfit(PrintTableQuad.dofs.^2, PrintTableQuad.time, 1);
+ratioQuad = polyval(ptri, PrintTableQuad.dofs.^2)./polyval(pquad, PrintTableQuad.dofs.^2);
+ratioTri = polyval(ptri, PrintTableTri.dofs.^2)./polyval(pquad, PrintTableTri.dofs.^2);
+[ratioTri, ratioQuad]
+
+plot(PrintTableQuad.dofs.*PrintTableQuad.dofs, PrintTableQuad.time, 'rs-', ...
     'Markersize', markerSize, 'LineWidth', linewidth,...
     'MarkerFaceColor', 'r')
-
+set(gca, 'XScale', 'log', 'YScale', 'log')
 xlabel('$DOFs$', 'FontSize', 16, 'Interpreter', 'Latex')
-ylabel('$\rm{Elapsed \: Time (s)}$', 'FontSize', 16, 'Interpreter', 'Latex')
+ylabel('$\rm{Elapsed \,\, Time (s)}$', 'FontSize', 16, 'Interpreter', 'Latex')
+xlim([1.75e4, 2.e5]);
+% ylim([2e1, 6e2]);
 
 box on; grid on;
 legend({'$\rm{Tri}$', '$\rm{Quad}$'}, 'box', 'off', 'FontSize', 16,...
     'Location', 'NorthWest', 'Interpreter', 'Latex');
+print -dtiff L2_DOFs.tiff -r300
 end% func

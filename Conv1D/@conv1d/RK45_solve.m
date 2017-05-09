@@ -1,4 +1,4 @@
-function [ c ] = solve( obj )
+function [ c ] = RK45_solve( obj )
 %SOLVE Summary of this function goes here
 %   Detailed explanation goes here
 
