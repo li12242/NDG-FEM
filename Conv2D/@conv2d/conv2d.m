@@ -1,61 +1,38 @@
-classdef conv2d
+classdef conv2d < ndg_lib.phys.phys2d
     %CONV2D Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties(SetAccess=protected)
-        mesh
-        c_ext
-        u
-        v
+    properties(Constant)
+        Nfield = 1
     end
     
     properties
-        cfl % CFL number
-        c
-        miu
-        ftime
-        dt
+        cfl     % CFL 数
+        ftime   % 计算终止时间
+        dt      % 计算时间步长
+        u,v     % 速度场
     end
     
-    % abstract function
+    %% 虚函数
     methods(Abstract)
-        [ c, u ] = init(obj, x) % get the initial value
         [ dt ] = time_interval(obj) % get the time interval dt
     end
     
-    % function - matlab
+    %% 私有函数
     methods(Access=protected) % private 
-        [ cP ] = nei_node_val(obj, cM, cP, nx, ny, ftype) % adjacent node value
-        [ E, G ] = flux_term( obj, u, c ) % get the flux terms
-        [ flux ] = num_flux(obj, cM, uM, cP, uP, nx) % get numerical flux
-        [ rhs ] = rhs_term(obj, c, time) % get the r.h.s term
-    end
-    methods % public solver
-        [ c ] = solve_mat(obj)
-    end
-    % function - mat-mex
-    methods(Access=protected) % private
-        
-    end
-    methods % public
-        [ c ] = solve_mex(obj)
+        [ E, G ] = flux_term( obj, f_Q ) % get the flux terms
+        [ dflux ] = surf_term( obj, f_Q ) % get flux deviation
+        [ rhs ] = rhs_term(obj, f_Q ) % get the r.h.s term
     end
     
-    % private function - mat-gpu
-    methods(Access=protected) % private
-    end
-    methods % public
-        [ c ] = solve_gpu(obj)
-    end
-    
-    % private function - cuda-gpu
-    methods(Access=protected) % private
-    end
-    methods % public
-        [ c ] = solve_cuda(obj)
-    end
-    
+    %% 公共方法
     methods
+        function obj = conv2d(mesh)
+            obj = obj@ndg_lib.phys.phys2d(mesh);
+        end
+        
+        f_Q = RK45_solve(obj) % Runge-Kutta 4th order 5 stages
     end
+    
 end
 

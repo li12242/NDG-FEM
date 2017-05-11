@@ -3,6 +3,7 @@ function declare_file( obj )
 %   Detailed explanation goes here
 
 obj.ncid = netcdf.create(obj.name,'CLOBBER');
+
 for n = 1:numel(obj.dims)
     obj.dims(n).define_in_ncfile(obj.ncid);
 end

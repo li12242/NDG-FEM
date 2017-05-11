@@ -12,39 +12,10 @@ classdef mesh2d < ndg_lib.mesh.mesh
         vx, vy, vz
     end
     
-    % elemental infomation
-    properties(SetAccess=private)
-        EToE, EToF
-        x, y, z
-        rx, ry, rz
-        sx, sy, sz
-        tx, ty, tz
-        nx, ny, nz
-        J
-        Js
-    end
-    
-    properties(SetAccess=private)
-        eidM, eidP
-        eidtype@uint8
-        eidfscal
-    end
-    
-    properties(SetAccess=private)
-        Nedge
-        Nnode
-        kM, kP
-        fM, fP
-        ftype@uint8
-        idM, idP
-        fpM, fpP
-        fscal
-        fnxM, fnyM, fnzM
-    end
-    
     methods(Static)
         [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename)
     end
+    
     methods(Access = protected)
         [EToE, EToF] = ele_connect(obj, EToV)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
@@ -76,23 +47,14 @@ classdef mesh2d < ndg_lib.mesh.mesh
             
             obj = obj@ndg_lib.mesh.mesh(cell, ...
                 Nv, vx, vy, vz, K, EToV, EToR, EToBS);
-                        
-            [obj.EToE, obj.EToF] = ele_connect(obj, obj.EToV);
-            
-            [obj.x, obj.y, obj.z] = ele_node_project(obj, obj.vx, obj.vy, obj.vz);
-            
-            [obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, ...
-                obj.tx, obj.ty, obj.tz, obj.J] = ele_vol_factor(obj);
-            
-            [obj.nx, obj.ny, obj.nz, obj.Js] = ...
-                ele_suf_factor(obj, obj.vx, obj.vy, obj.EToV);
-            
-            [obj.Nedge, obj.Nnode, obj.kM, obj.kP, obj.fM, obj.fP, obj.ftype, ...
-                obj.idM, obj.idP, obj.fpM, obj.fpP, obj.fscal, ...
-                obj.fnxM, obj.fnyM, obj.fnzM] = ...
-                edge_connect(obj, obj.EToV, obj.EToE, obj.EToF, obj.EToBS);
-            
-            [obj.eidM, obj.eidP, obj.eidtype, obj.eidfscal] = ele_suf_connect(obj);
+        end% func
+        
+        function draw(obj)
+            hold on;
+            patch('Vertices', [obj.vx(:), obj.vy(:)], ...
+                'Faces', obj.EToV', ...
+                'FaceColor', [0.8, 0.9, 1]);
+            plot(obj.x(:), obj.y(:), 'k.')
         end% func
     end% methods
     

@@ -32,10 +32,10 @@ classdef nc_var < matlab.mixin.SetGet
             ndim = numel(dims);
             if ndim > 1  % has more than one dims, only the length 
                 % of the last dim could be unlimited
-                if any( dims( 1:(ndim-1) ).len < 0 )
+                if any( [dims( 1:(ndim-1) ).len] < 0 )
                     error(['The length of dimension ', ...
                         'should be positive intger!'])
-                elseif any( dims( 1:(ndim-1) ).len == 0 )
+                elseif any( [dims( 1:(ndim-1) ).len] == 0 )
                     error(['The length of dimension ', ...
                         'should not be unlimited!'])
                 end% if
@@ -54,8 +54,8 @@ classdef nc_var < matlab.mixin.SetGet
     methods
         function obj = nc_var(varargin)
             switch nargin
-                case 1
-                    obj.name = varargin{1};
+                case 0
+                    return;
                 case 3
                     obj.name = varargin{1};
                     obj.set_dims(varargin{2});
@@ -63,9 +63,17 @@ classdef nc_var < matlab.mixin.SetGet
             end
         end
         
-        function read_from_file(obj, ncid, varid)
+        function read_from_file(obj, ncid, varid, dims)
             obj.id = varid;
-            [obj.name,obj.type,obj.dims,~] = netcdf.inqVar(ncid, varid);
+            [obj.name,obj.type,dimIDs,~] = netcdf.inqVar(ncid, varid);
+            
+            for m = 1:numel(dimIDs)
+                for n = 1:numel(dims)
+                    if (dimIDs(m) == dims(n).id)
+                        obj.dims = [obj.dims, dims(n)];
+                    end
+                end
+            end
         end
         
         function define_in_ncfile(obj, ncid)

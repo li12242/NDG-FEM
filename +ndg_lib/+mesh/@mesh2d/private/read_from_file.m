@@ -64,7 +64,7 @@ ftype = data(4, :);
 
 % assigned to EToBS
 [Nface, K] = size(EToV);
-EToBS = ones(Nface, K).*ndg_lib.bc_type.Inner; % initialize
+EToBS = uint8(ones(Nface, K)).*ndg_lib.bc_type.Inner; % initialize
 for k = 1:K
     for f = 1:Nface
         v1 = EToV(f, k);
