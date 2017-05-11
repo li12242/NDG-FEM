@@ -6,10 +6,8 @@ function [K,EToV,Nv,VX,VY,EToBS,EToR] = tri_mesh(Nx, Ny, xmin, xmax, ymin, ymax,
 % INPUT
 %    Nx     No. of points along x coordinate
 %    Ny     No. of points along x coordinate
-%    xmin   min x coordinate
-%    xmax   max x coordinate
-%    ymin   min y coordinate
-%    ymax   max y coordinate
+%    xmin,xmax   minimum and maximum x coordinate
+%    ymin,ymax   minimum and maximum y coordinate
 %    flag   = partination type [flag=false, "\", flag=true, "/"]
 %
 % OUTPUT

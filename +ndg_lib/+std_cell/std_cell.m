@@ -42,11 +42,12 @@ classdef std_cell
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
     end
     
+    % public
     methods
         node_val = project_vert2node(obj, vert_val);
     end
    
-    % 公共方法
+    % private
     methods(Hidden, Access = protected)
         function V = Vandmode_Matrix(obj, orthogonal_func)
             V = zeros(obj.Np, obj.Np);

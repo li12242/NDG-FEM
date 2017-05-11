@@ -17,7 +17,7 @@ classdef nc_dim < matlab.mixin.SetGet
             %   tdim = nc_dim('time', 0);
             switch nargin
                 case 1
-                    set_name(obj, varargin{1});
+                    return;
                 case 2
                     set_name(obj, varargin{1});
                     set_len(obj, varargin{2});

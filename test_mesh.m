@@ -6,12 +6,12 @@ Nv = K+1;
 EToV = [1:K; 2:(K+1)];
 vx = linspace(0, 1, Nv)';
 EToR = ones(K, 1);
-EToBS = ones(size(EToV)); EToBS([1, end]) = 1;
+EToBS = zeros(size(EToV)); EToBS([1, end]) = 5;
 
 mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);
 
 %% triangle mesh
-tri = ndg_lib.std_cell.tri(3);
+tri = ndg_lib.std_cell.tri(2);
 
 EToV = [1,2,3; 3,2,4]';
 vx = [0, 1, 0, 1]';
@@ -23,7 +23,7 @@ EToBS = [5, 1, 5; 1, 5, 5]';
 
 mesh = ndg_lib.mesh.tri_mesh(tri, Nv, vx, vy, K, EToV, EToR, EToBS);
 
-casename = 'SWE2D/mesh/DamBreakWet/DamBreakWet';
+casename = 'Conv2D/mesh/triangle';
 mesh = ndg_lib.mesh.tri_mesh(tri, casename);
 
 %% quad
