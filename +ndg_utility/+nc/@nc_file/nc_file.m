@@ -2,7 +2,7 @@ classdef nc_file < matlab.mixin.SetGet
     %NC_FILE Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties(SetAccess = private)
+    properties(SetAccess = protected)
         isopen = false  % indicator for wheather the file is open
         ncid    % ID of ncfile
         dims  % array of dimensions in NetCDF file
@@ -18,34 +18,37 @@ classdef nc_file < matlab.mixin.SetGet
             %   file.read_file(''); % read properties from input file 
             obj.ncid = netcdf.open(obj.name, 'NOWRITE');
             
-            varids = netcdf.inqVarIDs(obj.ncid);
-            var = repmat(ndg_utility.nc.nc_var('tmp'), numel(varids), 1);
-            for n = 1:numel(varids)
-                var(n).read_from_file(obj.ncid, varids(n));
-            end
-            obj.vars = var;
-            
             dimids = netcdf.inqDimIDs(obj.ncid);
-            dim = repmat(ndg_utility.nc.nc_dim('tmp'), numel(dimids), 1);
+            dim = repmat(ndg_utility.nc.nc_dim(), numel(dimids), 1);
             for n = 1:numel(dimids)
-                dim(n).read_from_file(obj.ncid, dimids(n));
+                dim(n) = ndg_utility.nc.nc_dim();
+                read_from_file(dim(n), obj.ncid, dimids(n));
             end
             obj.dims = dim;
+            
+            varids = netcdf.inqVarIDs(obj.ncid);
+            var = repmat(ndg_utility.nc.nc_var(), numel(varids), 1);
+            for n = 1:numel(varids)
+                var(n) = ndg_utility.nc.nc_var();
+                read_from_file(var(n), obj.ncid, varids(n), dim);
+            end
+            obj.vars = var;
             obj.isopen = true;
         end
     end
     
     %% public methods
     methods
-        function store_var(obj, varid, startInd, len, val)
-            
-        end% func
         
         function obj = nc_file(varargin)
             % create nc_file object
+            % Usages:
+            %   file = nc_file(); % create an empty nc_file object 
+            %   file = nc_file('test.nc', [x, time], [var]); % create a
+            %   nc_file object with contains.
             switch nargin
-                case 1
-                    obj.name = varargin{1};
+                case 0
+                    return;
                 case 3
                     obj.name = varargin{1};
                     obj.dims = varargin{2};
@@ -58,6 +61,7 @@ classdef nc_file < matlab.mixin.SetGet
         function delete(obj)
             if(obj.isopen) % if netcdf file is still open
                 netcdf.close(obj.ncid);
+                obj.isopen = false;
             end
         end% func
         
