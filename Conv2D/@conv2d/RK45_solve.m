@@ -1,4 +1,4 @@
-function [ c ] = RK45_solve( obj )
+function [ obj ] = RK45_solve( obj )
 %SOLVE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,23 +20,24 @@ rk4c = [             0.0  ...
 
 time = 0;
 ftime = obj.ftime;
-c    = obj.c;
-miu  = obj.miu;
+f_Q  = obj.f_Q;
 dt   = obj.time_interval;
-resQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
+resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 while(time < ftime)
     if(time + dt > ftime)
         dt = ftime - time;
     end
     for INTRK = 1:5
-        tloc = time + rk4c(INTRK)*dt;
-        rhsQ = rhs_term(obj, c, miu, tloc);
+        %tloc = time + rk4c(INTRK)*dt;
+        rhsQ = rhs_term(obj, f_Q);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
-        c = c + rk4b(INTRK)*resQ;
+        f_Q = f_Q + rk4b(INTRK)*resQ;
     end
     time = time + dt;
-    plot(obj.mesh.x, c, '.-'); drawnow;
+%     obj.f_Q = f_Q; obj.draw(1); drawnow;
 end
+
+obj.f_Q = f_Q;
 end
 

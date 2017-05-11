@@ -2,6 +2,7 @@ classdef mesh
     %@STD_MESH Summary of this class goes here
     %   Detailed explanation goes here
     
+    %%
     properties(Abstract)
         cell
         K
@@ -13,7 +14,7 @@ classdef mesh
     end
     
     % elemental volume infomation
-    properties(Abstract, SetAccess=private)
+    properties(SetAccess=protected)
         EToE, EToF
         x, y, z
         rx, ry, rz
@@ -22,20 +23,20 @@ classdef mesh
         J
     end
     
-    properties(Abstract, SetAccess=private)
+    properties(SetAccess=protected)
         eidM, eidP
         eidtype@uint8
         eidfscal
     end
     
     % elemental edge information
-    properties(Abstract, SetAccess=private)
+    properties(SetAccess=protected)
         nx, ny, nz
         Js
     end
     
     % edge information
-    properties(Abstract, SetAccess=private)
+    properties(SetAccess=protected)
         Nedge
         Nnode
         kM, kP
@@ -47,21 +48,24 @@ classdef mesh
         fnxM, fnyM, fnzM
     end
     
-    % I/O methods
+    %% I/O methods
     methods(Abstract)
         % read mesh information from input file, I/O methods
         [Nv, vx, vy, vz, K, EToV, EToR, EToBS] = read_from_file(casename)
     end
     
-    % Abstract methods
+    %% Abstract methods
     methods(Abstract, Access = protected)
         ele_connect(obj) % get EToE and EToF through EToV
         ele_vol_factor(obj) % get volume infomation () of each element
         ele_suf_factor(obj) % get out normal vector of each elemental edges
         edge_connect(obj) % get edge connection through element connection   
     end
+    methods(Abstract)
+        draw(obj); 
+    end
     
-    % public methods
+    %% public methods
     methods
         function nodeQ = proj_vert2node(obj, vertQ)
             % project scalars from mesh verts to nodes
@@ -70,6 +74,7 @@ classdef mesh
         end
     end
     
+    %% private methods
     methods(Access = protected)
         function obj = mesh(cell, Nv, vx, vy, vz, K, EToV, EToR, EToBS)
             obj.cell = cell;
@@ -81,6 +86,18 @@ classdef mesh
             obj.EToV = EToV;
             obj.EToR = EToR;
             obj.EToBS = EToBS;
+            
+            [obj.EToE, obj.EToF] = ele_connect(obj, obj.EToV);
+            [obj.x, obj.y, obj.z] = ele_node_project(obj, obj.vx, obj.vy, obj.vz);
+            [obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, ...
+                obj.tx, obj.ty, obj.tz, obj.J] = ele_vol_factor(obj);
+            [obj.nx, obj.ny, obj.nz, obj.Js] = ...
+                ele_suf_factor(obj, obj.vx, obj.vy, obj.EToV);
+            [obj.Nedge, obj.Nnode, obj.kM, obj.kP, obj.fM, obj.fP, obj.ftype, ...
+                obj.idM, obj.idP, obj.fpM, obj.fpP, obj.fscal, ...
+                obj.fnxM, obj.fnyM, obj.fnzM] = ...
+                edge_connect(obj, obj.EToV, obj.EToE, obj.EToF, obj.EToBS);
+            [obj.eidM, obj.eidP, obj.eidtype, obj.eidfscal] = ele_suf_connect(obj);
         end% func
         
         function [x, y, z] = ele_node_project(obj, vx, vy, vz)
@@ -117,7 +134,6 @@ classdef mesh
                 sk = sk + Nfp;
             end
         end
-        
     end
     
 end
