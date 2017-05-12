@@ -9,13 +9,13 @@ function SWE_Driver1d
 % % sponge layer test
 % caseName = 'WiderGaussianMound';
 % caseName = 'LocalGaussianMound';
-% caseName = 'WiderMovingMound';
-caseName = 'LocalMovingMound_SpongeLayer';
+ caseName = 'WiderMovingMound';
+%caseName = 'LocalMovingMound_SpongeLayer';
 
 % minimum water depth
 minDepth = 1e-4;
 g        = 9.81;
-n        = 1;   % polynomial order 
+n        =5;   % polynomial order 
 nele     = 333; % No. of elements
 
 % Set to strucutre variable

@@ -1,4 +1,5 @@
-function VandMatrix = getVandMatrix(nOrder, r)
+function VandMatrix=GetVandMatrix(~,nOrder,r)
+
 % get Vandmonde Matrix of line element
 % INPUT:
 %   N   - highest order of base expansions P_N
@@ -9,7 +10,7 @@ function VandMatrix = getVandMatrix(nOrder, r)
 % USAGES: 
 %   Vand = VandMatrix(N, r)
 
-VandMatrix = zeros(numel(r), nOrder+1);
+VandMatrix = zeros(numel(r),nOrder+1);
 for j=0:nOrder
     % P_{j-1}(r_i)$
     VandMatrix(:,j+1) = Polylib.JacobiP(r(:), 0, 0, j);

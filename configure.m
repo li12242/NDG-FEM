@@ -7,6 +7,7 @@ if nargin == 0
     conf_SWE2d   = true;
     conf_Mesh    = true;
     conf_Post    = true;
+    conf_SWE1d   = true;
 else
     conf_Polylib = false;
     conf_Limit1d = false;
@@ -97,16 +98,27 @@ end
 if conf_SWE2d
     localpath = 'SWE2d/Mex';
     installpath = localpath;
-    src = {'SWE_Mex_BC2d.c', ...
+        src = {'SWE_Mex_BC2d.c', ...
         'SWE_Mex_Flux2d.c',...
         'SWE_Mex_HLLFlux2d.c',...
         'SWE_Mex_PositivePreserving2d.c'};
     libsrc = {'SWE2d.c'};
     fprintf('==============SWE2d=================\n')
-    install(localpath, installpath, src, libsrc);
+    install(localpath, installpath, src,libsrc);
     fprintf('==============SWE2d=================\n\n')
 end
-
+%% SWE1d
+if conf_SWE1d
+    localpath = 'SWE1d/Mex';
+    installpath = localpath;
+    src = {'SWE_Mex_Flux1d.c', ...
+        'SWE_Mex_HLLFlux1d.c',...
+        'SWE_Mex_PositivePreserving1d.c'};
+    %libsrc = {'SWE2d.c'};
+    fprintf('==============SWE1d=================\n')
+    install1(localpath, installpath, src);
+    fprintf('==============SWE1d=================\n\n')
+end
 %% Postprocess
 if conf_Post
     localpath = '+Utilities/+PostProcess/Mex';
@@ -136,6 +148,23 @@ cd(fullPath);
 for i = 1:numel(srcfile)
     fprintf('installing %s to %s...\n', src{i}, installpath);
     file = [srcfile(i), libfile{:}];
+    mex('CFLAGS="$CFLAGS -Wall"','-O', file{:}, '-outdir', dirPath);
+end% for
+
+cd(pwdPath);
+end
+%% install function
+% Compile the source file and put into spicific directory.
+function install1(localpath, installpath, src)
+% 
+pwdPath  = pwd;
+fullPath = fullfile(pwd, localpath);
+dirPath  = fullfile(pwd, installpath);
+srcfile  = fullfile(fullPath, src);
+cd(fullPath);
+for i = 1:numel(srcfile)
+    fprintf('installing %s to %s...\n', src{i}, installpath);
+    file = srcfile(i);
     mex('CFLAGS="$CFLAGS -Wall"','-O', file{:}, '-outdir', dirPath);
 end% for
 

@@ -35,8 +35,8 @@ classdef RegionLine < MultiRegions.Region
             vx = zeros(2, obj.nElement);
             vx(1,:) = VX(EToV(:,1)); vx(2,:) = VX(EToV(:,2));
             % get node coordinate
-            [obj.x, obj.rx, obj.J] = line.getEleGeometric(vx);
-            [obj.nx, obj.sJ] = line.getFaceGeometric(obj.x);
+            [obj.x, obj.rx, obj.J] = line.GetEleGeometric(vx);
+            [obj.nx, obj.sJ] = line.GetFaceGeometric(obj.x);
             % get node coordinate
             [obj.SpFToV, obj.EToE, obj.EToF] = Connect1D(obj,EToV);
             [obj.vmapM,obj.vmapP] = BuildMap(obj,EToV, obj.EToE, obj.EToF);
@@ -85,15 +85,15 @@ classdef RegionLine < MultiRegions.Region
             vmapM = zeros(nFaceNode, obj.nElement);
             vmapP = zeros(nFaceNode, obj.nElement);
             for ie = 1:obj.nElement
-                vmapM(:,ie) = obj.Shape.getFaceListToNodeList + ...
+                vmapM(:,ie) = obj.Shape.GetFaceListToNodeList + ...
                     (ie-1)*obj.Shape.nNode;
             end
             for k1 = 1:obj.nElement
                 for f1 = 1:obj.Shape.nFace
                     k2 = EToE(k1,f1); f2 = EToF(k1,f1);
                     
-                    flist1 = obj.Shape.getFaceListAtFace(f1);
-                    flist2 = obj.Shape.getFaceListAtFace(f2);
+                    flist1 = obj.Shape.GetFaceListAtFace(f1);
+                    flist2 = obj.Shape.GetFaceListAtFace(f2);
 
                     % find find volume node numbers of left and right nodes 
                     vidM = vmapM(flist1, k1); 
