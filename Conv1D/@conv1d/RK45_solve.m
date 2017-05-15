@@ -1,4 +1,4 @@
-function [ obj ] = RK45_solve( obj )
+function RK45_solve( obj )
 %SOLVE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -34,6 +34,7 @@ while(time < ftime)
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
+        f_Q = Utilities.Limiter.Limiter1D.BJ1D(obj.mesh, f_Q);
     end
     time = time + dt;
     %plot(obj.mesh.x, f_Q(:,:,1), '.-'); drawnow;
