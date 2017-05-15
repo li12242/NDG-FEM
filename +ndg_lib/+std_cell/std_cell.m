@@ -3,7 +3,7 @@ classdef std_cell
     %   Detailed explanation goes here
     
     %% 全局属性
-    properties(Abstract)
+    properties
         N   % 基函数阶数
     end
     
@@ -20,34 +20,63 @@ classdef std_cell
     end
     
     % 体积属性
-    properties(Abstract, SetAccess = private)
+    properties(SetAccess = protected)
         Np % 节点个数
         r, s, t
         V
         M
         Dr, Ds, Dt
+        w
     end
     % 面属性
-    properties(Abstract, SetAccess = private)
+    properties(SetAccess = protected)
         Fmask
         Nfp
         Nfptotal
         LIFT
+        ws
     end
     
-    %% 方法
-    methods(Abstract, Access=protected) % 虚函数
-        [r,s,t] = node_coor_func(obj, N)
+    %% 虚函数
+    methods(Abstract, Access=protected) % 私有
+        [Np, r,s,t] = node_coor_func(obj, N)
         fun = orthogonal_func(obj, N, ind, r, s, t)
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
     end
     
-    % public
-    methods
+    %% 公共虚函数
+    methods(Abstract, Access=public)
         node_val = project_vert2node(obj, vert_val);
     end
+    
+    %% 构造函数
+    methods
+        function obj = std_cell(N)
+            obj.N = N;
+            % volume
+            [obj.Np, obj.r, obj.s, obj.t] = obj.node_coor_func(N);
+            obj.V = obj.Vandmode_Matrix(@obj.orthogonal_func);
+            obj.M = obj.Mass_Matrix;
+            [obj.Dr, obj.Ds, obj.Dt] = obj.Derivative_Matrix...
+                (@obj.derivative_orthogonal_func);
+            % face
+            if obj.Nface>0
+                obj.Nfp = zeros(obj.Nface, 1);
+            else
+                obj.Nfp = 1;
+            end
+            for f = 1:obj.Nface
+                cell = ndg_lib.ndg_cell(obj.N, obj.faceType(f));
+                obj.Nfp(f) = cell.Np;
+            end
+            obj.Nfptotal = sum(obj.Nfp);
+            obj.Fmask = obj.Face_node;
+            obj.LIFT = obj.Lift_Matrix;
+            [obj.w, obj.ws] = obj.integral_coeff();
+        end
+    end
    
-    % private
+    %% 隐藏私有函数
     methods(Hidden, Access = protected)
         function V = Vandmode_Matrix(obj, orthogonal_func)
             V = zeros(obj.Np, obj.Np);
@@ -111,6 +140,23 @@ classdef std_cell
                 end
             end
             LIFT = (obj.V*(obj.V)')*Mes;
+        end
+        
+        function [w, ws] = integral_coeff(obj)
+            w = zeros(obj.Np, 1);
+            w(:) = sum(obj.M);
+            ws = zeros(obj.Nfptotal, 1);
+            Mes = zeros(obj.Np, obj.Nfptotal);
+            sk = 1;
+            for f = 1:obj.Nface
+                cell = ndg_lib.ndg_cell(obj.N, obj.faceType(f));
+                row = obj.Fmask(:, f);
+                for n = 1:cell.Np
+                    Mes(row, sk) = cell.M(:, n);
+                    sk = sk + 1;
+                end
+            end
+            ws(:) = sum(Mes);
         end
     end
 end

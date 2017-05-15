@@ -3,7 +3,7 @@ classdef conv2d < ndg_lib.phys.phys2d
     %   Detailed explanation goes here
     
     properties(Constant)
-        Nfield = 1
+        Nfield = 1  % 变量个数
     end
     
     properties

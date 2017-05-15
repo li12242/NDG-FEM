@@ -6,7 +6,8 @@ Nv = K+1;
 EToV = [1:K; 2:(K+1)];
 vx = linspace(0, 1, Nv)';
 EToR = ones(K, 1);
-EToBS = zeros(size(EToV)); EToBS([1, end]) = 5;
+EToBS = zeros(size(EToV)); 
+EToBS([1, end]) = ndg_lib.bc_type.ZeroGrad;
 
 mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);
 

@@ -1,7 +1,7 @@
 function ulimit = BJ1D(mesh, u)
 
-V = mesh.Shape.VandMatrix;
-Np = mesh.Shape.nNode;
+V = mesh.cell.V;
+Np = mesh.cell.Np;
 
 % Compute cell averages, v
 uh = V\u; uh(2:Np,:)=0; uavg = V*uh; v = uavg(1,:);
@@ -10,8 +10,8 @@ uh = V\u; uh(2:Np,:)=0; uavg = V*uh; v = uavg(1,:);
 ulimit = u;
 
 % find max and min cell averages
-maxv = max(v(mesh.EToE')); 
-minv = min(v(mesh.EToE')); 
+maxv = max(v(mesh.EToE)); 
+minv = min(v(mesh.EToE)); 
 
 maxv = max([v; maxv]);
 minv = min([v; minv]);
@@ -20,7 +20,7 @@ minv = min([v; minv]);
 minu = min(u);
 maxu = max(u);
 
-dx = mesh.J(1, :)*2; K = 100;
+dx = mesh.J(1, :)*2; K = 10;
 
 ids = find( (maxu > maxv | minu < minv) & (maxu - minu) > K.*dx);
 

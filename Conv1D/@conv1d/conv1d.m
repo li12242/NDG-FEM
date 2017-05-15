@@ -45,6 +45,7 @@ classdef conv1d < ndg_lib.phys.phys1d
     
     %% ¹«¹²º¯Êý
     methods  
+        
         function obj = conv1d(mesh)
             obj = obj@ndg_lib.phys.phys1d(mesh);
         end
