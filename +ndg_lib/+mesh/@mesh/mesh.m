@@ -20,7 +20,7 @@ classdef mesh
         rx, ry, rz
         sx, sy, sz
         tx, ty, tz
-        J
+        J, vol
     end
     
     properties(SetAccess=protected)
@@ -32,7 +32,7 @@ classdef mesh
     % elemental edge information
     properties(SetAccess=protected)
         nx, ny, nz
-        Js
+        Js, elen
     end
     
     % edge information
@@ -72,6 +72,31 @@ classdef mesh
             ele_vQ = vertQ(obj.EToV); 
             nodeQ = obj.cell.project_vert2node(ele_vQ);
         end
+        
+        function c_m = cell_mean(obj, f_Q)
+            % calculate the cell averaged values
+            par = bsxfun(@times, obj.cell.w, obj.J);
+            c_m = sum( par.*f_Q )./sum(par);
+        end
+        
+        function f_m = face_mean(obj, f_Q)
+            % calculate the averaged values of each faces
+            par = bsxfun(@times, obj.cell.ws, obj.Js);
+            f_m = zeros(obj.cell.Nface, 1);
+            f_M = f_Q(obj.eidM);
+            tmp = par.*f_M;
+            st = 1;
+            if (obj.cell.Nfp == 1)
+                f_m = tmp;
+            else
+                for f = 1:obj.cell.Nface
+                    sk = st + obj.cell.Nfp(f);
+                    row = st:(sk-1);
+                    f_m(f, :) = sum( tmp(row, :) )./sum(par(row, :));
+                    st = sk;
+                end
+            end
+        end
     end
     
     %% private methods
@@ -98,6 +123,24 @@ classdef mesh
                 obj.fnxM, obj.fnyM, obj.fnzM] = ...
                 edge_connect(obj, obj.EToV, obj.EToE, obj.EToF, obj.EToBS);
             [obj.eidM, obj.eidP, obj.eidtype, obj.eidfscal] = ele_suf_connect(obj);
+            [obj.vol, obj.elen] = ele_scale(obj);
+        end% func
+        
+        function [vol, edge_len] = ele_scale(obj)
+            vol = sum( bsxfun(@times, obj.cell.w, obj.J) );
+            
+            par = bsxfun(@times, obj.cell.ws, obj.Js);
+            edge_len = zeros(obj.cell.Nface, 1);
+            if (obj.cell.Nfp == 1)
+                edge_len = par;
+            else
+                for f = 1:obj.cell.Nface
+                    sk = st + obj.cell.Nfp(f);
+                    row = st:(sk-1);
+                    edge_len(f, :) = sum(par(row, :));
+                    st = sk;
+                end
+            end
         end% func
         
         function [x, y, z] = ele_node_project(obj, vx, vy, vz)

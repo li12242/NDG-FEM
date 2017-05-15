@@ -1,6 +1,6 @@
-#Wet/Dry treatment
+# Wet/Dry treatment
 
-##Identify the refinement element
+## Identify the refinement element
 
 The following process is in function
 
@@ -11,33 +11,30 @@ where the variable `refineflag` will return a bool vector flag for wet/dry refin
 ###1. identify the transitation element
 For define the transitation (wet/dry interface) element, the element must satisfy the following condition
 
-$$\begin{equation}
-\left\{ \begin{matrix}
+$$\left\{ \begin{matrix}
 h_i > h_{dry} \quad \text{for} \quad \forall x_i \in \Omega_i \cr
 \Omega_{i-1} \in \text{wet cell} \quad \& \quad \Omega_{i+1} \in \text{dry cell}
 \end{matrix}\right.
-\end{equation}$$
+$$
 
 or
 
-$$\begin{equation}
+$$
 \left\{ \begin{matrix}
 h_i > h_{dry} \quad \text{for} \quad \forall x_i \in \Omega_i \cr
 \Omega_{i-1} \in \text{dry cell} \quad \& \quad \Omega_{i+1} \in \text{wet cell}
 \end{matrix}\right.
-\end{equation}$$
+$$
 
 The first condition requires that there is water in the transitation element $\Omega_i$. The second condition require the adjacent element has different wet-dry status.
 
-###2. the refinement condition
+### 2. the refinement condition
 
 For the transitation element which need refinement, the water depth satisfy the following condition
 
-$$\begin{equation}
-\bar{h}_i + B_{i+1/2} < \mathrm{max}(B_i, B_{i+1})
-\end{equation}$$
+$$ \bar{h}_i + B_{i+1/2} < \mathrm{max}(B_i, B_{i+1}) $$
 
-##h refinement
+## h refinement
 
 Function
 
@@ -45,12 +42,11 @@ Function
 
 refine the transitation and returns the new mesh object with variable `h` & `q`. The variable `localEleIndex` is a matrix store the information of local refinement.
 
-###1. get new vertex index, location and EToV
+### 1. get new vertex index, location and EToV
 
-###2. get new EToE and EToF
+### 2. get new EToE and EToF
 
-###3. interpolate h and q to new local refinement element
+### 3. interpolate h and q to new local refinement element
 
 
-##Combine the local refined element
-
+## Combine the local refined element

@@ -1,4 +1,4 @@
-function [r,s,t] = node_coor_func(obj, nOrder)
+function [Np, r,s,t] = node_coor_func(obj, nOrder)
 % Compute (x,y) nodes in equilateral triangle for polynomial of order
 alpopt = [0.0000 0.0000 1.4152 0.1001 0.2751 0.9800 1.0999 ...
           1.2832 1.3648 1.4773 1.4959 1.5743 1.5770 1.6223 1.6258];  
@@ -9,7 +9,7 @@ else
   alpha = 5/3;
 end
 % total number of nodes
-Np = obj.Np;
+Np = (nOrder+1)*(nOrder+2)/2;
 % Create equidistributed nodes on equilateral triangle
 L1 = zeros(Np,1); L3 = zeros(Np,1); %L2 = zeros(Np,1); 
 sk = 1;
