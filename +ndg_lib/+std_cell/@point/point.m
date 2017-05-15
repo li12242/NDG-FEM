@@ -1,12 +1,7 @@
 classdef point < ndg_lib.std_cell.std_cell
     %STD_POINT Summary of this class goes here
     %   Detailed explanation goes here
-    %% 全局属性
-    properties
-        N   % 基函数阶数
-    end
-    
-    % 基本属性
+    %% 基本属性
     properties(Constant)
         type = ndg_lib.std_cell_type.Point % 单元类型
         Nv = 1      % 单元顶点个数
@@ -20,24 +15,9 @@ classdef point < ndg_lib.std_cell.std_cell
         faceType = ndg_lib.std_cell_type.Point
     end
     
-    % 体积属性
-    properties(SetAccess = private)
-        Np      % 节点个数
-        r, s, t
-        V
-        M
-        Dr, Ds, Dt
-    end
-    % 面属性
-    properties(SetAccess = private)
-        Fmask
-        Nfp
-        Nfptotal
-        LIFT
-    end
-    
     methods(Access=protected)
-        function [r,s,t] = node_coor_func(obj, N)
+        function [Np,r,s,t] = node_coor_func(obj, N)
+            Np = 1;
             r = 0;
             s = 0;
             t = 0;
@@ -56,19 +36,7 @@ classdef point < ndg_lib.std_cell.std_cell
     
     methods
         function obj = point(N)
-            obj.N = N;
-            % volume
-            obj.Np = 1;
-            [obj.r, obj.s, obj.t] = obj.node_coor_func(N);
-            obj.V = obj.Vandmode_Matrix(@obj.orthogonal_func);
-            obj.M = obj.Mass_Matrix;
-            [obj.Dr, obj.Ds, obj.Dt] = obj.Derivative_Matrix...
-                (@obj.derivative_orthogonal_func);
-            % face
-            obj.Nfp = 1;
-            obj.Nfptotal = sum(obj.Nfp);
-            obj.Fmask = obj.Face_node;
-            obj.LIFT = obj.Lift_Matrix;
+            obj = obj@ndg_lib.std_cell.std_cell(N);
         end
         
         function node_val = project_vert2node(obj, vert_val)

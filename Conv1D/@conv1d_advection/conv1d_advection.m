@@ -1,7 +1,9 @@
 classdef conv1d_advection < conv1d
     %CONV1D_ADVECTION Summary of this class goes here
     %   Detailed explanation goes here
-    
+    properties
+        slopelimiter
+    end
     methods
         function obj = conv1d_advection(mesh)
             obj = obj@conv1d(mesh);
@@ -9,6 +11,7 @@ classdef conv1d_advection < conv1d
             obj.cfl = 0.3;
             obj.ftime = 1;
             obj.dt = obj.time_interval();
+            obj.slopelimiter = ndg_utility.limiter.BJ(mesh, mesh.cell);
         end% func
         
         function init(obj) 
@@ -34,6 +37,8 @@ classdef conv1d_advection < conv1d
             % flow field
             obj.u = 0.25*ones(Np, K);
         end% func
+        
+        RK45_solve( obj );
         
         function [ dt ] = time_interval(obj)
             dx = obj.mesh.cell.vol * obj.mesh.J;

@@ -36,6 +36,7 @@ classdef phys < matlab.mixin.SetGet
         function obj = phys(mesh)
             obj.mesh = mesh;
             obj.f_Q = zeros(mesh.cell.Np, mesh.K, obj.Nfield);
+            obj.f_extQ = zeros(mesh.cell.Np, mesh.K, obj.Nfield);
         end% func
     end
     

@@ -1,40 +1,51 @@
-#RKDG to shallow water equations
+# RKDG to shallow water equations
 
-##1.Governing Equations
-$$\begin{equation}
+## 1.Governing Equations
+$$
 \frac{\partial U}{\partial t} + \frac{\partial F(U)}{\partial x} = S(U)
-\end{equation}$$
+$$
 
-$$\begin{equation}
+$$
 U = \begin{bmatrix}\eta \cr q_x \end{bmatrix} \quad F = \begin{bmatrix}q_x \cr \frac{q_x^2}{h} + \frac{1}{2}g(\eta^2 - 2\eta z) \end{bmatrix} \quad S = \begin{bmatrix}0 \cr -g\eta\frac{\partial z}{\partial x} \end{bmatrix}
-\end{equation}$$
+$$
 
-##2.Discrete with DGM
+## 2.Discrete with DGM
 
-$$\begin{equation} U_h = \sum{l_j U_j} \quad F_h(U) = \sum{l_j F(U_j)} \end{equation}$$
-
-
-$$\begin{equation}\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx+
-\int_{\Omega} l_i \frac{\partial l_j}{\partial x} F(U_j) dx= 0 \end{equation}$$
+$$ U_h = \sum{l_j U_j} \quad F_h(U) = \sum{l_j F(U_j)} $$
 
 
-$$\begin{equation} \int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx +
+$$
+\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx+
+\int_{\Omega} l_i \frac{\partial l_j}{\partial x} F(U_j) dx= 0
+$$
+
+
+$$
+\int_{\Omega} l_i l_j \frac{\partial U_j}{\partial t} dx +
 \int_{\Omega} l_i \frac{\partial l_j}{\partial x} F(U_j) dx+
-\oint_{\partial \Omega} l_i l_j (F^* - F)\cdot \vec{n} ds = 0  \end{equation}$$
+\oint_{\partial \Omega} l_i l_j (F^* - F)\cdot \vec{n} ds = 0  $$
 
-$$\begin{equation} JM \frac{\partial U}{\partial t} + JMD_x F(U) + J_E M_E (F^* - F)\cdot \vec{n} = 0 \end{equation}$$
+$$
+JM \frac{\partial U}{\partial t} + JMD_x F(U) + J_E M_E (F^* - F)\cdot \vec{n} = 0
+$$
 
 ODE:
-$$\begin{equation} \frac{\partial U}{\partial t} = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F^* - F)\cdot \vec{n}=L(U(t)) \end{equation}$$
+$$
+\frac{\partial U}{\partial t} = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F^* - F)\cdot \vec{n}=L(U(t))
+$$
 
-$$\begin{equation} rhs = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}\end{equation} $$
+$$
+rhs = -\frac{\partial r}{\partial x}D_r F(U) + \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}
+$$
 
 It is important to point out that at dry cells no flux is flow inside the elemnt. Therefor, for dry cells
 
-$$\begin{equation} rhs = \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}\end{equation} $$
+$$
+rhs = \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}
+$$
 
-##3.Numerical Flux
-###3.1.HLL flux function
+## 3.Numerical Flux
+### 3.1.HLL flux function
 
 Formulations are given as
 
@@ -63,19 +74,19 @@ $$c^* = \frac{1}{2}(\sqrt{gh^-} + \sqrt{gh^+}) + \frac{1}{4}(u^- - u^+)$$
 for wet-dry interface, the wave speed is giving as
 
 1. left-hand dry bed
-$$\begin{equation}
+$$
 S_L = u^+ - 2\sqrt{g h^+} \quad S_R = u^+ + \sqrt{g h^+}
-\end{equation}$$
+$$
 
 2. right-hand dry bed
-$$\begin{equation}
+$$
 S_L = u^- - \sqrt{g h^-} \quad S_R = u^- + 2\sqrt{g h^-}
-\end{equation}$$
+$$
 
 3. both sides are dry
-$$\begin{equation}
+$$
 S_L = 0 \quad S_R = 0
-\end{equation}$$
+$$
 
 **Noticing. 1**
 For flux terms, the discharge $q^2$ is divided by water depth $h$
@@ -100,7 +111,7 @@ defining $Q = TU$, the numerical flux $\hat{\mathbf{F}}$ can be obtained through
 $$\hat{\mathbf{F}} \cdot n = T^{-1}\mathbf{F}^{HLL}(Q)$$
 
 
-##4.Limiter
+## 4.Limiter
 **Note: discontinuity detector from Krivodonova (2003) is not working**
 
 For better numerical stability, minmod limiter is used in limiting the discharge and elevation.
@@ -115,24 +126,24 @@ The first step is to define wet elements. After each time step, **the whole doma
 
 The second step is to modify wet cells; If the depth of any nodes is less than $h_{positive}$, then the flow rate is reset to zero and the new water depth is constructed as
 
-$$\begin{equation}
+$$
 \begin{array}{c}
 \mathrm{M}\Pi_h h_i(x) = \theta_1 \left( h_i(x) - \bar{h}_i \right) + \bar{h}_i \cr
 \mathrm{M}\Pi_h q_i(x) = \theta_1 \left( q_i(x) - \bar{q}_i \right) + \bar{q}_i \cr
 \end{array}
-\end{equation}$$
+$$
 
 where
 
-$$\begin{equation}
+$$
 \theta_1 = min \left\{ \frac{\bar{h}_i - \xi }{\bar{h}_i - h_{min}}, 1 \right\}, \quad h_{min} = min\{ h_i (x_i) \}
-\end{equation}$$
+$$
 
 It is necessary to fulfill the restriction that the mean depth $\bar{h}_i$ is greater than $\xi$, i.e. $0$ m. In the function `PositiveOperator`, if the mean depth of element is less than $\xi$, all nodes will add a small depth $\xi - \bar{h}_i$ to re-fulfill the restriction. At last, all nodes with negative water depth $h_i(x_j) < 0$ will be modified to zero.
 
-##6. Wet/Dry treatment
+## 6. Wet/Dry treatment
 
-###6.1. Identification of dry cells
+### 6.1. Identification of dry cells
 
 `WetDryJudge.m`
 
@@ -140,12 +151,12 @@ It is necessary to fulfill the restriction that the mean depth $\bar{h}_i$ is gr
 function isWet = WetDryJudge(mesh, h, physics)
 ```
 
-###6.2. Cancellation of gravity
+### 6.2. Cancellation of gravity
 
 
-##7.Numerical Test
+## 7.Numerical Test
 
-###7.1.Wet dam break
+### 7.1.Wet dam break
 
 | Model Setting | value |
 | --- | --- |
@@ -158,7 +169,7 @@ function isWet = WetDryJudge(mesh, h, physics)
 
 ![](../fig/DamBreakWet.png)
 
-###7.2.Dry dam break
+### 7.2.Dry dam break
 
 | Model Setting | value |
 | --- | --- |
@@ -171,7 +182,7 @@ function isWet = WetDryJudge(mesh, h, physics)
 
 The analytical solution from Izem et al. (2016)
 
-$$\begin{eqnarray}
+$$
 \begin{aligned}
 h_1(x,t) = \left\{ \begin{matrix}
 h_0, & \text{if} \quad x\le -t \sqrt{gh_0}, \cr
@@ -179,9 +190,9 @@ h_0, & \text{if} \quad x\le -t \sqrt{gh_0}, \cr
 0, & \text{if} \quad x> 2t\sqrt{gh_0}
 \end{matrix} \right.
 \end{aligned}
-\end{eqnarray}$$
+$$
 
-$$\begin{eqnarray}
+$$
 \begin{aligned}
 u_1(x,t) = \left\{ \begin{matrix}
 0, & \text{if} \quad x\le -t \sqrt{gh_0}, \cr
@@ -189,11 +200,11 @@ u_1(x,t) = \left\{ \begin{matrix}
 0, & \text{if} \quad x> 2t\sqrt{gh_0}
 \end{matrix} \right.
 \end{aligned}
-\end{eqnarray}$$
+$$
 
 ![](../fig/DamBreakDry.png)
 
-###7.3.Parabolic bowl
+### 7.3.Parabolic bowl
 
 | Model Setting | value |
 | --- | --- |
@@ -205,9 +216,9 @@ u_1(x,t) = \left\{ \begin{matrix}
 
 Exact solution
 
-$$\begin{equation}
+$$
 Z(x,t) = \frac{-B^2 \mathrm{cos}(2wt) - B^2 - 4Bw \mathrm{cos}(wt)x}{4g}
-\end{equation}$$
+$$
 
 1. $t = T/2$
 ![](../fig/ParabolicBowl_1.png)
@@ -375,21 +386,21 @@ $h_0$ = 1
 
 bottom topography
 
-$$\begin{equation}
+$$
 b_s(x) = b(r) = \left\{ \begin{matrix}
 a \cdot \frac{exp(-0.5/(r_m^2 - r^2))}{exp(-0.5/r_m^2)} & \text{if} \quad r\le r_m \cr
 0 & \text{otherwise}
 \end{matrix} \right.
-\end{equation}$$
+$$
 
 where $r = \left| x - 0.5 \right|$， $r_m = 0.4$ and $a = 1.2$
 
 water depth at $T=0$s
-$$\begin{equation}
+$$
 h_0 = min(0, 1- b(x))
-\end{equation}$$
+$$
 
-##8. Todo List
+## 8. Todo List
 
 *16/4/21 - simplification of `Hrefine1D.m`*
 In `Hrefine1D.m`, avoid of calling `RegionLine.BuildMap`, modified `vmapM` and `vmapP` in an other way.
@@ -398,5 +409,3 @@ In `Hrefine1D.m`, avoid of calling `RegionLine.BuildMap`, modified `vmapM` and `
 
 *16/4/29 - reconstruct the wet/dry judgement*
 Use one function to judege the wet/dry status of cells and store it in variable `isWet`. Use the same threshold value in calculating the wet/dry status in RHS, flux terms, slope limiter.
-
-
