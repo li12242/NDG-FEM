@@ -32,7 +32,7 @@ kM = fix( (id-1)./obj.cell.Nface )+1; % trans global index to element index
 fM = rem(id-1, obj.cell.Nface)+1; % trans global index to local face index
 kP = EToE(id); % adjacent element index
 fP = EToF(id); % adjacent face index
-ftype = uint8(EToBS(id)); % face type
+ftype = int8(EToBS(id)); % face type
 end% func
 
 function [Nnode, idM, idP, fpM, fpP, fscal, fnxM, fnyM] = ...

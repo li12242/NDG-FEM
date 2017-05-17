@@ -4,7 +4,6 @@ classdef limiter_cell
     %   的梯度进行重构，获得修正后的单元值。
     
     properties
-        phys
         mesh
         cell
     end

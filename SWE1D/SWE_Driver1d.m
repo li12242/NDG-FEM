@@ -1,6 +1,6 @@
 function SWE_Driver1d
 %% Parameters
-% caseName = 'DamBreakDry';
+caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
 % caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
@@ -10,13 +10,13 @@ function SWE_Driver1d
 % caseName = 'WiderGaussianMound';
 % caseName = 'LocalGaussianMound';
 % caseName = 'WiderMovingMound';
-caseName = 'LocalMovingMound_SpongeLayer';
+% caseName = 'LocalMovingMound_SpongeLayer';
 
 % minimum water depth
 minDepth = 1e-4;
 g        = 9.81;
 n        = 1;   % polynomial order 
-nele     = 333; % No. of elements
+nele     = 10; % No. of elements
 
 % Set to strucutre variable
 phys.name     = caseName;

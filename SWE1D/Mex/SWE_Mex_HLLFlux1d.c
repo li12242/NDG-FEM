@@ -23,9 +23,9 @@ void SWE_NodalFlux1d(real hcrit, real gra,
  *
  * Outputs:
  * Usages:
- * 		[Fhs, Fqxs] = SWE_Mex_HLLFlux1d(hmin, gra, h, Qx, nx, vmapM, vmapP);
+ * 		[Fhs, Fqxs] = SWE_Mex_HLLFlux1d(hmin, gra, h, q, nx, vmapM, vmapP);
  */
-void mexFunction(int nlhs, mxArray *plhs[], 
+void mexFunction(int nlhs, mxArray *plhs[],
 	int nrhs, const mxArray *prhs[]){
 
 	/* check input & output */
@@ -44,20 +44,20 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *vmapP = mxGetPr(prhs[6]);
 
 	/* get dimensions */
-    size_t nfp, ne;
-    nfp = mxGetM(prhs[5]);
-    ne  = mxGetN(prhs[2]);
+    size_t Nfp, K;
+    Nfp = mxGetM(prhs[5]);
+    K  = mxGetN(prhs[2]);
 
 	/* allocate output array */
-	plhs[0] = mxCreateDoubleMatrix((mwSize)nfp, (mwSize)ne, mxREAL);
-	plhs[1] = mxCreateDoubleMatrix((mwSize)nfp, (mwSize)ne, mxREAL);
+	plhs[0] = mxCreateDoubleMatrix((mwSize)Nfp, (mwSize)K, mxREAL);
+	plhs[1] = mxCreateDoubleMatrix((mwSize)Nfp, (mwSize)K, mxREAL);
 
-	real *Fhs  = mxGetPr(plhs[0]); 
-    real *Fqxs = mxGetPr(plhs[1]); 
+	real *Fhs  = mxGetPr(plhs[0]);
+    real *Fqxs = mxGetPr(plhs[1]);
 
     int i,j,ind=0;
-	for (i=0;i<ne;i++){
-		for(j=0;j<nfp;j++){
+	for (i=0;i<K;i++){
+		for(j=0;j<Nfp;j++){
             real hM, hP, qxM, qxP;
             real qnM, qnP;
             real nxf;
@@ -67,7 +67,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
             int iP = (int)vmapP[ind]-1;
 
             // mexPrintf("vmapM[%d] = %d, vmapP[%d] = %d\n", ind, iM, ind, iP);
-            
+
             hM  = h[iM];
             hP  = h[iP];
             qxM = qx[iM];
@@ -79,13 +79,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 			SWE_HLL1d(hmin, gra, hM, hP, qnM, qnP,
                 &Fhns, &Fqns);
-			
+
             Fhs [ind] = Fhns;
             Fqxs[ind] = Fqns*nxf;
             ind++;
 		}
 	}
-    
+
     return;
 }
 
