@@ -24,6 +24,10 @@ while(time<ftime)
     S  = SWE_WaveSpeed1d(phys, h, q);
     dt = CFL/S*dx;
     
+%     fp = fopen('test.txt', 'w+');
+%     fprintf(fp, 'dt = %f\n', dt);
+%     fclose(fp);
+    
     if time + dt > ftime
         dt = ftime - time;
     end% if
@@ -45,13 +49,14 @@ while(time<ftime)
         h = h + rk4b(INTRK)*resH;
         
         [h, q] = SWE_PositivePreserving1d(phys, h, q);
-
     end
     time = time + dt;
-    ncfile.putVarPart('time', isk, 1, time);
-    ncfile.putVarPart('h',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], h);
-    ncfile.putVarPart('q',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], q);
-    
+%     ncfile.putVarPart('time', isk, 1, time);
+%     ncfile.putVarPart('h',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], h);
+%     ncfile.putVarPart('q',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], q);
+    subplot(2,1,1); plot(phys.mesh.x, h, 'r.-');
+    subplot(2,1,2); plot(phys.mesh.x, q, 'b.-'); 
+    drawnow;
     isk = isk + 1;
 end
 

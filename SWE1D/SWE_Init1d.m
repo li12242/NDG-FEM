@@ -347,10 +347,10 @@ h       = 10.*ones(size(mesh.x));
 q       = zeros(size(mesh.x));
 dampos  = 500;
 xc      = mean(mesh.x);
-h(:, xc > dampos) = phys.minDepth;
+h(:, xc > dampos) = 0;
 
 % Parameters
-ftime   = 20;
+ftime   = 40;
 dx      = (x2 - x1)./Ne/N;
 dt      = 1;
 end% func

@@ -1,17 +1,7 @@
 classdef mesh2d < ndg_lib.mesh.mesh
     %@STD_MESH2D Summary of this class goes here
     %   Detailed explanation goes here
-    
-    properties
-        cell
-        K
-        Nv
-        EToV
-        EToR
-        EToBS
-        vx, vy, vz
-    end
-    
+
     methods(Static)
         [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename)
     end

@@ -6,7 +6,7 @@ classdef conv1d < ndg_lib.phys.phys1d
         Nfield = 1
     end
     
-    properties
+    properties(SetAccess = protected)
         cfl     % CFL 数
         ftime   % 计算终止时间
         dt      % 计算时间步长

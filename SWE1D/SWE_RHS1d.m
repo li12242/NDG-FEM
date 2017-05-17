@@ -4,19 +4,51 @@ function [rhsH, rhsQ] = SWE_RHS1d(phys, mesh, h, q, bot, isWet, time, dt)
 % Righ Hand Side
 line = mesh.Shape;
 % numel flux
-[Fhs, Fqs]  = SWE_HLL1d(phys, mesh, h, q, isWet);
+% [Fhs, Fqs]  = SWE_HLL1d(phys, mesh, h, q, isWet);
+h_M = h(mesh.vmapM); h_P = h(mesh.vmapP);
+q_M = q(mesh.vmapM); q_P = q(mesh.vmapP);
+[dFhs, dFqs] = hll_flux(phys.minDepth, phys.gra, h_M, q_M, h_P, q_P, mesh.nx);
 % source term
 [Sh, Sq]    = SWE_Source1d(phys, mesh, bot, h, isWet);
 % flux term
-[Fh, Fq]    = SWE_Flux1d(phys, h, q, isWet);
+[Fh, Fq] = SWE_Flux1d(phys, h, q);
 
 [Sph, Spq]  = SWE_SpongeLayerBC(phys, mesh, h, q, time, dt);
 
 % rhs
-rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
-    - line.LIFT*(Fhs.*mesh.fScale) + Sh + Sph;
-rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
-    - line.LIFT*(Fqs.*mesh.fScale) + Sq + Spq;
+% rhsH = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fh))) ...
+%     - line.LIFT*(Fhs.*mesh.fScale) + Sh + Sph;
+% rhsQ = mesh.rx.*(line.invM*(line.Dr'*(line.M*Fq))) ...
+%     - line.LIFT*(Fqs.*mesh.fScale) + Sq + Spq;
+
+rhsH = - mesh.rx.*(line.Dr*Fh) ...
+    + line.LIFT*(dFhs.*mesh.fScale) + Sh + Sph;
+rhsQ = - mesh.rx.*(line.Dr*Fq) ...
+    + line.LIFT*(dFqs.*mesh.fScale) + Sq + Spq;
+
+% fp = fopen('test.txt', 'a+');
+% fmtstr = '%f %f\n';
+% fprintf(fp, '\nh = \n');
+% fprintf(fp, fmtstr, h);
+% fprintf(fp, '\nq = \n');
+% fprintf(fp, fmtstr, q);
+% 
+% fmtstr = '%f %f\n';
+% fprintf(fp, '\ndFhs = \n');
+% fprintf(fp, fmtstr, dFhs);
+% fprintf(fp, '\ndFqs = \n');
+% fprintf(fp, fmtstr, dFqs);
+% fmtstr = '%f %f\n';
+% fprintf(fp, '\nFh = \n');
+% fprintf(fp, fmtstr, Fh);
+% fprintf(fp, '\nFq = \n');
+% fprintf(fp, fmtstr, Fq);
+% fprintf(fp, '\nrhsH = \n');
+% fprintf(fp, fmtstr, rhsH);
+% fprintf(fp, '\nrhsQ = \n');
+% fprintf(fp, fmtstr, rhsQ);
+% fclose(fp);
+
 end% func
 
 %% SWE_SpongeLayerBC
@@ -169,7 +201,7 @@ end% func
 
 %% SWE_Flux1d
 % calculate flux terms of SWE
-function [Fh, Fq] = SWE_Flux1d(phys, h, q, isWet)
+function [Fh, Fq] = SWE_Flux1d(phys, h, q)
 
 hmin = phys.minDepth;
 gra  = phys.gra;
