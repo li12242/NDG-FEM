@@ -27,11 +27,12 @@ classdef BJ_line < ndg_utility.limiter.BJ.BJ
               % correction factor
               a = ones(size(f_Q));
               f_dive = 1./bsxfun(@minus, f_Q, c_mean);
-              ind = bsxfun(@gt, f_Q, c_mean);
+              
+              ind = bsxfun(@gt, f_Q, c_mean); % correction for f_Q > c_mean
               tmp = min(1, bsxfun(@times, c_max-c_mean, f_dive));
               a(ind) = tmp(ind);
               
-              ind = bsxfun(@lt, f_Q, c_mean);
+              ind = bsxfun(@lt, f_Q, c_mean); % correction for f_Q < c_mean
               tmp = min(1, bsxfun(@times, c_min-c_mean, f_dive));
               a(ind) = tmp(ind);
               % apply slope limiter to selected elements
@@ -41,18 +42,5 @@ classdef BJ_line < ndg_utility.limiter.BJ.BJ
         end
     end
     
-end
-
-function a = limitCoeff(maxu, minu, meanu, u)
-a = ones(size(u)); Np = size(u, 1);
-
-ind = u > meanu;
-a(ind) = min(1, ( maxu(ind) - meanu(ind) )./( u(ind) - meanu(ind) ) );
-
-ind = u < meanu;
-a(ind) = min(1, ( minu(ind) - meanu(ind) )./( u(ind) - meanu(ind) ) );
-
-amin = min(a);
-a = ones(Np, 1)*amin;
 end
 

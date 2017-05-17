@@ -2,7 +2,7 @@ classdef TVB
     %TVB Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
+    properties(SetAccess = protected)
         mesh
         cell
         V       % Vandermonde matrix

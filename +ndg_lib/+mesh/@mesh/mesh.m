@@ -3,12 +3,12 @@ classdef mesh
     %   Detailed explanation goes here
     
     %%
-    properties(Abstract)
+    properties
         cell
         K
         Nv
         EToV % element to vertex information
-        EToR
+        EToR@int8
         EToBS
         vx, vy, vz
     end
@@ -25,7 +25,7 @@ classdef mesh
     
     properties(SetAccess=protected)
         eidM, eidP
-        eidtype@uint8
+        eidtype@int8
         eidfscal
     end
     
@@ -41,18 +41,13 @@ classdef mesh
         Nnode
         kM, kP
         fM, fP
-        ftype@uint8
+        ftype@int8
         idM, idP
         fpM, fpP
         fscal
         fnxM, fnyM, fnzM
     end
     
-    %% I/O methods
-    methods(Abstract)
-        % read mesh information from input file, I/O methods
-        [Nv, vx, vy, vz, K, EToV, EToR, EToBS] = read_from_file(casename)
-    end
     
     %% Abstract methods
     methods(Abstract, Access = protected)
@@ -75,8 +70,9 @@ classdef mesh
         
         function c_m = cell_mean(obj, f_Q)
             % calculate the cell averaged values
-            par = bsxfun(@times, obj.cell.w, obj.J);
-            c_m = sum( par.*f_Q )./sum(par);
+%             par = bsxfun(@times, obj.cell.w, obj.J);
+%             c_m = sum( par.*f_Q )./sum(par);
+            [ c_m ] = cell_mean( f_Q, obj.cell.w, obj.J );
         end
         
         function f_m = face_mean(obj, f_Q)
@@ -99,6 +95,12 @@ classdef mesh
         end
     end
     
+    % I/O methods
+    methods(Abstract)
+        % read mesh information from input file, I/O methods
+        [Nv, vx, vy, vz, K, EToV, EToR, EToBS] = read_from_file(casename)
+    end
+    
     %% private methods
     methods(Access = protected)
         function obj = mesh(cell, Nv, vx, vy, vz, K, EToV, EToR, EToBS)
@@ -109,7 +111,7 @@ classdef mesh
             obj.vz = vz;
             obj.K  = K;
             obj.EToV = EToV;
-            obj.EToR = EToR;
+            obj.EToR = int8(EToR);
             obj.EToBS = EToBS;
             
             [obj.EToE, obj.EToF] = ele_connect(obj, obj.EToV);
@@ -153,7 +155,7 @@ classdef mesh
             Nfptotal = obj.cell.Nfptotal;
             eidM = zeros(Nfptotal, obj.K);
             eidP = zeros(Nfptotal, obj.K);
-            eidtype = uint8(zeros(Nfptotal, obj.K));
+            eidtype = int8(zeros(Nfptotal, obj.K));
             eidfscal = zeros(Nfptotal, obj.K);
             faceIndexStart = ones(obj.cell.Nface, 1); % start index of each face node
             for f = 2:obj.cell.Nface
