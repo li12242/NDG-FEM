@@ -1,4 +1,4 @@
-function RK45_solve( obj )
+function [ obj ] = RK45_solve( obj )
 %SOLVE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,10 +20,14 @@ rk4c = [             0.0  ...
 
 time = 0;
 ftime = obj.ftime;
-f_Q  = obj.f_Q;
-dt   = obj.time_interval;
+
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
+f_Q  = obj.f_Q;
+obj.wetdry_detector(f_Q);
+
+% xc = obj.mesh.cell_mean(obj.mesh.x);
 while(time < ftime)
+    dt = obj.time_interval;
     if(time + dt > ftime)
         dt = ftime - time;
     end
@@ -34,11 +38,17 @@ while(time < ftime)
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
-%         f_Q = Utilities.Limiter.Limiter1D.BJ1D(obj.mesh, f_Q);
-        f_Q = obj.slopelimiter.limit( f_Q );
+        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1), obj.M );
+        f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2), obj.M );
+
+        f_Q = obj.positive_preserve( f_Q );
+        obj.wetdry_detector( f_Q) ; % 重新判断干湿单元    
     end
     time = time + dt;
-    plot(obj.mesh.x, f_Q(:,:,1), 'o-'); drawnow;
+%     subplot(2,1,1); plot(obj.mesh.x, f_Q(:,:,1), 'r.-', ...
+%         xc, obj.mesh.EToR, 'b*'); 
+%     subplot(2,1,2); plot(obj.mesh.x, f_Q(:,:,2), 'r.-'); 
+%     drawnow;
 end
 
 obj.f_Q = f_Q;

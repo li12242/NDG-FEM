@@ -45,11 +45,6 @@ classdef phys < matlab.mixin.SetGet
         f_Q = RK45_solve(obj) % Runge-Kutta 4th order 5 stages
     end
     
-    % 误差统计
-    methods
-        f_ext = ext_fun( obj )
-    end
-    
     % 文件 I/O
     methods
         function obj = set_out_file(obj, filename, dt)

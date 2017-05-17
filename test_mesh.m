@@ -1,12 +1,12 @@
 %% line
-line = ndg_lib.std_cell.line(2);
+line = ndg_lib.std_cell.line(1);
 
 K = 100;
 Nv = K+1;
 EToV = [1:K; 2:(K+1)];
-vx = linspace(0, 1, Nv)';
-EToR = ones(K, 1);
-EToBS = zeros(size(EToV)); 
+vx = linspace(0, 2, Nv)';
+EToR = zeros(K, 1);
+EToBS = uint8(ones(size(EToV)))*ndg_lib.bc_type.Inner; 
 EToBS([1, end]) = ndg_lib.bc_type.ZeroGrad;
 
 mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);

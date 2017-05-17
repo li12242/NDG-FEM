@@ -1,4 +1,4 @@
-classdef mesh_type < double
+classdef mesh_type < int8
     %MESH_TYPE Summary of this class goes here
     %   Detailed explanation goes here
     
