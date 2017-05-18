@@ -38,10 +38,8 @@ while(time < ftime)
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
-        % 应用斜率限制器限制水位与流量
-        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1)+obj.bot, obj.M );
+        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1), obj.M );
         f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2), obj.M );
-        f_Q(:,:,1) = f_Q(:,:,1) - obj.bot; % 将水位转换为水深变量
         
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元    
