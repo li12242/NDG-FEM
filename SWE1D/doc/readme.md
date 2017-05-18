@@ -1,6 +1,10 @@
-# RKDG to shallow water equations
+# 一维浅水方程
 
-## 1.Governing Equations
+## 1. 控制方程
+
+根据物理变量的不同，浅水方程可以分为两种，分别以水深 $h$ 和自由水位 $\eta$ 为自变量。
+以水深 $h$ 为自由变量的控制方程为
+
 $$
 \frac{\partial U}{\partial t} + \frac{\partial F(U)}{\partial x} = S(U)
 $$
@@ -9,7 +13,7 @@ $$
 U = \begin{bmatrix}\eta \cr q_x \end{bmatrix} \quad F = \begin{bmatrix}q_x \cr \frac{q_x^2}{h} + \frac{1}{2}g(\eta^2 - 2\eta z) \end{bmatrix} \quad S = \begin{bmatrix}0 \cr -g\eta\frac{\partial z}{\partial x} \end{bmatrix}
 $$
 
-## 2.Discrete with DGM
+## 2. 数值离散
 
 $$ U_h = \sum{l_j U_j} \quad F_h(U) = \sum{l_j F(U_j)} $$
 
@@ -44,7 +48,7 @@ $$
 rhs = \frac{J_E}{J}M^{-1} M_E (F - F^*)\cdot \vec{n}
 $$
 
-## 3.Numerical Flux
+## 3. 数值通量
 ### 3.1.HLL flux function
 
 Formulations are given as
@@ -112,13 +116,15 @@ $$\hat{\mathbf{F}} \cdot n = T^{-1}\mathbf{F}^{HLL}(Q)$$
 
 
 ## 4.Limiter
-**Note: discontinuity detector from Krivodonova (2003) is not working**
+
+斜率限制器对浅水方程计算稳定性**至关重要(crucial)**。
+
 
 For better numerical stability, minmod limiter is used in limiting the discharge and elevation.
 
 Check `testing/Limiter1D/doc` for more details about minmod limiter.
 
-##5. Positive preserving limiter
+## 5. Positive preserving limiter
 
 For the thin layer approach, a small depth ( $h_{positive} = 10^{-3} m$) and zeros velocity are prescribed for dry nodes.
 

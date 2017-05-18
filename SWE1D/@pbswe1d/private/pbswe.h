@@ -14,15 +14,7 @@ typedef enum {
     DRY = 5,
 } cell_type;
 
-typedef enum {
-    INNER = 0,
-    SLIPWALL = 2,
-    NSLIPWALL = 3,
-    ZEROGRAD = 4,
-    CLAMP = 5,
-} bc_type;
-
 void nodal_flux(double hcrit, double gra,
-    double h, double qx, double *Fh, double *Fq);
+    double eta, double qx, double bot, double *Fh, double *Fq);
 
 #endif
