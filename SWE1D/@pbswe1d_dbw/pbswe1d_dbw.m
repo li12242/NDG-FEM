@@ -1,4 +1,4 @@
-classdef swe1d_dbw < swe1d
+classdef pbswe1d_dbw < pbswe1d
     %SWE1D_DBW Ò»Î¬ dam-break-wet Çó½âÆ÷¡£
     %   Detailed explanation goes here
     
@@ -6,7 +6,6 @@ classdef swe1d_dbw < swe1d
         dam_pos = 500
         h0 = 10
         h1 = 2
-        hmin = 1e-4
     end
     
     properties
@@ -15,7 +14,7 @@ classdef swe1d_dbw < swe1d
     
     methods
         
-        function obj = swe1d_dbw(varargin)
+        function obj = pbswe1d_dbw(varargin)
             % create the dam-break-wet solver
             %
             switch nargin % initialize the mesh object
@@ -32,7 +31,7 @@ classdef swe1d_dbw < swe1d
                     error('The number of input variable is incorrect!');
             end
             
-            obj = obj@swe1d(mesh);
+            obj = obj@pbswe1d(mesh);
             obj.init();
             obj.ftime = 20;
             obj.cfl = 0.2;

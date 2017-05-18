@@ -1,4 +1,4 @@
-#include "swe.h"
+#include "pbswe.h"
 
 /*
  * Usages:
