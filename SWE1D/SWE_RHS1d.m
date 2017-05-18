@@ -26,28 +26,28 @@ rhsH = - mesh.rx.*(line.Dr*Fh) ...
 rhsQ = - mesh.rx.*(line.Dr*Fq) ...
     + line.LIFT*(dFqs.*mesh.fScale) + Sq + Spq;
 
-% fp = fopen('test.txt', 'a+');
-% fmtstr = '%f %f\n';
-% fprintf(fp, '\nh = \n');
-% fprintf(fp, fmtstr, h);
-% fprintf(fp, '\nq = \n');
-% fprintf(fp, fmtstr, q);
-% 
-% fmtstr = '%f %f\n';
-% fprintf(fp, '\ndFhs = \n');
-% fprintf(fp, fmtstr, dFhs);
-% fprintf(fp, '\ndFqs = \n');
-% fprintf(fp, fmtstr, dFqs);
-% fmtstr = '%f %f\n';
-% fprintf(fp, '\nFh = \n');
-% fprintf(fp, fmtstr, Fh);
-% fprintf(fp, '\nFq = \n');
-% fprintf(fp, fmtstr, Fq);
-% fprintf(fp, '\nrhsH = \n');
-% fprintf(fp, fmtstr, rhsH);
-% fprintf(fp, '\nrhsQ = \n');
-% fprintf(fp, fmtstr, rhsQ);
-% fclose(fp);
+fp = fopen('test.txt', 'a+');
+fmtstr = '%f %f\n';
+fprintf(fp, '\nh = \n');
+fprintf(fp, fmtstr, h);
+fprintf(fp, '\nq = \n');
+fprintf(fp, fmtstr, q);
+
+fmtstr = '%f %f\n';
+fprintf(fp, '\ndFhs = \n');
+fprintf(fp, fmtstr, dFhs);
+fprintf(fp, '\ndFqs = \n');
+fprintf(fp, fmtstr, dFqs);
+fmtstr = '%f %f\n';
+fprintf(fp, '\nFh = \n');
+fprintf(fp, fmtstr, Fh);
+fprintf(fp, '\nFq = \n');
+fprintf(fp, fmtstr, Fq);
+fprintf(fp, '\nrhsH = \n');
+fprintf(fp, fmtstr, rhsH);
+fprintf(fp, '\nrhsQ = \n');
+fprintf(fp, fmtstr, rhsQ);
+fclose(fp);
 
 end% func
 

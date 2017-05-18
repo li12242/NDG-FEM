@@ -323,7 +323,7 @@ h = z - bot;
 h(h<0) = 0;
 
 % Parameters
-ftime = 2*T; % Parabolic Bowl
+ftime = T; % Parabolic Bowl
 dx      = (x2 - x1)./Ne/N;
 dt      = 1;
 end% func

@@ -1,0 +1,49 @@
+#include "pbswe.h"
+
+/* Computation of the flux term for two dimensional SWE.
+ * Usages:
+ * 	  [Fh, Fqx] = swe_nodal_flux(hmin, gra, eta, qx, bot, EToR)
+ */
+void mexFunction( int nlhs, mxArray *plhs[],
+    int nrhs, const mxArray *prhs[] )
+{
+
+    /* check input & output */
+	if (nrhs != 6) mexErrMsgTxt("The number of input arguments should be 5.");
+	if (nlhs != 2) mexErrMsgTxt("The number of output arguments should be 2.");
+
+	/* get inputs */
+	double hmin = mxGetScalar(prhs[0]);
+	double gra  = mxGetScalar(prhs[1]);
+	double *eta = mxGetPr(prhs[2]);
+	double *qx  = mxGetPr(prhs[3]);
+    double *bot = mxGetPr(prhs[4]);
+    signed char *etype = (signed char *)mxGetData(prhs[5]);
+	/* get dimensions */
+	size_t Np = mxGetM(prhs[2]);
+	size_t K = mxGetN(prhs[2]);
+	/* allocate output array */
+	plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
+	plhs[1] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
+
+	double *Fh = mxGetPr(plhs[0]);
+    double *Fq = mxGetPr(plhs[1]);
+
+	int n,k,ind=0;
+	for (k=0;k<K;k++){
+        if (etype[k] == DRY){ // cell is dry
+            for(n=0;n<Np;n++){
+                Fh[ind] = 0.0;
+                Fq[ind] = 0.0;
+                ind ++;
+            }
+        }else{ // cell is wet
+            for(n=0;n<Np;n++){
+    			nodal_flux(hmin, gra, eta[ind], qx[ind], bot[ind],
+                    Fh+ind, Fq+ind);
+    			ind++;
+    		}
+        }
+	}
+    return;
+}

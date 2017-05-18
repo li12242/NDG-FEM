@@ -23,7 +23,7 @@ ftime = obj.ftime;
 
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 f_Q  = obj.f_Q;
-obj.wetdry_detector(f_Q);
+obj.wetdry_detector( f_Q );
 
 % xc = obj.mesh.cell_mean(obj.mesh.x);
 while(time < ftime)
@@ -38,17 +38,14 @@ while(time < ftime)
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
-        % 应用斜率限制器限制水位与流量
-        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1)+obj.bot, obj.M );
+        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) + obj.bot, obj.M );
         f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2), obj.M );
-        f_Q(:,:,1) = f_Q(:,:,1) - obj.bot; % 将水位转换为水深变量
         
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元    
-        obj.draw( f_Q ); pause(1e-10);
     end
     time = time + dt;
-    
+    obj.draw( f_Q ); pause(1e-10);
 end
 
 obj.f_Q = f_Q;

@@ -3,10 +3,10 @@ function ulimit = MinmodLinear(mesh, u)
 % Purpose: Apply minmod limiter to u, get linear result
 
 %% mex version
-shape = mesh.Shape;
+shape = mesh.cell;
 
 ulimit = Utilities.Limiter.Limiter1D.Minmod1d_Mex...
-    (u, mesh.J, shape.M, shape.Fmask, mesh.EToE, mesh.x);
+    (u, mesh.J, shape.M, shape.Fmask, mesh.EToE', mesh.x);
 % 
 % V = @(x)mesh.Shape.VandMatrix;
 % Np = @(x)mesh.Shape.nNode;

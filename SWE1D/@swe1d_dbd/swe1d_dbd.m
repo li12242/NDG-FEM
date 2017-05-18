@@ -5,10 +5,11 @@ classdef swe1d_dbd < swe1d
     properties(Constant)
         dam_pos = 500
         h0 = 10
+        hmin = 1e-4
     end
     
     properties
-        M = 1e-3;
+        M = 1e-5;
     end
     
     methods
