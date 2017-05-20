@@ -3,7 +3,23 @@ classdef conv2d_rotation < conv2d
     %   Detailed explanation goes here
     
     methods
-        function obj = conv2d_rotation(mesh)
+        function obj = conv2d_rotation(varargin)
+            switch nargin
+                case 1
+                    mesh = varargin(1);
+                    if ( ~isa(mesh, 'ndg_lib.mesh.tri_mesh') || ...
+                            ~isa(mesh, 'ndg_lib.mesh.quad_mesh') )
+                        error(['The input is not a triangle or ',... 
+                            'quadrilateral mesh object!']);
+                    end
+                case 3
+                    N = varargin{1};
+                    M = varargin{2};
+                    type = varargin{3};
+                    mesh = uniform_mesh( N, M, type );
+                otherwise
+                    error('The number of input variable is incorrect.');
+            end% switch
             obj = obj@conv2d(mesh);
             obj.init; % call initial function
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
