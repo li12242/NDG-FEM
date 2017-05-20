@@ -20,8 +20,8 @@ rk4c = [             0.0  ...
 
 time = 0;
 ftime = obj.ftime;
-f_Q  = obj.f_Q;
-dt   = obj.time_interval;
+f_Q = obj.f_Q;
+dt = obj.time_interval;
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 while(time < ftime)
     if(time + dt > ftime)
@@ -35,7 +35,7 @@ while(time < ftime)
         f_Q = f_Q + rk4b(INTRK)*resQ;
     end
     time = time + dt;
-%     obj.f_Q = f_Q; obj.draw(1); drawnow;
+    obj.f_Q = f_Q; obj.draw(1); drawnow;
 end
 
 obj.f_Q = f_Q;

@@ -1,14 +1,14 @@
 classdef mesh_type < int8
-    %MESH_TYPE Summary of this class goes here
+    %MESH_TYPE 计算单元枚举类型
     %   Detailed explanation goes here
     
     enumeration
-        Normal      (0)
+        Normal      (0) % 普通单元
         Sponge      (1) % sponge cell
-        Refine      (2) % refine cell
+        Refine      (2) % 细分单元
         Coarse      (3) % coares cell to be refined
-        Wet         (4)
-        Dry         (5)
+        Wet         (4) % 湿单元
+        Dry         (5) % 干单元
     end
     
     methods

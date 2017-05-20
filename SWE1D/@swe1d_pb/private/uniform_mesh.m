@@ -11,7 +11,7 @@ x1 = -5000;
 x2 =  5000; % º∆À„”Ú∑∂Œß
 vx = linspace(x1, x2, Nv)';
 EToR  = zeros(K, 1);
-EToBS = uint8(ones(size(EToV)))*ndg_lib.bc_type.Inner;
+EToBS = int8(ones(size(EToV)))*ndg_lib.bc_type.Inner;
 EToBS([1, end]) = ndg_lib.bc_type.ZeroGrad;
 
 mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);
