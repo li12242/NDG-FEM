@@ -11,7 +11,7 @@ x1 = 0;
 x2 = 38; % º∆À„”Ú∑∂Œß
 vx = linspace(x1, x2, Nv)';
 EToR  = zeros(K, 1);
-EToBS = uint8(ones(size(EToV)))*ndg_lib.bc_type.Inner;
+EToBS = int8(ones(size(EToV)))*ndg_lib.bc_type.Inner;
 EToBS(1) = ndg_lib.bc_type.SlipWall;
 EToBS(end) = ndg_lib.bc_type.ZeroGrad;
 

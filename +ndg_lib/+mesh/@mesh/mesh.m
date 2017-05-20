@@ -132,10 +132,11 @@ classdef mesh
             vol = sum( bsxfun(@times, obj.cell.w, obj.J) );
             
             par = bsxfun(@times, obj.cell.ws, obj.Js);
-            edge_len = zeros(obj.cell.Nface, 1);
+            edge_len = zeros(obj.cell.Nface, obj.K);
             if (obj.cell.Nfp == 1)
                 edge_len = par;
             else
+                st = 1;
                 for f = 1:obj.cell.Nface
                     sk = st + obj.cell.Nfp(f);
                     row = st:(sk-1);

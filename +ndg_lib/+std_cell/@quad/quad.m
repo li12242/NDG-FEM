@@ -21,7 +21,7 @@ classdef quad < ndg_lib.std_cell.std_cell
     end
     
     methods(Access=protected)
-        [r,s,t] = node_coor_func(obj, N);
+        [Np, r,s,t] = node_coor_func(obj, N);
         f = orthogonal_func(obj, N, ind, r, s, t);
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
     end

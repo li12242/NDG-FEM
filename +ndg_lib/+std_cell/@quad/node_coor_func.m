@@ -1,4 +1,4 @@
-function [ r,s,t ] = node_coor_func( obj, order )
+function [ Np,r,s,t ] = node_coor_func( obj, order )
 %GETCOOR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,5 +11,6 @@ s = ones(np, 1)*x';
 
 r = r(:); s = s(:);
 t = zeros(size(r));
+Np = np*np;
 end
 
