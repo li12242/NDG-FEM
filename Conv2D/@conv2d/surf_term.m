@@ -13,10 +13,8 @@ nx = obj.mesh.nx;
 ny = obj.mesh.ny;
 
 ind = ( (nx.*uM+ny.*vM) >= 0); 
-EM = nx.*uM.*cM + ny.*vM.*cM; fluxS(ind) = EM(ind);
-
-ind = ( (nx.*uM+ny.*vM) <  0); 
-EM = nx.*uP.*cP + ny.*vP.*cP; fluxS(ind) = EM(ind);
+EM = nx.*uM.*cM + ny.*vM.*cM; fluxS( ind) = EM( ind);
+EM = nx.*uP.*cP + ny.*vP.*cP; fluxS(~ind) = EM(~ind);
 
 % 外法向通量偏差，fn - fn*
 dflux = nx.*uM.*cM + ny.*vM.*cM - fluxS;
@@ -43,6 +41,6 @@ cP(ind) = cM(ind);
 
 %% clamped
 ind = (ftype == ndg_lib.bc_type.Clamped);
-cP(ind) = c_extM(ind);
+cP(ind) = 2*c_extM(ind) - cM(ind);
 
 end

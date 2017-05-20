@@ -28,11 +28,11 @@ for f = 1:obj.cell.Nface
     ind(f, :) = min(v1, v2)*obj.Nv + max(v1, v2);
 end
 % calculate the unique edges
-[~, id, ~] = unique(ind); % find the global index
+[~, id, ~] = unique(ind); % 寻找不同面标记
 
 Nedge = numel(id);
-kM = fix( (id-1)./obj.cell.Nface )+1; % trans global index to element index
-fM = rem(id-1, obj.cell.Nface)+1; % trans global index to local face index
+kM = fix( (id-1)./obj.cell.Nface )+1; % 不同所b标记在列号
+fM = rem(id-1, obj.cell.Nface)+1; % 不同标记所在行号
 kP = EToE(id); % adjacent element index
 fP = EToF(id); % adjacent face index
 ftype = int8(EToBS(id)); % face type
