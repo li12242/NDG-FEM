@@ -10,6 +10,7 @@ classdef swe1d_trihump < swe1d
     
     properties
         M = 1e-10
+        detector
     end
     
     methods(Access=protected)
@@ -21,9 +22,12 @@ classdef swe1d_trihump < swe1d
         function obj = swe1d_trihump(N, K)
             mesh = uniform_mesh(N, K);
             obj = obj@swe1d(mesh);
-            obj.init();
+            
             obj.ftime = 93;
             obj.cfl = 0.2;
+            obj.detector = ndg_utility.detector.detector1d(mesh, ...
+                15.5+[2, 4, 8, 10, 11, 13, 20], 0.1, obj.ftime, obj.Nfield);
+            obj.init();
         end
         
         function init(obj)
@@ -38,6 +42,27 @@ classdef swe1d_trihump < swe1d
             ind = (obj.mesh.x > (x0-len)) & (obj.mesh.x < (x0+len));
             bot(ind) = b0 - abs(obj.mesh.x(ind) - x0)*b0/len;
             obj.bot = bot;
+            % detector init
+            obj.detector.init();
+        end
+        
+        function result(obj)
+            folder = '@swe1d_trihump/private/';
+            name = {'p1.txt', 'p2.txt', 'p3.txt', ...
+                'p4.txt', 'p5.txt', 'p6.txt', 'p7.txt'};
+            for i = 1:numel(name)
+                filename = fullfile(folder, name{i});
+                figure('color', 'w');
+                [t, h] = read_measured_data(filename);
+                plot(t, h, 'ro'); hold on;
+                p_h = obj.detector.draw(i, 1);
+                xlim([0, 90]); ylim([0, .75]);
+                grid on; box on;
+                xlabel('$time\,(s)$', 'Interpreter', 'Latex', 'FontSize', 16);
+                ylabel('$h\,(m)$', 'Interpreter', 'Latex', 'FontSize', 16);
+                legend({'Measured', 'NDG'}, 'box', 'off', 'FontSize', 16, ...
+                    'Interpreter', 'Latex')
+            end
         end
     end
     

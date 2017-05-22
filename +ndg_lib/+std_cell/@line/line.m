@@ -26,10 +26,6 @@ classdef line < ndg_lib.std_cell.std_cell
             t = zeros(Np, 1);
         end
         
-        function f = orthogonal_func(obj, N, ind, r, s, t)
-            f = Polylib.JacobiP(r, 0, 0, ind-1);
-        end% func
-        
         function [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
             dr = Polylib.GradJacobiP(r, 0, 0, ind-1);
             ds = zeros(obj.Np, 1);
@@ -41,6 +37,10 @@ classdef line < ndg_lib.std_cell.std_cell
         function obj = line(N)
             obj = obj@ndg_lib.std_cell.std_cell(N);
         end
+        
+        function f = orthogonal_func(obj, N, ind, r, s, t)
+            f = Polylib.JacobiP(r, 0, 0, ind-1);
+        end% func
         
         function node_val = project_vert2node(obj, vert_val)
             node_val = 0.5*((1-obj.r)*vert_val(1,:) + (1+obj.r)*vert_val(2,:));

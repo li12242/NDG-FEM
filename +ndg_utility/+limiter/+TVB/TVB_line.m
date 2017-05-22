@@ -3,7 +3,7 @@ classdef TVB_line < ndg_utility.limiter.TVB.TVB
     %   Detailed explanation goes here
     
     properties
-        dx % diversity of x coordinate in each cell
+        dx % 每个单元第一节点与最后一个节点坐标之差
     end
     
     methods
@@ -41,7 +41,7 @@ classdef TVB_line < ndg_utility.limiter.TVB.TVB
             % slope limiter to selected elements
             if any(ids)
                 % calculate the limited boundary diversities
-                tmp = ndg_utility.limiter.minmod([df_b; df_mean1; df_mean2]);
+                tmp = ndg_utility.limiter.TVB.minmod([df_b; df_mean1; df_mean2]);
                 slope = tmp./obj.dx; % the limited slopes
                 t_Q = bsxfun(@plus, f_mean, ... % reconstruct limited node values
                   bsxfun(@times, slope, bsxfun(@minus, obj.mesh.x, obj.xc)));
