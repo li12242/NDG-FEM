@@ -78,7 +78,7 @@ classdef mesh
         function f_m = face_mean(obj, f_Q)
             % calculate the averaged values of each faces
             par = bsxfun(@times, obj.cell.ws, obj.Js);
-            f_m = zeros(obj.cell.Nface, 1);
+            f_m = zeros(obj.cell.Nface, obj.K);
             f_M = f_Q(obj.eidM);
             tmp = par.*f_M;
             st = 1;
