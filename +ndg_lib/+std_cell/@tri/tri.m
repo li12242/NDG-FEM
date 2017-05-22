@@ -21,7 +21,6 @@ classdef tri < ndg_lib.std_cell.std_cell
     
     methods(Access=protected)
         [Np,r,s,t] = node_coor_func(obj, N);
-        f = orthogonal_func(obj, N, ind, r, s, t);
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
     end
     
@@ -29,7 +28,9 @@ classdef tri < ndg_lib.std_cell.std_cell
         function obj = tri(N)
             obj = obj@ndg_lib.std_cell.std_cell(N);
         end
-       
+        
+        f = orthogonal_func(obj, N, ind, r, s, t);
+
         function node_val = project_vert2node(obj, vert_val)
             node_val = 0.5*(-(obj.r+obj.s)*vert_val(1, :) ...
                 + (1+obj.r)*vert_val(2, :)...

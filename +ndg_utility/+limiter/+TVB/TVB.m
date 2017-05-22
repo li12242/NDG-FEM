@@ -5,8 +5,6 @@ classdef TVB
     properties(SetAccess = protected)
         mesh
         cell
-        V       % Vandermonde matrix
-        invV    % inverse of Vandermonde matrix
         h2      % square of each elements' length
         xc      % 
         yc
@@ -17,8 +15,6 @@ classdef TVB
         function obj = TVB(mesh, cell)
             obj.mesh = mesh;
             obj.cell = cell;
-            obj.V = cell.V;
-            obj.invV = inv(obj.V);
             
             obj.h2 = obj.mesh.vol.^2; % h2
             obj.xc = obj.mesh.cell_mean(obj.mesh.x);
