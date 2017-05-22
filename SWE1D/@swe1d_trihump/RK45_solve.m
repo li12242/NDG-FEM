@@ -24,7 +24,7 @@ ftime = obj.ftime;
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 f_Q  = obj.f_Q;
 obj.wetdry_detector(f_Q);
-
+obj.detector.collect(f_Q, time);
 % xc = obj.mesh.cell_mean(obj.mesh.x);
 while(time < ftime)
     dt = obj.time_interval;
@@ -43,10 +43,10 @@ while(time < ftime)
         
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元    
-        obj.draw( f_Q ); pause(1e-10);
+        % obj.draw( f_Q ); pause(1e-10);
     end
     time = time + dt;
-    
+    obj.detector.collect(f_Q, time);
 end
 
 obj.f_Q = f_Q;

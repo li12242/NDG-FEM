@@ -23,10 +23,6 @@ classdef point < ndg_lib.std_cell.std_cell
             t = 0;
         end
         
-        function fun = orthogonal_func(obj, N, ind, r, s, t)
-            fun = 1;
-        end
-        
         function [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
             dr = 0;
             ds = 0;
@@ -37,6 +33,10 @@ classdef point < ndg_lib.std_cell.std_cell
     methods
         function obj = point(N)
             obj = obj@ndg_lib.std_cell.std_cell(N);
+        end
+        
+        function fun = orthogonal_func(obj, N, ind, r, s, t)
+            fun = 1;
         end
         
         function node_val = project_vert2node(obj, vert_val)

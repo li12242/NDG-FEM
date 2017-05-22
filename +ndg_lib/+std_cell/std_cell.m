@@ -40,12 +40,12 @@ classdef std_cell
     %% 虚函数
     methods(Abstract, Access=protected) % 私有
         [Np, r,s,t] = node_coor_func(obj, N)
-        fun = orthogonal_func(obj, N, ind, r, s, t)
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
     end
     
     %% 公共虚函数
     methods(Abstract, Access=public)
+        fun = orthogonal_func(obj, N, ind, r, s, t);
         node_val = project_vert2node(obj, vert_val);
     end
     
