@@ -2,8 +2,9 @@ function [ dflux ] = surf_term( obj, f_Q )
 %SURF_TERM Summary of this function goes here
 %   Detailed explanation goes here
 
-cM = f_Q( obj.mesh.eidM ); uM = obj.u( obj.mesh.eidM ); vM = obj.v( obj.mesh.eidM );
-cP = f_Q( obj.mesh.eidP ); uP = obj.u( obj.mesh.eidP ); vP = obj.v( obj.mesh.eidP );
+cM = f_Q( obj.mesh.eidM ); cP = f_Q( obj.mesh.eidP ); 
+uM = obj.u( obj.mesh.eidM ); uP = obj.u( obj.mesh.eidP ); 
+vM = obj.v( obj.mesh.eidM ); vP = obj.v( obj.mesh.eidP );
 c_extM = obj.f_extQ( obj.mesh.eidM );
 
 cP = nei_node_val(cM, cP, c_extM, obj.mesh.eidtype);

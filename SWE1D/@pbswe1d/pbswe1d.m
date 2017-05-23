@@ -59,7 +59,7 @@ classdef pbswe1d < ndg_lib.phys.phys1d
         
         function obj = pbswe1d(mesh)
             obj = obj@ndg_lib.phys.phys1d(mesh);
-            obj.slopelimiter = ndg_utility.limiter.TVB(mesh, mesh.cell);
+            obj.slopelimiter = ndg_utility.limiter.TVB(mesh);
         end
     end
 
