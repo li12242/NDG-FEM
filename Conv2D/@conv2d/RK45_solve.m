@@ -35,7 +35,7 @@ while(time < ftime)
         f_Q = f_Q + rk4b(INTRK)*resQ;
     end
     time = time + dt;
-    obj.f_Q = f_Q; obj.draw(1); drawnow;
+    %obj.f_Q = f_Q; obj.draw(1); drawnow;
 end
 
 obj.f_Q = f_Q;

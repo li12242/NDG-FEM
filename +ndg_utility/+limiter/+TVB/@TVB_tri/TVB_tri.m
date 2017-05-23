@@ -7,10 +7,10 @@ classdef TVB_tri < ndg_utility.limiter.TVB.TVB
     end
     
     methods
-        function obj = TVB_tri(mesh,cell)
-            obj = obj@ndg_utility.limiter.TVB.TVB(mesh, cell);
+        function obj = TVB_tri(mesh)
+            obj = obj@ndg_utility.limiter.TVB.TVB(mesh, mesh.cell);
             
-            if (cell.type ~= ndg_lib.std_cell_type.Tri)
+            if (mesh.cell.type ~= ndg_lib.std_cell_type.Tri)
                 error('The input cell type is incorrect!');
             end
             obj.xf = mesh.face_mean(mesh.x);
