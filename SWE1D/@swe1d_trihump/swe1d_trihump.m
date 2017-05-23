@@ -1,6 +1,9 @@
 classdef swe1d_trihump < swe1d
     %SWE1D_TRIHUMO Summary of this class goes here
     %   Detailed explanation goes here
+    % Reference:
+    %   1. Kesserwani & Liang, 2010;
+    %   2. Mao et al., 2016
     
     properties(Constant)
         h0 = 0.75
