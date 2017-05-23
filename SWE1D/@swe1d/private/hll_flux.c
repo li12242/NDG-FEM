@@ -41,7 +41,9 @@ void hll_nodal_flux(double hmin, double gra, double hM, double hP,
     }else if( (sM==0) & (sP==0) ){
         *Fhn = 0; *Fqxn = 0;
     }else{
-        mexErrMsgIdAndTxt("SWE_Mex_HLL1d:",
+        mexPrintf("[hM, qnM]=[%f,%f], [hP, qnP]=[%f,%f], [sM,sP]=[%f,%f]",
+                hM, qnM, hP, qnP, sM, sP);
+        mexErrMsgIdAndTxt("MATLAB:hll_flux:hll_nodal_flux:",
         "The wave speed computation occurs an error.");
     }
     return;

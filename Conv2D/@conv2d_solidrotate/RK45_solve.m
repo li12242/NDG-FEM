@@ -20,35 +20,23 @@ rk4c = [             0.0  ...
 
 time = 0;
 ftime = obj.ftime;
-
+f_Q = obj.f_Q;
+dt = obj.time_interval;
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
-f_Q  = obj.f_Q;
-obj.wetdry_detector(f_Q);
-obj.detector.collect(f_Q, time);
-% xc = obj.mesh.cell_mean(obj.mesh.x);
 while(time < ftime)
-    dt = obj.time_interval;
     if(time + dt > ftime)
         dt = ftime - time;
     end
     for INTRK = 1:5
         %tloc = time + rk4c(INTRK)*dt;
-        %obj.update_ext(tloc);
         rhsQ = rhs_term(obj, f_Q);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
-        
-        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1)+obj.bot, obj.M );
-        f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2), obj.M );
-        f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
-        
-        f_Q = obj.positive_preserve( f_Q );
-        obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元
-        obj.draw( f_Q ); pause(1e-10);
+        f_Q = obj.slopelimiter.limit(f_Q);
     end
     time = time + dt;
-    obj.detector.collect(f_Q, time);
+    obj.f_Q = f_Q; obj.draw(1); drawnow;
 end
 
 obj.f_Q = f_Q;

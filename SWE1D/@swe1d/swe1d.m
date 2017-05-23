@@ -37,8 +37,8 @@ classdef swe1d < ndg_lib.phys.phys1d
         [ f_Q ] = positive_preserve( obj, f_Q )
         
         function wetdry_detector(obj, f_Q)
-            hm = obj.mesh.cell_mean(f_Q(:,:,1)); % 计算单元平均水深
-            obj.wetflag = (hm > obj.hmin);
+            %hm = obj.mesh.cell_mean(f_Q(:,:,1)); % 计算单元平均水深
+            obj.wetflag = all(f_Q(:,:,1) > obj.hmin);
             %obj.wetflag = all( f_Q(:,:,1) > obj.hmin );
             % 设置平均水深小于阀值的单元类型为干单元
             obj.mesh.EToR( ~obj.wetflag ) = ndg_lib.mesh_type.Dry;
@@ -61,7 +61,7 @@ classdef swe1d < ndg_lib.phys.phys1d
         
         function obj = swe1d(mesh)
             obj = obj@ndg_lib.phys.phys1d(mesh);
-            obj.slopelimiter = ndg_utility.limiter.TVB(mesh, mesh.cell);
+            obj.slopelimiter = ndg_utility.limiter.TVB(mesh);
         end
     end
 

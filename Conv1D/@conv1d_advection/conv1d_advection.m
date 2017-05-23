@@ -24,7 +24,7 @@ classdef conv1d_advection < conv1d
             obj.cfl = 0.3;
             obj.ftime = 1.5;
             obj.dt = obj.time_interval();
-            obj.slopelimiter = ndg_utility.limiter.BJ(mesh, mesh.cell);
+            obj.slopelimiter = ndg_utility.limiter.BJ(mesh);
         end% func
         
         function init(obj) 

@@ -7,10 +7,10 @@ classdef TVB_line < ndg_utility.limiter.TVB.TVB
     end
     
     methods
-        function obj = TVB_line(mesh,cell)
-            obj = obj@ndg_utility.limiter.TVB.TVB(mesh, cell);
+        function obj = TVB_line(mesh)
+            obj = obj@ndg_utility.limiter.TVB.TVB(mesh, mesh.cell);
             
-            if (cell.type ~= ndg_lib.std_cell_type.Line)
+            if (mesh.cell.type ~= ndg_lib.std_cell_type.Line)
                 error('The input cell type is incorrect!');
             end
             
