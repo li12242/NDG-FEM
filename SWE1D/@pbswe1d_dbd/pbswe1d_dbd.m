@@ -5,6 +5,7 @@ classdef pbswe1d_dbd < pbswe1d
     properties(Constant)
         dam_pos = 500
         h0 = 10
+        hmin = 1e-4
     end
     
     properties

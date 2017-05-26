@@ -34,14 +34,18 @@ classdef obc_file < ndg_utility.nc.nc_file
         end% func
         
         function vertExt = interp(obj, Nfield, step, coef)
-            tmp1 = netcdf.getVar(obj.ncid, obj.f_extID, [0, 0, step(1)-1], [obj.Nv, Nfield, 1]);
-            tmp2 = netcdf.getVar(obj.ncid, obj.f_extID, [0, 0, step(2)-1], [obj.Nv, Nfield, 1]);
+            tmp1 = netcdf.getVar(obj.ncid, obj.f_extID, ...
+                [0, 0, step(1)-1], [obj.Nv, Nfield, 1]);
+            tmp2 = netcdf.getVar(obj.ncid, obj.f_extID, ...
+                [0, 0, step(2)-1], [obj.Nv, Nfield, 1]);
             vertExt = tmp1.*coef(1) + tmp2.*coef(2); 
         end
     end
     
     %% public methods
     methods
+        make_obc_file(obj, filename, Nfield, time, vert, f_extQ);
+        
         function obj = obc_file(varargin)
             switch nargin
                 case 0
@@ -57,7 +61,7 @@ classdef obc_file < ndg_utility.nc.nc_file
             [step, coef] = coef_parameter_update(obj, stime);
             vertQ = interp(obj, Nfield, step, coef);
         end
-        
+                
         function obj = set_file(obj, filename)
             % Set the object associate with a new NetCDF file
             if( exist(filename, 'file') ~= 2 ) % check file exist

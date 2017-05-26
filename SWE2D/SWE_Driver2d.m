@@ -19,9 +19,9 @@ function SWE_Driver2d
 % for further intialization
 
 % Name of test case
-% casename = 'DamBreakDry';
+casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
-casename = 'ParabolicBowl';
+% casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
@@ -31,15 +31,15 @@ casename = 'ParabolicBowl';
 % Order of polymomials used for approximation 
 N = 1;
 % Number of elements on each edge
-Nx = 80;
-Ny = 80;
+Nx = 200;
+Ny = 1;
 
 % # Name of test case
 phys.casename = casename;
 phys.nx       = Nx + 1; % number of points
 phys.ny       = Ny + 1; % number of points
 phys.n        = N;
-phys.meshType = 'tri';
+phys.meshType = 'quad';
 phys.gra      = 9.81;
 
 if (strncmp(phys.casename, 'TsuamiRunup', 11)) % spicific coefficient
@@ -48,8 +48,8 @@ if (strncmp(phys.casename, 'TsuamiRunup', 11)) % spicific coefficient
     phys.minht    = 5e-4;
 else % coefficient for other test case
     phys.ManningCoeff = 0;
-    phys.minDepth = 1e-3;
-    phys.minht    = 1e-3;
+    phys.minDepth = 1e-4;
+    phys.minht    = 1e-4;
 end% if
 
 % initialization

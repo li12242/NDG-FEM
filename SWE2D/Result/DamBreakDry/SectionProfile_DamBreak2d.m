@@ -26,13 +26,13 @@ end
 
 %% Construct postprocess class
 meshtype = 'quad';
-filename = {'SWE2D_DamBreakDry_quad_80.nc'};
+filename = {'SWE2D_DamBreakDry_quad_200.nc'};
 fileID   = 1;
 % create post process class for quad
 PostproQuad = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 
-meshtype = 'tri';
-filename = {'SWE2D_DamBreakDry_tri_80.nc'};
+meshtype = 'quad';
+filename = {'SWE2D_DamBreakDry_quad_100.nc'};
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
 lineWidth   = 2;
 markerSize  = 8;

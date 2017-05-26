@@ -8,6 +8,9 @@ classdef bc_type < int8
         NonSlipWall     (3)
         ZeroGrad        (4)
         Clamped         (5)
+        ClampedDepth    (6)
+        ClampedVel      (7)
+        Flather         (8)
     end
 end
 

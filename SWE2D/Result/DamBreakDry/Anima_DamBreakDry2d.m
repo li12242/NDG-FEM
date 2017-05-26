@@ -4,7 +4,7 @@ function Anima_DamBreakDry2d
 
 %% Parameter
 meshtype = 'quad';
-filename = {'SWE2D_DamBreakDry_quad_80.nc'};
+filename = {'SWE2D_DamBreakDry_quad_100.nc'};
 order    = 1;
 PostproTri  = Utilities.PostProcess.Postprocess(filename, meshtype, order);
 fileID   = 1;
