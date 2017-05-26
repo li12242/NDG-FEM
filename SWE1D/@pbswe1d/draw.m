@@ -46,7 +46,7 @@ if ( isempty(obj.draw_h) || ~isvalid( obj.draw_h{1} ) )
     box on; grid on;
 else % 若图像存在
     f = f_Q(:,:,1); % 更新水位
-    set( obj.draw_h{1}, 'YData', f(:)+obj.bot(:) );
+    set( obj.draw_h{1}, 'YData', f(:) );
     f = f_Q(:,:,2); % 更新流速
     set( obj.draw_h{2}, 'YData', f(:) );
 end
