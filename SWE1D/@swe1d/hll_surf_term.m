@@ -13,5 +13,5 @@ zM = obj.bot( obj.mesh.eidM );
     obj.f_extQ(:,:,1), obj.f_extQ(:,:,2), obj.mesh.eidtype);
 
 [dflux(:,:,1), dflux(:,:,2)] = ...
-    hll_flux(obj.hmin, obj.gra, h_M, q_M, h_P, q_P, obj.mesh.nx);
+    hll_flux(obj.hmin, obj.gra, h_M, q_M, h_P, q_P, zM, obj.mesh.nx);
 end
