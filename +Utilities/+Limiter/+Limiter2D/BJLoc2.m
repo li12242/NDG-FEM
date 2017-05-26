@@ -91,9 +91,9 @@ function hlim = BJLoc2(mesh, h, beta)
 %     + dy.*(ones(shape.nNode,1)*phpy);
 
 %% mex 
-hlim = Utilities.Limiter.Limiter2D.BJLoc2d_Mex(h, mesh.J, mesh.Shape.M,...
-    mesh.Shape.Fmask, mesh.EToE, mesh.x, mesh.y, beta);
-hlim = Utilities.Limiter.Limiter2D.BJLoc2d_Mex(hlim, mesh.J, mesh.Shape.M,...
-    mesh.Shape.Fmask, mesh.EToE, mesh.x, mesh.y, beta);
+hlim = Utilities.Limiter.Limiter2D.BJLoc2d_Mex(h, mesh.J, mesh.cell.M,...
+    mesh.cell.Fmask, mesh.EToE', mesh.x, mesh.y, beta);
+% hlim = Utilities.Limiter.Limiter2D.BJLoc2d_Mex(hlim, mesh.J, mesh.Shape.M,...
+%     mesh.Shape.Fmask, mesh.EToE, mesh.x, mesh.y, beta);
 
 end% func

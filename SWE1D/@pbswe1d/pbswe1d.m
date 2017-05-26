@@ -4,10 +4,11 @@ classdef pbswe1d < ndg_lib.phys.phys1d
 
     properties(Constant)
         Nfield = 2  % 物理场 (eta, q)
-        hmin = 1e-4
         gra = 9.81
     end
-    
+    properties(Abstract, Constant)
+        hmin % 最小水深阀值
+    end
     properties(Abstract)
         M   % TVB 限制器系数
     end
@@ -37,8 +38,7 @@ classdef pbswe1d < ndg_lib.phys.phys1d
         
         function wetdry_detector( obj, f_Q )
             obj.h = f_Q(:,:,1) - obj.bot;
-            hm = obj.mesh.cell_mean( obj.h ); % 计算单元平均水深
-            obj.wetflag = ( hm > obj.hmin );
+            obj.wetflag = all( obj.h > obj.hmin );
             % 设置平均水深小于阀值的单元类型为干单元
             obj.mesh.EToR( ~obj.wetflag ) = ndg_lib.mesh_type.Dry;
             obj.mesh.EToR( obj.wetflag ) = ndg_lib.mesh_type.Normal;

@@ -27,7 +27,7 @@ obj.wetdry_detector(f_Q);
 obj.detector.collect(f_Q, time);
 % xc = obj.mesh.cell_mean(obj.mesh.x);
 while(time < ftime)
-    dt = obj.time_interval;
+    dt = obj.time_interval( f_Q );
     if(time + dt > ftime)
         dt = ftime - time;
     end
@@ -39,9 +39,10 @@ while(time < ftime)
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
         
-        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1)+obj.bot, obj.M );
+%         f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1)+obj.bot, obj.M );
+%         f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
+        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1), obj.M );
         f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2), obj.M );
-        f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
         
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元

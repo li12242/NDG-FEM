@@ -33,7 +33,7 @@ while(time < ftime)
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
-        f_Q = obj.slopelimiter.limit(f_Q);
+        f_Q = obj.slopelimiter.limit(f_Q, obj.M);
     end
     time = time + dt;
     obj.f_Q = f_Q; obj.draw(1); drawnow;

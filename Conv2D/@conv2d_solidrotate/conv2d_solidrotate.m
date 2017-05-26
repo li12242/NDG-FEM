@@ -9,6 +9,7 @@ classdef conv2d_solidrotate < conv2d
     end
     properties
         slopelimiter
+        M = 0.1;
     end
     
     methods
@@ -34,7 +35,7 @@ classdef conv2d_solidrotate < conv2d
             obj.cfl = 0.3;
             obj.ftime = 2.4;
             obj.dt = obj.time_interval();
-            obj.slopelimiter = ndg_utility.limiter.VB.VB_2d(mesh);
+            obj.slopelimiter = ndg_utility.limiter.VB.VB_TVB(mesh);
         end
         
         function init(obj)

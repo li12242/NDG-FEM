@@ -11,7 +11,7 @@ bclist   = obj.StdCell.verlist';
 EToV     = ones(ne, 1)*bclist;
 EToV     = EToV + (np*(0:ne-1))'*ones(size(bclist));
 
-switch varargin{1}
+switch isempty(varargin)
     case 'value' % 根据函数值绘制颜色
         % varargin 附加参数??2.颜色1 3.颜色2 4.值域范围 5.其他patch对象参数
         
