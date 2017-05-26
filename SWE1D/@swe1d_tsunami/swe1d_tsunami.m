@@ -7,10 +7,12 @@ classdef swe1d_tsunami < swe1d
     end
     
     properties
-        M = 1e-2   % TVB 限制器系数
+        M = 100   % TVB 限制器系数
     end
     
     methods
+        %draw(obj, f_Q);
+        
         function obj = swe1d_tsunami(varargin)
             switch nargin
                 case 1
@@ -25,16 +27,22 @@ classdef swe1d_tsunami < swe1d
             
             obj = obj@swe1d(mesh);
             obj.init();
-            obj.ftime = 20;
+            obj.ftime = 360;
             obj.cfl = 0.2;
         end% func
         
         function obj = init(obj)
-            obj.bot = 5000 - 0.1*mesh.x;
-            q = zeros(obj.mesh.cell.Np, obj.mesh.K);
+            obj.bot = 5000 - 0.1*obj.mesh.x;
             % interpolation of surface water level
             data = load('initial_condition.mat');
             Interp = griddedInterpolant(data.x, data.eta+5000, 'nearest');
+            eta = Interp(obj.mesh.x(:)); 
+            eta = reshape(eta, size(obj.mesh.x));
+            ind = (eta < obj.bot);
+            eta( ind ) = obj.bot( ind );
+            h = eta - obj.bot;
+            obj.f_Q(:,:,1) = h;
+            obj.f_Q(:,:,2) = zeros(obj.mesh.cell.Np, obj.mesh.K);
         end% func
     end
     

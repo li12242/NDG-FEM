@@ -26,15 +26,16 @@ void Grad2Node(int Np, double hmean,
 }
 
 
-void VertLimit(int K, int Np, int Nfaces, int Nfp, double *fmax, double *fmin, 
-	double *fc, double *xc, double *yc, 
+void VertLimit(int K, int Np, int Nfaces, int Nfp,
+    double *f_v, double *f_max, double *f_min,
+	double *fc, double *xc, double *yc,
 	double *f_Q, double *x, double *y,
 	double *Fmask, double *EToV, double *flim, Wei_Fun_t WeiGrad){
 
 	double *fv = (double*) calloc(Nfaces, sizeof(double));
 	double *xv = (double*) calloc(Nfaces, sizeof(double));
 	double *yv = (double*) calloc(Nfaces, sizeof(double));
-	
+
 	int k,f,n;
 	double dfdx, dfdy;
 	for (k=0;k<K;k++){
@@ -49,20 +50,24 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp, double *fmax, double *fmin,
 			yv[f] = y[n];
 			fv[f] = f_Q[n];
 
-			#if DEBUG
-			mexPrintf("k=%d, f=%d, xv=%f, yv=%f, fv=%f, fmax=%f, fmin=%f, ",
-				k, f, xv[f], yv[f], fv[f], fmax[v], fmin[v]);
+			#if 0
+			mexPrintf("k=%d, f=%d, xv=%f, yv=%f, fv=%f, f_max=%f, f_min=%f, ",
+				k, f, xv[f], yv[f], fv[f], f_max[v], f_min[v]);
 			#endif
-			if(fv[f]>fmax[v]){ 
-				fv[f]=fmax[v]; tflag = 1; 
-			}else if(fv[f]<fmin[v]){
-				fv[f]=fmin[v]; tflag = 1; 
-			}
-			#if DEBUG
+			// if(fv[f]>f_max[v]){
+			// 	fv[f]=f_v[v]; tflag = 1;
+			// }else if(fv[f]<f_min[v]){
+			// 	fv[f]=f_v[v]; tflag = 1;
+			// }
+            fv[f]=f_v[v]; tflag = 1; // always limiting
+			#if 0
 			mexPrintf("fv_=%f\n", fv[f]);
 			#endif
 		}
 		if (tflag){
+            #if DEBUG
+            mexPrintf("k=%d ", k);
+            #endif
 			GetWeiGrad(Nfaces, xv, yv, fv, xm, ym, fm, &dfdx, &dfdy, WeiGrad);
 			Grad2Node(Np, fm, xm, ym, x+k*Np, y+k*Np, dfdx, dfdy, flim+k*Np);
 		}else{
@@ -71,7 +76,7 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp, double *fmax, double *fmin,
 				flim[sk] = f_Q[sk];
 			}
 		}
-		
+
 	}
 
 	free(fv);
@@ -81,14 +86,14 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp, double *fmax, double *fmin,
 }
 
 void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
-    double xc, double yc, double hc, 
+    double xc, double yc, double hc,
     double *dhdx, double *dhdy, Wei_Fun_t WeiGrad){
 
     double *gra_x, *gra_y, *gra_det;
     gra_x = (double *) calloc(Nsub, sizeof(double));
     gra_y = (double *) calloc(Nsub, sizeof(double));
     gra_det = (double *) calloc(Nsub, sizeof(double));
-    
+
     #if DEBUG
     mexPrintf("xc=%f, yc=%f, hc=%f\n", xc, yc, hc);
     #endif
@@ -103,7 +108,7 @@ void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
         a[0] = xv[l1] - xc; a[1] = yv[l1] - yc;
         a[2] = xv[l2] - xc; a[3] = yv[l2] - yc;
         f[0] = hv[l1] - hc; f[1] = hv[l2] - hc;
-        
+
         #if DEBUG
         mexPrintf("Nfaces=%d, x1=%f, y1=%f, h1=%f, x2=%f, y2=%f, h2=%f\n",
             i, xv[l1], yv[l1], hv[l1], xv[l2], yv[l2], hv[l2]);
@@ -112,7 +117,7 @@ void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
         MatrixSolver2(a, f, x);
         gra_x[i] = x[0]; gra_y[i] = x[1];
         gra_det[i] = x[0]*x[0] + x[1]*x[1];
-        
+
         #if DEBUG
         mexPrintf("Nfaces=%d, dhdx=%f, dhdy=%f, det=%f\n",
             i, gra_x[i], gra_y[i], gra_det[i]);
@@ -120,7 +125,9 @@ void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
     }
 
     WeiGrad(Nsub, gra_x, gra_y, gra_det, dhdx, dhdy);
-
+    #if DEBUG
+    mexPrintf("gra_x=%f, gra_y=%f\n", *dhdx, *dhdy);
+    #endif
     free(gra_x);
     free(gra_y);
     free(gra_det);

@@ -1,13 +1,17 @@
 classdef swe1d < ndg_lib.phys.phys1d
-    %SWE1D Summary of this class goes here
-    %   Detailed explanation goes here
-
+    %SWE1D 一维浅水方程求解器
+    %   一维守恒浅水方程，以水深 h，流量 q = hu 为自变量，方程包括连续方程与动量方程
+    %       dh/dt + dq/dx = 0
+    %       dq/dt + d(uh^2 + 0.5gh^2)/dx = Sb + Sf
+    %   其中 Sb 与 Sf 分别为底坡源项与摩阻源项，其中 Sb = -ghdz/dx，摩阻源项
+    %   有 Manning 公式与线性公式两种形式。
+    %
     properties(Constant)
         Nfield = 2  % 物理量场个数
-        gra = 9.81
+        gra = 9.81  % 重力加速度
     end
     properties(Abstract, Constant)
-        hmin
+        hmin % 最小水深阀值
     end
     
     properties(Abstract)
@@ -25,7 +29,7 @@ classdef swe1d < ndg_lib.phys.phys1d
 
     %% 虚函数
     methods(Abstract)
-        init(obj)
+        init(obj) % 初始化函数
     end
     
     %% 私有函数
@@ -45,10 +49,10 @@ classdef swe1d < ndg_lib.phys.phys1d
             obj.mesh.EToR( obj.wetflag ) = ndg_lib.mesh_type.Normal;
         end
         
-        function dt = time_interval( obj )
-            h = obj.f_Q(:,:,1);
-            q = obj.f_Q(:,:,2);
-            u = (q./h) + sqrt(obj.gra*h);
+        function dt = time_interval( obj, f_Q )
+            h = f_Q(:,:,1);
+            q = f_Q(:,:,2);
+            u = abs(q./h) + sqrt(obj.gra*h);
             s = bsxfun(@times, obj.mesh.vol/obj.mesh.cell.N, 1./u);
             dt = obj.cfl*min( min( s(:, obj.wetflag) ) );
         end

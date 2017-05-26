@@ -105,7 +105,7 @@ while(time<FinalTime)
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qx(mesh.vmapM), 'k.-');
 %         subplot(3,1,3);
 %         plot3(mesh.x(mesh.vmapM), mesh.y(mesh.vmapM), qy(mesh.vmapM), 'k.-');
-        
+%         drawnow;
     end
     
     % Increment time

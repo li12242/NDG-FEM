@@ -6,5 +6,6 @@ h = f_Q(:,:,1) - obj.bot;
 hc = obj.mesh.cell_mean( h );
 qc = obj.mesh.cell_mean( f_Q(:,:,2) );
 
-[f_Q(:,:,1), f_Q(:,:,2)] = ppreserve(obj.hmin, h, f_Q(:,:,2), hc, qc);
+[h, f_Q(:,:,2)] = ppreserve(obj.hmin, h, f_Q(:,:,2), hc, qc);
+f_Q(:,:,1) = h + obj.bot;
 end
