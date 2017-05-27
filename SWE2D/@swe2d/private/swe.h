@@ -27,7 +27,7 @@ typedef enum {
 } bc_type;
 
 void nodal_flux(double hcrit, double gra,
-    double h, double qx, double qy,
+    double h, double qx, double qy, double z,
     double *Eh, double *Eqx, double *Eqy,
     double *Gh, double *Gqx, double *Gqy);
 

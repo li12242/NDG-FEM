@@ -3,11 +3,11 @@ classdef swe1d_tsunami < swe1d
     %   Detailed explanation goes here
     
     properties(Constant)
-        hmin = 1e-2
+        hmin = 5e-2
     end
     
     properties
-        M = 100   % TVB 限制器系数
+        M = 1e-2   % TVB 限制器系数
     end
     
     methods

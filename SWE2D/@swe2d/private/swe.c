@@ -4,19 +4,19 @@
  *
  */
 void nodal_flux(double hcrit, double gra,
-    double h, double qx, double qy,
+    double h, double qx, double qy, double z,
     double *Eh, double *Eqx, double *Eqy,
     double *Gh, double *Gqx, double *Gqy)
 {
     if(h>hcrit){
-        double h2 = 0.5*gra*h*h;
+        double h2 = 0.5*gra*(h*h - z*z);
         double huv = qx*qy/h;
 
         *Eh = qx;
         *Gh = qy;
         *Eqx = (qx*qx/h + h2);
-        *Eqy = huv;
         *Gqx = huv;
+        *Eqy = huv;
         *Gqy = (qy*qy/h + h2);
     }else{ // for dry nodes
         *Eh = 0; *Eqx = 0; *Eqy = 0;
