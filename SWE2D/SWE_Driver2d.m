@@ -19,13 +19,13 @@ function SWE_Driver2d
 % for further intialization
 
 % Name of test case
-casename = 'DamBreakDry';
+% casename = 'DamBreakDry';
 % casename = 'DamBreakWet';
 % casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
 % casename = 'FlowOver3Bumps';
-% casename = 'TsuamiRunup';
+casename = 'TsuamiRunup';
 % casename = 'ObliqueHydraulicJump';
 
 % Order of polymomials used for approximation 
