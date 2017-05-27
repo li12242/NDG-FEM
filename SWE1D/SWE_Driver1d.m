@@ -2,9 +2,9 @@ function SWE_Driver1d
 %% Parameters
 % caseName = 'DamBreakDry';
 % caseName = 'DamBreakWet';
-caseName = 'ParabolicBowl';
+% caseName = 'ParabolicBowl';
 % caseName = 'LakeAtRest';
-% caseName = 'TsunamiRunup';
+caseName = 'TsunamiRunup';
 
 % % sponge layer test
 % caseName = 'WiderGaussianMound';

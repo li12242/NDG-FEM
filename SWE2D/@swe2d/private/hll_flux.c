@@ -10,12 +10,14 @@
  */
 void hll_flux(double hmin, double gra, double hM, double hP,
               double qnM, double qnP, double qvM, double qvP,
-              double z, double *Fhn, double *Fqxn, double *Fqyn){
+              double *Fhn, double *Fqxn, double *Fqyn){
 
     double EhM,EqnM,EqvM,EhP,EqnP,EqvP;
     double GhM,GqnM,GqvM,GhP,GqnP,GqvP;
-    nodal_flux(hmin, gra, hM, qnM, qvM, z, &EhM, &EqnM, &EqvM, &GhM, &GqnM, &GqvM);
-    nodal_flux(hmin, gra, hP, qnP, qvP, z, &EhP, &EqnP, &EqvP, &GhP, &GqnP, &GqvP);
+    reduce_nodal_flux(hmin, gra, hM, qnM, qvM,
+        &EhM, &EqnM, &EqvM, &GhM, &GqnM, &GqvM);
+    reduce_nodal_flux(hmin, gra, hP, qnP, qvP,
+        &EhP, &EqnP, &EqvP, &GhP, &GqnP, &GqvP);
     /* calculation of wave speed */
     double sM, sP, us, cs, unM,unP;
     if( (hM>hmin) & (hP>hmin) ){
@@ -74,7 +76,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	int nrhs, const mxArray *prhs[]){
 
 	/* check input & output */
-	if (nrhs != 14) mexErrMsgTxt("Wrong number of input arguments.");
+	if (nrhs != 13) mexErrMsgTxt("Wrong number of input arguments.");
 	if (nlhs != 3) mexErrMsgTxt("Wrong number of output arguments.");
 
 	/* get inputs */
@@ -83,15 +85,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	double *h = mxGetPr(prhs[2]);
 	double *qx = mxGetPr(prhs[3]);
 	double *qy = mxGetPr(prhs[4]);
-    double *z = mxGetPr(prhs[5]);
-    double *h_ext = mxGetPr(prhs[6]);
-	double *qx_ext = mxGetPr(prhs[7]);
-	double *qy_ext = mxGetPr(prhs[8]);
-	double *nx = mxGetPr(prhs[9]);
-    double *ny = mxGetPr(prhs[10]);
-    double *eidM = mxGetPr(prhs[11]);
-    double *eidP = mxGetPr(prhs[12]);
-    signed char *eidtype = (signed char *)mxGetData(prhs[13]); // int8 类型
+    double *h_ext = mxGetPr(prhs[5]);
+	double *qx_ext = mxGetPr(prhs[6]);
+	double *qy_ext = mxGetPr(prhs[7]);
+	double *nx = mxGetPr(prhs[8]);
+    double *ny = mxGetPr(prhs[9]);
+    double *eidM = mxGetPr(prhs[10]);
+    double *eidP = mxGetPr(prhs[11]);
+    signed char *eidtype = (signed char *)mxGetData(prhs[12]); // int8 类型
 
 	/* get dimensions */
     size_t Nfp = mxGetM(prhs[11]);
@@ -116,7 +117,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
             f_M[0] = h[iM];  varP[0] = h[iP];
             f_M[1] = qx[iM]; varP[1] = qx[iP];
             f_M[2] = qy[iM]; varP[2] = qy[iP];
-            double z_ = z[iM];
 
             // outward normal vector of local element
             double nx_ = nx[ind];
@@ -142,14 +142,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
             double Fhns, Fqns, Fqyns;
 			hll_flux(hmin, gra, f_M[0], f_P[0],
-                qnM, qnP, qvM, qvP, z_, &Fhns, &Fqns, &Fqyns);
+                qnM, qnP, qvM, qvP, &Fhns, &Fqns, &Fqyns);
 
             dFh[ind] = -Fhns;
             dFqx[ind] = -(Fqns*nx_ - Fqyns*ny_);
             dFqy[ind] = -(Fqns*ny_ + Fqyns*nx_);
 
             double Eh, Eqx, Eqy, Gh, Gqx, Gqy;
-            nodal_flux(hmin, gra, f_M[0], f_M[1], f_M[2], z_,
+            reduce_nodal_flux(hmin, gra, f_M[0], f_M[1], f_M[2],
                 &Eh, &Eqx, &Eqy, &Gh, &Gqx, &Gqy);
 
             dFh[ind] += nx_*Eh + ny_*Gh;

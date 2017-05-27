@@ -232,7 +232,7 @@ function [Sh, Sq] = SWE_Source1d(phys, mesh, bot, h, isWet)
 g    = phys.gra; 
 line = mesh.Shape;
 Sh   = zeros(size(h));
-Sq   = -g.*h.*mesh.rx.*(line.Dr*bot);
+Sq   = -g.*h.*mesh.rx.*(line.Dr*(bot));
 Sq(:, ~isWet) = 0.0;
 end% func
 

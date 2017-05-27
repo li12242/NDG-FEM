@@ -3,7 +3,7 @@ SingleResult;
 end
 
 function SingleResult
-filename = 'SWE1DTsunamiRunup.nc';
+filename = 'SWE1D_TsunamiRunup_100.nc';
 x = ncread(filename, 'x'); x = reshape(x, 2, numel(x)/2);
 bedElevation = -0.1*x;
 time = ncread(filename, 'time');
@@ -13,9 +13,9 @@ FinalTime = [160, 175, 220];
 for itime = 1:numel(FinalTime)
     [~, index] = min(abs(time - FinalTime(itime)));
     fprintf('time deviation %f\n', time(index) - FinalTime(itime));
-    h = ncread(filename, 'h', [1, index],[inf, 1]);
-    q = ncread(filename, 'q', [1, index],[inf, 1]);
-    h = reshape(h, 2, numel(x)/2); q = reshape(q, 2, numel(x)/2);
+    h = ncread(filename, 'h', [1, 1, index],[inf, inf, 1]);
+    q = ncread(filename, 'q', [1, 1, index],[inf, inf, 1]);
+    %h = reshape(h, 2, numel(x)/2); q = reshape(q, 2, numel(x)/2);
     eta = h + bedElevation; u = q./h; u(h<1e-2) = 0; u(u>50) = 0;
     
     load(['t', num2str(FinalTime(itime)), '.mat']);
@@ -46,7 +46,7 @@ end
 
 function ComparedResult
 filename = 'SWE1D.nc';
-filename1 = 'SWE1DTsunamiRunup1.nc';
+filename1 = 'SWE1D_TsunamiRunup_100.nc';
 x = ncread(filename, 'x');
 bedElevation = -0.1*x;
 

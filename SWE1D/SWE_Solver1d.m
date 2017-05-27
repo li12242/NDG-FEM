@@ -51,12 +51,12 @@ while(time<ftime)
         [h, q] = SWE_PositivePreserving1d(phys, h, q);
     end
     time = time + dt;
-%     ncfile.putVarPart('time', isk, 1, time);
-%     ncfile.putVarPart('h',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], h);
-%     ncfile.putVarPart('q',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], q);
-%     subplot(2,1,1); plot(phys.mesh.x(:), h(:)+phys.bot(:), 'r.-');
-%     subplot(2,1,2); plot(phys.mesh.x(:), q(:), 'b.-'); 
-%     drawnow;
+    ncfile.putVarPart('time', isk, 1, time);
+    ncfile.putVarPart('h',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], h);
+    ncfile.putVarPart('q',  [0,0,isk],[mesh.Shape.nNode,mesh.nElement,1], q);
+    subplot(2,1,1); plot(phys.mesh.x(:), h(:)+phys.bot(:), 'r.-');
+    subplot(2,1,2); plot(phys.mesh.x(:), q(:), 'b.-'); 
+    drawnow;
     isk = isk + 1;
 end
 

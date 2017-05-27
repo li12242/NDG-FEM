@@ -1,9 +1,9 @@
 classdef swe2d_fpb < swe2d
-    %SWE2D_FPB Summary of this class goes here
+    %SWE2D_FPB ÏßÐÔÄ¦×èÅ×ÎïÍëËãÀý£¨Duran, 2015£©
     %   Detailed explanation goes here
     
     properties(Constant)
-        hmin = 1e-4
+        hmin = 1e-2
         h0 = 10
         a = 3e3
         B = 5
@@ -13,6 +13,8 @@ classdef swe2d_fpb < swe2d
     
     methods(Access=protected)
         [ f_ext ] = extval(obj, time);
+        [ sf ] = fric_sour_term( obj, f_Q )
+        [ rhs ] = rhs_term(obj, f_Q ) % ¼ÆËãÓÒ¶ËÏî
     end
     
     methods
