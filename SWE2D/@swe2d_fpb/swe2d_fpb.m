@@ -1,19 +1,22 @@
-classdef swe2d_dbw < swe2d
-    %SWE2D_DBW Summary of this class goes here
+classdef swe2d_fpb < swe2d
+    %SWE2D_FPB Summary of this class goes here
     %   Detailed explanation goes here
-    
-    properties(Hidden)
-        dam_pos = 500
-        h0 = 10
-        h1 = 2
-    end
     
     properties(Constant)
         hmin = 1e-4
+        h0 = 10
+        a = 3e3
+        B = 5
+        k = 0.002 % 线性摩阻系数
+        T = 2*672
+    end
+    
+    methods(Access=protected)
+        [ f_ext ] = extval(obj, time);
     end
     
     methods
-        function obj = swe2d_dbw(varargin)
+        function obj = swe2d_fpb(varargin)
             switch nargin
                 case 1
                     mesh = varargin(1);
@@ -23,8 +26,8 @@ classdef swe2d_dbw < swe2d
                             'quadrilateral mesh object!']);
                     end
                 case 3
-                    N = varargin{1};
-                    M = varargin{2};
+                    N = varargin{1}; 
+                    M = varargin{2}; 
                     type = varargin{3};
                     mesh = uniform_mesh( N, M, type );
                 otherwise
@@ -33,18 +36,15 @@ classdef swe2d_dbw < swe2d
             
             obj = obj@swe2d(mesh);
             obj.cfl = 0.2;
-            obj.ftime = 20;
+            obj.ftime = 4*obj.T;
             obj.init();
         end
         
         function init(obj)
-            f_Q = obj.h1*ones(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
-            xc  = obj.mesh.cell_mean(obj.mesh.x);
-            f_Q(:, xc<obj.dam_pos, 1) = obj.h0;
-            obj.f_Q = f_Q;
-            
-            obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K); % bottom
-        end% func
+            r2 = obj.mesh.x.^2 + obj.mesh.y.^2;
+            obj.bot = r2*(obj.h0/obj.a^2);
+            obj.f_Q = obj.extval(0);
+        end
     end
     
 end

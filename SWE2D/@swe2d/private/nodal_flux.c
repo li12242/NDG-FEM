@@ -2,14 +2,14 @@
 
 /* Computation of the flux term for two dimensional SWE.
  * Usages:
- * 	  [Eh, Eqx, Eqy, Gh, Gqx, Gqy] = swe_nodal_flux(hmin, gra, h, qx, qy, EToR)
+ * 	  [Eh, Eqx, Eqy, Gh, Gqx, Gqy] = swe_nodal_flux(hmin, gra, h, qx, qy, z, EToR)
  */
 void mexFunction( int nlhs, mxArray *plhs[],
     int nrhs, const mxArray *prhs[] )
 {
 
     /* check input & output */
-	if (nrhs != 6) mexErrMsgTxt("The number of input arguments should be 5.");
+	if (nrhs != 7) mexErrMsgTxt("The number of input arguments should be 5.");
 	if (nlhs != 6) mexErrMsgTxt("The number of output arguments should be 2.");
 
 	/* get inputs */
@@ -18,7 +18,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	double *h   = mxGetPr(prhs[2]);
 	double *qx  = mxGetPr(prhs[3]);
     double *qy = mxGetPr(prhs[4]);
-    signed char *etype = (signed char *)mxGetData(prhs[5]);
+    double *z = mxGetPr(prhs[5]);
+    signed char *etype = (signed char *)mxGetData(prhs[6]);
 	/* get dimensions */
 	size_t Np, K;
 	Np = mxGetM(prhs[2]);
@@ -48,7 +49,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
             }
         }else{ // cell is wet
             for(n=0;n<Np;n++){
-    			nodal_flux(hmin, gra, h[ind], qx[ind], qy[ind],
+    			nodal_flux(hmin, gra, h[ind], qx[ind], qy[ind], z[ind],
                     Eh+ind, Eqx+ind, Eqy+ind,
                     Gh+ind, Gqx+ind, Gqy+ind);
     			ind++;
