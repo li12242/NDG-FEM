@@ -5,6 +5,9 @@ classdef swe2d_3bump < swe2d
     properties(Constant)
         dam_pos = 16
         h0 = 1.875
+    end
+    
+    properties(Constant)
         hmin = 1e-2
     end
     
