@@ -5,11 +5,10 @@ classdef swe2d_dbd < swe2d
     properties(Hidden)
         dam_pos = 500
         h0 = 10
-        hmin = 1e-2
     end
     
-    properties
-        M = 0.1
+    properties(Constant)
+        hmin = 1e-4
     end
     
     methods

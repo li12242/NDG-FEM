@@ -7,8 +7,12 @@ classdef swe2d < ndg_lib.phys.phys2d
         gra = 9.81 % 重力加速度
     end
     
+    properties(Abstract, Constant)
+        hmin
+    end
+    
     properties(SetAccess=protected)
-        bot % 底坡高程（）
+        bot % 底坡高程
         bx, by % 底坡高程梯度
         cfl % CFL 数
         ftime % 计算终止时间
