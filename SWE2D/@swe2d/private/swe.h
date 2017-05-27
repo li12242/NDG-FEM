@@ -31,6 +31,11 @@ void nodal_flux(double hcrit, double gra,
     double *Eh, double *Eqx, double *Eqy,
     double *Gh, double *Gqx, double *Gqy);
 
+void reduce_nodal_flux(double hcrit, double gra,
+    double h, double qx, double qy,
+    double *Eh, double *Eqx, double *Eqy,
+    double *Gh, double *Gqx, double *Gqy);
+
 int bound_cond(double *varM, double *varP, double *f_ext,
     double nx, double ny, bc_type type, double *f_P);
 
