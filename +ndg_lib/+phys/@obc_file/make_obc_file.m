@@ -2,7 +2,7 @@ function make_obc_file( obj, filename, time, vert, f_extQ )
 %MAKE_OBC_FILE Summary of this function goes here
 %   Detailed explanation goes here
 
-[Nv, Nt, Nfield] = size(f_extQ);
+[Nv, Nfield, Nt] = size(f_extQ);
 time_d = ndg_utility.nc.nc_dim('Nt', Nt);
 nfld_d = ndg_utility.nc.nc_dim('Nfield', Nfield);
 nv_d = ndg_utility.nc.nc_dim('Nv', Nv);

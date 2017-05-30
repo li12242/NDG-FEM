@@ -44,6 +44,7 @@ classdef obc_file < ndg_utility.nc.nc_file
     
     %% public methods
     methods
+        % 生成开边界 NetCDF 文件
         make_obc_file(obj, filename, Nfield, time, vert, f_extQ);
         
         function obj = obc_file(varargin)
