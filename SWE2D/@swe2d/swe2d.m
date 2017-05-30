@@ -20,9 +20,6 @@ classdef swe2d < ndg_lib.phys.phys2d
         wetflag % 湿单元逻辑值
         slopelimiter
     end
-    properties
-        n   % Manning 摩阻参数
-    end
     
     methods(Access=protected)
         function dt = time_interval( obj, f_Q )

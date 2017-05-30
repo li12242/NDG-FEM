@@ -21,6 +21,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
             if(nargin == 2) % case input
                 casename = varargin{1};
                 [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename);
+                
             elseif(nargin == 8) % parameters input
                 Nv = varargin{1};
                 vx = varargin{2};
