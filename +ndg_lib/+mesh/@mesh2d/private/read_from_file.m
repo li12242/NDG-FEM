@@ -10,6 +10,7 @@ fprintf('%s %d\n\n','Nv = ', Nv);
 
 % read mesh file
 [K, EToV, EToR] = read_mesh_file(casename);
+EToV = resort_vert(EToV, vx, vy); % get the vertex anti-clockwise
 fprintf('%s\n-- %s\n', 'finish read element file:', [casename, '.ele']);
 fprintf('%s %d\n\n', 'K = ', K);
 % read boundary condition file

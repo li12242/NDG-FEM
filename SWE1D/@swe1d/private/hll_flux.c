@@ -1,11 +1,11 @@
 #include "swe.h"
 
 void hll_nodal_flux(double hmin, double gra, double hM, double hP,
-    double qnM, double qnP, double zM, double *Fhn, double *Fqxn){
+    double qnM, double qnP, double *Fhn, double *Fqxn){
 
     double FhM, FqnM, FhP, FqnP;
-    nodal_flux(hmin, gra, hM, qnM, zM, &FhM, &FqnM);
-    nodal_flux(hmin, gra, hP, qnP, zM, &FhP, &FqnP);
+    reduce_nodal_flux(hmin, gra, hM, qnM, &FhM, &FqnM);
+    reduce_nodal_flux(hmin, gra, hP, qnP, &FhP, &FqnP);
 
     /* calculation of wave speed */
     double sM, sP;
@@ -69,7 +69,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     int nrhs, const mxArray *prhs[])
 {
     /* check input & output */
-	if (nrhs != 8) mexErrMsgTxt("The number of input should be 7.");
+	if (nrhs != 7) mexErrMsgTxt("The number of input should be 7.");
 	if (nlhs != 2) mexErrMsgTxt("The number of output should be 2");
 
     /* get inputs */
@@ -79,8 +79,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	double *qM  = mxGetPr(prhs[3]);
     double *hP  = mxGetPr(prhs[4]);
 	double *qP  = mxGetPr(prhs[5]);
-    double *zM = mxGetPr(prhs[6]);
-    double *nx  = mxGetPr(prhs[7]);
+    double *nx  = mxGetPr(prhs[6]);
 
 	size_t Nfp = mxGetM(prhs[2]);
 	size_t K = mxGetN(prhs[2]);
@@ -98,17 +97,16 @@ void mexFunction(int nlhs, mxArray *plhs[],
             double qM_ = qM[sk];
             double hP_ = hP[sk];
             double qP_ = qP[sk];
-            double zM_ = zM[sk];
             double nx_ = nx[sk];
             double qnM =  qM_*nx_;
             double qnP =  qP_*nx_;
 
             double Fhn, Fqn;
-            hll_nodal_flux(hmin, gra, hM_, hP_, qnM, qnP, zM_, &Fhn, &Fqn);
+            hll_nodal_flux(hmin, gra, hM_, hP_, qnM, qnP, &Fhn, &Fqn);
             dFhs[sk] = -Fhn;
             dFqs[sk] = -Fqn*nx_;
 
-            nodal_flux(hmin, gra, hM_, qM_, zM_, &Fhn, &Fqn);
+            reduce_nodal_flux(hmin, gra, hM_, qM_, &Fhn, &Fqn);
             dFhs[sk] += Fhn*nx_; // FhM*nx - Fhs
             dFqs[sk] += Fqn*nx_; // Fhq*nx - Fqs
             sk++;
