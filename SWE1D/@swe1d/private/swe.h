@@ -25,4 +25,6 @@ typedef enum {
 void nodal_flux(double hcrit, double gra,
     double h, double qx, double z, double *Fh, double *Fq);
 
+void reduce_nodal_flux(double hcrit, double gra,
+    double h, double qx, double *Fh, double *Fq);
 #endif

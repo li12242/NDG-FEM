@@ -20,7 +20,9 @@ int bound_cond(double *varM, double *varP, double *f_ext,
             f_P[0] = varM[0]; f_P[1] = varM[1]; f_P[2] = varM[2];
             break;
         case Clamped:
-            f_P[0] = f_ext[0]; f_P[1] = f_ext[1]; f_P[2] = f_ext[2];
+            f_P[0] = 2*f_ext[0] - varM[0]; 
+            f_P[1] = 2*f_ext[1] - varM[1]; 
+            f_P[2] = 2*f_ext[2] - varM[2];
             break;
         case ClampedDepth:
             f_P[0] = f_ext[0]; f_P[1] = varM[1]; f_P[2] = varM[2];
