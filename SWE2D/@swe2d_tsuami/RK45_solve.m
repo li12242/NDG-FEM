@@ -32,8 +32,8 @@ while(time < ftime)
         dt = ftime - time;
     end
     for INTRK = 1:5
-        %tloc = time + rk4c(INTRK)*dt;
-        %obj.update_ext(tloc);
+        tloc = time + rk4c(INTRK)*dt;
+        obj.update_ext(tloc);
         rhsQ = rhs_term(obj, f_Q);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
@@ -50,6 +50,7 @@ while(time < ftime)
     end
     obj.draw( f_Q ); drawnow;
     time = time + dt;
+    obj.detector.collect(f_Q, time);
 end
 
 obj.f_Q = f_Q;
