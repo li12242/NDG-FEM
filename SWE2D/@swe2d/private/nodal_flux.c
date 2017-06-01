@@ -39,8 +39,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double *Gqx = mxGetPr(plhs[4]);
     double *Gqy = mxGetPr(plhs[5]);
 
-	int n,k,ind=0;
+	int n,k;
+    #pragma omp parallel for private(n)
 	for (k=0;k<K;k++){
+        int ind = k*Np;
         if (etype[k] == DRY){ // cell is dry
             for(n=0;n<Np;n++){
                 Eh[ind] = 0.0; Eqx[ind] = 0.0; Eqy[ind] = 0.0;

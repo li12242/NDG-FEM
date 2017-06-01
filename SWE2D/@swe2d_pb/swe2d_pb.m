@@ -3,7 +3,7 @@ classdef swe2d_pb < swe2d
     %   Detailed explanation goes here
     
     properties(Constant)
-        hmin = 1e-4
+        hmin = 1e-2
         a = 1.6e-7
         X = 1
         Y = -0.41884
