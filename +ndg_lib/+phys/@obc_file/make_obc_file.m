@@ -30,5 +30,8 @@ netcdf.putVar(obcfile.ncid, obcfile.vars(2).id, vert);
 netcdf.putVar(obcfile.ncid, obcfile.vars(3).id, f_extQ);
 
 netcdf.close(obcfile.ncid);
+
+% 设定新生成的 NetCDF 文件为开边界文件
+obj.set_file(filename);
 end
 

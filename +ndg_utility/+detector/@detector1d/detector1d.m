@@ -6,7 +6,8 @@ classdef detector1d < ndg_utility.detector.detector
         function obj = detector1d(mesh, xd, dt, ftime, Nfield)
             yd = zeros(size(xd));
             zd = zeros(size(xd));
-            obj = obj@ndg_utility.detector.detector(mesh, xd, yd, zd, dt, ftime, Nfield);
+            obj = obj@ndg_utility.detector.detector(mesh, xd, yd, zd, ...
+                dt, ftime, Nfield);
         end
         
         function [kd, rd, sd, td] = findlocate(obj)

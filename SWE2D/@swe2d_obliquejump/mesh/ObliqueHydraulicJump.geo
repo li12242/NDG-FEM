@@ -36,4 +36,4 @@ Transfinite Line{3} = npx3+1;
 // four corners of the transfinite interpolation
 Transfinite Surface{1} = {1, 5, 4, 2};
 // generate quadrilateral elements
-Recombine Surface{1};
+// Recombine Surface{1};
