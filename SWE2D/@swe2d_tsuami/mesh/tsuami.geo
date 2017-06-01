@@ -54,5 +54,5 @@ Physical Surface(1) = {1,2,3,4};
 // 设定在岛屿及实测点附近加密
 
 Mesh.Smoothing = 20;
-Recombine Surface{1,2,3,4};
+//Recombine Surface{1,2,3,4};
 
