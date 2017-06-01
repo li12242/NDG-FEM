@@ -92,7 +92,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *ny = mxGetPr(prhs[9]);
     double *eidM = mxGetPr(prhs[10]);
     double *eidP = mxGetPr(prhs[11]);
-    signed char *eidtype = (signed char *)mxGetData(prhs[12]); // int8 类型
+    signed char *eidtype = (signed char *)mxGetData(prhs[12]); // int8 类�?
 
 	/* get dimensions */
     size_t Nfp = mxGetM(prhs[11]);
@@ -107,10 +107,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *dFqx = mxGetPr(plhs[1]);
     double *dFqy = mxGetPr(plhs[2]);
 
-    int i,j,ind=0;
+    /* set number of threads */
+//     int n = omp_get_num_procs();
+//     omp_set_num_threads(n);
+    int i,j;
+    //#pragma omp parallel for private(j)
 	for (i=0;i<K;i++){
+        int ind = i*Nfp;
 		for(j=0;j<Nfp;j++){
-
             int iM = (int)eidM[ind]-1; // change to C type
             int iP = (int)eidP[ind]-1;
             double f_M[3], varP[3]; // local and adjacent node values
@@ -132,7 +136,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
             // various boudnary conditions
             double f_P[3];
             int info = bound_cond(f_M, varP, f_ext, nx_, ny_, type, f_P);
-            if(info) mexErrMsgTxt("Unknown boundary conditions.");
+            // if(info) mexErrMsgTxt("Unknown boundary conditions.");
 
             double qnM, qnP, qvM, qvP;
             qnM = f_M[1]*nx_ + f_M[2]*ny_; qvM = -f_M[1]*ny_ + f_M[2]*nx_;

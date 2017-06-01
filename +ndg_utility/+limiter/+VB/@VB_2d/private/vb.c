@@ -32,16 +32,20 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp,
 	double *f_Q, double *x, double *y,
 	double *Fmask, double *EToV, double *flim, Wei_Fun_t WeiGrad){
 
-	double *fv = (double*) calloc(Nfaces, sizeof(double));
-	double *xv = (double*) calloc(Nfaces, sizeof(double));
-	double *yv = (double*) calloc(Nfaces, sizeof(double));
-
-	int k,f,n;
-	double dfdx, dfdy;
+// 	double *fv = (double*) calloc(Nfaces, sizeof(double));
+// 	double *xv = (double*) calloc(Nfaces, sizeof(double));
+// 	double *yv = (double*) calloc(Nfaces, sizeof(double));
+    
+    /* set number of threads */
+    int p = omp_get_num_procs();
+    omp_set_num_threads(p);
+	int k,f;
+    #pragma omp parallel for private(f)
 	for (k=0;k<K;k++){
-		double xm = xc[k];
+		double xm = xc[k]; // read cell centre coordinate
 		double ym = yc[k];
-		double fm = fc[k];
+		double fm = fc[k]; // cell averaged values
+        double fv[Nfaces], xv[Nfaces], yv[Nfaces];
 		int tflag = 0;
 		for(f=0;f<Nfaces;f++){
 			int n = k*Np + (int)Fmask[f*Nfp]-1; // node index
@@ -64,24 +68,27 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp,
 			mexPrintf("fv_=%f\n", fv[f]);
 			#endif
 		}
+        
 		if (tflag){
             #if DEBUG
             mexPrintf("k=%d ", k);
             #endif
+            double dfdx, dfdy;
 			GetWeiGrad(Nfaces, xv, yv, fv, xm, ym, fm, &dfdx, &dfdy, WeiGrad);
 			Grad2Node(Np, fm, xm, ym, x+k*Np, y+k*Np, dfdx, dfdy, flim+k*Np);
 		}else{
-			for(n=0;n<Np;n++){
-				int sk = k*Np +n;
+            int m;
+			for(m=0;m<Np;m++){
+				int sk = k*Np + m;
 				flim[sk] = f_Q[sk];
 			}
 		}
 
 	}
 
-	free(fv);
-	free(xv);
-	free(yv);
+// 	free(fv);
+// 	free(xv);
+// 	free(yv);
 	return;
 }
 
@@ -89,10 +96,10 @@ void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
     double xc, double yc, double hc,
     double *dhdx, double *dhdy, Wei_Fun_t WeiGrad){
 
-    double *gra_x, *gra_y, *gra_det;
-    gra_x = (double *) calloc(Nsub, sizeof(double));
-    gra_y = (double *) calloc(Nsub, sizeof(double));
-    gra_det = (double *) calloc(Nsub, sizeof(double));
+    double gra_x[Nsub], gra_y[Nsub], gra_det[Nsub];
+//     gra_x = (double *) calloc(Nsub, sizeof(double));
+//     gra_y = (double *) calloc(Nsub, sizeof(double));
+//     gra_det = (double *) calloc(Nsub, sizeof(double));
 
     #if DEBUG
     mexPrintf("xc=%f, yc=%f, hc=%f\n", xc, yc, hc);
@@ -115,7 +122,8 @@ void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
         #endif
         /* get local gradient x=(dhdx, dhdy) of ith subdomain */
         MatrixSolver2(a, f, x);
-        gra_x[i] = x[0]; gra_y[i] = x[1];
+        gra_x[i] = x[0]; 
+        gra_y[i] = x[1];
         gra_det[i] = x[0]*x[0] + x[1]*x[1];
 
         #if DEBUG
@@ -128,9 +136,9 @@ void GetWeiGrad(int Nsub, double *xv, double *yv, double *hv,
     #if DEBUG
     mexPrintf("gra_x=%f, gra_y=%f\n", *dhdx, *dhdy);
     #endif
-    free(gra_x);
-    free(gra_y);
-    free(gra_det);
+//     free(gra_x);
+//     free(gra_y);
+//     free(gra_det);
     return;
 }
 

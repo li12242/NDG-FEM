@@ -35,7 +35,11 @@ while(time < ftime)
         %tloc = time + rk4c(INTRK)*dt;
         %obj.update_ext(tloc);
         rhsQ = rhs_term(obj, f_Q);
-        resQ = rk4a(INTRK)*resQ + dt*rhsQ;
+        try
+            resQ = rk4a(INTRK).*resQ + dt.*rhsQ;
+        catch
+            keyboard
+        end
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
         % 应用斜率限制器限制水位与流量

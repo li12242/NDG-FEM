@@ -33,7 +33,7 @@ while(time < ftime)
     end
     for INTRK = 1:5
         tloc = time + rk4c(INTRK)*dt;
-        obj.update_ext(tloc);
+        obj.update_ext(f_Q, tloc); % 更新外部值
         rhsQ = rhs_term(obj, f_Q);
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
@@ -48,9 +48,11 @@ while(time < ftime)
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
         %obj.draw( f_Q ); drawnow;
     end
-    obj.draw( f_Q ); drawnow;
+    %obj.draw( f_Q ); drawnow;
     time = time + dt;
-    obj.detector.collect(f_Q, time);
+    t_Q(:,:,1) = f_Q(:,:,1) + obj.bot;
+    t_Q(:,:,[2,3]) = f_Q(:,:,[2,3]);
+    obj.detector.collect(t_Q, time);
 end
 
 obj.f_Q = f_Q;

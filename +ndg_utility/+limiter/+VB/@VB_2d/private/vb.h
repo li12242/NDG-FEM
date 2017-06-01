@@ -3,6 +3,8 @@
 
 #include "mex.h"
 #include <math.h>
+#include <omp.h>
+
 #define max(a,b)  ( (a>b)?a:b )
 #define min(a,b)  ( (a<b)?a:b )
 
