@@ -72,8 +72,12 @@ for f = 1:Nedge
         xP = obj.x( ind2 );
         yP = obj.y( ind2 );
         d12 = (xpM - xP).^2 + (ypM - yP).^2;
-        m = (d12 < 1e-10);
+        m = (d12 < 3e-16);
+        %try
         idP(sk) = (k2-1)*Np + Fmask(m, f2);
+        %catch
+        %    keyboard
+        %end
         fpP(sk) = faceIndexStart(f2)+list(m);
         
         fscal(sk) = obj.Js(f1, k1)./obj.J( idM(sk)  );

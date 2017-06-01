@@ -60,7 +60,7 @@ classdef phys < matlab.mixin.SetGet
         
         function obj = update_ext(obj, stime)
             % 根据开边界文件结果更新外部数据
-            vert_extQ = obj.obc_file.get_extQ(obj.Nfield, stime);
+            vert_extQ = obj.obc_file.get_extQ(stime);
             vertlist = obj.obc_file.vert;
             for fld = 1:obj.Nfield % map vertex values to nodes
                 vert_Q = zeros(obj.mesh.Nv);

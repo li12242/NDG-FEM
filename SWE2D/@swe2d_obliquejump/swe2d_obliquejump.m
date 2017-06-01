@@ -12,22 +12,20 @@ classdef swe2d_obliquejump < swe2d
         casename
     end
     
+    methods(Access=private)
+        [ obcfile ] = make_obc_file( obj, casename )
+    end
+    
     methods
         function obj = swe2d_obliquejump(N, casename, type)
-            switch type
-                case ndg_lib.std_cell_type.Tri
-                    cell = ndg_lib.std_cell.tri(N);
-                case ndg_lib.std_cell_type.Quad
-                    cell = ndg_lib.std_cell.quad(N);
-            end% switch
-            
-            [ mesh, obcfile ] = read_mesh_file(cell, casename);
+            % read mesh grid
+            [ mesh ] = read_mesh_file(N, casename, type);
             obj = obj@swe2d(mesh);
             obj.casename = casename;
             obj.init();
             obj.ftime  = 15;
             obj.cfl = 0.2;
-            obj.obc_file = obcfile;
+            obj.obc_file = obj.make_obc_file(casename);
             obj.update_ext(0);
         end
         

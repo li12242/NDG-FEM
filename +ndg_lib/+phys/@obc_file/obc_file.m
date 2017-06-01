@@ -1,6 +1,13 @@
 classdef obc_file < ndg_utility.nc.nc_file
-    %OBC_FILE Summary of this class goes here
-    %   Detailed explanation goes here
+    %OBC_FILE 开边界文件类
+    %   开边界文件默认为 NetCDF 格式，通过时间线性插值读取任意时刻开边界数据。
+    %   对象包含的方法有:
+    %       obc_file - 构造函数，包括无输入参数和输出开边界文件名两种调用方式;
+    %       get_extQ - 获取开边界文件内外部值数据，其中外部值为顶点处二维数据，
+    %           其各个维度分别为 [vert, field];
+    %       set_file - 指定开边界文件，此方法用于辅助生成 obc_file 对象为空的情况;
+    %       make_obc_file - 通过输入顶点，时间，以及外部值的方法生成开边界 NetCDF
+    %           文件，其中外部值为三维数据，其各个维度分别为 [vert, field, time];
     
     properties(Constant)
         Nstep = 2 % use adjacent two steps to interpolate
@@ -19,6 +26,7 @@ classdef obc_file < ndg_utility.nc.nc_file
     %% private methods
     methods(Access=private)
         function [step, coef] = coef_parameter_update(obj, stime)
+            % 根据给定时间，寻找最接近的两个时间步，并给出各自插值系数.
             t = find( obj.time > stime, 1 );
             if (isempty(t)) 
                 step = [obj.Ntime, obj.Ntime]; coef = [1, 0]; return; 
@@ -33,11 +41,11 @@ classdef obc_file < ndg_utility.nc.nc_file
             coef = flip(coef);
         end% func
         
-        function vertExt = interp(obj, Nfield, step, coef)
+        function vertExt = interp(obj, step, coef)
             tmp1 = netcdf.getVar(obj.ncid, obj.f_extID, ...
-                [0, 0, step(1)-1], [obj.Nv, Nfield, 1]);
+                [0, 0, step(1)-1], [obj.Nv, obj.Nfield, 1]);
             tmp2 = netcdf.getVar(obj.ncid, obj.f_extID, ...
-                [0, 0, step(2)-1], [obj.Nv, Nfield, 1]);
+                [0, 0, step(2)-1], [obj.Nv, obj.Nfield, 1]);
             vertExt = tmp1.*coef(1) + tmp2.*coef(2); 
         end
     end
@@ -57,10 +65,10 @@ classdef obc_file < ndg_utility.nc.nc_file
             end
         end% func
         
-        function vertQ = get_extQ(obj, Nfield, stime)
-            % Get the external value
+        function vertQ = get_extQ(obj, stime)
+            % 获取外部值数据
             [step, coef] = coef_parameter_update(obj, stime);
-            vertQ = interp(obj, Nfield, step, coef);
+            vertQ = interp(obj, step, coef);
         end
                 
         function obj = set_file(obj, filename)
