@@ -22,7 +22,7 @@ classdef detector < matlab.mixin.SetGet
     end
     
     methods(Abstract, Hidden)
-        [kd, rd, sd, td] = findlocate(obj)
+        [kd, rd, sd, td] = findlocate(obj) % 寻找节点所在单元编号与单元内局部坐标
     end
     
     methods(Hidden, Access=protected)
@@ -39,6 +39,7 @@ classdef detector < matlab.mixin.SetGet
     
     methods
         function obj = detector(mesh, xd, yd, zd, dt, ftime, Nfield)
+            % 根据输入节点坐标及时间步构造检测器
             obj.mesh = mesh;
             obj.xd = xd; 
             obj.yd = yd; 
