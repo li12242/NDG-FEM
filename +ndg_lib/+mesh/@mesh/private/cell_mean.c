@@ -1,6 +1,10 @@
 #include "mex.h"
 #include <math.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 /*
  * brief: Calculate the mean value of each elements.
  * usages:
@@ -28,6 +32,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	double *u_m = mxGetPr(plhs[0]);
 
     int n,k;
+    #ifdef _OPENMP
+    #pragma omp parallel for private(n) num_threads(DG_THREADS)
+    #endif
     for(k=0;k<K;k++){
         u_m[k] = 0.0;
         double area = 0.0;

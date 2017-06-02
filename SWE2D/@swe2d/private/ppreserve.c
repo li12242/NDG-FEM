@@ -34,15 +34,16 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	double *qx_pos = mxGetPr(plhs[1]);
 	double *qy_pos = mxGetPr(plhs[2]);
 	int k,n;
+    double ksi = 0.0;
 	// cell area and scalar averages
-    #pragma omp parallel for
+    #pragma omp parallel for private(n, ksi)
 	for (k = 0;k < K; k++){
 		double hmean = hc[k];
 		double qxmean = qxc[k];
 		double qymean = qyc[k];
 		if(hmean<=ksi){
 			for(n = 0; n < Np; n++ ){
-				ind = k * Np + n;
+				int ind = k * Np + n;
 				h[ind] = 0;
 				qx[ind] = 0;
 				qy[ind] = 0;
@@ -55,7 +56,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
         double theta;
 		if(hmin < hmean){
-			theta = min( (hmean-0.0)/(hmean-hmin), 1.0 );
+			theta = min( (hmean-ksi)/(hmean-hmin), 1.0 );
 		}else{ theta = 0.0; }
 
 		for(n=0;n<Np;n++){

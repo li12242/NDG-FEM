@@ -35,11 +35,7 @@ while(time < ftime)
         %tloc = time + rk4c(INTRK)*dt;
         %obj.update_ext(tloc);
         rhsQ = rhs_term(obj, f_Q);
-        try
-            resQ = rk4a(INTRK).*resQ + dt.*rhsQ;
-        catch
-            keyboard
-        end
+        resQ = rk4a(INTRK).*resQ + dt.*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
         % 应用斜率限制器限制水位与流量
@@ -52,7 +48,7 @@ while(time < ftime)
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
         %obj.draw( f_Q ); drawnow;
     end
-    obj.draw( f_Q ); drawnow;
+    %obj.draw( f_Q ); drawnow;
     time = time + dt;
 end
 
