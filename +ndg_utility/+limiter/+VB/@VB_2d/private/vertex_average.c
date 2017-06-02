@@ -1,5 +1,9 @@
 #include "mex.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #define INFITY 10e10
 #define max(a,b)  ( (a>b)?a:b )
 #define min(a,b)  ( (a<b)?a:b )
@@ -10,6 +14,7 @@ void weight_vertex_value(int Nvert, int MaxKv, double *Kv,
     double *VToE, double *VToC, double *hc, double *hv)
 {
     int n,k;
+    #pragma omp parallel for private(k)
     for(n=0;n<Nvert;n++){ // loop for all vertex
         hv[n] = 0.0;
         int Ne = (int) Kv[n];

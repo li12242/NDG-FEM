@@ -108,10 +108,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *dFqy = mxGetPr(plhs[2]);
 
     /* set number of threads */
-//     int n = omp_get_num_procs();
-//     omp_set_num_threads(n);
+    int n = omp_get_num_procs();
+    omp_set_num_threads(n);
     int i,j;
-    //#pragma omp parallel for private(j)
+    #pragma omp parallel for private(j)
 	for (i=0;i<K;i++){
         int ind = i*Nfp;
 		for(j=0;j<Nfp;j++){
