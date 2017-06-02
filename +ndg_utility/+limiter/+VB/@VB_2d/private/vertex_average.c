@@ -14,7 +14,9 @@ void weight_vertex_value(int Nvert, int MaxKv, double *Kv,
     double *VToE, double *VToC, double *hc, double *hv)
 {
     int n,k;
-    #pragma omp parallel for private(k)
+    #ifdef _OPENMP
+    #pragma omp parallel for private(k) num_threads(DG_THREADS)
+    #endif
     for(n=0;n<Nvert;n++){ // loop for all vertex
         hv[n] = 0.0;
         int Ne = (int) Kv[n];

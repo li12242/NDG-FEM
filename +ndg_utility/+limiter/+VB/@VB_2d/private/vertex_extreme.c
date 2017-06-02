@@ -42,7 +42,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		f_min[n] =  INFITY;
 	}
     
-    #pragma omp parallel for private(m)
+    #ifdef _OPENMP
+    #pragma omp parallel for private(m) num_threads(DG_THREADS)
+    #endif
 	for(n=0;n<Nv;n++){
 		int Ne = Kv[n]; // ?????????ä¸??
 		double *vtoe = VToE + n*maxNe;

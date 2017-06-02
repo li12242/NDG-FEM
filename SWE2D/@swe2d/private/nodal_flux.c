@@ -40,7 +40,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double *Gqy = mxGetPr(plhs[5]);
 
 	int n,k;
-    #pragma omp parallel for private(n)
+    #ifdef _OPENMP
+    #pragma omp parallel for private(n) num_threads(DG_THREADS)
+    #endif
 	for (k=0;k<K;k++){
         int ind = k*Np;
         if (etype[k] == DRY){ // cell is dry

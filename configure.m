@@ -20,8 +20,9 @@ switch computer('arch')
         end
         
         if with_omp
-            cflags = 'CFLAGS=$CFLAGS, -Wall -qopenmp';
-            ldflags = ['-liomp5', ' -DDG_THREADS=', num2str(with_omp)];
+            cflags = ['CFLAGS=$CFLAGS, -Wall -qopenmp -DDG_THREADS=', ...
+                num2str(with_omp)];
+            ldflags = '-liomp5';
         else
             cflags = 'CFLAGS=$CFLAGS, -Wall';
             ldflags = '';
