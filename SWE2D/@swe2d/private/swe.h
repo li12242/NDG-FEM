@@ -3,7 +3,10 @@
 
 #include "mex.h"
 #include <math.h>
+
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 #define max(a,b)  ( (a>b)?a:b )
 #define min(a,b)  ( (a<b)?a:b )

@@ -1,5 +1,9 @@
 #include "mex.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #define INFITY 10e10
 #define max(a,b)  ( (a>b)?a:b )
 #define min(a,b)  ( (a<b)?a:b )
@@ -37,16 +41,17 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		f_max[n] = -INFITY;
 		f_min[n] =  INFITY;
 	}
-
+    
+    #pragma omp parallel for private(m)
 	for(n=0;n<Nv;n++){
-		int Ne = Kv[n]; // 节点所在单元个数
+		int Ne = Kv[n]; // ?????????�??
 		double *vtoe = VToE + n*maxNe;
 		
 		#if DEBUG
 		mexPrintf("n=%d, Ne=%d\n", n, Ne);
 		#endif
 		for(m=0;m<Ne;m++){
-			int eid = (int) vtoe[m]-1; // 单元编号
+			int eid = (int) vtoe[m]-1; // ???�??
 			f_max[n] = max(f_max[n], f_mean[eid]);
 			f_min[n] = min(f_min[n], f_mean[eid]);
 			
