@@ -36,7 +36,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	int k,n;
     double ksi = 0.0;
 	// cell area and scalar averages
-    #pragma omp parallel for private(n, ksi)
+    #ifdef _OPENMP
+    #pragma omp parallel for private(n, ksi) num_threads(DG_THREADS)
+    #endif 
 	for (k = 0;k < K; k++){
 		double hmean = hc[k];
 		double qxmean = qxc[k];
