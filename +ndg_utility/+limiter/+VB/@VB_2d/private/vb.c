@@ -37,10 +37,10 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp,
 // 	double *yv = (double*) calloc(Nfaces, sizeof(double));
     
     /* set number of threads */
-    int p = omp_get_num_procs();
-    omp_set_num_threads(p);
 	int k,f;
-    #pragma omp parallel for private(f)
+    #ifdef _OPENMP
+    #pragma omp parallel for private(f) num_threads(DG_THREADS)
+    #endif
 	for (k=0;k<K;k++){
 		double xm = xc[k]; // read cell centre coordinate
 		double ym = yc[k];
