@@ -42,7 +42,7 @@ install(path, srcfile, libfile, compiler, cflags, ldflags);
 %% +ndg_lib/+mesh
 path = '+ndg_lib/+mesh/@mesh/private';
 srcfile = {'cell_mean.c'};
-libfile = {'cell_mean.c'};
+libfile = {};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
 path = '+ndg_lib/+mesh/@mesh2d/private';
