@@ -28,6 +28,15 @@ switch computer('arch')
             ldflags = '';
         end
     case 'win64'
+        compiler = '';
+        if with_omp
+            cflags = ['CFLAGS=$CFLAGS -fopenmp -DDG_THREADS=',...
+                num2str(with_omp)];
+            ldflags = 'LDFLAGS=$LDFLAGS -fopenmp';
+        else
+            cflags = 'CFLAGS=$CFLAGS, -Wall';
+            ldflags = '';
+        end
     case 'glnxa64'
     otherwise
         error('configure error: Unknown platform.');
@@ -42,7 +51,7 @@ install(path, srcfile, libfile, compiler, cflags, ldflags);
 %% +ndg_lib/+mesh
 path = '+ndg_lib/+mesh/@mesh/private';
 srcfile = {'cell_mean.c'};
-libfile = {'cell_mean.c'};
+libfile = {};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
 path = '+ndg_lib/+mesh/@mesh2d/private';
