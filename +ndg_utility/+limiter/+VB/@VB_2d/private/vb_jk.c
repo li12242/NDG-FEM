@@ -6,7 +6,7 @@ void JKGrad(int Nsub, double *gra_x, double *gra_y, double *gra_det,
     double *dhdx, double *dhdy){
     double frac=Nsub*EPSILON;
     int i,j;
-    for(i=0;i<Nsub;i++){ frac += pow(gra_det[i], (Nsub-1.0)); }
+    for(i=0;i<Nsub;i++){ frac += (pow(gra_det[i], (Nsub-1.0)) + EPSILON ); }
 
     for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
         double w = 1.0;

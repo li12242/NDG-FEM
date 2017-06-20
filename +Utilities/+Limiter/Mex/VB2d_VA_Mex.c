@@ -110,7 +110,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		real hc = hmean[k];
 		real xc = xmean[k];
 		real yc = ymean[k];
-		int flag = 0;
+		//int flag = 1;
 		for(f=0;f<Nfaces;f++){
 			i = k*Np + (int) Fmask[f*Nfp]-1; // node index
 			v = (int) EToV[k + f*K]-1; // vertex index
@@ -119,10 +119,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			hv[f] = h[i];
 			if(hv[f]>hvmax[v]){
 				hv[f]=hvmax[v];
-				flag = 1;
+				//flag = 1;
 			}else if(hv[f]<hvmin[v]){
 				hv[f]=hvmin[v];
-				flag = 1;
+				//flag = 1;
 			}
 
 			// mexPrintf("k=%d, f=%d, v=%d, i=%d, hv=%f\n", 

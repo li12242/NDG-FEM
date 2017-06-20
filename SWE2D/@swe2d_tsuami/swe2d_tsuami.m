@@ -36,7 +36,6 @@ classdef swe2d_tsuami < swe2d
             [ mesh ] = read_mesh_file(N, casename, type);
             obj = obj@swe2d(mesh);
             obj.init();
-            obj.cfl = 0.4;
             obj.ftime = 22.5;
             obj.obc_file = obj.make_obc_file(casename);
             

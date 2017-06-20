@@ -1,5 +1,5 @@
 #include "swe.h"
-#define DEBUG 1
+#define DEBUG 0
 /**
  * @brief Calculation of the Lax-Friedrichs numerical flux
  * @param [in] hmin - threadhold of the water depth
@@ -26,13 +26,13 @@ void lf_flux(double hmin, double gra, double hM, double hP,
     }else{ sP = 0.0; }
 
     #if DEBUG
-    if( (k>81) & (k<85) ){
-        mexPrintf("===============================\n");
-        mexPrintf("k=%d\n", k);
-        mexPrintf("hM=%f, hP=%f\n", hM, hP);
-        mexPrintf("qnM=%f, qnP=%f\n", qnM, qnP);
-        mexPrintf("sM=%f, sP=%f\n",sM, sP);
-    }
+    // if( (k>81) & (k<85) ){
+    //     mexPrintf("===============================\n");
+    //     mexPrintf("k=%d\n", k);
+    //     mexPrintf("hM=%f, hP=%f\n", hM, hP);
+    //     mexPrintf("qnM=%f, qnP=%f\n", qnM, qnP);
+    //     mexPrintf("sM=%f, sP=%f\n",sM, sP);
+    // }
     #endif
 
     double s = max(sM, sP);
@@ -41,12 +41,12 @@ void lf_flux(double hmin, double gra, double hM, double hP,
     *Fqyn = 0.5*( EqvM + EqvP + s*(qvM-qvP) );
 
     #if DEBUG
-    if( (k>81) & (k<85) ){
-        mexPrintf("EhM=%f, EhP=%f\n", EhM, EhP);
-        mexPrintf("EqnM=%f, EqnP=%f\n", EqnM, EqnP);
-        mexPrintf("EqvM=%f, EqvP=%f\n", EqvM, EqvP);
-        mexPrintf("Fhn=%f, Fqxn=%f, Fqyn=%f\n", *Fhn, *Fqxn, *Fqyn);
-    }
+    // if( (k>81) & (k<85) ){
+    //     mexPrintf("EhM=%f, EhP=%f\n", EhM, EhP);
+    //     mexPrintf("EqnM=%f, EqnP=%f\n", EqnM, EqnP);
+    //     mexPrintf("EqvM=%f, EqvP=%f\n", EqvM, EqvP);
+    //     mexPrintf("Fhn=%f, Fqxn=%f, Fqyn=%f\n", *Fhn, *Fqxn, *Fqyn);
+    // }
     #endif
 }
 
@@ -100,8 +100,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *dFqx = mxGetPr(plhs[1]);
     double *dFqy = mxGetPr(plhs[2]);
 
-    int i,j,ind=0;
+    int i,j;
+    #ifdef _OPENMP
+    #pragma omp parallel for private(j) num_threads(DG_THREADS)
+    #endif
 	for (i=0;i<K;i++){
+        int ind = i*Nfp;
 		for(j=0;j<Nfp;j++){
 
             int iM = (int)eidM[ind]-1; // change to C type
@@ -149,12 +153,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
             dFqx[ind] += nx_*Eqx + ny_*Gqx;
             dFqy[ind] += nx_*Eqy + ny_*Gqy;
             #if DEBUG
-            if( (i>81) & (i<85) ){
-                mexPrintf("nx=%f, ny=%f\n", nx_, ny_);
-                mexPrintf("Eh=%f, Eqx=%f, Eqy=%f\n", Eh, Eqx, Eqy);
-                mexPrintf("Gh=%f, Gqx=%f, Gqy=%f\n", Gh, Gqx, Gqy);
-                mexPrintf("dFh=%f, dFqx=%f, dFqy=%f\n", dFh[ind], dFqx[ind], dFqy[ind]);
-            }
+            // if( (i>81) & (i<85) ){
+            //     mexPrintf("nx=%f, ny=%f\n", nx_, ny_);
+            //     mexPrintf("Eh=%f, Eqx=%f, Eqy=%f\n", Eh, Eqx, Eqy);
+            //     mexPrintf("Gh=%f, Gqx=%f, Gqy=%f\n", Gh, Gqx, Gqy);
+            //     mexPrintf("dFh=%f, dFqx=%f, dFqy=%f\n", dFh[ind], dFqx[ind], dFqy[ind]);
+            // }
             #endif
             ind++;
 		}

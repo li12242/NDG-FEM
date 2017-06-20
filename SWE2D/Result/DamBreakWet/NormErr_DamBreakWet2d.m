@@ -3,11 +3,12 @@ function NormErr_DamBreakWet2d
 %   Detailed explanation goes here
 
 %% parameters
-meshtype = 'tri';
-N        = 1;
-filename = {'SWE2D_DamBreakWet_VBVA_tri_300.nc', ...
-    'SWE2D_DamBreakWet_VBJK_tri_300.nc', ...
-    'SWE2D_DamBreakWet_VBHWENO_tri_300.nc'};
+meshtype = 'quad';
+N = 1;
+Ne = 600;
+filename = {['DamBreakWet_VA_', meshtype, '_',num2str(Ne),'_', num2str(N),'.nc'], ...
+    ['DamBreakWet_JK_', meshtype, '_',num2str(Ne),'_', num2str(N),'.nc'], ...
+    ['DamBreakWet_HWENO_', meshtype, '_',num2str(Ne),'_', num2str(N),'.nc']};
 Postpro = Utilities.PostProcess.Postprocess(filename, meshtype, N);
 
 T = 20;

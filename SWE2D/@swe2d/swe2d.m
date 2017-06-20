@@ -14,7 +14,6 @@ classdef swe2d < ndg_lib.phys.phys2d
     properties(SetAccess=protected)
         bot % 底坡高程
         bx, by % 底坡高程梯度
-        cfl % CFL 数
         ftime % 计算终止时间
         dt % 计算时间步长
         wetflag % 湿单元逻辑值
@@ -22,21 +21,28 @@ classdef swe2d < ndg_lib.phys.phys2d
     end
     
     methods(Access=protected)
-        function dt = time_interval( obj, f_Q )
+        function spe = character_len(obj, f_Q)
             % 计算时间步长
             h = f_Q(:,:,1);
             q = sqrt( f_Q(:,:,2).^2 + f_Q(:,:,3).^2 );
-            u = (q./h) + sqrt(obj.gra*h);
-            s = bsxfun(@times, sqrt(obj.mesh.vol)/obj.mesh.cell.N, 1./u);
-            dt = obj.cfl*min( min( s(:, obj.wetflag) ) );
+            spe = (q./h) + sqrt(obj.gra*h);
+            spe(:, ~obj.wetflag) = eps;
         end
+%         function dt = time_interval( obj, f_Q )
+%             % 计算时间步长
+%             h = f_Q(:,:,1);
+%             q = sqrt( f_Q(:,:,2).^2 + f_Q(:,:,3).^2 );
+%             u = (q./h) + sqrt(obj.gra*h);
+%             s = bsxfun(@times, sqrt(obj.mesh.vol)/obj.mesh.cell.N, 1./u);
+%             dt = obj.cfl*min( min( s(:, obj.wetflag) ) );
+%         end
         
         function wetdry_detector(obj, f_Q)
             % 判断单元干湿状态
             % 设置所有水深大于阀值的单元类型为湿单元
             obj.wetflag = all( f_Q(:,:,1) > obj.hmin );
             obj.mesh.EToR( ~obj.wetflag ) = ndg_lib.mesh_type.Dry;
-            obj.mesh.EToR( obj.wetflag ) = ndg_lib.mesh_type.Normal;
+            obj.mesh.EToR( obj.wetflag ) = obj.mesh.EToR( obj.wetflag );
         end
         
         function topo_grad_term(obj)

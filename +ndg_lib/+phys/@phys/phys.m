@@ -45,6 +45,55 @@ classdef phys < matlab.mixin.SetGet
         f_Q = RK45_solve(obj) % Runge-Kutta 4th order 5 stages
     end
     
+    % 范数误差
+    methods
+        function err = norm_err2(obj, time)
+            % 计算1范数误差。
+            % 警告，调用此函数时需要首先定义精确解函数：
+            %   f_ext = ext_func(obj, time)
+            % ext_func 根据输入时间返回各节点精确解。
+            f_ext = ext_func(obj, time); 
+            err = zeros(obj.Nfield, 1);
+            f_abs = obj.f_Q - f_ext;
+            area = sum(obj.mesh.vol);
+            for fld = 1:obj.Nfield
+                temp = f_abs(:,:,fld).*f_abs(:,:,fld);
+                err(fld) = sqrt( sum( ...
+                    obj.mesh.cell_mean(temp).*obj.mesh.vol ) )./area;
+            end
+        end
+        
+        function err = norm_err1(obj, time)
+            % 计算2范数误差。
+            % 警告，调用此函数时需要首先定义精确解函数：
+            %   f_ext = ext_func(obj, time)
+            % ext_func 根据输入时间返回各节点精确解。
+            f_ext = ext_func(obj, time);
+            err = zeros(obj.Nfield, 1);
+            f_abs = obj.f_Q - f_ext;
+            area = sum(obj.mesh.vol);
+            for fld = 1:obj.Nfield
+                temp = abs( f_abs(:,:,fld) );
+                err(fld) = sum( ...
+                    obj.mesh.cell_mean(temp).*obj.mesh.vol )./area;
+            end
+        end
+        
+        function err = norm_errInf(obj, time)
+            % 计算最大范数误差。
+            % 警告，调用此函数时需要首先定义精确解函数：
+            %   f_ext = ext_func(obj, time)
+            % ext_func 根据输入时间返回各节点精确解。
+            f_ext = ext_func(obj, time);
+            err = zeros(obj.Nfield, 1);
+            f_abs = obj.f_Q - f_ext;
+            for fld = 1:obj.Nfield
+                temp = abs( f_abs(:,:,fld) );
+                err(fld) = max( obj.mesh.cell_mean(temp) );
+            end
+        end
+    end
+    
     % 文件 I/O
     methods
         function obj = set_out_file(obj, filename, dt)

@@ -27,7 +27,8 @@ obj.wetdry_detector(f_Q);
 obj.topo_grad_term(); % 计算底坡梯度
 
 while(time < ftime)
-    dt = obj.time_interval( f_Q );
+    dt = time_interval(obj, f_Q);
+%     dt = obj.time_interval(f_Q);
     if(time + dt > ftime)
         dt = ftime - time;
     end
@@ -48,10 +49,15 @@ while(time < ftime)
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
         %obj.draw( f_Q ); drawnow;
     end
-    %obj.draw( f_Q ); drawnow;
+    obj.draw( f_Q ); drawnow;
     time = time + dt;
 end
 
 obj.f_Q = f_Q;
 end
 
+function dt = time_interval(obj, f_Q)
+spe = obj.character_len(f_Q); % Jacobian characteristic length
+dt = bsxfun(@times, sqrt(obj.mesh.vol)/(2*obj.mesh.cell.N+1), 1./spe);
+dt = min( min( dt ) );
+end% func

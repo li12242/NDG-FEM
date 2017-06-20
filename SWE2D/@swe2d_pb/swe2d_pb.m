@@ -37,7 +37,6 @@ classdef swe2d_pb < swe2d
             end% switch
             
             obj = obj@swe2d(mesh);
-            obj.cfl = 0.2;
             obj.T = 2*pi./(8*obj.gra*obj.a);
             obj.ftime = 4*obj.T;
             obj.init();

@@ -58,11 +58,11 @@ void VertLimit(int K, int Np, int Nfaces, int Nfp,
 			mexPrintf("k=%d, f=%d, xv=%f, yv=%f, fv=%f, f_max=%f, f_min=%f, ",
 				k, f, xv[f], yv[f], fv[f], f_max[v], f_min[v]);
 			#endif
-			// if(fv[f]>f_max[v]){
-			// 	fv[f]=f_v[v]; tflag = 1;
-			// }else if(fv[f]<f_min[v]){
-			// 	fv[f]=f_v[v]; tflag = 1;
-			// }
+// 			if(fv[f]>f_max[v]){
+// 				fv[f]=f_v[v]; tflag = 1;
+// 			}else if(fv[f]<f_min[v]){
+// 				fv[f]=f_v[v]; tflag = 1;
+// 			}
             fv[f]=f_v[v]; tflag = 1; // always limiting
 			#if 0
 			mexPrintf("fv_=%f\n", fv[f]);

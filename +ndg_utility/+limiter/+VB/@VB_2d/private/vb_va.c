@@ -14,8 +14,8 @@ void VAGrad(int Nsub, double *gra_x, double *gra_y, double *gra_det,
                 continue;
             w = w*gra_det[j];
         }
-        frac += w;
         w += EPSILON;
+        frac += w;
         *dhdx += w*gra_x[i];
         *dhdy += w*gra_y[i];
     }

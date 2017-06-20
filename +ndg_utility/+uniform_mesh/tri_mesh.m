@@ -1,20 +1,22 @@
 function [K,EToV,Nv,VX,VY,EToBS,EToR] = tri_mesh(Mx, My, ...
     xmin, xmax, ymin, ymax, bc_type)
 %TRI_MESH  生成均匀三角形网格。
-%    三角形网格计算域由 [xmin, xmax] x [ymin, ymax] 确定，其中 x，y 每个轴上
-%    单元个数分别为 Mx 与 My。均匀三角形为直角三角形，由四边形沿对角线分割而成，
-%    flag 参数确定对角线分割方向。
+%   三角形网格计算域大小为 [xmin, xmax] x [ymin, ymax]，其中 x，y 每个轴上
+%   单元个数分别为 Mx 与 My。三角形均为直角三角形，由四边形沿对角线分割而成，
+%   flag 变量确定对角线分割方向。
+%   默认节点编号从左下角开始，首先沿 x 轴进行循环。设置边界面类型分别为底部、上部、
+%   左侧和右侧四个边界，数组 EToBS 中（每列）包括边界面上两个节点编号与边界类型。
 % 
-% Parameters
-%    Mx, My     - x，y 坐标轴上单元个数；
-%    xmin,xmax  - x 坐标轴范围
-%    ymin,ymax  - y 坐标轴范围
-%    flag       - 三角形划分方向 [flag=0, "\", flag=1, "/"]
-flag = 0;
+%   输入参数
+%   Mx, My     - x，y 坐标轴上单元个数；
+%   xmin,xmax  - x 坐标轴范围；
+%   ymin,ymax  - y 坐标轴范围；
+%   bctype - 底部、上部、左侧和右侧四个边界条件；
 %
-% Author(s)
-%    li12242 Tianjin University
+% Author: li12242 Tianjin University
 
+% 三角形划分方向 0(default)=\, 1=/;
+flag = 0;
 %% Parameters
 Nx = Mx + 1; % number of nodes along x coordinate
 Ny = My + 1;

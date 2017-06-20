@@ -6,8 +6,8 @@ classdef BJ_line < ndg_utility.limiter.BJ.BJ
     end
     
     methods
-        function obj = BJ_line(mesh, cell)
-            obj = obj@ndg_utility.limiter.BJ.BJ(mesh, cell);
+        function obj = BJ_line(mesh)
+            obj = obj@ndg_utility.limiter.BJ.BJ(mesh);
         end
         
         function f_limit = limit(obj, f_Q)

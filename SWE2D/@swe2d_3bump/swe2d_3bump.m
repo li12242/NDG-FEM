@@ -31,7 +31,6 @@ classdef swe2d_3bump < swe2d
             end% switch
             
             obj = obj@swe2d(mesh);
-            obj.cfl = 0.2;
             obj.ftime = 30;
             obj.init();
         end% func

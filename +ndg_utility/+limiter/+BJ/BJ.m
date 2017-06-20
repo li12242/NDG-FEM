@@ -8,9 +8,9 @@ classdef BJ
     end
     
     methods
-        function obj = BJ(mesh, cell)
+        function obj = BJ(mesh)
             obj.mesh = mesh;
-            obj.cell = cell;
+            obj.cell = mesh.cell;
         end
     end
     

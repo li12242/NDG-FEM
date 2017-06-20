@@ -1,0 +1,78 @@
+function run_conv2d
+
+ne = [20, 40, 80, 100];
+k = [1, 2, 3, 4];
+len = 1./ne;
+
+Nmesh = numel(ne);
+Ndeg = numel(k);
+dofs = zeros(Nmesh, Ndeg);
+for n = 1:Ndeg
+    for m = 1:Nmesh
+        dofs(m, n) = ne(m).^2 * (k(n)+1).^2;
+    end
+end
+
+errInf = zeros(Nmesh, Ndeg);
+err2 = zeros(Nmesh, Ndeg);
+err1 = zeros(Nmesh, Ndeg);
+
+for n = 1:Ndeg
+    for m = 1:Nmesh
+        conv = conv2d_mountrotate(k(n), ne(m), ndg_lib.std_cell_type.Quad);
+        conv.RK45_solve;
+        err2(m, n) = conv.norm_err2(2.4);
+        err1(m, n) = conv.norm_err1(2.4);
+        errInf(m, n) = conv.norm_errInf(2.4);
+    end
+end
+
+%marker = {'r-o', 'b-s', 'k-*', 'c-^'};
+for n = 1:Ndeg
+    subplot(1,3,1); plot(len, err1(:, n)); hold on;
+    subplot(1,3,2); plot(len, err2(:, n)); hold on;
+    subplot(1,3,3); plot(len, errInf(:, n)); hold on;
+end
+
+for n = 1:3
+    subplot(1,3,n);
+    box on; grid on;
+    set(gca, 'XScale', 'log', 'YScale', 'log');
+    lendstr = cell(Ndeg, 1);
+    for m = 1:Ndeg
+        lendstr{m} = ['p=', num2str(m)];
+    end
+    legend(lendstr, 'box', 'off');
+end
+
+
+for n = 1:Ndeg
+    fprintf('\n==================deg = %d==================\n', n);
+    t = convergence_table(len, err1(:, n), err2(:, n), errInf(:, n))
+end
+
+end
+
+function t1 = convergence_table(len, err1, err2, errInf)
+t1 = table;
+t1.len = len';
+n = 1;
+t1.(['err1_',num2str(n)]) = err1(:);
+t1.(['a1_',num2str(n)]) = get_ratio(len, err1);
+
+t1.(['err2_',num2str(n)]) = err2(:);
+t1.(['a2_',num2str(n)]) = get_ratio(len, err2);
+
+t1.(['errf_',num2str(n)]) = errInf(:);
+t1.(['af_',num2str(n)]) = get_ratio(len, errInf);
+end
+
+function a = get_ratio(len, err)
+Nmesh = numel(len);
+
+a = zeros(Nmesh, 1);
+for m = 2:Nmesh
+    scal_ratio = log2( len(m)/len(m-1) );
+    a(m) = log2( err(m)/err(m-1) )./scal_ratio;
+end
+end

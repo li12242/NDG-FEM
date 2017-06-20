@@ -73,7 +73,7 @@ install(path, srcfile, libfile, compiler, cflags, ldflags);
 
 %% SWE2d
 path = 'SWE2d/@swe2d/private';
-srcfile = {'hll_flux.c', 'nodal_flux.c', 'ppreserve.c'};
+srcfile = {'hll_flux.c', 'nodal_flux.c', 'ppreserve.c', 'lf_flux.c'};
 libfile = {'swe.c', 'bound_cond.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 

@@ -21,6 +21,7 @@ classdef mesh
         sx, sy, sz
         tx, ty, tz
         J, vol
+        spg_delta % ∫£√‡≤„æ‡¿Î±ﬂΩÁµ„æ‡¿Î
     end
     
     properties(SetAccess=protected)

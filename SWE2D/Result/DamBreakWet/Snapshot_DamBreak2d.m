@@ -1,11 +1,11 @@
 function Snapshot_DamBreak2d
 %% Construct postprocess class
 meshtype = 'tri';
-filename = {'SWE2D_DamBreakWet_VA_tri_300.nc'};
+filename = {'DamBreakWet_VA_tri_300_3.nc'};
 fileID   = 1;
 
 % create post process class for quad
-Postpro = Utilities.PostProcess.Postprocess(filename, meshtype, 1);
+Postpro = Utilities.PostProcess.Postprocess(filename, meshtype, 3);
 T = 20;
 time    = (0:0.005:1)*T;
 

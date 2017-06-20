@@ -24,7 +24,6 @@ classdef swe2d_obliquejump < swe2d
             obj.casename = casename;
             obj.init();
             obj.ftime  = 15;
-            obj.cfl = 0.2;
             obj.obc_file = obj.make_obc_file(casename);
             obj.update_ext(0);
         end

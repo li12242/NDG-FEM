@@ -21,7 +21,6 @@ classdef swe2d_pdb < swe2d
             
             obj = obj@swe2d(mesh);
             obj.init();
-            obj.cfl = 0.2;
             obj.ftime = 7;
         end% func
         
