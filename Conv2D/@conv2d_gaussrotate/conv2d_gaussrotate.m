@@ -1,5 +1,5 @@
-classdef conv2d_mountrotate < conv2d
-    %CONV2D_ROTATION Summary of this class goes here
+classdef conv2d_gaussrotate < conv2d
+    %CONV2D_GAUSSROTATE Gauss º¯ÊýÐý×ª´«ÊäËãÀý
     %   Detailed explanation goes here
     
     properties(Constant)
@@ -12,7 +12,7 @@ classdef conv2d_mountrotate < conv2d
     end
     
     methods
-        function obj = conv2d_mountrotate(varargin)
+        function obj = conv2d_gaussrotate(varargin)
             switch nargin
                 case 1
                     mesh = varargin{1};
@@ -33,7 +33,6 @@ classdef conv2d_mountrotate < conv2d
             obj.init; % call initial function
             obj.cfl = 0.9;
             obj.ftime = 2.4;
-            obj.dt = obj.time_interval();
         end% func
         
         function init(obj)
@@ -44,10 +43,9 @@ classdef conv2d_mountrotate < conv2d
         end% func
         
         
-        function [ dt ] = time_interval(obj)
-            dx = sqrt(obj.mesh.cell.vol * obj.mesh.J);
+        function [ spe ] = character_len(obj, f_Q)
             vel = sqrt( obj.u.^2 + obj.v.^2 );
-            dt = obj.cfl*min( min(dx./vel) )/(2*obj.mesh.cell.N+1);
+            spe = vel;
         end
         
         function f_ext = ext_func(obj, time)

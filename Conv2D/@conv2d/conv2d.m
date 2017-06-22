@@ -15,7 +15,7 @@ classdef conv2d < ndg_lib.phys.phys2d
     
     %% Ðéº¯Êý
     methods(Abstract)
-        [ dt ] = time_interval(obj) % get the time interval dt
+        [ spe ] = character_len(obj, f_Q) % get the time interval dt
     end
     
     %% Ë½ÓÐº¯Êý

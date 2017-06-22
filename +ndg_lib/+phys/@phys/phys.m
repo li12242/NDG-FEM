@@ -112,7 +112,7 @@ classdef phys < matlab.mixin.SetGet
             vert_extQ = obj.obc_file.get_extQ(stime);
             vertlist = obj.obc_file.vert;
             for fld = 1:obj.Nfield % map vertex values to nodes
-                vert_Q = zeros(obj.mesh.Nv);
+                vert_Q = zeros(obj.mesh.Nv, 1);
                 vert_Q( vertlist ) = vert_extQ(:, fld);
                 obj.f_extQ(:,:,fld) = obj.mesh.proj_vert2node(vert_Q);
             end

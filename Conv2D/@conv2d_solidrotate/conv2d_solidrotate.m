@@ -9,10 +9,15 @@ classdef conv2d_solidrotate < conv2d
     end
     properties
         slopelimiter
-        M = 0.1;
+        M = 1e-3;
     end
     
     methods
+        function [ spe ] = character_len(obj, f_Q)
+            vel = sqrt( obj.u.^2 + obj.v.^2 );
+            spe = vel;
+        end
+        
         function obj = conv2d_solidrotate(varargin)
             switch nargin
                 case 1
@@ -34,8 +39,7 @@ classdef conv2d_solidrotate < conv2d
             obj.init(); % call initial function
             obj.cfl = 0.3;
             obj.ftime = 2.4;
-            obj.dt = obj.time_interval();
-            obj.slopelimiter = ndg_utility.limiter.VB.VB_TVB(mesh);
+            obj.slopelimiter = ndg_utility.limiter.TVB.TVB_tri(mesh);
         end
         
         function init(obj)
@@ -61,12 +65,6 @@ classdef conv2d_solidrotate < conv2d
             w = 5*pi/6;
             obj.u = w.*(0.5-obj.mesh.y); 
             obj.v = w.*(obj.mesh.x-0.5);
-        end
-        
-        function [ dt ] = time_interval(obj)
-            dx = sqrt(obj.mesh.cell.vol * obj.mesh.J);
-            vel = sqrt( obj.u.^2 + obj.v.^2 );
-            dt = obj.cfl*min( min(dx./vel) );
         end
     end
     

@@ -15,7 +15,7 @@ classdef conv1d < ndg_lib.phys.phys1d
     
     %% Ðéº¯Êý
     methods(Abstract)
-        [ dt ] = time_interval(obj) % get the time interval dt
+        [ spe ] = character_len(obj, f_Q)
     end
     
     %% function - matlab
@@ -48,10 +48,6 @@ classdef conv1d < ndg_lib.phys.phys1d
         
         function obj = conv1d(mesh)
             obj = obj@ndg_lib.phys.phys1d(mesh);
-        end
-        
-        function draw(obj)
-            plot(obj.mesh.x, obj.f_Q, '.-');
         end
         
         function create_obc_file(obj, filename, dt, ftime)

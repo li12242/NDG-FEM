@@ -28,14 +28,6 @@ classdef swe2d < ndg_lib.phys.phys2d
             spe = (q./h) + sqrt(obj.gra*h);
             spe(:, ~obj.wetflag) = eps;
         end
-%         function dt = time_interval( obj, f_Q )
-%             % 计算时间步长
-%             h = f_Q(:,:,1);
-%             q = sqrt( f_Q(:,:,2).^2 + f_Q(:,:,3).^2 );
-%             u = (q./h) + sqrt(obj.gra*h);
-%             s = bsxfun(@times, sqrt(obj.mesh.vol)/obj.mesh.cell.N, 1./u);
-%             dt = obj.cfl*min( min( s(:, obj.wetflag) ) );
-%         end
         
         function wetdry_detector(obj, f_Q)
             % 判断单元干湿状态

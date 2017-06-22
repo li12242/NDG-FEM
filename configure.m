@@ -71,6 +71,12 @@ srcfile = {'vb_weno.c', 'vertex_average.c', 'vertex_extreme.c'};
 libfile = {'vb.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
+%% Conv2d
+path = 'Conv2d/@conv2d/private';
+srcfile = {'upwind_flux.c'};
+libfile = {'conv2d.c', 'bc.c'};
+install(path, srcfile, libfile, compiler, cflags, ldflags);
+
 %% SWE2d
 path = 'SWE2d/@swe2d/private';
 srcfile = {'hll_flux.c', 'nodal_flux.c', 'ppreserve.c', 'lf_flux.c'};

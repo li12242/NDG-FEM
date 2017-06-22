@@ -1,7 +1,12 @@
-function set_east_spg_obc4( obj, casename )
+function set_east_spg_obc4( obj )
 %SET_EAST_SPG_OBC4 Summary of this function goes here
 %   Detailed explanation goes here
 
+casename = 'SWE2D/@swe2d_channel/mesh/quad_sponge';
+[ obj.mesh ] = read_mesh_file(obj.mesh.cell.N, casename, ...
+    ndg_lib.std_cell_type.Quad);
+obj.EToB = get_bc_id(obj); % 读取开边界类型
+obj.obc_vert = get_obc_vert(casename); % 读取开边界顶点编号
 % 设定开边界条件 EToBS
 westid = (obj.EToB == 2);
 obj.mesh.EToBS(westid) = ndg_lib.bc_type.Clamped; % 西侧边界条件
@@ -12,14 +17,16 @@ obj.mesh = ndg_lib.mesh.mesh2d(obj.mesh.cell, ...
     obj.mesh.Nv, obj.mesh.vx, obj.mesh.vy, ...
     obj.mesh.K, obj.mesh.EToV, obj.mesh.EToR, obj.mesh.EToBS);
 
+obj.init(); % 变量初始化
+
 % 添加海绵层
 obj.mesh = obj.mesh.add_sponge(obj.obc_vert);
 
 % 设定边界信息
 Nt = ceil(obj.ftime/obj.obc_time_interval);
 Nfield = 3; % 开边界物理场个数
-spg_vert = unique( obj.mesh.EToV(:, ...
-    obj.mesh.EToR == ndg_lib.mesh_type.Sponge) ); % 海绵层内节点
+spg_vert = unique(  ... % 海绵层内节点
+    obj.mesh.EToV(:, obj.mesh.EToR == ndg_lib.mesh_type.Sponge) ); 
 vert = unique([spg_vert; obj.obc_vert]); % 全部边界节点
 Nv = numel(vert); % 顶点个数
 vx = obj.mesh.vx(vert);
@@ -35,8 +42,8 @@ for t = 1:Nt
     temp = cos(k.*vx - w*tloc);
     h = obj.eta*temp + obj.H;
     u = obj.eta*sqrt(obj.gra/obj.H)*temp;
-%     f_Q(:, 1, t) = h;
-    f_Q(:, 1, t) = 0;
+    f_Q(:, 1, t) = h;
+%     f_Q(:, 1, t) = 0;
     f_Q(:, 2, t) = h.*u;
 end
 

@@ -69,7 +69,7 @@ void hll_flux(double hmin, double gra, double hM, double hP,
  *  eidtype     - boundary types with int8 type variable;
  *
  * Usages:
- * 	[dFhs, dFqxs, dFqys] = SWE_Mex_HLL2d(hmin, gra,
+ * 	[dFhs, dFqxs, dFqys] = hll_flux(hmin, gra,
  *      h, qx, qy, z, h_ext, qx_ext, qy_ext, nx, ny, eidM, eidP, eidtype);
  */
 void mexFunction(int nlhs, mxArray *plhs[],

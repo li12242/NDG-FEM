@@ -3,7 +3,7 @@ function [ EToB ] = get_bc_id( obj )
 %   Detailed explanation goes here
 
 EToB = obj.mesh.EToBS;
-EToB( EToB == 2 ) = 1;
-EToB( EToB == 4 ) = 2;
-EToB( EToB == 5 ) = 3;
+EToB( EToB == 2 ) = 1; % 1-南侧与北侧;
+EToB( EToB == 4 ) = 2; % 2-西侧;
+EToB( EToB == 5 ) = 3; % 3-东侧;
 end

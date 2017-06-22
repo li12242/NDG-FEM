@@ -1,7 +1,12 @@
-function set_west_wave_depth_obc1( obj, casename )
+function set_west_wave_depth_obc1( obj )
 %SET_WAVE_DEPTH_OBC1 Summary of this function goes here
 %   Detailed explanation goes here
 
+casename = 'SWE2D/@swe2d_channel/mesh/quad';
+[ obj.mesh ] = read_mesh_file(obj.mesh.cell.N, casename, ...
+    ndg_lib.std_cell_type.Quad);
+obj.EToB = get_bc_id(obj); % 读取开边界类型
+obj.obc_vert = get_obc_vert(casename); % 读取开边界顶点编号
 % 设定开边界条件 EToBS
 % westid = (obj.EToB == 1);
 % obj.mesh.EToBS(westid) = ndg_lib.bc_type.NonSlipWall; % 固壁边界条件
@@ -14,6 +19,7 @@ obj.mesh = ndg_lib.mesh.mesh2d(obj.mesh.cell, ...
     obj.mesh.Nv, obj.mesh.vx, obj.mesh.vy, ...
     obj.mesh.K, obj.mesh.EToV, obj.mesh.EToR, obj.mesh.EToBS);
 
+obj.init(); % 变量初始化
 % 设定边界信息
 Nv = numel(obj.obc_vert); % 顶点个数
 Nt = ceil(obj.ftime/obj.obc_time_interval);

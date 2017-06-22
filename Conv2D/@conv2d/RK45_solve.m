@@ -21,7 +21,7 @@ rk4c = [             0.0  ...
 time = 0;
 ftime = obj.ftime;
 f_Q = obj.f_Q;
-dt = obj.time_interval;
+dt = time_interval( obj, f_Q );
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 while(time < ftime)
     if(time + dt > ftime)
@@ -35,9 +35,14 @@ while(time < ftime)
         f_Q = f_Q + rk4b(INTRK)*resQ;
     end
     time = time + dt;
-    %obj.f_Q = f_Q; obj.draw(1); view(-20, 40); drawnow; 
+    %obj.draw(f_Q); drawnow; 
 end
 
 obj.f_Q = f_Q;
 end
 
+function dt = time_interval(obj, f_Q)
+spe = obj.character_len(f_Q); % Jacobian characteristic length
+dt = bsxfun(@times, sqrt(obj.mesh.vol)/(2*obj.mesh.cell.N+1), 1./spe);
+dt = min( min( dt ) );
+end% func

@@ -38,7 +38,7 @@ cP(ind) = cM(ind);
 
 %% clamped
 ind = (ftype == ndg_lib.bc_type.Clamped);
-cP(ind) = c_extM(ind);
+cP(ind) = 2*c_extM(ind) - cM(ind);
 
 end
 

@@ -34,15 +34,13 @@ classdef swe2d_channel < swe2d
             obj = obj@swe2d(mesh);
             obj.casename = casename;
             obj.ftime = 7200;
-            obj.init(casename);
+            obj.set_west_wave_depth_obc1(); % default obc 
         end% func
         
-        function init(obj, casename)
+        function init(obj)
             obj.f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
+            obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
             obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K);
-            obj.EToB = get_bc_id(obj);
-            obj.obc_vert = get_obc_vert(casename);
-            obj.set_west_wave_depth_obc1(casename); % default obc 
         end% func
     end
     

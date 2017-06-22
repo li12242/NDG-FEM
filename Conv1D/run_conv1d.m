@@ -1,15 +1,15 @@
-function run_conv2d
+function run_conv1d
 
-ne = [20, 40, 60, 80];
+ne = [40, 60, 80, 100];
 k = [1, 2, 3];
-len = 1./ne;
+len = 2./ne;
 
 Nmesh = numel(ne);
 Ndeg = numel(k);
 dofs = zeros(Nmesh, Ndeg);
 for n = 1:Ndeg
     for m = 1:Nmesh
-        dofs(m, n) = ne(m).^2 * (k(n)+1).^2;
+        dofs(m, n) = ne(m) * (k(n)+1);
     end
 end
 
@@ -19,15 +19,12 @@ err1 = zeros(Nmesh, Ndeg);
 
 for n = 1:Ndeg
     for m = 1:Nmesh
-        conv = conv2d_gaussrotate(k(n), ne(m), ndg_lib.std_cell_type.Quad);
+        conv = conv1d_advection( k(n), ne(m) );
         conv.RK45_solve;
         err2(m, n) = conv.norm_err2(conv.ftime);
         err1(m, n) = conv.norm_err1(conv.ftime);
         errInf(m, n) = conv.norm_errInf(conv.ftime);
     end
-    
-    fprintf('\n==================deg = %d==================\n', n);
-    t = convergence_table(len, err1(:, n), err2(:, n), errInf(:, n))
 end
 
 %marker = {'r-o', 'b-s', 'k-*', 'c-^'};
@@ -46,6 +43,12 @@ for n = 1:3
         lendstr{m} = ['p=', num2str(m)];
     end
     legend(lendstr, 'box', 'off');
+end
+
+
+for n = 1:Ndeg
+    fprintf('\n==================deg = %d==================\n', n);
+    t = convergence_table(len, err1(:, n), err2(:, n), errInf(:, n))
 end
 
 end
