@@ -19,7 +19,7 @@ err1 = zeros(Nmesh, Ndeg);
 
 for n = 1:Ndeg
     for m = 1:Nmesh
-        conv = conv2d_gaussrotate(k(n), ne(m), ndg_lib.std_cell_type.Quad);
+        conv = conv2d_diffusion(k(n), ne(m), ndg_lib.std_cell_type.Quad);
         conv.RK45_solve;
         err2(m, n) = conv.norm_err2(conv.ftime);
         err1(m, n) = conv.norm_err1(conv.ftime);
