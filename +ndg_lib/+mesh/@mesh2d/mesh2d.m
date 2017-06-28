@@ -41,6 +41,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
         end% func
         
         function obj = add_sponge(obj, vertlist)
+            % 计算海绵层内单元距离边界长度
             obj. spg_delta = zeros(obj.cell.Np, obj.K);
             xb = obj.vx(vertlist);
             yb = obj.vy(vertlist);

@@ -44,5 +44,5 @@ end
 function dt = time_interval(obj, f_Q)
 spe = obj.character_len(f_Q); % Jacobian characteristic length
 dt = bsxfun(@times, sqrt(obj.mesh.vol)/(2*obj.mesh.cell.N+1), 1./spe);
-dt = min( min( dt ) );
+dt = min( min( dt ) )*0.9;
 end% func

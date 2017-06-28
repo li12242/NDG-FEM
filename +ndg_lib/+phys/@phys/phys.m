@@ -11,12 +11,12 @@ classdef phys < matlab.mixin.SetGet
     end
     
     properties(SetAccess=protected)
-        mesh        % 网格对象
         f_extQ      % 外部值
         obc_file    % 开边界文件
         out_file    % 结果文件
     end
     properties
+        mesh        % 网格对象
         f_Q     % 变量
     end
     %% 虚函数

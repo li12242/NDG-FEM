@@ -32,6 +32,7 @@ classdef conv2d < ndg_lib.phys.phys2d
         end
         
         f_Q = RK45_solve(obj) % Runge-Kutta 4th order 5 stages
+        refine_mesh(obj, multi_ratio) % refined mesh
     end
     
 end

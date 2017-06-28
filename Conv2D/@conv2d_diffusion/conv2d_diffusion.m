@@ -9,8 +9,18 @@ classdef conv2d_diffusion < conv2d
     end
     
     methods
-        function obj = conv2d_diffusion(N, M, type)
-            mesh = uniform_mesh(N, M, type);
+        function obj = conv2d_diffusion(varargin)
+            if( isa(varargin{2}, 'char') )
+                N = varargin{1};
+                casename = varargin{2};
+                type = varargin{3};
+                [ mesh ] = read_mesh_file(N, casename, type);
+            elseif( isa(varargin{2}, 'double') )
+                N = varargin{1};
+                M = varargin{2};
+                type = varargin{3};
+                mesh = uniform_mesh(N, M, type);
+            end
             obj = obj@conv2d(mesh);
             obj.ftime = 2;
             obj.init();
@@ -25,6 +35,7 @@ classdef conv2d_diffusion < conv2d
             obj.u = 0.5*ones(obj.mesh.cell.Np, obj.mesh.K);
             obj.v = 0.5*ones(obj.mesh.cell.Np, obj.mesh.K);
             obj.f_Q = obj.ext_func(0);
+            obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
         end
         
         function f_ext = ext_func(obj, time)

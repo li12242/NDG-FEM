@@ -11,6 +11,7 @@ classdef mesh
         EToR@int8
         EToBS
         vx, vy, vz
+        J
     end
     
     % elemental volume infomation
@@ -20,7 +21,7 @@ classdef mesh
         rx, ry, rz
         sx, sy, sz
         tx, ty, tz
-        J, vol
+        vol
         spg_delta % ∫£√‡≤„æ‡¿Î±ﬂΩÁµ„æ‡¿Î
     end
     
@@ -113,7 +114,7 @@ classdef mesh
             obj.K  = K;
             obj.EToV = EToV;
             obj.EToR = int8(EToR);
-            obj.EToBS = EToBS;
+            obj.EToBS = int8(EToBS);
             
             [obj.EToE, obj.EToF] = ele_connect(obj, obj.EToV);
             [obj.x, obj.y, obj.z] = ele_node_project(obj, obj.vx, obj.vy, obj.vz);

@@ -14,6 +14,10 @@ classdef swe2d_channel < swe2d
         obc_vert; % 开边界顶点序号
     end
     
+    properties(SetAccess=private)
+        detector
+    end
+    
     properties
         casename;
         T = 360; % 周期 6 min
@@ -22,26 +26,47 @@ classdef swe2d_channel < swe2d
         obc_time_interval = 12; % 开边界数据频率 (s)
     end
     
+    methods(Abstract)
+        set_bc(obj) % set boundary condition
+    end
+    
     methods
         draw(obj, f_Q);
-        set_west_wave_depth_obc1(obj, casename);
-        set_west_wave_all_obc2(obj, casename);
-        set_west_wave_flow_east_wall_obc3(obj, casename)
-        set_east_spg_obc4(obj, casename);
         
         function obj = swe2d_channel(N, casename, type)
             [ mesh ] = read_mesh_file(N, casename, type);
             obj = obj@swe2d(mesh);
             obj.casename = casename;
             obj.ftime = 7200;
-            obj.set_west_wave_depth_obc1(); % default obc 
+            
+            % set detector
+            xd = [0, 5e3, 10e3, 20e3];
+            yd = [0, 0, 0, 0];
+            obj.detector = ndg_utility.detector.detector2d(mesh, ...
+                xd, yd, obj.T/24, obj.ftime, obj.Nfield);
+            
+            obj.EToB = get_bc_id(obj); % 读取开边界类型
+            obj.obc_vert = get_obc_vert(casename); % 读取开边界顶点编号
+            
+            obj.set_bc(); % 设置开边界条件
         end% func
         
         function init(obj)
             obj.f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
             obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K);
-        end% func
+            % 设定初始条件
+            w = 2*pi/obj.T;
+            c = sqrt(obj.gra*obj.H);
+            k = w/c;
+            
+            h = obj.eta*cos(k.*obj.mesh.x)+obj.H;
+            u = obj.eta*sqrt(obj.gra/obj.H)*cos(k.*obj.mesh.x);
+
+            obj.f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
+            obj.f_Q(:, :, 1) = h;
+            obj.f_Q(:, :, 2) = h.*u;
+        end
     end
     
     methods(Access=protected)

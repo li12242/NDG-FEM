@@ -2,20 +2,26 @@ function [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename)
 %READ_FROM_FILE Summary of this function goes here
 %   Detailed explanation goes here
 
+isdebug = 0;
 % read node file
 [Nv, vx, vy] = read_node_file(casename);
-fprintf('\n%s\n\n', 'In function read_from_file')
-fprintf('%s\n-- %s\n', 'finish read node file:', [casename, '.node']);
-fprintf('%s %d\n\n','Nv = ', Nv);
-
+if isdebug
+    fprintf('\n%s\n\n', 'In function read_from_file')
+    fprintf('%s\n-- %s\n', 'finish read node file:', [casename, '.node']);
+    fprintf('%s %d\n\n','Nv = ', Nv);
+end
 % read mesh file
 [K, EToV, EToR] = read_mesh_file(casename);
 EToV = resort_vert(EToV, vx, vy); % get the vertex anti-clockwise
-fprintf('%s\n-- %s\n', 'finish read element file:', [casename, '.ele']);
-fprintf('%s %d\n\n', 'K = ', K);
+if isdebug
+    fprintf('%s\n-- %s\n', 'finish read element file:', [casename, '.ele']);
+    fprintf('%s %d\n\n', 'K = ', K);
+end
 % read boundary condition file
 EToBS = read_edge_file(casename, EToV, Nv);
-fprintf('%s\n-- %s\n\n', 'finish read boundary file:', [casename, '.edge']);
+if isdebug
+    fprintf('%s\n-- %s\n\n', 'finish read boundary file:', [casename, '.edge']);
+end
 end% func
 
 function [Nv, vx, vy] = read_node_file(casename)

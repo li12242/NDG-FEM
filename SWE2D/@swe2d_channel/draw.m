@@ -13,10 +13,6 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
         *ones(1, obj.mesh.cell.Nfptotal);
     figure('color', 'w', 'Position', [440, 500, 720, 300]);
     axes('Position', [0.05, 0.1, 0.4, 0.8])
-    % 绘制底坡
-%     patch('Vertices', [obj.mesh.x(:), obj.mesh.y(:), obj.bot(:)], ...
-%         'Faces', EToV, ...
-%         'FaceColor', [.8, .8, .8]);
     % 绘制水面
     f = f_Q(:,:,1); f(f<obj.hmin) = nan;
     obj.draw_h{1} = patch(...
@@ -26,7 +22,8 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
         'FaceColor', 'interp', ...
         'FaceVertexCData', f(:), ...
         'FaceAlpha', 0.8);
-    view(20, 32); colormap(winter); box on; grid on;
+    view(20, 32); colormap(winter); box on; grid on; 
+    %zlim([obj.H-obj.eta-0.05, obj.H+obj.eta+0.05]);
     axes('Position', [0.55, 0.55, 0.4, 0.4])
     % 绘制流量 qx
     f = f_Q(:,:,2);
@@ -46,12 +43,14 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
         'EdgeColor', 'none', ...
         'FaceColor', 'interp', ...
         'FaceVertexCData', f(:) );
-    view(20, 32); colormap(winter); box on; grid on;
+    view(20, 32); colormap(winter);
+    box on; grid on;
 else % 若图像存在
     f = f_Q(:,:,1); f(f<obj.hmin) = nan; % 消去干网格
     set(obj.draw_h{1}, ...
         'Vertices', [obj.mesh.x(:), obj.mesh.y(:), f(:)+obj.bot(:)],...
         'FaceVertexCData', f(:));
+    
     f = f_Q(:,:,2);
     set(obj.draw_h{2}, ...
         'Vertices', [obj.mesh.x(:), obj.mesh.y(:), f(:)],...
