@@ -3,8 +3,10 @@ classdef conv2d_diffusion < conv2d
     %   Detailed explanation goes here
     
     properties(Constant)
-        x0 = -0.5; 
-        y0 = -0.5;
+        x0 = -50; 
+        y0 = -50;
+        u0 = 100/2;
+        v0 = 100/2;
         miu = 0;
     end
     
@@ -32,8 +34,8 @@ classdef conv2d_diffusion < conv2d
         end
         
         function init(obj)
-            obj.u = 0.5*ones(obj.mesh.cell.Np, obj.mesh.K);
-            obj.v = 0.5*ones(obj.mesh.cell.Np, obj.mesh.K);
+            obj.u = obj.u0*ones(obj.mesh.cell.Np, obj.mesh.K);
+            obj.v = obj.v0*ones(obj.mesh.cell.Np, obj.mesh.K);
             obj.f_Q = obj.ext_func(0);
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
         end
@@ -45,7 +47,7 @@ classdef conv2d_diffusion < conv2d
                 t = -(obj.mesh.x-xc).^2/obj.miu ...
                     -(obj.mesh.y-yc).^2/obj.miu;
             else
-                sigma = 125*1e3/(33*33);
+                sigma = 125*1e-1/(33*33);
                 t = -( (obj.mesh.x-xc).^2+(obj.mesh.y-yc).^2 )*sigma;
             end
             f_ext = exp(t);

@@ -12,7 +12,7 @@ switch nargin
         with_omp = varargin{2};
 end
 switch computer('arch')
-    case 'maci64' 
+    case 'maci64'
         if isempty(compiler_path) % default compiler path
             compiler = 'CC=/opt/intel/composer_xe_2015.5.222/bin/intel64/icc';
         else
@@ -44,7 +44,8 @@ end
 
 %% +Polylib
 path = '+Polylib';
-srcfile = {'zwglj.c', 'JacobiP.c', 'jacobfd.c', 'GradJacobiP.c', 'Dglj.c'};
+srcfile = {'zwglj.c', 'zwgl.c', 'JacobiP.c', 'jacobfd.c', ...
+    'GradJacobiP.c', 'Dglj.c'};
 libfile = {'polylib.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
@@ -103,6 +104,9 @@ ndg_utility.cprintf('string', '%s\nCFLAGS=%s\nLDFLAGS=%s\n', ...
     compiler, cflags, ldflags);
 
 for i = 1:numel(srcfile)
+    if ( iscompiled(srcfile) ) 
+        continue; 
+    end
     fprintf('\n%s/%s...\n', path,src{i});
     file = [srcfile(i), libfile{:}];
     mex(compiler, cflags, '-O', ldflags, file{:});
@@ -111,3 +115,8 @@ ndg_utility.cprintf('key', ...
     '=========finish installing %s=========\n\n', path);
 cd(pwdPath);
 end
+
+function tf = iscompiled(srfile)
+tf = false;
+end
+

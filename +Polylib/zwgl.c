@@ -2,7 +2,7 @@
 #include "polylib.h"
 
 /* 
- * Get Gauss-Lobatto-Jacobi zeros and weights with end point in[-1, 1]
+ * Get Gauss-Legendre points and weights.
  * Input: 	
  * 		np 	- number of nodes in [-1, 1]
  * Output:
@@ -35,6 +35,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 	/* void zwglj(double *z, double *w, int np, double alpha, double beta) */
 
-	zwglj(z, w, np, 0, 0);
+	zwgl(z, w, np);
 
 }

@@ -11,8 +11,8 @@ function [ mesh ] = uniform_mesh( N, M, type )
 % Output:
 %   mesh - Íø¸ñ¶ÔÏó
 %
-xmin = -1; xmax = 1; 
-ymin = -1; ymax = 1;
+xmin = -100; xmax = 100; 
+ymin = -100; ymax = 100;
 face_type = [ndg_lib.bc_type.ZeroGrad,...
     ndg_lib.bc_type.ZeroGrad, ...
     ndg_lib.bc_type.ZeroGrad, ...

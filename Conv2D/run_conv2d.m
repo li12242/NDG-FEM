@@ -1,11 +1,13 @@
 function run_conv2d
 
-casename{1} = 'Conv2D/@conv2d_diffusion/mesh/quad_500/quad_500';
-K = 505;
-ne = [K, K*4^1, K*4^2];
-k = [1, 2, 3];
-% ne = [20, 40, 60, 80, 100];
-len = 1./ne;
+casename{1} = 'Conv2D/@conv2d_diffusion/mesh/quad_2000/quad_2000';
+K = 2000;
+n = [0, 1];
+ne = K*4.^n;
+len = 0.5.^n;
+k = [1, 2, 3, 4];
+% ne = [20, 40, 60, 80];
+% len = 1./ne;
 
 Nmesh = numel(ne);
 Ndeg = numel(k);
@@ -20,7 +22,7 @@ errInf = zeros(Nmesh, Ndeg);
 err2 = zeros(Nmesh, Ndeg);
 err1 = zeros(Nmesh, Ndeg);
 quad_type = ndg_lib.std_cell_type.Quad;
-linewidth = 1.5; markersize = 5.5;
+linewidth = 1.5; markersize = 7;
 color = {'b', 'r', 'g', 'm'};
 marker = {'o', 's', '^', '*'};
 for n = 1:Ndeg
@@ -30,7 +32,8 @@ for n = 1:Ndeg
         else
             conv.refine_mesh(1);
         end
-        conv.mesh.J = repmat(mean(conv.mesh.J), conv.mesh.cell.Np, 1);
+%         conv = conv2d_gaussrotate(k(n), ne(m), quad_type);
+%         conv.mesh.J = repmat(mean(conv.mesh.J), conv.mesh.cell.Np, 1);
         conv.init; conv.RK45_solve;
         err2(m, n) = conv.norm_err2(conv.ftime);
         err1(m, n) = conv.norm_err1(conv.ftime);
@@ -38,21 +41,21 @@ for n = 1:Ndeg
     end
     % print table
     fprintf('\n==================deg = %d==================\n', n);
-    t = convergence_table(dofs(:, n), err1(:, n), err2(:, n), errInf(:, n))
+    t = convergence_table(len, err1(:, n), err2(:, n), errInf(:, n))
     
     % plot figure
     co = color{n}; ma = marker{n};
-    figure(1); plot(dofs(:, n), err1(:, n), [co, ma, '--'],...
+    figure(1); plot(dofs(:, n), err1(:, n), [co, ma, '-'],...
         'LineWidth', linewidth, ...
         'MarkerSize', markersize, ...
         'MarkerFaceColor', co); 
     hold on;
-    figure(2); plot(dofs(:, n), err2(:, n), [co, ma, '--'],...
+    figure(2); plot(dofs(:, n), err2(:, n), [co, ma, '-'],...
         'LineWidth', linewidth, ...
         'MarkerSize', markersize, ...
         'MarkerFaceColor', co); 
     hold on;
-    figure(3); plot(dofs(:, n), errInf(:, n), [co, ma, '--'],...
+    figure(3); plot(dofs(:, n), errInf(:, n), [co, ma, '-'],...
         'LineWidth', linewidth, ...
         'MarkerSize', markersize, ...
         'MarkerFaceColor', co); 
