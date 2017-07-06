@@ -77,6 +77,8 @@ path = 'Conv2d/@conv2d/private';
 srcfile = {'upwind_flux.c'};
 libfile = {'conv2d.c', 'bc.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
+path = 'Conv2d/@conv2d_gaussquad/private';
+install(path, srcfile, libfile, compiler, cflags, ldflags);
 
 %% SWE2d
 path = 'SWE2d/@swe2d/private';

@@ -1,5 +1,5 @@
-classdef conv2d_diffusion < conv2d
-    %CONV2D_DIFFUSION Summary of this class goes here
+classdef conv2d_gaussquad < conv2d
+    %CONV2D_GAUSSQUAD Summary of this class goes here
     %   Detailed explanation goes here
     
     properties(Constant)
@@ -10,8 +10,12 @@ classdef conv2d_diffusion < conv2d
         miu = 0;
     end
     
+    properties
+        uq, vq
+    end
+    
     methods
-        function obj = conv2d_diffusion(varargin)
+        function obj = conv2d_gaussquad(varargin)
             if( isa(varargin{2}, 'char') )
                 N = varargin{1};
                 casename = varargin{2};
@@ -36,6 +40,8 @@ classdef conv2d_diffusion < conv2d
         function init(obj)
             obj.u = obj.u0*ones(obj.mesh.cell.Np, obj.mesh.K);
             obj.v = obj.v0*ones(obj.mesh.cell.Np, obj.mesh.K);
+            obj.uq = obj.mesh.cell.proj_node2quad(obj.u);
+            obj.vq = obj.mesh.cell.proj_node2quad(obj.u);
             obj.f_Q = obj.ext_func(0);
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
         end
@@ -52,6 +58,13 @@ classdef conv2d_diffusion < conv2d
             end
             f_ext = exp(t);
         end
+    end
+    
+    %% Ë½ÓÐº¯Êý
+    methods(Access=protected) % private 
+        [ E, G ] = flux_term_quad( obj, f_Q ) % get the flux terms
+        [ dflux ] = surf_term_quad( obj, f_Q ) % get flux deviation
+        [ rhs ] = rhs_term(obj, f_Q ) % get the r.h.s term
     end
     
 end

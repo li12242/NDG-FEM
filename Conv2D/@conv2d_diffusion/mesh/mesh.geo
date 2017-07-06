@@ -1,6 +1,6 @@
-c = 5;
-xmin = -100; xmax = 100;
-ymin = -100; ymax = 100;
+c = 0.05;
+xmin = -1; xmax = 1;
+ymin = -1; ymax = 1;
 
 Point(1) = {xmin, ymin, 0, c};
 Point(2) = {xmax, ymin, 0, c};

@@ -7,7 +7,6 @@ classdef conv2d < ndg_lib.phys.phys2d
     end
     
     properties
-        cfl     % CFL 数
         ftime   % 计算终止时间
         dt      % 计算时间步长
         u,v     % 速度场
