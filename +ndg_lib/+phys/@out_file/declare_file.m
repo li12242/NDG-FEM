@@ -2,7 +2,7 @@ function declare_file( obj )
 %DECLARE_FILE Create a new NetCDF file and define contained variables
 %   Detailed explanation goes here
 
-obj.ncid = netcdf.create(obj.name,'CLOBBER');
+obj.ncid = netcdf.create([obj.name,'.nc'],'CLOBBER');
 
 for n = 1:numel(obj.dims)
     obj.dims(n).define_in_ncfile(obj.ncid);

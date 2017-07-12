@@ -11,6 +11,8 @@ classdef conv2d_diffusion < conv2d
     end
     
     methods
+        drarw_section(obj, f_Q, time);
+        
         function obj = conv2d_diffusion(varargin)
             if( isa(varargin{2}, 'char') )
                 N = varargin{1};
@@ -38,6 +40,7 @@ classdef conv2d_diffusion < conv2d
             obj.v = obj.v0*ones(obj.mesh.cell.Np, obj.mesh.K);
             obj.f_Q = obj.ext_func(0);
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
+            
         end
         
         function f_ext = ext_func(obj, time)

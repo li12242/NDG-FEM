@@ -1,4 +1,4 @@
-function [ stdcell ] = ndg_cell( N, type )
+function [ stdcell ] = get_std_cell( N, type )
 %NDG_CELL 根据输出单元类型与阶数返回对应单元对象。
 %   Detailed explanation goes here
 

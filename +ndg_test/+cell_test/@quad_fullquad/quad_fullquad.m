@@ -14,7 +14,7 @@ classdef quad_fullquad < ndg_lib.std_cell.quad
     methods
         function obj = quad_fullquad(N)
             obj = obj@ndg_lib.std_cell.quad(N);
-            Nq = obj.N+2; % 每个维度积分节点个数
+            Nq = obj.N+1; % 每个维度积分节点个数
             obj.Nq = Nq^2;
             obj.Nfq = Nq*obj.Nface;
             [obj.zq, obj.q] = Polylib.zwgl(Nq); % 一维 GL 积分节点

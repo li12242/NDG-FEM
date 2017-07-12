@@ -3,10 +3,8 @@ classdef conv2d_gaussquad < conv2d
     %   Detailed explanation goes here
     
     properties(Constant)
-        x0 = -0.5; 
-        y0 = -0.5;
-        u0 = 1/2;
-        v0 = 1/2;
+        x0 = -0.5; y0 = -0.5;
+        u0 = 1/2; v0 = 1/2;
         miu = 0;
     end
     

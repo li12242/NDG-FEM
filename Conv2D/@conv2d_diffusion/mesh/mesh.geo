@@ -1,4 +1,4 @@
-c = 0.05;
+c = 0.1;
 xmin = -1; xmax = 1;
 ymin = -1; ymax = 1;
 
@@ -14,7 +14,7 @@ Line Loop(1) = {1, 2, 3, 4};
 Plane Surface(1) = {1};
 
 Recombine Surface{1};
-Mesh.Smoothing = 10;
+Mesh.Smoothing = 8;
 
 Physical Line(5) = {1,2,3,4}; // east bc - clamped
 Physical Surface(1) = {1};Coherence;

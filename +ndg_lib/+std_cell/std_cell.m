@@ -66,7 +66,7 @@ classdef std_cell
                 obj.Nfp = 1;
             end
             for f = 1:obj.Nface
-                cell = ndg_lib.ndg_cell(obj.N, obj.faceType(f));
+                cell = ndg_lib.get_std_cell(obj.N, obj.faceType(f));
                 obj.Nfp(f) = cell.Np;
             end
             obj.Nfptotal = sum(obj.Nfp);
@@ -115,7 +115,7 @@ classdef std_cell
                 if(isrow(sv)) sv = sv'; end
                 if(isrow(tv)) tv = tv'; end
                 % get the nodes on face f
-                cell = ndg_lib.ndg_cell(obj.N, obj.faceType(f));
+                cell = ndg_lib.get_std_cell(obj.N, obj.faceType(f));
                 fr = cell.project_vert2node(rv);
                 fs = cell.project_vert2node(sv);
                 ft = cell.project_vert2node(tv);
@@ -132,7 +132,7 @@ classdef std_cell
             Mes = zeros(obj.Np, obj.Nfptotal);
             sk = 1;
             for f = 1:obj.Nface
-                cell = ndg_lib.ndg_cell(obj.N, obj.faceType(f));
+                cell = ndg_lib.get_std_cell(obj.N, obj.faceType(f));
                 row = obj.Fmask(:, f);
                 for n = 1:cell.Np
                     Mes(row, sk) = cell.M(:, n);
@@ -149,7 +149,7 @@ classdef std_cell
             Mes = zeros(obj.Np, obj.Nfptotal);
             sk = 1;
             for f = 1:obj.Nface
-                cell = ndg_lib.ndg_cell(obj.N, obj.faceType(f));
+                cell = ndg_lib.get_std_cell(obj.N, obj.faceType(f));
                 row = obj.Fmask(:, f);
                 for n = 1:cell.Np
                     Mes(row, sk) = cell.M(:, n);

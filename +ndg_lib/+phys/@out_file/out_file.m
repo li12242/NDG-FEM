@@ -60,8 +60,9 @@ classdef out_file < ndg_utility.nc.nc_file
         function put_var(obj, time, f_Q)
             % 将变量 f_Q 与 time 写入结果文件内
             if (time > obj.counter*obj.dt)
-                netcdf.putVar(obj.ncid, obj.vars(1).id, [0, 0, obj.counter],...
-                    [obj.vars(1).dims(1:2).len, 1], f_Q);
+                netcdf.putVar(obj.ncid, obj.vars(1).id, ...
+                    [0, 0, 0, obj.counter],...
+                    [obj.vars(1).dims(1:3).len, 1], f_Q);
                 netcdf.putVar(obj.ncid, obj.vars(2).id, obj.counter, 1, time);
                 obj.counter = obj.counter + 1;
             end% if

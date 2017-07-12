@@ -51,8 +51,7 @@ classdef detector < matlab.mixin.SetGet
             obj.time = zeros(obj.Nt, 1);
             obj.Nfield = Nfield;
             
-            obj.dQ = zeros(obj.Nd, obj.Nt, obj.Nfield);
-            
+            obj.init();
             [obj.kd, obj.rd, obj.sd, obj.td] = obj.findlocate();
             obj.intMat = obj.interpmatrix();
         end% func
