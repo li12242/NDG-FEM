@@ -21,7 +21,7 @@ face_type = [ndg_lib.bc_type.SlipWall,...
 My = ceil( Mx*.4 );
 switch type
     case ndg_lib.std_cell_type.Tri
-        cell = ndg_lib.ndg_cell(N, type);
+        cell = ndg_lib.get_std_cell(N, type);
         [K,EToV,Nv,VX,VY,EToBS,EToR] = ...
             ndg_utility.uniform_mesh.tri_mesh(Mx, My, ...
             xmin, xmax, ymin, ymax, face_type);
@@ -29,7 +29,7 @@ switch type
             K, EToV, EToR, EToBS);
         
     case ndg_lib.std_cell_type.Quad
-        cell = ndg_lib.ndg_cell(N, type);
+        cell = ndg_lib.get_std_cell(N, type);
         [K,EToV,Nv,VX,VY,EToBS,EToR] = ...
             ndg_utility.uniform_mesh.quad_mesh(Mx, My, ...
             xmin, xmax, ymin, ymax, face_type);
