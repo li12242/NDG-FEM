@@ -4,8 +4,6 @@ classdef mesh2d_fullquad < ndg_lib.mesh.mesh2d
     
     properties
         invM % inverse mass matrix of each element
-        Drq, Dsq % 体积分刚度矩阵 $S_{x,ij} = J(\xi_j) d\varphi_i/dx|_{\xi_j}$
-        LIFTq % 面积分系数矩阵 Js \cdot \varphi_i(\xi_j)
         Jq, % 插值节点处雅克比行列式
         rxq, ryq, rzq
         sxq, syq, szq
@@ -22,14 +20,12 @@ classdef mesh2d_fullquad < ndg_lib.mesh.mesh2d
             % 计算每个面质量矩阵
             obj.Jq = obj.cell.proj_node2quad(obj.J);
             obj.invM = mass_matrix(obj);
-            % 计算乘以质量矩阵逆后刚度矩阵
-            [ obj.Drq, obj.Dsq ] = stiff_matrix(obj);
+            
             obj.rxq = obj.vol_scal(obj.rx); % 计算面积分转换系数
             obj.ryq = obj.vol_scal(obj.ry);
             obj.sxq = obj.vol_scal(obj.sx);
             obj.syq = obj.vol_scal(obj.sy);
             % 面积分 lift 矩阵
-            obj.LIFTq = lift_matrix(obj);
             [obj.nxq, obj.nyq, obj.nzq, obj.fsq] ...
                 = face_scal(obj, obj.vx, obj.vy, obj.EToV);
             [obj.eidMq, obj.eidPq, obj.eidtypeq] = connect_quad_node(obj);
@@ -79,23 +75,6 @@ classdef mesh2d_fullquad < ndg_lib.mesh.mesh2d
                     obj.cell.Vq);
                 mass_mat = obj.cell.Vq'*JVq;
                 invM(:, :, k) = inv(mass_mat);
-            end
-        end
-        
-        function [ Dr, Ds ] = stiff_matrix(obj)
-            Ds = zeros(obj.cell.Np, obj.cell.Nq, obj.K);
-            Dr = zeros(obj.cell.Np, obj.cell.Nq, obj.K);
-            
-            for k = 1:obj.K
-                Dr(:,:,k) = obj.invM(:, :, k)*obj.cell.Drq';
-                Ds(:,:,k) = obj.invM(:, :, k)*obj.cell.Dsq';
-            end
-        end
-        
-        function [ lift ] = lift_matrix(obj)
-            lift = zeros(obj.cell.Np, obj.cell.Nfq, obj.K);
-            for k = 1:obj.K
-                lift(:, :, k) = obj.invM(:, :, k)*obj.cell.Vbq';
             end
         end
         

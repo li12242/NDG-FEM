@@ -23,9 +23,9 @@ ftime = obj.ftime;
 f_Q = obj.f_Q;
 dt = time_interval( obj, f_Q );
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
-ticktime = [0, 0.5, 1, 1.5, 1.98];
-marker = ['ox+*s'];
-flag = true(size(ticktime));
+% ticktime = [0, 0.5, 1, 1.5, 1.98];
+% marker = ['ox+*s'];
+% flag = true(size(ticktime));
 
 while(time < ftime)
     if(time + dt > ftime)
@@ -39,33 +39,33 @@ while(time < ftime)
         f_Q = f_Q + rk4b(INTRK)*resQ;
     end
     time = time + dt;
-    if any(flag)
-        t = find(flag, 1);
-        if(time > ticktime(t))
-            fig = figure(); obj.draw( f_Q );
-            grid on; box on; view([-18, 42]); zlim([-0.2, 1]);
-            xlabel('$x$', 'Fontsize', 16, 'Interpreter', 'Latex');
-            ylabel('$y$', 'Fontsize', 16, 'Interpreter', 'Latex');
-            zlabel('$C$', 'Fontsize', 16, 'Interpreter', 'Latex');
-            print(fig, ['time_', num2str(ticktime(t))], ...
-                '-r300', '-dtiff')
-            close(fig);
-            obj.draw_section(f_Q, time, marker(t));
-            flag(t) = false;
-        end
-    end
+%     if any(flag)
+%         t = find(flag, 1);
+%         if(time > ticktime(t))
+%             fig = figure(); obj.draw( f_Q );
+%             grid on; box on; view([-18, 42]); zlim([-0.2, 1]);
+%             xlabel('$x$', 'Fontsize', 16, 'Interpreter', 'Latex');
+%             ylabel('$y$', 'Fontsize', 16, 'Interpreter', 'Latex');
+%             zlabel('$C$', 'Fontsize', 16, 'Interpreter', 'Latex');
+%             print(fig, ['time_', num2str(ticktime(t))], ...
+%                 '-r300', '-dtiff')
+%             close(fig);
+%             obj.draw_section(f_Q, time, marker(t));
+%             flag(t) = false;
+%         end
+%     end
     %obj.draw(f_Q); drawnow; 
 end
 obj.f_Q = f_Q;
 
-grid on; box on;
-xlabel('$x$', 'Fontsize', 16, 'Interpreter', 'Latex');
-ylabel('$C$', 'Fontsize', 16, 'Interpreter', 'Latex');
-legend({'$t = 0 s$', '$t = 0.5 s$', ...
-    '$t = 1 s$', '$t = 1.5 s$', '$t = 2 s$'}, ...
-    'Location', 'eastoutside', ...
-    'Interpreter', 'Latex',...
-    'FontSize', 16);
+% grid on; box on;
+% xlabel('$x$', 'Fontsize', 16, 'Interpreter', 'Latex');
+% ylabel('$C$', 'Fontsize', 16, 'Interpreter', 'Latex');
+% legend({'$t = 0 s$', '$t = 0.5 s$', ...
+%     '$t = 1 s$', '$t = 1.5 s$', '$t = 2 s$'}, ...
+%     'Location', 'eastoutside', ...
+%     'Interpreter', 'Latex',...
+%     'FontSize', 16);
 end
 
 function dt = time_interval(obj, f_Q)

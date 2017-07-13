@@ -30,10 +30,11 @@ linestyle = '--';
 for n = 1:Ndeg
     for m = 1:Nmesh
         if (m == 1)
-            conv = conv2d_gaussquad(k(n), casename{m}, quad_type);
+            conv = conv2d_diffusion(k(n), casename{m}, quad_type);
         else
             conv.refine_mesh(1);
         end
+        %conv.mesh.J = repmat(mean(conv.mesh.J), conv.mesh.cell.Np, 1);
         conv.init; 
         tic; conv.RK45_solve; time(m, n) = toc;
         err2(m, n) = conv.norm_err2(conv.ftime);
@@ -63,16 +64,16 @@ for n = 1:Ndeg
         'MarkerFaceColor', co); 
     hold on;
     
-    figure(4); plot(dofs(:, n), errInf(:, n), [co, ma, linestyle],...
+    figure(4); plot(dofs(:, n), time(:, n), [co, ma, linestyle],...
         'LineWidth', linewidth, ...
         'MarkerSize', markersize, ...
         'MarkerFaceColor', co); 
     hold on;
 end
 
-ylabel_str = {'$L_1$', '$L_2$', '$L_\infty$'};
+ylabel_str = {'$L_1$', '$L_2$', '$L_\infty$', '$time(s)$'};
 fontsize = 16;
-for n = 1:3
+for n = 1:4
     figure(n);
     box on; grid on;
     set(gca, 'XScale', 'log', 'YScale', 'log');
@@ -82,7 +83,7 @@ for n = 1:3
     end
     legend(lendstr, 'box', 'off',...
         'Interpreter', 'Latex', 'FontSize', fontsize);
-    xlabel('$N_e$', 'Interpreter', 'Latex', 'FontSize', fontsize);
+    xlabel('$DOFs$', 'Interpreter', 'Latex', 'FontSize', fontsize);
     ylabel(ylabel_str{n}, 'Interpreter', 'Latex', 'FontSize', fontsize);
 end
 
