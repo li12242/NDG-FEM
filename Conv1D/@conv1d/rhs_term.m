@@ -6,7 +6,7 @@ E = flux_term(obj, f_Q); % volume flux term
 dflux = surf_term( obj, f_Q ); % surface flux deviation
 
 rhs = -obj.mesh.rx.*(obj.mesh.cell.Dr*E) + ...
-    obj.mesh.cell.LIFT*( obj.mesh.eidfscal.*dflux );
+    obj.mesh.cell.LIFT*( obj.mesh.Js.*dflux )./obj.mesh.J;
 
 end
 

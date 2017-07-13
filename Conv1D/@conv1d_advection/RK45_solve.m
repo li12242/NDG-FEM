@@ -38,7 +38,7 @@ while(time < ftime)
 %         f_Q = obj.slopelimiter.limit( f_Q );
     end
     time = time + dt;
-    %obj.draw( f_Q ); drawnow;
+    obj.draw( f_Q ); drawnow;
 end
 
 obj.f_Q = f_Q;

@@ -12,6 +12,8 @@ classdef tri_mesh < ndg_lib.mesh.mesh2d
             end
             
         end% func
+        
+        obj = refine(obj, multi_rate); % ¼ÓÃÜÍø¸ñ
     end% methods
     
 end

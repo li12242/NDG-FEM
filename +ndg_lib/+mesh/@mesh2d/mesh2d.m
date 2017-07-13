@@ -24,7 +24,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
         end
     end% methods
     
-    methods
+    methods        
         function obj = mesh2d(cell, varargin)
             
             if(nargin == 2) % case input

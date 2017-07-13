@@ -22,14 +22,14 @@ classdef mesh < matlab.mixin.SetGet
         rx, ry, rz
         sx, sy, sz
         tx, ty, tz
-        vol, elen
+        vol % 每个单元体积/面积/长度
+        elen % 单元各个面面积/长度
         spg_delta % 海绵层距离边界点距离
     end
     
     properties(SetAccess=protected)
         eidM, eidP
         eidtype@int8
-        eidfscal
     end
     
     % elemental edge information
@@ -56,11 +56,11 @@ classdef mesh < matlab.mixin.SetGet
     methods(Abstract, Hidden, Access = protected)
         ele_vol_factor(obj) % get volume infomation () of each element
         ele_suf_factor(obj) % get out normal vector of each elemental edges
-%         edge_connect(obj) % get edge connection through element connection
         Eind = get_Eind(obj) % 获取所有面独立编号
     end
     
     methods(Abstract)
+        refine(obj, order); % 加密网格
         draw(obj); 
     end
     
@@ -161,8 +161,8 @@ classdef mesh < matlab.mixin.SetGet
         end
         
         function obj = ele_scale(obj)
+            % 计算单元体积与各个边界面长度
             len = sum( bsxfun(@times, obj.cell.w, obj.J) );
-            
             par = bsxfun(@times, obj.cell.ws, obj.Js);
             eglen = zeros(obj.cell.Nface, obj.K);
             if (obj.cell.Nfp == 1)

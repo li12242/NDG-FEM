@@ -7,22 +7,20 @@ classdef line_mesh < ndg_lib.mesh.mesh
     end
     
     methods(Hidden, Access = protected)
-        [EToE, EToF] = ele_connect(obj, EToV)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
         [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
-%         [Nedge, Nnode, kM, kP, fM, fP, ftype, ...
-%             idM, idP, fpM, fpP, fscal, fnxM, fnyM, fnzM] = ...
-%             edge_connect(obj, EToV, EToE, EToF, EToBS)
         
         function Eind = get_Eind(obj)
             Eind = zeros(obj.cell.Nface, obj.K);
             for f = 1:obj.cell.Nface
                 Eind(f, :) = obj.EToV(obj.cell.FToV(1,f), :);
             end
-        end
+        end% func
     end% methods
     
     methods
+        obj = refine(obj, refine_level);
+        
         function obj = line_mesh(cell, varargin)
             if(cell.type ~= ndg_lib.std_cell_type.Line) % check input cell
                 error(['Input cell type ', cell.type, 'is not line!'])
