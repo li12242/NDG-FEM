@@ -6,13 +6,20 @@ classdef line_mesh < ndg_lib.mesh.mesh
         [Nv, vx, K, EToV, EToR, EToBS] = read_from_file(casename)
     end
     
-    methods(Access = protected)
+    methods(Hidden, Access = protected)
         [EToE, EToF] = ele_connect(obj, EToV)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
         [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
-        [Nedge, Nnode, kM, kP, fM, fP, ftype, ...
-            idM, idP, fpM, fpP, fscal, fnxM, fnyM, fnzM] = ...
-            edge_connect(obj, EToV, EToE, EToF, EToBS)
+%         [Nedge, Nnode, kM, kP, fM, fP, ftype, ...
+%             idM, idP, fpM, fpP, fscal, fnxM, fnyM, fnzM] = ...
+%             edge_connect(obj, EToV, EToE, EToF, EToBS)
+        
+        function Eind = get_Eind(obj)
+            Eind = zeros(obj.cell.Nface, obj.K);
+            for f = 1:obj.cell.Nface
+                Eind(f, :) = obj.EToV(obj.cell.FToV(1,f), :);
+            end
+        end
     end% methods
     
     methods
