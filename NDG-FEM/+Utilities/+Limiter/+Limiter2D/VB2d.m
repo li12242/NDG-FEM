@@ -1,0 +1,26 @@
+function [ hlim ] = VB2d_VA( mesh, h, type )
+%VB2D Summary of this function goes here
+%   Detailed explanation goes here
+
+shape = mesh.Shape;
+hlim  = Utilities.Limiter.Limiter2D.VB2d_VA_Mex...
+            (h, mesh.J, shape.M, mesh.EToV, ...
+            mesh.Shape.Fmask, mesh.Nv, mesh.x, mesh.y);
+
+switch type
+    case 'VA' % van Albada from Van Rosendale (1994)
+        hlim  = Utilities.Limiter.Limiter2D.VB2d_VA_Mex...
+            (h, mesh.J, shape.M, mesh.EToV, ...
+            mesh.Shape.Fmask, mesh.Nv, mesh.x, mesh.y);
+    case 'JK' % Jawahar and Kamath (2000)
+        hlim  = Utilities.Limiter.Limiter2D.VB2d_JK_Mex...
+            (h, mesh.J, shape.M, mesh.EToV, ...
+            mesh.Shape.Fmask, mesh.Nv, mesh.x, mesh.y);
+    case 'HWENO' % Qiu and Shu (2005)
+        hlim  = Utilities.Limiter.Limiter2D.VB2d_HWENO_Mex...
+            (h, mesh.J, shape.M, mesh.EToV, ...
+            mesh.Shape.Fmask, mesh.Nv, mesh.x, mesh.y);
+end
+
+end
+

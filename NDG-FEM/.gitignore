@@ -1,0 +1,13 @@
+.tags
+.tags_sorted_by_file
+.DS_Store
+my_version
+*.nc
+*.avi
+*.m~
+html
+*.mexmaci64
+*.mexw64
+*.mexw32
+*.txt
+*.asv

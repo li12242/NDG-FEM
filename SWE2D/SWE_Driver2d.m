@@ -20,7 +20,7 @@ function SWE_Driver2d(type)
 
 % Name of test case
 % casename = 'DamBreakDry';
-casename = 'DamBreakWet';
+%casename = 'DamBreakWet';
 % casename = 'ParabolicBowl';
 % casename = 'PartialDamBreak';
 % casename = 'FlowOver3BumpsUniform';
