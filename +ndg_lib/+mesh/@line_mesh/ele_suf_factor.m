@@ -1,4 +1,4 @@
-function [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
+function [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, vz, EToV)
 %ELE_SUF_FACTOR Summary of this function goes here
 %   Detailed explanation goes here
 

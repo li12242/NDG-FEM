@@ -8,7 +8,7 @@ classdef line_mesh < ndg_lib.mesh.mesh
     
     methods(Hidden, Access = protected)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
-        [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
+        [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, vz, EToV)
         
         function Eind = get_Eind(obj)
             Eind = zeros(obj.cell.Nface, obj.K);

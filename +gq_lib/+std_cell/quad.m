@@ -22,11 +22,13 @@ classdef quad < ndg_lib.std_cell.quad & gq_lib.std_cell.gauss_quad_cell
             tq = zeros(size(rq));
         end
         
-        function [rbq, sbq, tbq, wbq] = gaussquad_surf_coor(obj, N)
+        function [rbq, sbq, tbq, wbq, Nfq] = gaussquad_surf_coor(obj, N)
             sind = 1;
+            Nfq = zeros(obj.Nface, 1);
             for f = 1:obj.Nface
                 cell = gq_lib.std_cell.get_std_cell(N, obj.faceType(f) );
                 obj.Nfq = obj.Nfq + cell.Nq;
+                Nfq(f) = cell.Nq;
                 eind = sind + cell.Nq - 1;
                 r = obj.r(obj.Fmask(:, f));
                 s = obj.s(obj.Fmask(:, f));

@@ -51,96 +51,13 @@ classdef mesh < matlab.mixin.SetGet
 %         fnxM, fnyM, fnzM
 %     end
     
-    
-    %% Abstract methods
+    %% 私有方法
     methods(Abstract, Hidden, Access = protected)
         ele_vol_factor(obj) % get volume infomation () of each element
         ele_suf_factor(obj) % get out normal vector of each elemental edges
         Eind = get_Eind(obj) % 获取所有面独立编号
     end
     
-    methods(Abstract)
-        refine(obj, order); % 加密网格
-        draw(obj); 
-    end
-    
-    %% public methods
-    methods
-        function nodeQ = proj_vert2node(obj, vertQ)
-            % project scalars from mesh verts to nodes
-            ele_vQ = vertQ(obj.EToV); % 每个单元顶点值
-            nodeQ = obj.cell.project_vert2node(ele_vQ);
-        end
-        
-        function c_m = cell_mean(obj, f_Q)
-            % calculate the cell averaged values
-            [ c_m ] = cell_mean( f_Q, obj.cell.w, obj.J );
-        end
-        
-        function f_m = face_mean(obj, f_Q)
-            % 计算单元内每个面均值
-            par = bsxfun(@times, obj.cell.ws, obj.Js);
-            f_m = zeros(obj.cell.Nface, obj.K);
-            f_M = f_Q(obj.eidM);
-            tmp = par.*f_M;
-            st = 1;
-            if (obj.cell.Nfp == 1)
-                f_m = tmp;
-            else
-                for f = 1:obj.cell.Nface
-                    sk = st + obj.cell.Nfp(f);
-                    row = st:(sk-1);
-                    f_m(f, :) = sum( tmp(row, :) )./sum(par(row, :));
-                    st = sk;
-                end
-            end
-        end
-    end
-    
-    %% I/O methods
-    methods(Abstract)
-        % read mesh information from input file, I/O methods
-        [Nv, vx, vy, vz, K, EToV, EToR, EToBS] = read_from_file(casename)
-    end
-    
-    %% 公有函数
-    methods
-        function obj = mesh(cell, Nv, vx, vy, vz, K, EToV, EToR, EToBS)
-            % 设置网格对象属性
-            obj.cell = cell; 
-            obj.Nv = Nv;
-            obj.vx = vx; 
-            obj.vy = vy; 
-            obj.vz = vz;
-            obj.K  = K; 
-            obj.EToV = EToV;
-            obj.EToR = int8(EToR); 
-            obj.EToBS = int8(EToBS);
-            
-            % 获取每个单元相邻单元编号
-            obj.Eind = obj.get_Eind();
-            obj = ele_connect(obj, obj.Eind);
-            obj = ele_node_project(obj, vx, vy, vz);
-            
-            [obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, ...
-                obj.tx, obj.ty, obj.tz, obj.J] = ele_vol_factor(obj);
-            
-            [obj.nx, obj.ny, obj.nz, obj.Js] ...
-                = ele_suf_factor(obj, obj.vx, obj.vy, obj.EToV);
-            
-%             [obj.Nedge, obj.Nnode, ...
-%                 obj.kM, obj.kP, obj.fM, obj.fP, obj.ftype, ...
-%                 obj.idM, obj.idP, obj.fpM, obj.fpP, obj.fscal, ...
-%                 obj.fnxM, obj.fnyM, obj.fnzM] ...
-%                 = edge_connect(obj, obj.EToV, obj.EToE, obj.EToF, obj.EToBS);
-            
-            obj = ele_node_connect(obj);
-            
-            obj = ele_scale(obj);
-        end% func
-    end
-    
-    %% 私有函数
     methods(Hidden, Access=protected)
         
         function obj = ele_connect(obj, Eind)
@@ -229,5 +146,71 @@ classdef mesh < matlab.mixin.SetGet
         end
     end
     
+    %% 公共方法
+    methods(Abstract)
+        refine(obj, order); % 加密网格
+        draw(obj); 
+    end
+    
+    methods
+        function obj = mesh(cell, Nv, vx, vy, vz, K, EToV, EToR, EToBS)
+            % 设置网格对象属性
+            obj.cell = cell; 
+            obj.Nv = Nv;
+            obj.vx = vx; 
+            obj.vy = vy; 
+            obj.vz = vz;
+            obj.K  = K; 
+            obj.EToV = EToV;
+            obj.EToR = EToR; 
+            obj.EToBS = EToBS;
+            
+            % 获取每个单元相邻单元编号
+            obj.Eind = obj.get_Eind();
+            obj = ele_connect(obj, obj.Eind);
+            obj = ele_node_project(obj, vx, vy, vz);
+            
+            [obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, ...
+                obj.tx, obj.ty, obj.tz, obj.J] = ele_vol_factor(obj);
+            
+            [obj.nx, obj.ny, obj.nz, obj.Js] ...
+                = ele_suf_factor(obj, obj.vx, obj.vy, obj.vz, obj.EToV);
+            
+            obj = ele_node_connect(obj);
+            
+            obj = ele_scale(obj);
+        end% func
+        
+        function nodeQ = proj_vert2node(obj, vertQ)
+            % project scalars from mesh verts to nodes
+            ele_vQ = vertQ(obj.EToV); % 每个单元顶点值
+            nodeQ = obj.cell.project_vert2node(ele_vQ);
+        end
+        
+        function c_m = cell_mean(obj, f_Q)
+            % calculate the cell averaged values
+            [ c_m ] = cell_mean( f_Q, obj.cell.w, obj.J );
+        end
+        
+        function f_m = face_mean(obj, f_Q)
+            % 计算单元内每个面均值
+            par = bsxfun(@times, obj.cell.ws, obj.Js);
+            f_m = zeros(obj.cell.Nface, obj.K);
+            f_M = f_Q(obj.eidM);
+            tmp = par.*f_M;
+            st = 1;
+            if (obj.cell.Nfp == 1)
+                f_m = tmp;
+            else
+                for f = 1:obj.cell.Nface
+                    sk = st + obj.cell.Nfp(f);
+                    row = st:(sk-1);
+                    f_m(f, :) = sum( tmp(row, :) )./sum(par(row, :));
+                    st = sk;
+                end
+            end
+        end
+    end
+        
 end
 

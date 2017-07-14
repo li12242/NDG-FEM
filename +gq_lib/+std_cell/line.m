@@ -16,12 +16,14 @@ classdef line < ndg_lib.std_cell.line & gq_lib.std_cell.gauss_quad_cell
             tq = zeros(size(rq)); 
         end
         
-        function [rbq, sbq, tbq, wbq] = gaussquad_surf_coor(obj, N)
+        function [rbq, sbq, tbq, wbq, Nfq] = gaussquad_surf_coor(obj, N)
+            Nfq = zeros(obj.Nface, 1);
             rbq = zeros(obj.Nfq, 1);
             wbq = zeros(obj.Nfq, 1);
             sind = 1;
             for f = 1:obj.Nface
                 cell = gq_lib.std_cell.get_std_cell(N, obj.faceType(f) );
+                Nfq(f) = cell.Nq;
                 eind = sind + cell.Nq - 1;
                 r = obj.r(obj.Fmask(:, f));
                 rbq(sind:eind) = cell.project_node2quad(r);

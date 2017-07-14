@@ -5,13 +5,14 @@ classdef mesh2d < ndg_lib.mesh.mesh
     methods(Static)
         [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename)
     end
+    methods(Abstract, Static)
+        [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+            = uniform_mesh(xlim, ylim, Mx, My, facetype)
+    end
     
     methods(Hidden, Access=protected)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
-        [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, EToV)
-%         [Nedge, Nnode, kM, kP, fM, fP, ftype, ...
-%             idM, idP, fpM, fpP, fscal, fnxM, fnyM, fnzM] = ...
-%             edge_connect(obj, EToV, EToE, EToF, EToBS)
+        [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, vz, EToV)
         
         function Eind = get_Eind(obj)
             Eind = zeros(obj.cell.Nface, obj.K);
@@ -25,26 +26,8 @@ classdef mesh2d < ndg_lib.mesh.mesh
     end% methods
     
     methods        
-        function obj = mesh2d(cell, varargin)
-            
-            if(nargin == 2) % case input
-                casename = varargin{1};
-                [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename);
-                
-            elseif(nargin == 8) % parameters input
-                Nv = varargin{1};
-                vx = varargin{2};
-                vy = varargin{3};
-                K = varargin{4};
-                EToV = varargin{5};
-                EToR = varargin{6};
-                EToBS = varargin{7};
-            else
-                error(['The number of input parameters ', num2str(nargin), ...
-                    ' is incorrect!']);
-            end
+        function obj = mesh2d(cell, Nv, vx, vy, K, EToV, EToR, EToBS)            
             vz = zeros(size(vx)); % vz is all zeros
-            
             obj = obj@ndg_lib.mesh.mesh(cell, ...
                 Nv, vx, vy, vz, K, EToV, EToR, EToBS);
         end% func

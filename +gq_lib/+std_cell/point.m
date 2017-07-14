@@ -14,8 +14,8 @@ classdef point < ndg_lib.std_cell.point & gq_lib.std_cell.gauss_quad_cell
             rq = 0; sq = 0; tq = 0; wq = 1;
         end
         
-        function [rbq, sbq, tbq, wbq] = gaussquad_surf_coor(obj, N)
-            rbq = 0; sbq = 0; tbq = 0; wbq = 1;
+        function [rbq, sbq, tbq, wbq, Nfq] = gaussquad_surf_coor(obj, N)
+            rbq = 0; sbq = 0; tbq = 0; wbq = 1; Nfq = 1;
         end
     end
     
