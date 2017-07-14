@@ -34,7 +34,7 @@ classdef swe2d < ndg_lib.phys.phys2d
             % 设置所有水深大于阀值的单元类型为湿单元
             obj.wetflag = all( f_Q(:,:,1) > obj.hmin );
             obj.mesh.EToR( ~obj.wetflag ) = ndg_lib.mesh_type.Dry;
-            obj.mesh.EToR( obj.wetflag ) = obj.mesh.EToR( obj.wetflag );
+            obj.mesh.EToR( obj.wetflag ) = ndg_lib.mesh_type.Normal;
         end
         
         function topo_grad_term(obj)
