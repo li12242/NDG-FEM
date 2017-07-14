@@ -11,30 +11,21 @@ function [ mesh ] = uniform_mesh( N, Mx, type )
 % Output:
 %   mesh - Íø¸ñ¶ÔÏó
 %
-xmin = 0; xmax = 75; 
-ymin = -15; ymax = 15;
-face_type = [ndg_lib.bc_type.SlipWall,...
-    ndg_lib.bc_type.SlipWall, ...
-    ndg_lib.bc_type.SlipWall, ...
-    ndg_lib.bc_type.SlipWall];
+xlim = [0, 75]; ylim = [-15, 15];
+wall_bc = ndg_lib.bc_type.SlipWall;
+face_type = [wall_bc, wall_bc, wall_bc, wall_bc];
 
 My = ceil( Mx*.4 );
 switch type
     case ndg_lib.std_cell_type.Tri
         cell = ndg_lib.get_std_cell(N, type);
-        [K,EToV,Nv,VX,VY,EToBS,EToR] = ...
-            ndg_utility.uniform_mesh.tri_mesh(Mx, My, ...
-            xmin, xmax, ymin, ymax, face_type);
-        mesh = ndg_lib.mesh.tri_mesh(cell, Nv, VX, VY, ...
-            K, EToV, EToR, EToBS);
+        mesh = ndg_lib.mesh.tri_mesh(cell, 'uniform', ...
+            {xlim, ylim, Mx, My, face_type});
         
     case ndg_lib.std_cell_type.Quad
         cell = ndg_lib.get_std_cell(N, type);
-        [K,EToV,Nv,VX,VY,EToBS,EToR] = ...
-            ndg_utility.uniform_mesh.quad_mesh(Mx, My, ...
-            xmin, xmax, ymin, ymax, face_type);
-        mesh = ndg_lib.mesh.quad_mesh(cell, Nv, VX, VY, ...
-            K, EToV, EToR, EToBS);
+        mesh = ndg_lib.mesh.quad_mesh(cell, 'uniform', ...
+            {xlim, ylim, Mx, My, face_type});
 end
 end
 

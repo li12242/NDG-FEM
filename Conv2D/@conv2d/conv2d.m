@@ -1,6 +1,6 @@
 classdef conv2d < ndg_lib.phys.phys2d
-    %CONV2D Summary of this class goes here
-    %   Detailed explanation goes here
+    %CONV2D 二维对流方程求解器
+    %   二维对流方程求解器。
     
     properties(Constant)
         Nfield = 1  % 变量个数
@@ -26,7 +26,32 @@ classdef conv2d < ndg_lib.phys.phys2d
     
     %% 公共方法
     methods
-        function obj = conv2d(mesh)
+        function obj = conv2d(varargin)
+            switch varargin{1}
+                case 'file' % 读取文件
+                    var2 = varargin{2};
+                    
+                    N = var2{1};
+                    cell_type = var2{2};
+                    casename = var2{3};
+                    [ mesh ] = read_mesh_file(N, cell_type, casename);
+                case 'mesh'
+                    var2 = varargin{2};
+                    mesh = var2{1};
+                case 'uniform'
+                    var2 = varargin{2};
+                    
+                    N = var2{1};
+                    cell_type = var2{2};
+                    xlim = var2{3};
+                    ylim = var2{4};
+                    Mx = var2{5};
+                    My = var2{6};
+                    bc_type = var2{7};
+                    [ mesh ] = uniform_mesh(N, cell_type, ...
+                        xlim, ylim, Mx, My, bc_type);
+            end
+            
             obj = obj@ndg_lib.phys.phys2d(mesh);
         end
         

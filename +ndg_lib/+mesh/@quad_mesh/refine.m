@@ -7,8 +7,8 @@ for m = 1:multi_rate
     [newNv, newVX, newVY] = new_vertex(obj);
     [newK, newEToV, newEToBS, newEToR] = new_elemet_info(obj);
     
-    obj = ndg_lib.mesh.quad_mesh(obj.cell, ...
-        newNv, newVX, newVY, newK, newEToV, newEToR, newEToBS);
+    obj = ndg_lib.mesh.quad_mesh(obj.cell, 'variable',...
+        {newNv, newVX, newVY, newK, newEToV, newEToR, newEToBS});
 end
 end
 

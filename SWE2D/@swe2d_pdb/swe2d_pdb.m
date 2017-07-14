@@ -13,10 +13,10 @@ classdef swe2d_pdb < swe2d
             switch type
                 case ndg_lib.std_cell_type.Tri
                     cell = ndg_lib.std_cell.tri(N);
-                    mesh = ndg_lib.mesh.tri_mesh(cell, casename);
+                    mesh = ndg_lib.mesh.tri_mesh(cell, 'file', casename);
                 case ndg_lib.std_cell_type.Quad
                     cell = ndg_lib.std_cell.quad(N);
-                    mesh = ndg_lib.mesh.quad_mesh(cell, casename);
+                    mesh = ndg_lib.mesh.quad_mesh(cell, 'file', casename);
             end% switch
             
             obj = obj@swe2d(mesh);

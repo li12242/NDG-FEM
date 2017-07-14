@@ -51,15 +51,15 @@ classdef swe2d_tsuami < swe2d
             vert_extQ = obj.obc_file.get_extQ(stime);
             vertlist = obj.obc_file.vert;
             if (stime < obj.obc_file.time(end))
-                vert_Q = zeros(obj.mesh.Nv);
+                vert_Q = zeros(obj.mesh.Nv, 1);
                 vert_Q( vertlist ) = vert_extQ(:, 1); % 获取水位外部值
                 obj.f_extQ(:,:,1) = obj.mesh.proj_vert2node(vert_Q) - obj.bot;
 
-                vert_Q = zeros(obj.mesh.Nv);
+                vert_Q = zeros(obj.mesh.Nv, 1);
                 vert_Q( vertlist ) = vert_extQ(:, 2); % 获取流量外部值
                 obj.f_extQ(:,:,2) = obj.mesh.proj_vert2node(vert_Q);
 
-                vert_Q = zeros(obj.mesh.Nv);
+                vert_Q = zeros(obj.mesh.Nv, 1);
                 vert_Q( vertlist ) = vert_extQ(:, 3); % 获取流量外部值
                 obj.f_extQ(:,:,3) = obj.mesh.proj_vert2node(vert_Q);
             else

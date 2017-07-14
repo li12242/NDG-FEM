@@ -162,7 +162,7 @@ classdef mesh < matlab.mixin.SetGet
             obj.vz = vz;
             obj.K  = K; 
             obj.EToV = EToV;
-            obj.EToR = EToR; 
+            obj.EToR = int8(EToR); 
             obj.EToBS = EToBS;
             
             % 获取每个单元相邻单元编号

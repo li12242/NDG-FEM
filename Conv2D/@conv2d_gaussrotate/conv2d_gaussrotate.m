@@ -13,25 +13,27 @@ classdef conv2d_gaussrotate < conv2d
     
     methods
         function obj = conv2d_gaussrotate(varargin)
-            switch nargin
-                case 1
-                    mesh = varargin{1};
-                    if ( ~isa(mesh, 'ndg_lib.mesh.tri_mesh') && ...
-                            ~isa(mesh, 'ndg_lib.mesh.quad_mesh') )
-                        error(['The input is not a triangle or ',... 
-                            'quadrilateral mesh object!']);
-                    end
-                case 3
-                    N = varargin{1};
-                    M = varargin{2};
-                    type = varargin{3};
-                    mesh = uniform_mesh( N, M, type );
-                otherwise
-                    error('The number of input variable is incorrect.');
-            end% switch
-            obj = obj@conv2d(mesh);
+            if( isa(varargin{2}, 'char') )
+                N = varargin{1};
+                casename = varargin{2};
+                cell_type = varargin{3};
+                input_type = 'file';
+                input_var = {N, cell_type, casename};
+            elseif( isa(varargin{2}, 'double') )
+                N = varargin{1}; % 单元阶数
+                M = varargin{2}; % 单元个数
+                cell_type = varargin{3}; % 单元类型
+                xlim = [0, 1]; ylim = [0, 1]; % 计算域
+                Mx = M; My = M; % 单元个数
+                zg_bc = ndg_lib.bc_type.ZeroGrad;
+                bc_type = [zg_bc, zg_bc, zg_bc, zg_bc];
+
+                input_type = 'uniform';
+                input_var = {N, cell_type, xlim, ylim, Mx, My, bc_type};
+            end
+            
+            obj = obj@conv2d(input_type, input_var);
             obj.init; % call initial function
-            obj.cfl = 0.9;
             obj.ftime = 2.4;
         end% func
         

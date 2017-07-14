@@ -55,9 +55,11 @@ srcfile = {'cell_mean.c'};
 libfile = {};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
-path = '+ndg_lib/+mesh/@mesh2d/private';
+path = '+ndg_lib/+mesh/@quad_mesh/private';
 srcfile = {'resort_vert.c'};
 libfile = {'VertexSort.c'};
+install(path, srcfile, libfile, compiler, cflags, ldflags);
+path = '+ndg_lib/+mesh/@tri_mesh/private';
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
 %% +ndg_utility/+detector

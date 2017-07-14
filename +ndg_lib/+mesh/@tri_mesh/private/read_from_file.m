@@ -1,4 +1,4 @@
-function [Nv, vx, vy, vz, K, EToV, EToR, EToBS] = read_from_file(casename)
+function [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename)
 %READ_FROM_FILE Summary of this function goes here
 %   Detailed explanation goes here
 

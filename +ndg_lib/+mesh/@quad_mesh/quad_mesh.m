@@ -5,6 +5,8 @@ classdef quad_mesh < ndg_lib.mesh.mesh2d
     %       输入参数为文件名（不包括后缀），所有文件包括单元节点文件，节点坐标文件，
     %       边界节点文件。文件格式见
     %       'ndg_lib/mesh/mesh2d/private/read_from_file.m'
+    %       
+    %       
     %   2. 'variable' 通过变量生成网格对象。
     %       按照顺序给定各个参数：
     %           Nv - 顶点个数；
@@ -27,6 +29,12 @@ classdef quad_mesh < ndg_lib.mesh.mesh2d
     
     methods
         function obj = quad_mesh(cell, varargin)
+            % check input element
+            if( ne(cell.type, ndg_lib.std_cell_type.Quad) )
+                error(['Input cell type ', cell.type, ...
+                    'is not quadrilateral!'])
+            end
+            
             switch varargin{1}
                 case 'file'
                     [Nv, vx, vy, K, EToV, EToR, EToBS] ...
@@ -49,15 +57,16 @@ classdef quad_mesh < ndg_lib.mesh.mesh2d
                     facetype = var{5};
                     [Nv, vx, vy, K, EToV, EToR, EToBS] ...
                         = uniform_mesh(xlim, ylim, Mx, My, facetype);
+                otherwise
+                    error_fun = 'quand_mesh';
+                    error_str = ['Unknown input type, the first ', ...
+                        'variable should be one of the types: ', ...
+                        '"file", "variable", "uniform".'];
+                    error(['[',error_fun,']: ', error_str]);
             end
             obj = obj@ndg_lib.mesh.mesh2d(cell, ...
                 Nv, vx, vy, K, EToV, EToR, EToBS);
-            
-            % check input element
-            if( ne(obj.cell.type, ndg_lib.std_cell_type.Quad) )
-                error(['Input cell type ', cell.type, 'is not quadrilateral!'])
-            end
-            
+                        
         end% func
         
         obj = refine(obj, multi_rate); % 加密网格
