@@ -1,5 +1,5 @@
 classdef swe2d_3bump < swe2d
-    %SWE2D_3BUMP Summary of this class goes here
+    %SWE2D_3BUMP 模拟越过三个圆锥的溃坝运动
     %   Detailed explanation goes here
     
     properties(Constant)
@@ -18,8 +18,9 @@ classdef swe2d_3bump < swe2d
                     mesh = varargin(1);
                     if ( ~isa(mesh, 'ndg_lib.mesh.tri_mesh') || ...
                             ~isa(mesh, 'ndg_lib.mesh.quad_mesh') )
-                        error(['The input is not a triangle or ',... 
-                            'quadrilateral mesh object!']);
+                        errstr = ['The input should be a triangle ', ...
+                            'or quadrilateral mesh object!'];
+                        error(errstr);
                     end
                 case 3
                     N = varargin{1}; 

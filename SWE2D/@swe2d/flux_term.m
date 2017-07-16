@@ -1,5 +1,5 @@
 function [ E, G ] = flux_term( obj, f_Q )
-%FLUX_TERM Summary of this function goes here
+%FLUX_TERM 计算通量项
 %   Detailed explanation goes here
 
 E = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);

@@ -1,5 +1,5 @@
 function [ rhs ] = rhs_term( obj, f_Q )
-%RHS_TERM Summary of this function goes here
+%RHS_TERM 方程右端项计算
 %   Detailed explanation goes here
 
 [ dflux ] = hll_surf_term( obj, f_Q );

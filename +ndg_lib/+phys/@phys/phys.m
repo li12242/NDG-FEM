@@ -7,7 +7,7 @@ classdef phys < matlab.mixin.SetGet
     end
     
     properties(Hidden=true)
-        draw_h  % 立体绘制图像句柄
+        draw_h  % 绘制图像句柄
     end
     
     properties(SetAccess=protected)
@@ -16,8 +16,8 @@ classdef phys < matlab.mixin.SetGet
         out_file    % 结果文件
     end
     properties
-        mesh        % 网格对象
-        f_Q     % 变量
+        mesh    % 网格对象
+        f_Q     % 节点函数值，各维度 [节点，单元，物理场]
     end
     %% 虚函数
     methods(Abstract)
@@ -40,16 +40,11 @@ classdef phys < matlab.mixin.SetGet
         end% func
     end
     
-    % 非恒定问题时间离散方法
-    methods
-        f_Q = RK45_solve(obj) % Runge-Kutta 4th order 5 stages
-    end
-    
     % 范数误差
     methods
         function err = norm_err2(obj, time)
             % 计算1范数误差。
-            % 警告，调用此函数时需要首先定义精确解函数：
+            % 警告，调用此函数时需要首先定义精确解函数，调用格式
             %   f_ext = ext_func(obj, time)
             % ext_func 根据输入时间返回各节点精确解。
             f_ext = ext_func(obj, time); 

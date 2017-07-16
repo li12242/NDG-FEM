@@ -1,5 +1,5 @@
 classdef swe2d < ndg_lib.phys.phys2d
-    %@SWE2D 二维浅水方程求解器
+    %SWE2D 二维浅水方程求解器对象
     %   Detailed explanation goes here
     
     properties(Constant)
@@ -20,9 +20,10 @@ classdef swe2d < ndg_lib.phys.phys2d
         slopelimiter
     end
     
+    %% 私有方法
     methods(Access=protected)
-        function spe = character_len(obj, f_Q)
-            % 计算时间步长
+        function spe = char_len(obj, f_Q)
+            % 计算节点雅克比特征值
             h = f_Q(:,:,1);
             q = sqrt( f_Q(:,:,2).^2 + f_Q(:,:,3).^2 );
             spe = (q./h) + sqrt(obj.gra*h);
@@ -48,17 +49,21 @@ classdef swe2d < ndg_lib.phys.phys2d
         [ rhs ] = rhs_term(obj, f_Q ) % 计算右端项
         [ dflux ] = surf_term(obj, f_Q ) % 计算单元边界数值通量
         [ E,G ] = flux_term(obj, f_Q ) % 计算通量项
+        [ sb ] = topo_sour_term( obj, f_Q ); % 计算底坡源项
+        [ dflux ] = hll_surf_term(obj, f_Q ) % 采用 HLL 数值通量计算
+        [ dflux ] = lf_surf_term(obj, f_Q ) % 采用 LF 数值通量计算
     end
+    
+    %% 公共方法
     methods(Abstract)
         [ f_Q ] = init(obj)
     end
     
     methods
-        [ sb ] = topo_sour_term( obj, f_Q );
-        [ dflux ] = hll_surf_term(obj, f_Q ) % 采用 hll 数值通量计算
-        [ dflux ] = lf_surf_term(obj, f_Q ) % 采用 hll 数值通量计算
-        [hP, qxP, qyP] = adj_node_val(obj, hM, qxM, qyM, hP, qxP, qyP, ...
-            nx, ny, ftype) % 获取相邻单元边界值
+        [ obj ] = RK45(obj); % 采用 SSP RK45 格式计算
+        [ obj ] = RK45_OBC(obj); % 采用 SSP RK45 格式计算，并考虑开边界条件
+        [ obj ] = VB_RK45(obj); % 采用 vertex-based RK 格式计算
+        [ obj ] = VB_RK45_OBC(obj); % 采用 VB-RK 格式计算，并考虑开边界条件
         
         function obj = swe2d(mesh)
             obj = obj@ndg_lib.phys.phys2d(mesh);

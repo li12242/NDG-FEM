@@ -1,5 +1,5 @@
 function [ f_Q ] = positive_preserve( obj, f_Q )
-%POSE_PRESERVE Summary of this function goes here
+%POSITIVE_PRESERVE 修正水深与流量保证水深为正值
 %   Detailed explanation goes here
 
 hc = obj.mesh.cell_mean(f_Q(:,:,1));

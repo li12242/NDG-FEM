@@ -1,5 +1,5 @@
 function draw(obj, varargin)
-
+%DRAW 绘制及水位与流量场
 switch nargin
     case 1
         f_Q = obj.f_Q;
@@ -26,7 +26,7 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
         'FaceColor', 'interp', ...
         'FaceVertexCData', f(:), ...
         'FaceAlpha', 0.8);
-    view(20, 32); colormap(winter); box on; grid on;
+    view(20, 32); colormap(jet); box on; grid on;
     axes('Position', [0.55, 0.55, 0.4, 0.4])
     % 绘制流量 qx
     f = f_Q(:,:,2);
@@ -36,7 +36,7 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
         'EdgeColor', 'none', ...
         'FaceColor', 'interp', ...
         'FaceVertexCData', f(:) ); 
-    view(20, 32); colormap(winter); box on; grid on;
+    view(20, 32); colormap(jet); box on; grid on;
     axes('Position', [0.55, 0.05, 0.4, 0.4])
     % 绘制流量 qy
     f = f_Q(:,:,3);
@@ -46,7 +46,7 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
         'EdgeColor', 'none', ...
         'FaceColor', 'interp', ...
         'FaceVertexCData', f(:) );
-    view(20, 32); colormap(hsv); box on; grid on;
+    view(20, 32); colormap(jet); box on; grid on;
 else % 若图像存在
     f = f_Q(:,:,1); f(f<obj.hmin) = nan; % 消去干网格
     set(obj.draw_h{1}, ...

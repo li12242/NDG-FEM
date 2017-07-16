@@ -31,6 +31,7 @@ classdef swe2d_tsuami < swe2d
     end
     methods
         result(obj)
+        [ obj ] = VB_RK45_OBC(obj)
         
         function obj = swe2d_tsuami(N, casename, type)
             [ mesh ] = read_mesh_file(N, casename, type);
@@ -46,7 +47,7 @@ classdef swe2d_tsuami < swe2d
                 xd, yd, 0.05, obj.ftime, obj.Nfield);
         end% func
         
-        function obj = update_ext(obj, f_Q, stime)
+        function obj = update_ext(obj, stime)
             % 根据开边界文件结果更新外部数据
             vert_extQ = obj.obc_file.get_extQ(stime);
             vertlist = obj.obc_file.vert;
@@ -63,7 +64,7 @@ classdef swe2d_tsuami < swe2d
                 vert_Q( vertlist ) = vert_extQ(:, 3); % 获取流量外部值
                 obj.f_extQ(:,:,3) = obj.mesh.proj_vert2node(vert_Q);
             else
-                obj.f_extQ = f_Q;
+                obj.f_extQ = obj.f_Q;
             end
         end% func
         
