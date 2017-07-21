@@ -11,7 +11,7 @@ classdef conv2d_diffusion < conv2d
     end
     
     methods
-        drarw_section(obj, f_Q, time);
+        obj = RK45_section(obj);
         
         function obj = conv2d_diffusion(varargin)
             if( isa(varargin{2}, 'char') )

@@ -1,3 +1,0 @@
-WALL    = 1;
-INFLOW  = 2;
-OUTFLOW = 3;
