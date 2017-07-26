@@ -1,5 +1,5 @@
 function [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, vz, EToV)
-%MESH_EDGE_FACTOR 计算单元内各个边外法线向量与Jacobian变换系数
+%ELE_SUF_FACTOR 计算单元内各个边外法线向量与Jacobian变换系数
 %   计算单元边界应均为直线，每个边上各个节点外法线向量只有唯一值
 %
 

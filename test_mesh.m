@@ -15,14 +15,15 @@ mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);
 tri = ndg_lib.std_cell.tri(2);
 
 EToV = [1,2,3; 3,2,4]';
-vx = [0, 1, 0, 1]';
-vy = [0, 0, 1, 1]';
+vx = [0, 1, 0.5, 1.5]';
+vy = [0, 0, sqrt(3)/2, sqrt(3)/2]';
 K = 2;
 Nv = 4;
 EToR = [1, 1]';
 EToBS = [5, 1, 5; 1, 5, 5]';
 
-mesh = ndg_lib.mesh.tri_mesh(tri, Nv, vx, vy, K, EToV, EToR, EToBS);
+mesh = ndg_lib.mesh.tri_mesh(tri, 'variable', ...
+    {Nv, vx, vy, K, EToV, EToR, EToBS});
 
 casename = 'Conv2D/mesh/triangle';
 mesh = ndg_lib.mesh.tri_mesh(tri, casename);

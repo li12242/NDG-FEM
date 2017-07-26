@@ -1,5 +1,5 @@
 function [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
-%MESH_VOLUME_FACTOR Summary of this function goes here
+%ELE_VOL_FACTOR 计算单元内节点处 Jacobian 矩阵系数
 %   Detailed explanation goes here
 
 xr = obj.cell.Dr*obj.x; xs = obj.cell.Ds*obj.x;

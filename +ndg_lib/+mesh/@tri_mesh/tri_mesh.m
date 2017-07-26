@@ -1,10 +1,11 @@
 classdef tri_mesh < ndg_lib.mesh.mesh2d
-    %TRI_MESH 三角形网格类
+    %TRI_MESH triangular mesh object
     %   根据输入参数生成对应四边形网格对象，共有三种生成方法
     %   1. 'file' 通过网格文件生成。
     %       输入参数为文件名（不包括后缀），所有文件包括单元节点文件，节点坐标文件，
     %       边界节点文件。文件格式见
     %       'ndg_lib/mesh/mesh2d/private/read_from_file.m'
+    %
     %   2. 'variable' 通过变量生成网格对象。
     %       按照顺序给定各个参数：
     %           Nv - 顶点个数；

@@ -1,5 +1,5 @@
 classdef tri < ndg_lib.std_cell.std_cell
-    %STD_TRI Summary of this class goes here
+    %TRI Summary of this class goes here
     %   Detailed explanation goes here
     
     %% »ù±¾ÊôÐÔ

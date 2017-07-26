@@ -1,5 +1,5 @@
 classdef mesh2d < ndg_lib.mesh.mesh
-    %@STD_MESH2D Summary of this class goes here
+    %MESH2D 二维网格对象
     %   Detailed explanation goes here
 
     methods(Static)
@@ -10,6 +10,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
             = uniform_mesh(xlim, ylim, Mx, My, facetype)
     end
     
+    %% 私有方法
     methods(Hidden, Access=protected)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
         [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, vz, EToV)
@@ -25,7 +26,8 @@ classdef mesh2d < ndg_lib.mesh.mesh
         end
     end% methods
     
-    methods        
+    %% 公有方法
+    methods
         function obj = mesh2d(cell, Nv, vx, vy, K, EToV, EToR, EToBS)            
             vz = zeros(size(vx)); % vz is all zeros
             obj = obj@ndg_lib.mesh.mesh(cell, ...
