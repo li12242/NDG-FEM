@@ -44,10 +44,48 @@ void rhs_parall(size_t Np, size_t K, size_t Nfp,
                 double *dflux, double *eflux, double *gflux,
                 double *rhs)
 {
+    int k;
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(DG_THREADS)
+#endif
+    for (k = 0; k < K; k++)
+    {
+        /* volume term */
+        int n, m;
+        for (m = 0; m < Np; m++)
+        {
+            double rx_ = rx[k * Np + m];
+            double ry_ = ry[k * Np + m];
+            double sx_ = sx[k * Np + m];
+            double sy_ = sy[k * Np + m];
+
+            double *rhsQ = rhs + (k * Np + m);
+            double *E = eflux + k * Np;
+            double *G = gflux + k * Np;
+            for (n = 0; n < Np; n++)
+            {
+                double dr = Dr[n * Np + m];
+                double ds = Ds[n * Np + m];
+                double dx = rx_ * dr + sx_ * ds;
+                double dy = ry_ * dr + sy_ * ds;
+                rhsQ[0] -= dx * E[n] + dy * G[n];
+            }
+
+            double j = 1 / J[k * Np + m];
+            for (n = 0; n < Nfp; n++)
+            {
+                double js = Js[k * Nfp + n];
+                double dfs = dflux[k * Nfp + n];
+
+                rhsQ[0] += LIFT[m + n * Np] * dfs * js * j;
+            }
+        }
+    }
+    return;
 }
 /*
  */
-void rhs_term(size_t Np, size_t K, size_t Nfp,
+void rhs_term(size_t Np_, size_t K_, size_t Nfp_,
               double *Dr, double *Ds, double *LIFT,
               double *rx, double *ry, double *sx, double *sy,
               double *J, double *Js,
@@ -56,7 +94,8 @@ void rhs_term(size_t Np, size_t K, size_t Nfp,
 {
     char *chn = "N";
     double one = 1.0, zero = 0.0;
-    double *vtemp = calloc(Np * K, sizeof(double));
+    double *vtemp = calloc(Np_ * K_, sizeof(double));
+    mwSignedIndex Np = Np_, K = K_, Nfp = Nfp_;
     dgemm(chn, chn, &Np, &K, &Np, &one, Dr, &Np, eflux, &Np, &zero, vtemp, &Np);
     dvecm(Np * K, -1, rx, vtemp, rhs);
     dgemm(chn, chn, &Np, &K, &Np, &one, Ds, &Np, eflux, &Np, &zero, vtemp, &Np);
@@ -134,47 +173,47 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double *dflux = calloc(Nfp * K, sizeof(double));
     surf_term(Nfp, K, f_Q, f_extQ, u, v, nx, ny, eidM, eidP, eidtype, EToR, dflux);
 
-#if DEBUG
-    mexPrintf("dflux = \n");
-    int n, k;
-    for (n = 0; n < Nfp; n++)
-    {
-        mexPrintf("\t");
-        for (k = 0; k < K; k++)
-        {
-            mexPrintf("%e\t", dflux[k * Np + n]);
-        }
-        mexPrintf("\n");
-    }
-#endif
+    // #if DEBUG
+    //     mexPrintf("dflux = \n");
+    //     int n, k;
+    //     for (n = 0; n < Nfp; n++)
+    //     {
+    //         mexPrintf("\t");
+    //         for (k = 0; k < K; k++)
+    //         {
+    //             mexPrintf("%e\t", dflux[k * Np + n]);
+    //         }
+    //         mexPrintf("\n");
+    //     }
+    // #endif
     /* volume flux term */
     double *eflux = calloc(Np * K, sizeof(double));
     double *gflux = calloc(Np * K, sizeof(double));
     flux_term(Np, K, f_Q, u, v, EToR, eflux, gflux);
 
-#if DEBUG
-    mexPrintf("e = \n");
-    for (n = 0; n < Np; n++)
-    {
-        mexPrintf("\t");
-        for (k = 0; k < K; k++)
-        {
-            mexPrintf("%f\t", eflux[k * Np + n]);
-        }
-        mexPrintf("\n");
-    }
+    // #if DEBUG
+    //     mexPrintf("e = \n");
+    //     for (n = 0; n < Np; n++)
+    //     {
+    //         mexPrintf("\t");
+    //         for (k = 0; k < K; k++)
+    //         {
+    //             mexPrintf("%f\t", eflux[k * Np + n]);
+    //         }
+    //         mexPrintf("\n");
+    //     }
 
-    mexPrintf("g = \n");
-    for (n = 0; n < Np; n++)
-    {
-        mexPrintf("\t");
-        for (k = 0; k < K; k++)
-        {
-            mexPrintf("%f\t", gflux[k * Np + n]);
-        }
-        mexPrintf("\n");
-    }
-#endif
+    //     mexPrintf("g = \n");
+    //     for (n = 0; n < Np; n++)
+    //     {
+    //         mexPrintf("\t");
+    //         for (k = 0; k < K; k++)
+    //         {
+    //             mexPrintf("%f\t", gflux[k * Np + n]);
+    //         }
+    //         mexPrintf("\n");
+    //     }
+    // #endif
     /* DG rhs term */
     rhs_term(Np, K, Nfp, Dr, Ds, LIFT, rx, ry, sx, sy, J, Js, dflux, eflux, gflux, rhsQ);
     /* fv surface term */
