@@ -1,60 +1,82 @@
-classdef tri_loc_fv2d
+classdef tri_loc_fv2d < ndg_test.mesh_test.loc_fv
     %TRI_FV2D Finite volume information of the local refined element
     %   Detailed explanation goes here
     
-    properties(SetAccess=private)
-        Nedge % number of edges in each refined element
-        Kloc % number of sub-cells in each refined element
-        v1, v2 % vertex list of each edge
-        nx, ny % normal vector pointing from v1 to v2
-        ds % length of boundary edge    
-        P, R % project and reconstruct matrix from lagrange basis 
-             % coefficients to finite volume values, satisfying R = P^-1
-    end
-    
     methods
         function obj = tri_loc_fv2d(mesh)
-            cell = mesh.cell;
-            % connection in refined triangle
-            [ obj.Kloc, EToV ] = obj.tri_local_connect(cell); 
-            obj.Nedge = obj.Kloc*mesh.cell.Nface;
-            
-            [ obj.v1, obj.v2 ] = loc_fv_info(obj, mesh.K, ...
-                cell.Nface, cell.Np, EToV);
-            [ obj.nx, obj.ny, obj.ds ] = loc_fv_scale(obj, ...
-                cell.Nface, mesh.K, EToV, mesh.x, mesh.y);
-            [ obj.P, obj.R ] = project_matrix(obj, EToV, cell);
+            obj = obj@ndg_test.mesh_test.loc_fv(mesh);
         end
         
-        function val = project_node2fvm(obj, f_Q)
-            val = obj.P*f_Q;
+        function draw(obj, varargin)
+            hold on;
+            patch('Vertices', [obj.mesh.cell.r(:), obj.mesh.cell.s(:)], ...
+                'Faces', obj.EToV', ...
+                'FaceColor', [0.8, 0.9, 1]);
+            plot(obj.mesh.cell.r(:), obj.mesh.cell.s(:), 'ko', ...
+                'MarkerFaceColor', 'k', ...
+                'MarkerSize', 4)
         end
         
-        function f_Q = project_fvm2node(obj, val)
-            f_Q = obj.R*val;
+        function draw_control_vol(obj, n)
+            obj.draw();
+            r = obj.mesh.cell.r;
+            s = obj.mesh.cell.s;
+            rf = zeros(2, 1); 
+            sf = zeros(2, 1);
+            for k = 1:obj.Kloc
+                vert = obj.EToV(:, k);
+                fid = 1;
+                if any(vert == n)
+                    rc = mean( r(vert) ); sc = mean( s(vert) );
+                    
+                    vid = find(vert == n);
+                    for t = 1:numel(vert)
+                        if t == vid
+                            continue;
+                        end
+                        rf(fid) = ( r(vert(t)) + r(n) )./2;
+                        sf(fid) = ( s(vert(t)) + s(n) )./2;
+                        fid = fid+1;
+                    end
+                    
+                    patch('Vertices', ...
+                        [r(n), rf(1), rc, rf(2); s(n), sf(1), sc, sf(2)]', ...
+                        'Faces', [1,2,3,4], ...
+                        'FaceColor', [0.9882, 0.9608, .8667], ...
+                        'EdgeColor', 'k');
+                    
+                    plot([rf(1), rc, rf(2)], [sf(1), sc, sf(2)], 's-',...
+                        'Color', 'k',...
+                        'MarkerFaceColor', 'k', ...
+                        'MarkerSize', 4)
+                end
+            end
+            plot(r(n), s(n), 'ko-','Color', 'k',...
+                'MarkerFaceColor', 'k', 'MarkerSize', 4)
         end
     end
     
+    %% 私有方法
     methods(Access=protected)
         
-        function [P, R, vol] = project_matrix(obj, EToV, cell)
+        function [P, R, vol] = project_matrix(obj, mesh)
+            cell = mesh.cell;
             P = zeros(cell.Np, cell.Np);
-            R = zeros(cell.Np, cell.Np);
+            
             vol = zeros(cell.Np, 1);
             r = cell.r; 
             s = cell.s;
-            
             xw = obj.TriGaussPoints(cell.N);
-            w = xw(:, 3); Nq = numel(w);
+            w = xw(:, 3); w = w./sum(w); Nq = numel(w);
             Pw = zeros(Nq, cell.Np);
             for k = 1:obj.Kloc
-                vert = EToV(:, k);
+                vert = obj.EToV(:, k);
                 rc = mean( r( vert ) ); % cell centre coordinate
                 sc = mean( s( vert ) );
                 for f1 = 1:cell.Nface
                     f2 = mod(f1,cell.Nface)+1;
-                    vert1 = EToV(f1,k);
-                    vert2 = EToV(f2,k);
+                    vert1 = obj.EToV(f1,k);
+                    vert2 = obj.EToV(f2,k);
                     
                     r1 = r(vert1); s1 = s(vert1);
                     r2 = r(vert2); s2 = s(vert2);
@@ -63,7 +85,7 @@ classdef tri_loc_fv2d
                     
                     rt1 = obj.project_vert2quad(cell.N, [rf, rc, r1]');
                     st1 = obj.project_vert2quad(cell.N, [sf, sc, s1]');
-                    a1 = obj.tri_area([r1, s1], [rf, sf], [rc, sc]);
+                    a1 = obj.tri_area([r1, rf, rc]', [s1, sf, sc]');
                     vol(vert1) = vol(vert1) + a1;
                     for i = 1:cell.Np
                         Pw(:,i) = cell.orthogonal_func(cell.N, i, rt1, st1);
@@ -72,7 +94,7 @@ classdef tri_loc_fv2d
                     
                     rt2 = obj.project_vert2quad(cell.N, [rf, r2, rc]');
                     st2 = obj.project_vert2quad(cell.N, [sf, s2, sc]');
-                    a2 = obj.tri_area([r1, s1], [rf, sf], [rc, sc]);
+                    a2 = obj.tri_area([r2, rf, rc]', [s2, sf, sc]');
                     vol(vert2) = vol(vert2) + a2;
                     for i = 1:cell.Np
                         Pw(:,i) = cell.orthogonal_func(cell.N, i, rt2, st2);
@@ -85,88 +107,40 @@ classdef tri_loc_fv2d
             R = inv(P);
         end
         
-        function [v1, v2] = loc_fv_info(obj, K, Nface, Np, EToV)
+        function [v1, v2, nx, ny, nz, ds] = loc_edge_info(obj, mesh)
             % find vertex pairs in each sub-cell
+            K = mesh.K;
+            Np = mesh.cell.Np;
+            Nface = mesh.cell.Nface;
             v1 = zeros(obj.Nedge, K);
             v2 = zeros(obj.Nedge, K);
+            nx = zeros(obj.Nedge, K);
+            ny = zeros(obj.Nedge, K);
+            nz = zeros(obj.Nedge, K);
+            ds = zeros(obj.Nedge, K);
+            
+            xc = mesh.cell_mean(mesh.x);
+            yc = mesh.cell_mean(mesh.y);
             for e = 1:K
                 sk = 1;
                 Npoint = (e-1)*Np;
                 for k = 1:obj.Kloc % loop over refined elements
                     for f1 = 1:Nface
                         f2 = mod(f1,Nface)+1;
-                        v1(sk, e) = EToV(f1,k) + Npoint;
-                        v2(sk, e) = EToV(f2,k) + Npoint;
+                        v1(sk, e) = obj.EToV(f1,k) + Npoint;
+                        v2(sk, e) = obj.EToV(f2,k) + Npoint;
                         sk = sk + 1;
                     end
-                end% for
-            end
-        end
-        
-        function [nx, ny, ds] = loc_fv_scale(obj, Nface, K, EToV, x, y)
-            nx = zeros(obj.Nedge, K);
-            ny = zeros(obj.Nedge, K);
-            ds = zeros(obj.Nedge, K);
-            %xf = zeros(obj.Nedge, K);
-            %yf = zeros(obj.Nedge, K);
-
-            for e = 1:K % loop over all elements
-                sk = 1;
-                for k = 1:obj.Kloc
-                    vert = EToV(:, k);
-                    x1 = mean( x( vert, e ) ); % cell centre coordinate
-                    y1 = mean( y( vert, e ) );
-                    for f1 = 1:Nface
-                        vert1 = obj.v1( sk, e );
-                        vert2 = obj.v2( sk, e );
-                        xv1 = x(vert1); yv1 = y(vert1); % vertex 
-                        xv2 = x(vert2); yv2 = y(vert2);
-
-                        x2 = 0.5*(xv1 + xv2); % middle points coordinate
-                        y2 = 0.5*(yv1 + yv2);
-                        %xf(sk, e) = x2;
-                        %yf(sk, e) = y2;
-
-                        nxt =  (y2 - y1);
-                        nyt = -(x2 - x1);
-                        ds(sk, e) = sqrt( nxt*nxt + nyt*nyt );
-                        % check the direction is from v1 to v2
-                        dx = xv2 - xv1;
-                        dy = yv2 - yv1;
-                        if ( dx*nxt + dy*nyt ) < 0
-                            nx(sk, e) = -nxt/ds(sk, e);
-                            ny(sk, e) = -nyt/ds(sk, e);
-                        else
-                            nx(sk, e) = nxt/ds(sk, e);
-                            ny(sk, e) = nyt/ds(sk, e);
-                        end
-                        sk = sk + 1;
-                    end                
                 end
+                [ nx(:, e), ny(:, e), ds(:, e) ] = obj.norm_vector ...
+                    ( v1(:, e), v2(:, e), mesh.x, mesh.y, xc(e), yc(e) );
             end
-            %quiver(xf, yf, nx.*ds, ny.*ds);
-        end
-        
-        function node_val = project_vert2quad(obj, N, vert_val)
-            xw = obj.TriGaussPoints(N);
-            r = xw(:, 1); 
-            s = xw(:, 2);
-            node_val = ( (1-r-s)*vert_val(1, :) ...
-                + r*vert_val(2, :) + s*vert_val(3, :) );
-        end% 
-    end
-    
-    methods(Access=private, Static)
-        function area = tri_area(p1, p2, p3)
-            a = sqrt( (p1(1)-p2(1))^2+(p1(2)-p2(2))^2 );
-            b = sqrt( (p3(1)-p2(1))^2+(p3(2)-p2(2))^2 );
-            c = sqrt( (p1(1)-p3(1))^2+(p1(2)-p3(2))^2 );
-            p = (a+b+c)/2;
-            area = sqrt(p*(p-a)*(p-b)*(p-c));
-        end
-        
-        function [Kloc, EToV] = tri_local_connect(cell)
+        end% func
+                
+        function [Nedge, Kloc, EToV] = loc_connect(obj, cell)
+            % 单元内
             Kloc = cell.N^2;
+            Nedge = Kloc*cell.Nface;
             EToV = zeros(3, Kloc);
             sk = 1;
             for row = 1:cell.N
@@ -190,6 +164,75 @@ classdef tri_loc_fv2d
             end
         end% func
         
+        function [ vol ] = loc_fv_info(obj, mesh)
+            K = mesh.K;
+            vol = zeros(mesh.cell.Np, K);
+            for e = 1:K
+                for k = 1:obj.Kloc
+                    v = obj.EToV(:, k);
+                    x = mesh.x(v, e);
+                    y = mesh.y(v, e);
+                    a = obj.tri_area(x, y);
+                    vol(v, e) = vol(v, e) + a/3;
+                end
+            end
+        end% func
+    end
+    
+    methods(Access=private)
+        function node_val = project_vert2quad(obj, N, vert_val)
+            xw = obj.TriGaussPoints(N);
+            r = xw(:, 1); % standard tri [0,1]x[0,1]
+            s = xw(:, 2);
+            node_val = ( (1-r-s)*vert_val(1, :) ...
+                + r*vert_val(2, :) + s*vert_val(3, :) );
+        end% func
+    end
+    
+    %% 
+    methods(Access=private, Static)
+        
+        function [nx, ny, ds] = norm_vector(v1, v2, x, y, xc, yc)
+            Nedge = numel(v1);
+            nx = zeros(Nedge, 1);
+            ny = zeros(Nedge, 1);
+            ds = zeros(Nedge, 1);
+            for f = 1:Nedge
+                vert1 = v1(f);
+                vert2 = v2(f);
+                xv1 = x(vert1); yv1 = y(vert1); % vertex 
+                xv2 = x(vert2); yv2 = y(vert2);
+                xfc = 0.5*(xv1 + xv2); % middle points coordinate
+                yfc = 0.5*(yv1 + yv2);
+                
+                nxt =  (yfc - yc);
+                nyt = -(xfc - xc);
+                ds(f) = sqrt( nxt*nxt + nyt*nyt );
+                % check the direction is from v1 to v2
+                dx = xv2 - xv1;
+                dy = yv2 - yv1;
+                if ( dx*nxt + dy*nyt ) < 0
+                    nx(f) = -nxt/ds(f);
+                    ny(f) = -nyt/ds(f);
+                else
+                    nx(f) = nxt/ds(f);
+                    ny(f) = nyt/ds(f);
+                end
+            end
+        end
+                
+        function area = tri_area(x, y)
+            % calculate the area of triangle from given points coordinate
+            a = sqrt( (x(1,:) - x(2,:)).^2 + (y(1,:)-y(2,:)).^2 );
+            %a = sqrt( (p1(1)-p2(1))^2+(p1(2)-p2(2))^2 );
+            b = sqrt( (x(2,:) - x(3,:)).^2 + (y(2,:)-y(3,:)).^2 );
+            %b = sqrt( (p3(1)-p2(1))^2+(p3(2)-p2(2))^2 );
+            c = sqrt( (x(3,:) - x(1,:)).^2 + (y(3,:)-y(1,:)).^2 );
+            %c = sqrt( (p1(1)-p3(1))^2+(p1(2)-p3(2))^2 );
+            p = (a+b+c)./2;
+            area = sqrt(p.*(p-a).*(p-b).*(p-c));
+        end
+                
         function xw = TriGaussPoints(n)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Function TriGaussPoints provides the Gaussian points and weights %

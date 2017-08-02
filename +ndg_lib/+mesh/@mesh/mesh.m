@@ -1,5 +1,5 @@
-classdef mesh < matlab.mixin.SetGet
-    %@STD_MESH Summary of this class goes here
+classdef mesh < handle
+    %MESH Summary of this class goes here
     %   Detailed explanation goes here
     
     %%
@@ -16,7 +16,7 @@ classdef mesh < matlab.mixin.SetGet
     
     % elemental volume infomation
     properties(SetAccess=protected)
-        Eind % 每个面对应的独立编号
+        Eind % 每个单元各个面对应的独立编号
         EToE, EToF
         x, y, z
         rx, ry, rz
@@ -37,19 +37,6 @@ classdef mesh < matlab.mixin.SetGet
         nx, ny, nz
         Js
     end
-    
-%     % edge information
-%     properties(SetAccess=protected)
-%         Nedge
-%         Nnode
-%         kM, kP
-%         fM, fP
-%         ftype@int8
-%         idM, idP
-%         fpM, fpP
-%         fscal
-%         fnxM, fnyM, fnzM
-%     end
     
     %% 私有方法
     methods(Abstract, Hidden, Access = protected)

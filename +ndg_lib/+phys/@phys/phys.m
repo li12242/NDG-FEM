@@ -1,4 +1,4 @@
-classdef phys < matlab.mixin.SetGet
+classdef phys < handle
     %PHYS Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -29,6 +29,11 @@ classdef phys < matlab.mixin.SetGet
         [ E ] = flux_term( obj, f_Q ) % 计算体积积分通量项 F
         [ dflux ] = surf_term( obj, f_Q ) % 计算边界积分通量差值 (Fn - Fn*)
         [ rhs ] = rhs_term(obj, f_Q ) % 计算右端项
+    end
+    
+    methods(Access=protected)
+        function [ f_ext ] = ext_func(obj, time) % 解析解
+        end
     end
     
     %% 公共方法

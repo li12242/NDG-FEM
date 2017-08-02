@@ -1,4 +1,4 @@
-classdef nc_var < matlab.mixin.SetGet
+classdef nc_var < handle
     %NC_VAR Summary of this class goes here
     %   Detailed explanation goes here
     

@@ -22,20 +22,20 @@ switch computer('arch')
         if with_omp
             cflags = ['CFLAGS=$CFLAGS, -Wall -qopenmp -DDG_THREADS=', ...
                 num2str(with_omp)];
-            ldflags = '-liomp5';
+            ldflags = {'-liomp5', '-largeArrayDims', '-lmwblas'};
         else
             cflags = 'CFLAGS=$CFLAGS, -Wall';
-            ldflags = '';
+            ldflags = {'-largeArrayDims', '-lmwblas'};
         end
     case 'win64'
         compiler = '';
         if with_omp
             cflags = ['CFLAGS=$CFLAGS -fopenmp -DDG_THREADS=',...
                 num2str(with_omp)];
-            ldflags = 'LDFLAGS=$LDFLAGS -fopenmp';
+            ldflags = {'-liomp5', '-largeArrayDims', '-lmwblas'};
         else
             cflags = 'CFLAGS=$CFLAGS, -Wall';
-            ldflags = '';
+            ldflags = {'-largeArrayDims', '-lmwblas'};
         end
     case 'glnxa64'
     otherwise
@@ -79,7 +79,12 @@ path = 'Conv2d/@conv2d/private';
 srcfile = {'upwind_flux.c'};
 libfile = {'conv2d.c', 'bc.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
-path = 'Conv2d/@conv2d_gaussquad/private';
+path = 'Conv2d/@conv2d_adv_gq/private';
+install(path, srcfile, libfile, compiler, cflags, ldflags);
+
+path = 'Conv2d/@conv2d_refine_fv/private';
+srcfile = {'rhs_term.c'};
+libfile = {'conv2d.c', 'flux_term.c', 'surf_term.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
 %% SWE2d
@@ -103,9 +108,10 @@ libfile  = fullfile(fullPath, libsrc);
 
 cd(fullPath);
 
+sformat = repmat('%s ', 1, numel(ldflags));
 ndg_utility.cprintf('key', '=========installing %s=========\n', path);
-ndg_utility.cprintf('string', '%s\nCFLAGS=%s\nLDFLAGS=%s\n', ...
-    compiler, cflags, ldflags);
+ndg_utility.cprintf('string', ['%s\nCFLAGS=%s\nLDFLAGS=', sformat, '\n'], ...
+    compiler, cflags, ldflags{:});
 
 for i = 1:numel(srcfile)
     if ( iscompiled(srcfile) ) 
@@ -113,7 +119,7 @@ for i = 1:numel(srcfile)
     end
     fprintf('\n%s/%s...\n', path,src{i});
     file = [srcfile(i), libfile{:}];
-    mex(compiler, cflags, '-O', ldflags, file{:});
+    mex(compiler, cflags, '-O', ldflags{:}, file{:});
 end% for
 ndg_utility.cprintf('key', ...
     '=========finish installing %s=========\n\n', path);

@@ -1,4 +1,4 @@
-classdef nc_dim < matlab.mixin.SetGet
+classdef nc_dim < handle
     %NC_DIM Summary of this class goes here
     %   Detailed explanation goes here
     

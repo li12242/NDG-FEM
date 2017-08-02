@@ -30,17 +30,17 @@ linewidth = 1.5;
 markersize = 8;
 color = {'b', 'r', 'g', 'm'};
 marker = {'o', 's', '^', '*'};
-linestyle = '--';
+linestyle = '-';
 for n = 1:Ndeg
     for m = 1:Nmesh
         if (m == 1)
-            conv = conv2d_gaussquad(k(n), casename{m}, quad_type);
+            conv = conv2d_advection(k(n), casename{m}, quad_type);
         else
             conv.refine_mesh(1);
         end
         %conv.mesh.J = repmat(mean(conv.mesh.J), conv.mesh.cell.Np, 1);
         conv.init; 
-        tic; conv.RK45_solve; time(m, n) = toc;
+        tic; conv.RK45; time(m, n) = toc;
         err2(m, n) = conv.norm_err2(conv.ftime);
         err1(m, n) = conv.norm_err1(conv.ftime);
         errInf(m, n) = conv.norm_errInf(conv.ftime);

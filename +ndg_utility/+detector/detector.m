@@ -1,4 +1,4 @@
-classdef detector < matlab.mixin.SetGet
+classdef detector < handle
     %DETECTOR Summary of this class goes here
     %   Detailed explanation goes here
     

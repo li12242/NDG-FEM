@@ -1,4 +1,4 @@
-classdef nc_file < matlab.mixin.SetGet
+classdef nc_file < handle
     %NC_FILE Summary of this class goes here
     %   Detailed explanation goes here
     

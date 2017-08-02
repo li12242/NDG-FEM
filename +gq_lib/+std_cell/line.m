@@ -6,9 +6,9 @@ classdef line < ndg_lib.std_cell.line & gq_lib.std_cell.gauss_quad_cell
         function obj = line(N)
             obj = obj@ndg_lib.std_cell.line(N);
             obj = obj@gq_lib.std_cell.gauss_quad_cell(N);
-            
         end
     end
+    
     methods(Access=protected)
         function [rq, sq, tq, wq] = gaussquad_vol_coor(obj, N)
             [rq, wq] = Polylib.zwgl(N+1);

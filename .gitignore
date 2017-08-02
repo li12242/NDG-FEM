@@ -1,6 +1,7 @@
 .tags
 .tags_sorted_by_file
 .DS_Store
+.vscode
 my_version
 *.nc
 *.avi

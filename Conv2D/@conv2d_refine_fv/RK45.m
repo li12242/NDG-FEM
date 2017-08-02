@@ -1,5 +1,5 @@
-function [ obj ] = RK45_solve( obj )
-%SOLVE Summary of this function goes here
+function [ obj ] = RK45( obj )
+%RK45 Summary of this function goes here
 %   Detailed explanation goes here
 
 rk4a = [            0.0 ...
@@ -29,7 +29,7 @@ while(time < ftime)
     end
     for INTRK = 1:5
         %tloc = time + rk4c(INTRK)*dt;
-        rhsQ = rhs_term(obj, f_Q);
+        rhsQ = obj.rhs_term( f_Q );
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;

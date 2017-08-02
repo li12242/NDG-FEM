@@ -13,7 +13,7 @@ classdef conv2d < ndg_lib.phys.phys2d
     end
     
     %% Ðéº¯Êý
-    methods(Abstract)
+    methods(Abstract, Access=protected)
         [ spe ] = character_len(obj, f_Q) % get the time interval dt
     end
     
@@ -55,7 +55,7 @@ classdef conv2d < ndg_lib.phys.phys2d
             obj = obj@ndg_lib.phys.phys2d(mesh);
         end
         
-        f_Q = RK45_solve(obj) % Runge-Kutta 4th order 5 stages
+        f_Q = RK45(obj) % Runge-Kutta 4th order 5 stages
         refine_mesh(obj, multi_ratio) % refined mesh
     end
     

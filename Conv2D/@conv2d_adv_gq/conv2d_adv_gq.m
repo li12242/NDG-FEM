@@ -1,11 +1,12 @@
-classdef conv2d_gaussquad < conv2d
-    %CONV2D_GAUSSQUAD Summary of this class goes here
+classdef conv2d_adv_gq < conv2d
+    %CONV2D_ADV_GQ Summary of this class goes here
     %   Detailed explanation goes here
     
     properties(Constant)
-        x0 = -0.5; y0 = -0.5;
-        u0 = 1/2; v0 = 1/2;
-        miu = 0;
+        x0 = -0.5; 
+        y0 = -0.5;
+        u0 = 0.5; 
+        v0 = 0.5;
     end
     
     properties
@@ -13,7 +14,7 @@ classdef conv2d_gaussquad < conv2d
     end
     
     methods
-        function obj = conv2d_gaussquad(varargin)
+        function obj = conv2d_adv_gq(varargin)
             if( isa(varargin{2}, 'char') )
                 N = varargin{1};
                 casename = varargin{2};
@@ -35,7 +36,7 @@ classdef conv2d_gaussquad < conv2d
             obj = obj@conv2d(input_type, input_var);
             obj.ftime = 2;
             obj.init();
-        end
+        end% func
         
         function reset_gq_mesh(obj)
             N = obj.mesh.cell.N;
@@ -54,12 +55,7 @@ classdef conv2d_gaussquad < conv2d
                         {mesh.Nv, mesh.vx, mesh.vy, ...
                         mesh.K, mesh.EToV, mesh.EToR, mesh.EToBS});
             end            
-        end
-        
-        function [ spe ] = character_len(obj, f_Q)
-            vel = sqrt( obj.u.^2 + obj.v.^2 );
-            spe = vel;
-        end
+        end% func
         
         function init(obj)
             reset_gq_mesh(obj)
@@ -69,20 +65,8 @@ classdef conv2d_gaussquad < conv2d
             obj.vq = obj.mesh.cell.project_node2quad(obj.u);
             obj.f_Q = obj.ext_func(0);
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
-        end
+        end% func
         
-        function f_ext = ext_func(obj, time)
-            xc = obj.x0 + obj.u*time;
-            yc = obj.y0 + obj.v*time;
-            if obj.miu > 0
-                t = -(obj.mesh.x-xc).^2/obj.miu ...
-                    -(obj.mesh.y-yc).^2/obj.miu;
-            else
-                sigma = 125*1e3/(33*33);
-                t = -( (obj.mesh.x-xc).^2+(obj.mesh.y-yc).^2 )*sigma;
-            end
-            f_ext = exp(t);
-        end
     end
     
     %% Ë½ÓÐº¯Êý
@@ -90,6 +74,20 @@ classdef conv2d_gaussquad < conv2d
         [ E, G ] = flux_term_quad( obj, f_Q ) % get the flux terms
         [ dflux ] = surf_term_quad( obj, f_Q ) % get flux deviation
         [ rhs ] = rhs_term(obj, f_Q ) % get the r.h.s term
+        
+        function f_ext = ext_func(obj, time)
+            xc = obj.x0 + obj.u*time;
+            yc = obj.y0 + obj.v*time;
+            
+            sigma = 125*1e3/(33*33);
+            t = -( (obj.mesh.x-xc).^2+(obj.mesh.y-yc).^2 )*sigma;
+            f_ext = exp(t);
+        end% func
+        
+        function [ spe ] = character_len(obj, f_Q)
+            vel = sqrt( obj.u.^2 + obj.v.^2 );
+            spe = vel;
+        end% func
     end
     
 end
