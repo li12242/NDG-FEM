@@ -3,22 +3,6 @@
 
 #define DEBUG 0
 
-void upwind_flux(double f_M, double f_P, double uM, double vM,
-                 double nx, double ny, double *numflux)
-{
-
-    const double unM = uM * nx + vM * ny;
-    if (unM > 0)
-    {
-        *numflux = f_M * unM;
-    }
-    else
-    {
-        *numflux = f_P * unM;
-    }
-    return;
-}
-
 void surf_term(int Nfp, int K, double *h, double *h_ext,
                double *u, double *v, double *nx, double *ny,
                double *eidM, double *eidP, signed char *eidtype,

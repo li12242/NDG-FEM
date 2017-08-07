@@ -1,27 +1,27 @@
 classdef phys < handle
-    %PHYS Summary of this class goes here
+    %PHYS physical field
     %   Detailed explanation goes here
     
     properties(Abstract, Constant)
-        Nfield  % 变量个数
+        Nfield  % No. of the physical fields
     end
     
     properties(Hidden=true)
-        draw_h  % 绘制图像句柄
+        draw_h  % figure handle for the postprocess
     end
     
     properties(SetAccess=protected)
-        f_extQ      % 外部值
-        obc_file    % 开边界文件
-        out_file    % 结果文件
+        f_extQ      % external field
+        obc_file    % the open boundary file
+        out_file    % the output file
     end
     properties
-        mesh    % 网格对象
-        f_Q     % 节点函数值，各维度 [节点，单元，物理场]
+        mesh    % mesh object
+        f_Q     % the physical field values (each pages)
     end
     %% 虚函数
     methods(Abstract)
-        draw(obj, field) % 绘制场图
+        draw(obj, field) % draw the field
         [ f_Q ] = init(obj) % 初始化
     end
     
@@ -33,6 +33,7 @@ classdef phys < handle
     
     methods(Access=protected)
         function [ f_ext ] = ext_func(obj, time) % 解析解
+            % 
         end
     end
     

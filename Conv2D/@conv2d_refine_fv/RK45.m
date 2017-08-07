@@ -27,15 +27,18 @@ while(time < ftime)
     if(time + dt > ftime)
         dt = ftime - time;
     end
+    obj.detect_refine_cell();
+    [ f_Q ] = obj.refine2fv(f_Q);
     for INTRK = 1:5
         %tloc = time + rk4c(INTRK)*dt;
-        rhsQ = obj.rhs_term( f_Q );
+        [ rhsQ ] = obj.rhs_term( f_Q );
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
-        
         f_Q = f_Q + rk4b(INTRK)*resQ;
     end
+    [ f_Q ] = obj.combine2node( f_Q );
+    %obj.draw(f_Q); drawnow; 
     time = time + dt;
-    obj.draw(f_Q); drawnow; 
+    
 end
 
 obj.f_Q = f_Q;

@@ -13,8 +13,8 @@ Line(4) = {4, 1}; // west boundary
 Line Loop(1) = {1, 2, 3, 4};
 Plane Surface(1) = {1};
 
-Recombine Surface{1};
+//Recombine Surface{1};
 Mesh.Smoothing = 8;
 
 Physical Line(5) = {1,2,3,4}; // east bc - clamped
-Physical Surface(1) = {1};Coherence;
+Physical Surface(1) = {1};

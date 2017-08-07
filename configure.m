@@ -87,6 +87,9 @@ srcfile = {'rhs_term.c'};
 libfile = {'conv2d.c', 'flux_term.c', 'surf_term.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
+srcfile = {'rhs_fv_term.c'};
+libfile = {'conv2d.c'};
+install(path, srcfile, libfile, compiler, cflags, ldflags);
 %% SWE2d
 path = 'SWE2d/@swe2d/private';
 srcfile = {'hll_flux.c', 'nodal_flux.c', 'ppreserve.c', 'lf_flux.c'};

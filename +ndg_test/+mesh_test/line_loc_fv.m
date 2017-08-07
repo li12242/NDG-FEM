@@ -19,6 +19,10 @@ classdef line_loc_fv < ndg_test.mesh_test.loc_fv
             end
         end% func
         
+        function [ Js ] = loc_fv_surface(obj, mesh)
+            Js = ones(size(mesh.Js));
+        end
+        
         function [ v1, v2, nx, ny, nz, ds ] = loc_edge_info(obj, mesh)
             K = mesh.K;
             v1 = zeros(obj.Nedge, K);

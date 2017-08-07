@@ -59,7 +59,26 @@ classdef tri_loc_fv2d < ndg_test.mesh_test.loc_fv
     %% Ë½ÓÐ·½·¨
     methods(Access=protected)
         
-        function [P, R, vol] = project_matrix(obj, mesh)
+        function [ Js ] = loc_fv_surface(obj, mesh)
+            Js = zeros(size(mesh.Js)); % allocation
+            
+            Fmask = mesh.cell.Fmask;
+            x = mesh.x; 
+            y = mesh.y;
+            for k = 1:mesh.K
+                for n1 = 1:mesh.cell.Nfptotal-1
+                    n2 = n1+1;
+                    v1 = Fmask(n1);
+                    v2 = Fmask(n2);
+                    d2 = sqrt( (x(v1, k) - x(v2, k)).^2 ...
+                        + (y(v1, k) - y(v2, k)).^2 )/2;
+                    Js(n1, k) = Js(n1, k) + d2;
+                    Js(n2, k) = Js(n2, k) + d2;
+                end
+            end
+        end
+        
+        function [ P, R ] = project_matrix(obj, mesh)
             cell = mesh.cell;
             P = zeros(cell.Np, cell.Np);
             
@@ -74,9 +93,10 @@ classdef tri_loc_fv2d < ndg_test.mesh_test.loc_fv
                 rc = mean( r( vert ) ); % cell centre coordinate
                 sc = mean( s( vert ) );
                 for f1 = 1:cell.Nface
-                    f2 = mod(f1,cell.Nface)+1;
+                    v1 = f1;
+                    v2 = mod(v1, cell.Nv)+1;
                     vert1 = obj.EToV(f1,k);
-                    vert2 = obj.EToV(f2,k);
+                    vert2 = obj.EToV(v2,k);
                     
                     r1 = r(vert1); s1 = s(vert1);
                     r2 = r(vert2); s2 = s(vert2);
@@ -179,6 +199,7 @@ classdef tri_loc_fv2d < ndg_test.mesh_test.loc_fv
         end% func
     end
     
+    %% private function
     methods(Access=private)
         function node_val = project_vert2quad(obj, N, vert_val)
             xw = obj.TriGaussPoints(N);
@@ -188,8 +209,7 @@ classdef tri_loc_fv2d < ndg_test.mesh_test.loc_fv
                 + r*vert_val(2, :) + s*vert_val(3, :) );
         end% func
     end
-    
-    %% 
+  
     methods(Access=private, Static)
         
         function [nx, ny, ds] = norm_vector(v1, v2, x, y, xc, yc)
@@ -224,11 +244,8 @@ classdef tri_loc_fv2d < ndg_test.mesh_test.loc_fv
         function area = tri_area(x, y)
             % calculate the area of triangle from given points coordinate
             a = sqrt( (x(1,:) - x(2,:)).^2 + (y(1,:)-y(2,:)).^2 );
-            %a = sqrt( (p1(1)-p2(1))^2+(p1(2)-p2(2))^2 );
             b = sqrt( (x(2,:) - x(3,:)).^2 + (y(2,:)-y(3,:)).^2 );
-            %b = sqrt( (p3(1)-p2(1))^2+(p3(2)-p2(2))^2 );
             c = sqrt( (x(3,:) - x(1,:)).^2 + (y(3,:)-y(1,:)).^2 );
-            %c = sqrt( (p1(1)-p3(1))^2+(p1(2)-p3(2))^2 );
             p = (a+b+c)./2;
             area = sqrt(p.*(p-a).*(p-b).*(p-c));
         end

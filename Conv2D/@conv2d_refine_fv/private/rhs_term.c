@@ -3,37 +3,6 @@
 #include "conv2d.h"
 
 #define DEBUG 0
-/* 
- * @brief double precision vector multiply operation. 
- * t = x .* y 
- */
-void dvecm(double N, double alpha, double *x, double *y, double *t)
-{
-    int i;
-    // #ifdef _OPENMP
-    // #pragma omp parallel for num_threads(DG_THREADS)
-    // #endif
-    for (i = 0; i < N; i++)
-    {
-        t[i] = t[i] + alpha * x[i] * y[i];
-    }
-}
-
-/* 
- * @brief double precision vector divide operation. 
- * t = x .* y 
- */
-void dvecd(double N, double alpha, double *x, double *y, double *t)
-{
-    int i;
-    // #ifdef _OPENMP
-    // #pragma omp parallel for num_threads(DG_THREADS)
-    // #endif
-    for (i = 0; i < N; i++)
-    {
-        t[i] = t[i] + alpha * x[i] / y[i];
-    }
-}
 
 /*
  */
@@ -119,44 +88,43 @@ void rhs_term(size_t Np_, size_t K_, size_t Nfp_,
  * @brief calculate the R.H.S of conv2d problem.
  *
  * Usages:
- *  [ rhsQ, rhsV ] = rhs_term(f_Q, v_Q, f_ext, u, v, 
+ *  [ rhsQ ] = rhs_term(f_Q, f_ext, u, v, 
  *                      nx, ny, eidM, eidP, eidtype, EToR,    % for surface term
  *                      Dr, Ds, rx, ry, sx, sy, LIFT, J, Js)  % for rhs term
  */
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     /* check input */
-    if (nrhs != 20)
+    if (nrhs != 19)
     {
         mexErrMsgIdAndTxt("MATLAB:rhs_term:invalidNumInputs",
                           "20 input required.");
     }
-    else if (nlhs > 2)
+    else if (nlhs > 1)
     {
         mexErrMsgIdAndTxt("MATLAB:rhs_term:maxlhs",
                           "Too many output arguments.");
     }
 
     double *f_Q = mxGetPr(prhs[0]);
-    double *v_Q = mxGetPr(prhs[1]); // finite volume values
-    double *f_extQ = mxGetPr(prhs[2]);
-    double *u = mxGetPr(prhs[3]);
-    double *v = mxGetPr(prhs[4]);
-    double *nx = mxGetPr(prhs[5]);
-    double *ny = mxGetPr(prhs[6]);
-    double *eidM = mxGetPr(prhs[7]);
-    double *eidP = mxGetPr(prhs[8]);
-    signed char *eidtype = (signed char *)mxGetData(prhs[9]);
-    signed char *EToR = (signed char *)mxGetData(prhs[10]);
-    double *Dr = mxGetPr(prhs[11]);
-    double *Ds = mxGetPr(prhs[12]);
-    double *rx = mxGetPr(prhs[13]);
-    double *ry = mxGetPr(prhs[14]);
-    double *sx = mxGetPr(prhs[15]);
-    double *sy = mxGetPr(prhs[16]);
-    double *LIFT = mxGetPr(prhs[17]);
-    double *J = mxGetPr(prhs[18]);
-    double *Js = mxGetPr(prhs[19]);
+    double *f_extQ = mxGetPr(prhs[1]);
+    double *u = mxGetPr(prhs[2]);
+    double *v = mxGetPr(prhs[3]);
+    double *nx = mxGetPr(prhs[4]);
+    double *ny = mxGetPr(prhs[5]);
+    double *eidM = mxGetPr(prhs[6]);
+    double *eidP = mxGetPr(prhs[7]);
+    signed char *eidtype = (signed char *)mxGetData(prhs[8]);
+    signed char *EToR = (signed char *)mxGetData(prhs[9]);
+    double *Dr = mxGetPr(prhs[10]);
+    double *Ds = mxGetPr(prhs[11]);
+    double *rx = mxGetPr(prhs[12]);
+    double *ry = mxGetPr(prhs[13]);
+    double *sx = mxGetPr(prhs[14]);
+    double *sy = mxGetPr(prhs[15]);
+    double *LIFT = mxGetPr(prhs[16]);
+    double *J = mxGetPr(prhs[17]);
+    double *Js = mxGetPr(prhs[18]);
 
     /* get dimensions */
     size_t Np = mxGetM(prhs[0]);
@@ -165,9 +133,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
     /* allocate output array */
     plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
-    plhs[1] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
     double *rhsQ = mxGetPr(plhs[0]);
-    double *rhsV = mxGetPr(plhs[1]);
 
     /* surfce integral term */
     double *dflux = calloc(Nfp * K, sizeof(double));

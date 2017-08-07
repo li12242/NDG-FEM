@@ -8,6 +8,22 @@ int nodal_flux(double c, double u, double v,
     return 0;
 }
 
+void upwind_flux(double f_M, double f_P, double uM, double vM,
+                 double nx, double ny, double *numflux)
+{
+
+    const double unM = uM * nx + vM * ny;
+    if (unM > 0)
+    {
+        *numflux = f_M * unM;
+    }
+    else
+    {
+        *numflux = f_P * unM;
+    }
+    return;
+}
+
 int bound_cond(double varM, double varP, double f_ext,
                double nx, double ny, bc_type type,
                double *f_P)
@@ -33,4 +49,36 @@ int bound_cond(double varM, double varP, double f_ext,
         break;
     }
     return 0;
+}
+
+/* 
+ * @brief double precision vector multiply operation. 
+ * t = x .* y 
+ */
+void dvecm(double N, double alpha, double *x, double *y, double *t)
+{
+    int i;
+    // #ifdef _OPENMP
+    // #pragma omp parallel for num_threads(DG_THREADS)
+    // #endif
+    for (i = 0; i < N; i++)
+    {
+        t[i] = t[i] + alpha * x[i] * y[i];
+    }
+}
+
+/* 
+ * @brief double precision vector divide operation. 
+ * t = x .* y 
+ */
+void dvecd(double N, double alpha, double *x, double *y, double *t)
+{
+    int i;
+    // #ifdef _OPENMP
+    // #pragma omp parallel for num_threads(DG_THREADS)
+    // #endif
+    for (i = 0; i < N; i++)
+    {
+        t[i] = t[i] + alpha * x[i] / y[i];
+    }
 }

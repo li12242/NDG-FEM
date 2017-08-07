@@ -28,4 +28,8 @@ int nodal_flux(double c, double u, double v, double *E, double *G);
 int bound_cond(double varM, double varP, double f_ext,
                double nx, double ny, bc_type type, double *f_P);
 
+void dvecm(double N, double alpha, double *x, double *y, double *t);
+void dvecd(double N, double alpha, double *x, double *y, double *t);
+void upwind_flux(double f_M, double f_P, double uM, double vM,
+                 double nx, double ny, double *numflux);
 #endif //CONV2D_H
