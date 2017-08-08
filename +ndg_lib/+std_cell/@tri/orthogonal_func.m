@@ -1,13 +1,23 @@
-function [ fval ] = orthogonal_func(obj, N, ind, r, s, t)
-%ORTHOGONALFUN 正交基函数
-%   返回正交基函数在坐标（r,s）处函数值
+function [ fval ] = orthogonal_func(obj, N, td, r, s, t)
+%ORTHOGONAL_FUNC Get the values of the orthgonal basis
+%   Get the i-th orthgonal function value at the coordinate (r,s,t)
 
-% 坐标投影到矩阵
-[a,b] = rstoab(r,s);
+% project the coordinate (r,s) in triangle to (a,b) in square
+[ a,b ] = rstoab( r,s ); 
 
 % 基函数序号转换为矩形内正交函数编号（i，j）
-[i, j] = TransInd(N,ind);
-fval = Simplex2DP(a,b,i,j);
+[ i, j ] = trans_ind( N, td );
+[ fval ] = simplex2DP( a,b,i,j );
 
 end
+
+function [ P ] = simplex2DP( a,b,i,j )
+% Evaluate 2D orthonormal polynomial on simplex at (a,b) of order (i,j).
+% 
+h1 = Polylib.JacobiP(a,0,0,i); 
+h2 = Polylib.JacobiP(b,2*i+1,0,j);
+P = sqrt(2.0)*h1.*h2.*(1-b).^i;
+end
+
+
 

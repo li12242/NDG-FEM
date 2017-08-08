@@ -1,5 +1,5 @@
 classdef quad < ndg_lib.std_cell.std_cell
-    %STD_QUAD Summary of this class goes here
+    %QUAD Summary of this class goes here
     %   Detailed explanation goes here
     
     %% »ù±¾ÊôÐÔ

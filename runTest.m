@@ -1,6 +1,5 @@
 function runTest( varargin )
 %RUNTEST 测试脚本
-% 
 
 % 为了使测试函数顺利执行，必须将 NDG-FEM 库路径添加到环境变量内
 addpath(pwd);

@@ -9,7 +9,7 @@ classdef std_cell
     
     % 基本属性
     properties(Constant, Abstract)
-        type % 单元类型
+        type % ndg_lib.std_cell_type 单元类型
         Nv
         vr, vs, vt
         vol % 标准单元长度/面积/体积
@@ -56,7 +56,7 @@ classdef std_cell
             % volume
             [obj.Np, obj.r, obj.s, obj.t] = obj.node_coor_func(N);
             obj.V = obj.Vandmode_Matrix(@obj.orthogonal_func);
-            obj.M = obj.Mass_Matrix;
+            obj.M = obj.Mass_Matrix();
             [obj.Dr, obj.Ds, obj.Dt] = obj.Derivative_Matrix...
                 (@obj.derivative_orthogonal_func);
             % face
@@ -134,8 +134,13 @@ classdef std_cell
             for f = 1:obj.Nface
                 cell = ndg_lib.get_std_cell(obj.N, obj.faceType(f));
                 row = obj.Fmask(:, f);
+                row = row(row ~= 0);
                 for n = 1:cell.Np
+                    try
                     Mes(row, sk) = cell.M(:, n);
+                    catch
+                        keyboard
+                    end
                     sk = sk + 1;
                 end
             end
@@ -151,6 +156,7 @@ classdef std_cell
             for f = 1:obj.Nface
                 cell = ndg_lib.get_std_cell(obj.N, obj.faceType(f));
                 row = obj.Fmask(:, f);
+                row = row(row ~= 0);
                 for n = 1:cell.Np
                     Mes(row, sk) = cell.M(:, n);
                     sk = sk + 1;

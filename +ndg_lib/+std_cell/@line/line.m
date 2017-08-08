@@ -1,5 +1,5 @@
 classdef line < ndg_lib.std_cell.std_cell
-    %STD_LINE Summary of this class goes here
+    %LINE Summary of this class goes here
     %   Detailed explanation goes here
     
     %% »ù±¾ÊôĞÔ

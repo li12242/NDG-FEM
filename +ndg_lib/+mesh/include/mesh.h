@@ -1,12 +1,16 @@
 #ifndef NDG_FEM_MESH_H
 #define NDG_FEM_MESH_H
 
+#include "mex.h"
+#include "../../std_cell/include/std_cell.h"
+
 typedef enum {
     NORMAL = 0,
     SPONGE = 1,
     REFINE = 2,
     WET = 4,
-    DRY = 5
+    DRY = 5,
+    PARWET = 6, // partial wet
 } dg_mesh_type;
 
 typedef enum {
@@ -22,25 +26,26 @@ typedef enum {
 
 typedef struct dg_mesh
 {
-    int K;
-    int Nv;
-    int **EToV;
-    int *EToR;
-    int **EToBS;
+    dg_cell *cell;
+    size_t K;
+    size_t Nv;
+    double *EToV;
+    signed char *EToR;
+    signed char *EToBS;
     double *vx, *vy, *vz;
-    double **J;
-    int **EToE, **EToF;
-    double **x, **y, **z;
-    double **rx, **ry, **rz;
-    double **sx, **sy, **sz;
-    double **tx, **ty, **tz;
+    double *J;
+    double *EToE, *EToF;
+    double *x, *y, *z;
+    double *rx, *ry, *rz;
+    double **sx, **sy, *sz;
+    double *tx, *ty, *tz;
     double *vol;
-    double **elen;
-    int **eidM;
-    int **eidP;
-    int **eidtype;
-    double **nx, **ny, **nz;
-    double **Js;
+    double *elen;
+    double *eidM;
+    double *eidP;
+    signed char *eidtype;
+    double *nx, *ny, *nz;
+    double *Js;
 
 } dg_mesh;
 

@@ -1,5 +1,5 @@
-function [i,j] = TransInd(N, ind)
-%TRANSIND 将正交基函数编号转换为矩形单元内正交基函数编号（i,j）
+function [ i,j ] = trans_ind( N, ind )
+%TRANS_IND 将正交基函数编号转换为矩形单元内正交基函数编号（i,j）
 %   三角形内正交函数对应矩形单元内基函数顺序为
 %   i = 0, j = 0,1,2,...,N-1,N;
 %   i = 1, j = 0,1,2....,N-1;
