@@ -12,6 +12,10 @@ classdef swe2d_dbw < swe2d
         hmin = 1e-4
     end
     
+    methods(Access=protected)
+        [ f_ext ] = ext_func( obj, t )
+    end
+    
     methods
         function obj = swe2d_dbw(varargin)
             switch nargin

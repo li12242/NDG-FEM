@@ -43,14 +43,6 @@ classdef swe2d_dbd < swe2d
             
             obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K); % bottom
         end% func
-    
-        function f_ext = ext_func(obj, time)
-            f_ext = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
-            [h, u] = ext1d_func(obj, obj.mesh.x, time);
-            
-            f_ext(:, :, 1) = h;
-            f_ext(:, :, 2) = h.*u;
-        end
         
         function result(obj)
             % set detector
@@ -74,6 +66,16 @@ classdef swe2d_dbd < swe2d
             plot(xd, hu_num, 'bo-', 'MarkerSize', 6);
             plot(xd, h_ext.*u_ext, 'r-', 'LineWidth', 2.5);
             box on; grid on;
+        end
+    end
+    
+    methods(Access=protected)
+        function f_ext = ext_func(obj, time)
+            f_ext = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
+            [h, u] = ext1d_func(obj, obj.mesh.x, time);
+            
+            f_ext(:, :, 1) = h;
+            f_ext(:, :, 2) = h.*u;
         end
     end
     

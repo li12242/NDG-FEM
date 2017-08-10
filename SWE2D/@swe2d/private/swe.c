@@ -15,9 +15,11 @@ void nodal_flux(double hcrit, double gra,
         *Eh = qx;
         *Gh = qy;
         *Eqx = (qx*qx/h + h2);
+        //*Eqx = qx*qx/h;
         *Gqx = huv;
         *Eqy = huv;
         *Gqy = (qy*qy/h + h2);
+        //*Gqy = qy*qy/h;
     }else{ // for dry nodes
         *Eh = 0; *Eqx = 0; *Eqy = 0;
         *Gh = 0; *Gqx = 0; *Gqy = 0;
@@ -37,9 +39,11 @@ void reduce_nodal_flux(double hcrit, double gra,
         *Eh = qx;
         *Gh = qy;
         *Eqx = (qx*qx/h + h2);
+        //*Eqx = qx*qx/h;
         *Gqx = huv;
         *Eqy = huv;
         *Gqy = (qy*qy/h + h2);
+        //*Gqy = qy*qy/h;
     }else{ // for dry nodes
         *Eh = 0; *Eqx = 0; *Eqy = 0;
         *Gh = 0; *Gqx = 0; *Gqy = 0;

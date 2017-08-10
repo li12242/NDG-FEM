@@ -29,7 +29,7 @@ classdef swe2d_cs < swe2d
             
             obj = obj@swe2d(mesh);
             obj.init;
-            obj.ftime = 4;
+            obj.ftime = 1.2;
         end
         
         function init(obj)
@@ -42,5 +42,10 @@ classdef swe2d_cs < swe2d
         end
     end
     
+    methods(Access=protected)
+        function [f_ext] = ext_func(obj, stime)
+            
+        end
+    end
 end
 

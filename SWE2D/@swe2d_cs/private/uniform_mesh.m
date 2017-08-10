@@ -19,7 +19,7 @@ face_type = [ndg_lib.bc_type.SlipWall,...
 
 switch type
     case ndg_lib.std_cell_type.Tri
-        cell = ndg_lib.std_cell.tri(N, type);
+        cell = ndg_lib.std_cell.tri(N);
         mesh = ndg_lib.mesh.tri_mesh(cell, 'uniform', ...
             {xlim, ylim, M, M, face_type});
         

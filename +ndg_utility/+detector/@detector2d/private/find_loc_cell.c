@@ -1,7 +1,7 @@
 #include "vec_operator.h"
 
-#define TOLERR 1e-10
-
+#define TOLERR 1e-6
+#define DEBUG 0
 /*
  * Details:
  *   Find the location of the nodes which cell is inside.
@@ -59,7 +59,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				int v1 = (int) locVertList[(i-1+Nvert)%Nvert]-1;
 				int v2 = (int) locVertList[(i+1)%Nvert]-1;
 
-				
+                
 				A.x = x[v +k*Np]; A.y = y[v +k*Np];
 				B.x = x[v1+k*Np]; B.y = y[v1+k*Np];
 				C.x = x[v2+k*Np]; C.y = y[v2+k*Np];
@@ -86,13 +86,19 @@ void mexFunction(int nlhs, mxArray *plhs[],
                 continue;
             }
 
-			if(fabs(f)<TOLERR) { // f=0, p is on line AB
+			if(fabs(f) < TOLERR) { // f=0, p is on line AB
 				double temp = dot(AB, AP);
-				if ( (temp>0.0) & (temp<= dot(AB, AB)) ){ // p is on edge AB
+                #if DEBUG
+                mexPrintf("dot AB AP = %f\n", temp);
+                #endif
+				if ( (temp >= 0.0) & (temp<= dot(AB, AB)) ){ // p is on edge AB
 					cell_ind[m] = k+1;
 					break;
 				}
 			}
+            #if DEBUG
+            mexPrintf("Mp=%d, k=%d, f=%f\n", m, k, f);
+            #endif
 		}
 
 		if( fabs(cell_ind[m])<TOLERR ){

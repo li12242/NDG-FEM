@@ -4,7 +4,7 @@ classdef swe2d < ndg_lib.phys.phys2d
     
     properties(Constant)
         Nfield = 3 % 物理场个数，分别为 h，qx=hu，qy=hv
-        gra = 9.81 % 重力加速度
+        gra = 9.80616 % 重力加速度
     end
     
     properties(Abstract, Constant)

@@ -5,20 +5,20 @@ function run_conv2d
 
 casename{1} = 'Conv2D/@conv2d_diffusion/mesh/quad_500/quad_500';
 K = 505;
-n = [0, 1, 2];
-ne = K*4.^n;
-len = 0.5.^n;
-k = [1, 2, 3];
+nk = [0, 1, 2];
+ne = K*4.^nk;
+len = 0.5.^nk;
+order = [1, 2, 3];
 % ne = [20, 40, 60, 80];
 % len = 1./ne;
 
 Nmesh = numel(ne);
-Ndeg = numel(k);
+Ndeg = numel(order);
 dofs = zeros(Nmesh, Ndeg);
 time = zeros(Nmesh, Ndeg);
 for n = 1:Ndeg
     for m = 1:Nmesh
-        dofs(m, n) = ne(m) * (k(n)+1).^2;
+        dofs(m, n) = ne(m) * (order(n)+1).^2;
     end
 end
 
@@ -34,7 +34,7 @@ linestyle = '--';
 for n = 1:Ndeg
     for m = 1:Nmesh
         if (m == 1)
-            conv = conv2d_refine_fv(k(n), casename{m}, quad_type);
+            conv = conv2d_refine_fv(order(n), casename{m}, quad_type);
         else
             conv.refine_mesh(1);
         end

@@ -90,7 +90,7 @@ classdef phys < handle
             f_abs = obj.f_Q - f_ext;
             for fld = 1:obj.Nfield
                 temp = abs( f_abs(:,:,fld) );
-                err(fld) = max( obj.mesh.cell_mean(temp) );
+                err(fld) = max( temp );
             end
         end
     end
