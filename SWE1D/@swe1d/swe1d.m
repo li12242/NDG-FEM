@@ -49,12 +49,12 @@ classdef swe1d < ndg_lib.phys.phys1d
             obj.mesh.EToR( obj.wetflag ) = ndg_lib.mesh_type.Normal;
         end
         
-        function dt = time_interval( obj, f_Q )
+        function spe = char_len(obj, f_Q)
+            % 计算节点雅克比特征值
             h = f_Q(:,:,1);
-            q = f_Q(:,:,2);
-            u = abs(q./h) + sqrt(obj.gra*h);
-            s = bsxfun(@times, obj.mesh.vol/obj.mesh.cell.N, 1./u);
-            dt = obj.cfl*min( min( s(:, obj.wetflag) ) );
+            q = abs( f_Q(:,:,2) );
+            spe = (q./h) + sqrt(obj.gra*h);
+            spe(:, ~obj.wetflag) = eps;
         end
     end
 

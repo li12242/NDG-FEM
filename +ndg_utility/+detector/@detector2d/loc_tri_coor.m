@@ -8,10 +8,14 @@ sd = ones(obj.Nd, 1);
 fmask1 = obj.mesh.cell.Fmask(1, :)';
 fmask2 = obj.mesh.cell.Fmask(end, :)';
 for n = 1:obj.Nd
+    if (kd(n) == 0) 
+        continue; 
+    end
     xv1 = obj.mesh.x( fmask1, kd(n) );
     yv1 = obj.mesh.y( fmask1, kd(n) );
     xv2 = obj.mesh.x( fmask2, kd(n) );
     yv2 = obj.mesh.y( fmask2, kd(n) );
+    
     b = sqrt( (xv1 - xv2).^2 + (yv1 - yv2).^2 );
     a1 = sqrt( (xd(n) - xv1).^2 + (yd(n) - yv1).^2 );
     a2 = sqrt( (xd(n) - xv2).^2 + (yd(n) - yv2).^2 );

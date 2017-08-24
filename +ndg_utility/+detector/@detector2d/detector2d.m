@@ -15,12 +15,7 @@ classdef detector2d < ndg_utility.detector.detector
             % 寻找检测点所在单元
             kd = find_loc_cell(obj.mesh.x, obj.mesh.y, ...
                 obj.mesh.cell.Fmask(1,:), obj.xd, obj.yd)';
-            if( any(~kd) )
-                ind = find(~kd);
-                
-                error(['Some nodes (', num2str(numel(ind)),...
-                    ') are not located in the element']);
-            end
+            
             switch obj.mesh.cell.type
                 case ndg_lib.std_cell_type.Tri
                     [ rd, sd ] = loc_tri_coor(obj, kd, obj.xd, obj.yd);

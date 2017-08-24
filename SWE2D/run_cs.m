@@ -8,7 +8,7 @@ if (type ~= ndg_lib.std_cell_type.Tri) ...
     error(['Illegal cell type: ', num2str(type)]);
 end
 % parameter
-order = [1,2, 3];
+order = [1,2,3];
 ne = [20, 40, 80];
 len = 20./ne;
 
@@ -37,7 +37,7 @@ linewidth = 1.5;
 markersize = 8;
 color = {'b', 'r', 'g', 'm'};
 marker = {'o', 's', '^', '*'};
-linestyle = '-';
+linestyle = '--';
 
 for n = 1:Ndeg
     for m = 1:Nmesh
@@ -70,7 +70,7 @@ for n = 1:Ndeg
         ); 
     hold on;
     
-    figure(4); plot(dofs(:, n), time(:, n), [co, ma, linestyle],...
+    figure(4); plot(ne, time(:, n), [co, ma, linestyle],...
         'LineWidth', linewidth, ...
         'MarkerSize', markersize ...
         ); 

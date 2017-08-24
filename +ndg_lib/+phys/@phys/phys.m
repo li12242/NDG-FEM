@@ -7,7 +7,7 @@ classdef phys < handle
     end
     
     properties(Hidden=true)
-        draw_h  % figure handle for the postprocess
+        draw_h  % figure handles
     end
     
     properties(SetAccess=protected)
@@ -33,27 +33,23 @@ classdef phys < handle
     
     methods(Access=protected)
         function [ f_ext ] = ext_func(obj, time) % 解析解
-            % 
-        end
+        end% func
     end
     
-    %% 公共方法
+    %% public
     methods
         function obj = phys(mesh)
             obj.mesh = mesh;
             obj.f_Q = zeros(mesh.cell.Np, mesh.K, obj.Nfield);
             obj.f_extQ = zeros(mesh.cell.Np, mesh.K, obj.Nfield);
         end% func
-    end
     
-    % 范数误差
-    methods
         function err = norm_err2(obj, time)
-            % 计算1范数误差。
-            % 警告，调用此函数时需要首先定义精确解函数，调用格式
-            %   f_ext = ext_func(obj, time)
-            % ext_func 根据输入时间返回各节点精确解。
-            f_ext = ext_func(obj, time); 
+        % NORM_ERR2 calculate the L2 norm error from the exact solutions.
+        % Warrning: The methods calls the public method - ext_func
+        %   f_ext = ext_func(obj, t)
+        % which returns the exact solution of each nodes at time 't'.
+            f_ext = ext_func(obj, time); % get the exact solution
             err = zeros(obj.Nfield, 1);
             f_abs = obj.f_Q - f_ext;
             area = sum(obj.mesh.vol);
@@ -62,7 +58,7 @@ classdef phys < handle
                 err(fld) = sqrt( sum( ...
                     obj.mesh.cell_mean(temp).*obj.mesh.vol ) )./area;
             end
-        end
+        end% func
         
         function err = norm_err1(obj, time)
             % 计算2范数误差。
@@ -78,7 +74,7 @@ classdef phys < handle
                 err(fld) = sum( ...
                     obj.mesh.cell_mean(temp).*obj.mesh.vol )./area;
             end
-        end
+        end% func
         
         function err = norm_errInf(obj, time)
             % 计算最大范数误差。
@@ -90,10 +86,10 @@ classdef phys < handle
             f_abs = obj.f_Q - f_ext;
             for fld = 1:obj.Nfield
                 temp = abs( f_abs(:,:,fld) );
-                err(fld) = max( temp );
+                err(fld) = max(max( temp ));
             end
-        end
-    end
+        end% func
+    end% methods
     
     % 文件 I/O
     methods
@@ -119,33 +115,6 @@ classdef phys < handle
             end
             
         end% func
-        
-        function obj = init_from_file(obj, filename)
-            % 读取文件数据进行初始化
-            fp = fopen(filename);
-            Num = fscanf(fp, '%d', 1);
-            Nfld = fscanf(fp, '%d', 1); % read number of physical fields
-            if ( ( (Num~=obj.mesh.K) && (Num~=obj.mesh.Nv) ) )
-                error(['The number of values in file: ', ...
-                    num2str(Num), ...
-                    ' is neither element number: ', num2str(obj.mesh.K), ...
-                    ' nor vertex number: ', num2str(obj.mesh.Nv)]);
-            elseif (Nfld~=obj.Nfield)
-                error(['The number of physical field in file: ', ...
-                    num2str(Nfld), ...
-                    ' is different from this phys object: ', ...
-                    num2str(obj.Nfield)]);
-            end
-            fmtStr = ['%d ', repmat('%g ', 1, Nfld)];
-            data = fscanf(fp, fmtStr, [Nfld+1, Num]);
-            switch Num
-                case obj.mesh.K
-                    fprintf('\nInit with elemental averaged values.\n\n')
-                case obj.mesh.Nv
-                    fprintf('\nInit with vertex values.\n\n')
-            end
-            fclose(fp);
-        end
     end
     
 end

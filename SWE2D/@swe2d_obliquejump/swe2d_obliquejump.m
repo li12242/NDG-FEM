@@ -23,7 +23,7 @@ classdef swe2d_obliquejump < swe2d
             obj = obj@swe2d(mesh);
             obj.casename = casename;
             obj.init();
-            obj.ftime  = 15;
+            obj.ftime  = 10;
             obj.obc_file = obj.make_obc_file(casename);
             obj.update_ext(0);
         end
@@ -35,6 +35,21 @@ classdef swe2d_obliquejump < swe2d
             obj.f_Q = f_Q;
             obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K);
         end% func
+        
+        [ obj ] = VB_RK45_OBC_solve( obj );
+    end
+    
+    methods(Access=protected)
+        function [ f_ext ] = ext_func(obj, stime)
+            f_ext = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
+            f_ext(:, :, 1) = 1;
+            k = -tan(30/180*pi);
+            ind = (obj.mesh.y >= ( 30+k*(obj.mesh.x-10) ));
+            
+            he = ones(obj.mesh.cell.Np, obj.mesh.K);
+            he(ind)  = 1.5049;
+            f_ext(:, :, 1) = he;
+        end
     end
     
 end

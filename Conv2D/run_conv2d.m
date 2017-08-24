@@ -34,7 +34,7 @@ linestyle = '--';
 for n = 1:Ndeg
     for m = 1:Nmesh
         if (m == 1)
-            conv = conv2d_refine_fv(order(n), casename{m}, quad_type);
+            conv = conv2d_advection(order(n), casename{m}, quad_type);
         else
             conv.refine_mesh(1);
         end

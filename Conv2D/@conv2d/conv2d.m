@@ -1,34 +1,38 @@
 classdef conv2d < ndg_lib.phys.phys2d
-    %CONV2D 二维对流方程求解器
-    %   二维对流方程求解器。
+    %CONV2D solving two-dimensional convection equation.
+    %   The conserved form of the two-dimensional convection equation 
+    %   is written as
+    %   $\frac{\partial c}{\partial t} + \nabla \cdot \mathbf{F} = 0$.
+    %   where the flux $\mathbf{F} = \left[ uc, vc \right]$, and $(u, v)$
+    %   are the flow rate along x and y coordinate, respectively.
     
     properties(Constant)
-        Nfield = 1  % 变量个数
+        Nfield = 1  % # of physical field
     end
     
     properties
-        ftime   % 计算终止时间
-        dt      % 计算时间步长
-        u,v     % 速度场
+        ftime   % final time
+        dt      % time interval
+        u,v     % flow rate
     end
     
-    %% 虚函数
+    %% Abstract function
     methods(Abstract, Access=protected)
         [ spe ] = character_len(obj, f_Q) % get the time interval dt
     end
     
-    %% 私有函数
+    %% Private function
     methods(Access=protected) % private 
         [ E, G ] = flux_term( obj, f_Q ) % get the flux terms
         [ dflux ] = surf_term( obj, f_Q ) % get flux deviation
         [ rhs ] = rhs_term(obj, f_Q ) % get the r.h.s term
     end
     
-    %% 公共方法
+    %% Public function
     methods
         function obj = conv2d(varargin)
             switch varargin{1}
-                case 'file' % 读取文件
+                case 'file' % read from file
                     var2 = varargin{2};
                     
                     N = var2{1};

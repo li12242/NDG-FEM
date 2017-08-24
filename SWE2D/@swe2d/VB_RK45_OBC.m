@@ -26,6 +26,13 @@ f_Q  = obj.f_Q;
 obj.wetdry_detector(f_Q);
 obj.topo_grad_term(); % 计算底坡梯度
 
+is_Camera_on = 0; % 设定是否生成动画
+if is_Camera_on
+    writerObj = VideoWriter([pwd,'/tsuami.avi']);
+    writerObj.FrameRate=15; % 设定动画帧率
+    open(writerObj);	
+end
+
 while(time < ftime)
     dt = time_interval(obj, f_Q);
     if(time + dt > ftime)
@@ -48,7 +55,16 @@ while(time < ftime)
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
     end
     %obj.draw( f_Q ); drawnow;
+    if is_Camera_on
+        obj.draw( f_Q ); drawnow;
+        frame = getframe(gcf);
+        writeVideo(writerObj,frame); 
+    end% if
+    
     time = time + dt;
+end
+if is_Camera_on
+    close(writerObj);
 end
 
 obj.f_Q = f_Q;

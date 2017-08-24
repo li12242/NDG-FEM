@@ -8,6 +8,9 @@ sd = ones(obj.Nd, 1);
 fmask1 = obj.mesh.cell.Fmask(1, :)';
 fmask2 = obj.mesh.cell.Fmask(end, :)';
 for n = 1:obj.Nd
+    if (kd(n) == 0) 
+        continue; 
+    end
     xv1 = obj.mesh.x( fmask1, kd(n) );
     yv1 = obj.mesh.y( fmask1, kd(n) );
     xv2 = obj.mesh.x( fmask2, kd(n) );

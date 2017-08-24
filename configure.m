@@ -1,8 +1,8 @@
 function configure(varargin)
-% CONFIGURE 编译 mex 文件
-% 输入参数包括
-%   1. 编译器路径（可省略）；
-%   2. 是否选择 openmp 编译，0-不使用， 其他-OpenMP 线程数；
+%CONFIGURE compile the mex files.
+%   compile the mex file with 
+%   1. compiler path; (optional)
+%   2. number of threads;
 switch nargin
     case 1
         compiler_path = '';
@@ -20,11 +20,11 @@ switch computer('arch')
         end
         
         if with_omp
-            cflags = ['CFLAGS=$CFLAGS, -Wall -qopenmp -DDG_THREADS=', ...
+            cflags = ['CFLAGS=$CFLAGS, -std=c99 -Wall -qopenmp -DDG_THREADS=', ...
                 num2str(with_omp)];
             ldflags = {'-liomp5', '-largeArrayDims', '-lmwblas'};
         else
-            cflags = 'CFLAGS=$CFLAGS, -Wall';
+            cflags = 'CFLAGS=$CFLAGS, -std=c99 -Wall';
             ldflags = {'-largeArrayDims', '-lmwblas'};
         end
     case 'win64'
@@ -77,7 +77,7 @@ install(path, srcfile, libfile, compiler, cflags, ldflags);
 %% Conv2d
 path = 'Conv2d/@conv2d/private';
 srcfile = {'upwind_flux.c'};
-libfile = {'conv2d.c', 'bc.c'};
+libfile = {'conv2d.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 path = 'Conv2d/@conv2d_adv_gq/private';
 install(path, srcfile, libfile, compiler, cflags, ldflags);
@@ -90,6 +90,13 @@ install(path, srcfile, libfile, compiler, cflags, ldflags);
 srcfile = {'rhs_fv_term.c'};
 libfile = {'conv2d.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
+
+%% NConv2d
+path = 'NConv2d/@nconv2d/private';
+srcfile = {'lf_flux.c'};
+libfile = {'nconv2d.c'};
+install(path, srcfile, libfile, compiler, cflags, ldflags);
+
 %% SWE2d
 path = 'SWE2d/@swe2d/private';
 srcfile = {'hll_flux.c', 'nodal_flux.c', 'ppreserve.c', 'lf_flux.c'};
@@ -99,7 +106,6 @@ install(path, srcfile, libfile, compiler, cflags, ldflags);
 end% func
 
 %% install function
-
 function install(path, src, libsrc, compiler, cflags, ldflags)
 % Compile the source file and put into spicific directory.
 addpath(pwd)

@@ -12,3 +12,4 @@ html
 *.mexw32
 *.txt
 *.asv
+*.mat

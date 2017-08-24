@@ -1,5 +1,5 @@
 function read_gmsh(msh_file_name)
-msh_fp=fopen(msh_file_name);
+msh_fp = fopen(msh_file_name);
 [path_str, name, ext] = fileparts(msh_file_name);
 
 node_fp=fopen( fullfile(path_str, [name,'.node']),'w' );

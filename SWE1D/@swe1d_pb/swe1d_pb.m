@@ -1,13 +1,19 @@
 classdef swe1d_pb < swe1d
     %SWE1D_PB 一维光滑 parabolic bowl 振荡流求解器。
-    %   Detailed explanation goes here
+    %
+    %   [1] Khan AA, Lai W. Modeling shallow water flows using 
+    %       the discontinuous Galerkin method, 75P. CRC Press; 2014.
+
     
     properties
-        M = 1e-6
+        M = 1e-5
     end
     
     properties(Constant)
         hmin = 1e-4
+        a = 600
+        h0 = 10
+        B = 5
     end
     
     methods
@@ -25,8 +31,6 @@ classdef swe1d_pb < swe1d
             
             obj = obj@swe1d(mesh);
             obj.init();
-            obj.ftime = 20;
-            obj.cfl = 0.2;
         end
         
         function init(obj)
@@ -48,6 +52,12 @@ classdef swe1d_pb < swe1d
             obj.f_Q(:,:,1) = h;
             % Parameters
             obj.ftime = 2*T; % Parabolic Bowl
+        end
+    end
+    
+    methods(Access=protected)
+        function f_ext = ext_func(obj, stime)
+            
         end
     end
     

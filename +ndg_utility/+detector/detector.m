@@ -8,17 +8,17 @@ classdef detector < handle
     end
     
     properties(SetAccess=protected)
-        mesh % 网格对象;
-        Nd % 检测点个数（根据输入检测点个数确定）;
-        Nt % 时间序列个数（根据时间步长与结束时间确定）;
-        Nfield % 物理量个数;
-        xd, yd, zd % 检测点坐标;
-        kd % 检测点所在单元序号;
-        rd, sd, td % 检测点所在单元局部坐标;
-        dt % 时间步长;
-        ftime % 结束时间
-        time % 记录时间序列;
-        dQ % 检测点物理量值;
+        mesh % mesh object
+        Nd % # of the detector points (DP)
+        Nt % # of time steps
+        Nfield % # of physical fields
+        xd, yd, zd % coordinate of the DP
+        kd % list of the element No. contains each DP
+        rd, sd, td % the local coordinate for each DP
+        dt % time interval
+        ftime % final time
+        time % the time sequence
+        dQ % the results for the DP
     end
     
     methods(Abstract, Hidden)
@@ -27,13 +27,31 @@ classdef detector < handle
     
     methods(Hidden, Access=protected)
         function intMat = interpmatrix(obj)
-            % 计算每个检测点插值矩阵
+            % Calculate the interpolation matrix
             Vg = zeros(obj.Nd, obj.mesh.cell.Np);
+            ind =  (obj.kd ~= 0);
             for n = 1:obj.mesh.cell.Np
-                Vg(:, n) = obj.mesh.cell.orthogonal_func(obj.mesh.cell.N, ...
-                    n, obj.rd, obj.sd, obj.td);
+                Vg(ind, n) = obj.mesh.cell.orthogonal_func(obj.mesh.cell.N, ...
+                    n, obj.rd(ind), obj.sd(ind), obj.td(ind) );
             end% for
             intMat = Vg/obj.mesh.cell.V;
+            
+            % For the points out of the mesh domain, find the nearest node
+            % and set the interpolation matrix
+            ind = find( obj.kd == 0 );
+            for n = 1:numel(ind)
+                tid = ind(n);
+                dis = ( (obj.xd(tid) - obj.mesh.x).^2 ...
+                    + (obj.yd(tid) - obj.mesh.y).^2 ...
+                    + (obj.zd(tid) - obj.mesh.z).^2 );
+                
+                [~, m] = min( dis(:) );
+                [ r, k ] = ind2sub([obj.mesh.cell.Np, obj.mesh.K], m);
+                obj.kd( tid ) = k;    
+                intMat(tid, :) = 0;
+                intMat(tid, r) = 1;
+            end
+            
         end% func
     end
     
