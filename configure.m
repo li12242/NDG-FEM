@@ -74,6 +74,16 @@ srcfile = {'vb_weno.c', 'vertex_average.c', 'vertex_extreme.c'};
 libfile = {'vb.c'};
 install(path, srcfile, libfile, compiler, cflags, ldflags);
 
+path = '+ndg_utility/+limiter/+BJ/private';
+srcfile = {'vertex_extreme.c'};
+libfile = {};
+install(path, srcfile, libfile, compiler, cflags, ldflags);
+
+path = '+ndg_utility/+limiter/+BJ/@BJ_2d/private';
+srcfile = {'BJ_limit_2d.c'};
+libfile = {};
+install(path, srcfile, libfile, compiler, cflags, ldflags);
+
 %% Conv2d
 path = 'Conv2d/@conv2d/private';
 srcfile = {'upwind_flux.c'};

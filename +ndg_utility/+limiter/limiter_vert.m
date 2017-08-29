@@ -1,12 +1,12 @@
 classdef limiter_vert
-    %LIMITER_VERT 基于节点值的斜率限制器。
+    %LIMITER_VERT The vertex-based limiter
     %   Detailed explanation goes here
     
     properties
-        mesh % 网格对象
-        cell % 单元对象
-        Kv  % 每个顶点所在单元个数
-        VToE % 每个顶点所在单元序号
+        mesh % mesh object
+        cell % cell object
+        Kv  % number of elements for each vertex belongs to
+        VToE % index of elements contain each vertex
     end
     
     methods(Hidden)

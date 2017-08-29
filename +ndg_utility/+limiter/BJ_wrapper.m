@@ -1,5 +1,5 @@
-function [ limiter ] = BJ( mesh )
-%BJ Construct the 
+function [ limiter ] = BJ_wrapper( mesh )
+%BJ_WRAPPER Construct the BJ slope limiter for different types of meshes.
 %   Detailed explanation goes here
 
 switch mesh.cell.type
@@ -10,4 +10,3 @@ switch mesh.cell.type
 end
 
 end
-

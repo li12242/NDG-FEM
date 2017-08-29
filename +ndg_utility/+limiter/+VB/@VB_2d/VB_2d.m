@@ -1,5 +1,5 @@
 classdef VB_2d < ndg_utility.limiter.limiter_vert
-    %VB_2D 二维节点限制器
+    %VB_2D 2d vertex-based slope limiter.
     %   Detailed explanation goes here
     
     properties(SetAccess=private)
@@ -52,10 +52,10 @@ classdef VB_2d < ndg_utility.limiter.limiter_vert
         end
         
         function [ flimt ] = limit(obj, f_Q)
-            fmean = obj.mesh.cell_mean(f_Q);
-            [fmax, fmin] = vertex_extreme(obj.Kv, obj.VToE, fmean);
-            [ fv ] = vertex_average(fmean, obj.Kv, obj.VToE, obj.VToC);
-            [ flimt ] = obj.HWENO_wei(f_Q, fmean, fv, fmax, fmin);
+            c_mean = obj.mesh.cell_mean(f_Q);
+            [fmax, fmin] = vertex_extreme(obj.Kv, obj.VToE, c_mean);
+            [ fv ] = vertex_average(c_mean, obj.Kv, obj.VToE, obj.VToC);
+            [ flimt ] = obj.HWENO_wei(f_Q, c_mean, fv, fmax, fmin);
         end
     end
     

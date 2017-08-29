@@ -67,7 +67,8 @@ classdef swe2d < ndg_lib.phys.phys2d
         
         function obj = swe2d(mesh)
             obj = obj@ndg_lib.phys.phys2d(mesh);
-            obj.slopelimiter = ndg_utility.limiter.VB.VB_2d(mesh);
+            %obj.slopelimiter = ndg_utility.limiter.VB.VB_2d(mesh);
+            obj.slopelimiter = ndg_utility.limiter.BJ.BJ_2d(mesh);
         end
     end
     

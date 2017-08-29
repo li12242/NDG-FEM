@@ -1,5 +1,5 @@
 classdef BJ_line < ndg_utility.limiter.BJ.BJ
-    %BJ Summary of this class goes here
+    %BJ_LINE Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
@@ -24,20 +24,20 @@ classdef BJ_line < ndg_utility.limiter.BJ.BJ
                 & ((f_max - f_min) > K.*obj.mesh.vol));
             % Check to see if any elements require limiting
             if(any(ids))
-              % correction factor
-              a = ones(size(f_Q));
-              f_dive = 1./bsxfun(@minus, f_Q, c_mean);
-              
-              ind = bsxfun(@gt, f_Q, c_mean); % correction for f_Q > c_mean
-              tmp = min(1, bsxfun(@times, c_max-c_mean, f_dive));
-              a(ind) = tmp(ind);
-              
-              ind = bsxfun(@lt, f_Q, c_mean); % correction for f_Q < c_mean
-              tmp = min(1, bsxfun(@times, c_min-c_mean, f_dive));
-              a(ind) = tmp(ind);
-              % apply slope limiter to selected elements
-              tmp = bsxfun(@plus, c_mean, a./f_dive);
-              f_limit(:,ids) = tmp(:, ids);
+                % correction factor
+                a = ones(size(f_Q));
+                f_dive = 1./bsxfun(@minus, f_Q, c_mean);
+
+                ind = bsxfun(@gt, f_Q, c_mean); % correction for f_Q > c_mean
+                tmp = min(1, bsxfun(@times, c_max-c_mean, f_dive));
+                a(ind) = tmp(ind);
+
+                ind = bsxfun(@lt, f_Q, c_mean); % correction for f_Q < c_mean
+                tmp = min(1, bsxfun(@times, c_min-c_mean, f_dive));
+                a(ind) = tmp(ind);
+                % apply slope limiter to selected elements
+                tmp = bsxfun(@plus, c_mean, a./f_dive);
+                f_limit(:,ids) = tmp(:, ids);
             end% if
         end
     end

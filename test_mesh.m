@@ -12,7 +12,7 @@ EToBS([1, end]) = ndg_lib.bc_type.ZeroGrad;
 mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);
 
 %% triangle mesh
-tri = ndg_lib.std_cell.tri(2);
+tri = ndg_lib.std_cell.tri(3);
 
 EToV = [1,2,3; 3,2,4]';
 vx = [0, 1, 0.5, 1.5]';
@@ -39,4 +39,5 @@ Nv = 8;
 EToR = [1, 1, 1]';
 EToBS = [5,1,1,5; 1,5,1,1; 1,5,5,5]';
 
-mesh = ndg_lib.mesh.quad_mesh(quad, Nv, vx, vy, K, EToV, EToR, EToBS)
+mesh = ndg_lib.mesh.quad_mesh(quad, 'variable', ...
+    {Nv, vx, vy, K, EToV, EToR, EToBS})

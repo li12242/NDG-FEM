@@ -34,13 +34,8 @@ classdef tri_mesh < ndg_lib.mesh.mesh2d
                         = read_from_file( varargin{2} );
                 case 'variable'
                     var = varargin{2};
-                    Nv = var{1};
-                    vx = var{2}; 
-                    vy = var{3}; 
-                    K  = var{4}; 
-                    EToV = var{5};
-                    EToR = int8(var{6}); 
-                    EToBS = int8(var{7});
+                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                        = check_user_input(var);
                 case 'uniform'
                     var = varargin{2};
                     xlim = var{1};
@@ -50,6 +45,8 @@ classdef tri_mesh < ndg_lib.mesh.mesh2d
                     facetype = var{5};
                     [Nv, vx, vy, K, EToV, EToR, EToBS] ...
                         = uniform_mesh(xlim, ylim, Mx, My, facetype);
+                otherwise
+                    
             end
             obj = obj@ndg_lib.mesh.mesh2d(cell, ...
                 Nv, vx, vy, K, EToV, EToR, EToBS);
@@ -66,3 +63,30 @@ classdef tri_mesh < ndg_lib.mesh.mesh2d
     
 end
 
+function [Nv, vx, vy, K, EToV, EToR, EToBS] = check_user_input(input)
+% check the input variables for initlizing the mesh object.
+Nv = input{1};
+vx = input{2}; 
+vy = input{3}; 
+K  = input{4}; 
+EToV = input{5};
+EToR = int8(input{6}); 
+EToBS = int8(input{7});
+
+% check the # of the vertex
+if ( numel(vx) ~= Nv ) || ( numel(vy) ~= Nv )
+    error(['The length of input vertex coordinate "vx" or "vy" ', ...
+        'is not equal to Nv']);
+end% func
+
+% check the # of the elements
+if ( size(EToV, 2) ~= K )||( size(EToBS, 2) ~= K ) ||( numel(EToR) ~= K )
+    error(['The length of input "EToV", "EToR" or "EToBS" ', ...
+        'is not equal to K']);
+end% func
+
+if ( size(EToV, 1) ~= size(EToBS, 1) )
+    error('The numbers of vertex in "EToV" and "EToBS" are not equal');
+end% func
+
+end% func
