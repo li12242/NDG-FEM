@@ -1,54 +1,74 @@
 classdef swe2d_dbw < swe2d
-    %SWE2D_DBW Summary of this class goes here
-    %   Detailed explanation goes here
-    
-    properties(Hidden)
-        dam_pos = 500
-        h0 = 10
-        h1 = 2
-    end
+    %SWE2D_DBW The dam break problem with wet condition at the downstream.
+    %   
     
     properties(Constant)
-        hmin = 1e-4
-    end
+        dam_pos = 500
+        h0 = 10 % water depth at the upstream (left)
+        h1 = 2 % water depth at the downstream (right)
+    end% properties
+    
+    properties
+        theta = pi/6; % clockwise rotation angle
+    end% properties
+    
+    properties(Constant)
+        hmin = 1e-4 % the threshold of the water depth
+    end% properties
     
     methods(Access=protected)
         [ f_ext ] = ext_func( obj, t )
-    end
+    end% methods
     
     methods
         function obj = swe2d_dbw(varargin)
-            switch nargin
-                case 1
-                    mesh = varargin(1);
-                    if ( ~isa(mesh, 'ndg_lib.mesh.tri_mesh') || ...
-                            ~isa(mesh, 'ndg_lib.mesh.quad_mesh') )
-                        error(['The input is not a triangle or ',... 
-                            'quadrilateral mesh object!']);
-                    end
-                case 3
-                    N = varargin{1};
-                    M = varargin{2};
-                    type = varargin{3};
-                    mesh = uniform_mesh( N, M, type );
-                otherwise
-                    error('The number of input variable is incorrect.');
-            end% switch
-            
-            obj = obj@swe2d(mesh);
+            [ input ] = set_case_parameter( varargin{:} );
+            obj = obj@swe2d(input{:});
             obj.ftime = 20;
             obj.init();
-        end
+        end% func
         
         function init(obj)
-            f_Q = obj.h1*ones(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
-            xc  = obj.mesh.cell_mean(obj.mesh.x);
-            f_Q(:, xc<obj.dam_pos, 1) = obj.h0;
-            obj.f_Q = f_Q;
+            h = obj.h1*ones(obj.mesh.cell.Np, obj.mesh.K);
+            % the inverse rotation matrix
+            T = [cos(-obj.theta), sin(-obj.theta); 
+                -sin(-obj.theta), cos(-obj.theta)]; 
+
+            x = zeros(size(obj.mesh.x));
+            temp = T*[ obj.mesh.x(:)'; obj.mesh.y(:)'; ];
+            x(:) = temp(1, :);
+            xc = obj.mesh.cell_mean(x);
+            h(:, xc<obj.dam_pos) = obj.h0;
             
+            obj.f_Q(:, :, 1) = h;
+            obj.f_Q(:, :, 2:3) = 0;
             obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K); % bottom
         end% func
+        
+        result(obj);
+        [ obj ] = SL_RK45( obj );
     end
     
 end
+
+function [ input ] = set_case_parameter( varargin )
+% set the range of the computation domain and the boundary conditions
+if( isa(varargin{2}, 'char') )
+    N = varargin{1};
+    casename = varargin{2};
+    type = varargin{3};
+    input = {N, casename, type};
+elseif( isa(varargin{2}, 'double') )
+    N = varargin{1};
+    M = varargin{2};
+    type = varargin{3};
+    xlim = [0, 1000]; 
+    ylim = [-10, 10];
+    Mx = M; My = 1;
+    zg_bc = ndg_lib.bc_type.ZeroGrad;
+    bc_type = [zg_bc, zg_bc, zg_bc, zg_bc];
+    input = {N, xlim, ylim, Mx, My, type, bc_type};
+end% switch
+
+end% func
 

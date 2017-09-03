@@ -1,5 +1,5 @@
 function draw(obj, varargin)
-%DRAW 绘制及水位与流量场
+%DRAW Draw the water elevation and the flux on x and y coordinates
 switch nargin
     case 1
         f_Q = obj.f_Q;
@@ -46,7 +46,7 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
     ylabel('$y$', 'Interpreter', 'latex', 'FontSize', fontsize);
     zlabel('$q_x$', 'Interpreter', 'latex', 'FontSize', fontsize);
     view(20, 32); colormap(jet); box on; grid on;
-    zlim([-0.02, 0.02]);
+%     zlim([-0.02, 0.02]);
     
     % 绘制流量 qy
     axes('Position', [0.55, 0.1, 0.35, 0.35])
@@ -61,7 +61,7 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
     ylabel('$y$', 'Interpreter', 'latex', 'FontSize', fontsize);
     zlabel('$q_y$', 'Interpreter', 'latex', 'FontSize', fontsize);
     view(20, 32); colormap(winter); box on; grid on;
-    zlim([-0.01, .01]);
+%     zlim([-0.01, .01]);
 else % 若图像存在
     hmin = 1e-2;
     f = f_Q(:,:,1); f( f<hmin ) = nan; % 消去干网格

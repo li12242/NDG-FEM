@@ -1,8 +1,15 @@
-function [ obj ] = VB_RK45_OBC( obj )
-%VB_RK45_OBC Use SSP-RK45 temporal discretization with the vertex-based 
-%            slope limiter.
+function [ obj ] = SL_RK45( obj )
+%SL_RK45 Use SSP-RK45 temporal discretization with the BJ slope limiter.
+%        
+%   The SSP-RK45 is short for the strong stabilized preserving 4 order 5  
+%   stages Runge-Kutta scheme. 
+%   The slope limiter and the preserving operator is applied at each RK
+%   stages. As there is no boundary conditions enforced at the boundaries,
+%   The flux at the boundary are using the zero gradient conditions.
 %
-%   Detailed explanation goes here
+%   Reference:
+%   [1]:
+%
 
 rk4a = [            0.0 ...
         -567301805773.0/1357537059087.0 ...
@@ -25,16 +32,10 @@ ftime = obj.ftime;
 
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 f_Q  = obj.f_Q;
-obj.wetdry_detector(f_Q);
-obj.topo_grad_term(); % 计算底坡梯度
-obj.slopelimiter = ndg_utility.limiter.VB.VB_2d(obj.mesh);
 
-is_Camera_on = 0; % 设定是否生成动画
-if is_Camera_on
-    writerObj = VideoWriter([pwd,'/tsuami.avi']);
-    writerObj.FrameRate=15; % 设定动画帧率
-    open(writerObj);	
-end
+obj.slopelimiter = ndg_utility.limiter.BJ.BJ_2d(obj.mesh);
+obj.wetdry_detector(f_Q);
+obj.topo_grad_term(); % calculate the topography gradient term
 
 while(time < ftime)
     dt = time_interval(obj, f_Q);
@@ -42,33 +43,23 @@ while(time < ftime)
         dt = ftime - time;
     end
     for INTRK = 1:5
-        tloc = time + rk4c(INTRK)*dt;
-        obj.update_ext(tloc);
+        %tloc = time + rk4c(INTRK)*dt;
+        %obj.update_ext(tloc);
         rhsQ = rhs_term(obj, f_Q);
         resQ = rk4a(INTRK).*resQ + dt.*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
-        % 应用斜率限制器限制水位与流量
+        % use the limiter to limit the water elevation
         f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) + obj.bot );
         f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2) );
         f_Q(:,:,3) = obj.slopelimiter.limit( f_Q(:,:,3) );
         f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
         
         f_Q = obj.positive_preserve( f_Q );
-        obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
+        obj.wetdry_detector( f_Q ) ; % judge the wet-dry elements
     end
     %obj.draw( f_Q ); drawnow;
-    if is_Camera_on
-        obj.draw( f_Q ); drawnow;
-        frame = getframe(gcf);
-        writeVideo(writerObj,frame); 
-    end% if
-    
     time = time + dt;
-end
-
-if is_Camera_on
-    close(writerObj);
 end
 
 obj.f_Q = f_Q;
@@ -79,3 +70,4 @@ spe = obj.char_len(f_Q); % Jacobian characteristic length
 dt = bsxfun(@times, sqrt(obj.mesh.vol)/(2*obj.mesh.cell.N+1), 1./spe);
 dt = min( min( dt ) );
 end% func
+

@@ -1,5 +1,5 @@
 classdef line_mesh < ndg_lib.mesh.mesh
-    %MESH_LINE Summary of this class goes here
+    %LINE_MESH Summary of this class goes here
     %   Detailed explanation goes here
     
     methods(Static)

@@ -1,6 +1,14 @@
 classdef mesh2d < ndg_lib.mesh.mesh
-    %MESH2D 二维网格对象
-    %   Detailed explanation goes here
+    %MESH2D 2d mesh object
+    %   Create the 2d mesh object. The object is inherited from the mesh
+    %   object and has special treatment for the 2d elements (triangle and
+    %   quadrilateral). The mesh object contains only one type of elements,
+    %   and allocate multiple choices to create the object. The input
+    %   methods include
+    %   * use file;
+    %   * use parameters to create uniform mesh;
+    %   * use mesh variables to create the mesh;
+    %
 
     methods(Static)
         [Nv, vx, vy, K, EToV, EToR, EToBS] = read_from_file(casename)
@@ -10,7 +18,7 @@ classdef mesh2d < ndg_lib.mesh.mesh
             = uniform_mesh(xlim, ylim, Mx, My, facetype)
     end
     
-    %% 私有方法
+    %% private methods
     methods(Hidden, Access=protected)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = ele_vol_factor(obj)
         [nx, ny, nz, Js] = ele_suf_factor(obj, vx, vy, vz, EToV)
@@ -26,16 +34,30 @@ classdef mesh2d < ndg_lib.mesh.mesh
         end
     end% methods
     
-    %% 公有方法
-    methods
-        function obj = mesh2d(cell, Nv, vx, vy, K, EToV, EToR, EToBS)            
+    %% public methods
+    methods(Access=public)
+        function obj = mesh2d(cell, varargin)
+            
+            switch varargin{1}
+                case 'file'
+                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                        = read_from_file( varargin{2} );
+                case 'uniform'
+                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                        = unfirm_mesh(cell, varargin{2});
+                case 'variable'
+                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                        = check_var_input(cell, varargin{2});
+                otherwise
+            end
+               
             vz = zeros(size(vx)); % vz is all zeros
             obj = obj@ndg_lib.mesh.mesh(cell, ...
                 Nv, vx, vy, vz, K, EToV, EToR, EToBS);
         end% func
         
         function obj = add_sponge(obj, vertlist)
-            % 计算海绵层内单元距离边界长度
+            % Calculate the distance from the boundary for each nodes
             obj. spg_delta = zeros(obj.cell.Np, obj.K);
             xb = obj.vx(vertlist);
             yb = obj.vy(vertlist);
@@ -96,3 +118,48 @@ classdef mesh2d < ndg_lib.mesh.mesh
     
 end
 
+function [Nv, vx, vy, K, EToV, EToR, EToBS] = check_var_input(cell, input)
+% check the input variables for initlizing the mesh object.
+Nv = input{1};
+vx = input{2}; 
+vy = input{3}; 
+K  = input{4}; 
+EToV = input{5};
+EToR = int8(input{6}); 
+EToBS = int8(input{7});
+
+% check the # of the vertex
+if ( numel(vx) ~= Nv ) || ( numel(vy) ~= Nv )
+    error(['The length of input vertex coordinate "vx" or "vy" ', ...
+        'is not equal to Nv']);
+end% func
+
+% check the # of the elements
+if ( size(EToV, 2) ~= K )||( size(EToBS, 2) ~= K ) ||( numel(EToR) ~= K )
+    error(['The length of input "EToV", "EToR" or "EToBS" ', ...
+        'is not equal to K']);
+end% func
+
+if ( size(EToV, 1) ~= cell.Nv) || ( size(EToBS, 1) ~= cell.Nv )
+    error('The numbers of vertex in "EToV" and "EToBS" is not fault');
+end% func
+end% func
+
+function [Nv, vx, vy, K, EToV, EToR, EToBS] = unfirm_mesh(cell, var)
+% Generate the informations in the unifrom mesh.
+xlim = var{1}; 
+ylim = var{2};
+Mx = var{3}; 
+My = var{4};
+facetype = var{5};
+
+switch cell.type
+    case ndg_lib.std_cell_type.Tri % uniform triangle mesh
+        [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+            = tri_uniform_mesh(xlim, ylim, Mx, My, facetype);
+    case ndg_lib.std_cell_type.Quad % uniform quadrilateral mesh
+        [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+            = quad_uniform_mesh(xlim, ylim, Mx, My, facetype);
+end% switch
+
+end% func

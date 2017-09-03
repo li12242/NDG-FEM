@@ -25,8 +25,8 @@ EToBS = [5, 1, 5; 1, 5, 5]';
 mesh = ndg_lib.mesh.tri_mesh(tri, 'variable', ...
     {Nv, vx, vy, K, EToV, EToR, EToBS});
 
-casename = 'Conv2D/mesh/triangle';
-mesh = ndg_lib.mesh.tri_mesh(tri, casename);
+casename = 'Conv2D/@conv2d_diffusion/mesh/tri_1000/mesh';
+mesh = ndg_lib.mesh.tri_mesh(tri, 'file', casename);
 
 %% quad
 quad = ndg_lib.std_cell.quad(4);

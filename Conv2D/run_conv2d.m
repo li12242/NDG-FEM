@@ -47,7 +47,7 @@ for n = 1:Ndeg
     end
     % print table
     fprintf('\n==================deg = %d==================\n', n);
-    t = convergence_table(len, err1(:, n), err2(:, n), errInf(:, n), ...
+    convergence_table(len, err1(:, n), err2(:, n), errInf(:, n), ...
         time(:, n))
     
     % plot figure

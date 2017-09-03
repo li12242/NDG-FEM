@@ -1,5 +1,5 @@
 #include "mex.h"
-#include "VertexSort.h"
+#include "vert_sort.h"
 
 /*
  * Usages:

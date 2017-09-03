@@ -69,12 +69,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
     plhs[0] = mxCreateDoubleMatrix((mwSize)Np, (mwSize)K, mxREAL);
     double *f_limt = mxGetPr(plhs[0]);
 
-    // #ifdef _OPENMP
-    // #pragma omp parallel for num_threads(DG_THREADS)
-    // #endif
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(DG_THREADS)
+#endif
     for (int k = 0; k < K; k++)
     {
-        int flag = 0;
+        int flag = 1;
         double fvmax[Nv], fvmin[Nv]; // the vertex bounds
         for (int v = 0; v < Nv; v++)
         {

@@ -1,40 +1,25 @@
-function Run_test( varargin )
-%RUN_TEST run the tests to verify the model and solver
+function run_test( varargin )
+%RUN_TEST Verify all the tests.
 
-% 为了使测试函数顺利执行，必须将 NDG-FEM 库路径添加到环境变量内
-addpath(pwd);
+addpath(pwd); % add the pwd path to the environment
 
-if nargin == 0
-    test_StdRegions = true;
-else
-    test_StdRegions = false;
-    
-    for i = nargin
-        switch varargin{i}
-            case 'StdRegions'
-                test_StdRegions = true;
-            otherwise
-                error(['No test for %s, please choose one of\n',...
-                    '  StdRegions\n'], varargin{i})
-        end% switch
-    end% for
-end% if
+test_ndg_lib = 1;
 
-if test_StdRegions
+if test_ndg_lib
     filepath{1} = 'testing/StdRegions/Triangle';
     filepath{2} = 'testing/StdRegions/Quad';
-    Test_dir(filepath);
+    test_dir(filepath);
 end
 
 end
 
-function Test_dir(filepath)
-% TESTDIR 测试给定路径下所有测试脚本
-for f = 1:numel(filepath) % 遍历所有文件路径
+function test_dir(filepath)
+% test all the tests in the specific folder
+for f = 1:numel(filepath) % loop over all the path
     file = dir(filepath{f});
-    for i = 1:numel(file) % 遍历路径下所有文件
+    for i = 1:numel(file) % loop over all the files
         [~, ~, ext] = fileparts(file(i).name); 
-        if strcmp(ext, '.m') % 文件后缀为.m则执行测试
+        if strcmp(ext, '.m') % test the '.m' files
             results = runtests(fullfile(filepath{f}, file(i).name));
             table(results)
         end

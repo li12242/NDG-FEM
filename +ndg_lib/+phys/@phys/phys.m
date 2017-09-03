@@ -1,5 +1,5 @@
 classdef phys < handle
-    %PHYS physical field
+    %PHYS physical field class.
     %   Detailed explanation goes here
     
     properties(Abstract, Constant)

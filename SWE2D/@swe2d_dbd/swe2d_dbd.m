@@ -1,5 +1,5 @@
 classdef swe2d_dbd < swe2d
-    %SWE2D_DBD 溃坝模拟，下游为干网格
+    %SWE2D_DBD The dam break problem with dry condition at the downstream
     %   Detailed explanation goes here
     
     properties(Hidden)
@@ -8,32 +8,16 @@ classdef swe2d_dbd < swe2d
     end
     
     properties(Constant)
-        hmin = 1e-4
+        hmin = 1e-2
     end
     
     methods
         function obj = swe2d_dbd(varargin)
-            switch nargin
-                case 1
-                    mesh = varargin(1);
-                    if ( ~isa(mesh, 'ndg_lib.mesh.tri_mesh') || ...
-                            ~isa(mesh, 'ndg_lib.mesh.quad_mesh') )
-                        error(['The input is not a triangle or ',... 
-                            'quadrilateral mesh object!']);
-                    end
-                case 3
-                    N = varargin{1};
-                    M = varargin{2};
-                    type = varargin{3};
-                    mesh = uniform_mesh( N, M, type );
-                otherwise
-                    error('The number of input variable is incorrect.');
-            end% switch
-            
-            obj = obj@swe2d(mesh);
+            [ input ] = set_case_parameter( varargin{:} );
+            obj = obj@swe2d(input{:});
             obj.ftime = 20;
             obj.init();
-        end
+        end% func
         
         function init(obj)
             f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
@@ -76,7 +60,7 @@ classdef swe2d_dbd < swe2d
             
             f_ext(:, :, 1) = h;
             f_ext(:, :, 2) = h.*u;
-        end
+        end% func
     end
     
     methods(Hidden, Access=private)
@@ -97,4 +81,25 @@ classdef swe2d_dbd < swe2d
     end
     
 end
+
+function [ input ] = set_case_parameter( varargin )
+% set the range of the computation domain and the boundary conditions
+if( isa(varargin{2}, 'char') )
+    N = varargin{1};
+    casename = varargin{2};
+    type = varargin{3};
+    input = {N, casename, type};
+elseif( isa(varargin{2}, 'double') )
+    N = varargin{1};
+    M = varargin{2};
+    type = varargin{3};
+    xlim = [0, 1000]; % computation domain
+    ylim = [-10, 10]; % computation domain
+    Mx = M; My = 1;
+    zg_bc = ndg_lib.bc_type.ZeroGrad;
+    bc_type = [zg_bc, zg_bc, zg_bc, zg_bc];
+    input = {N, xlim, ylim, Mx, My, type, bc_type};
+end% switch
+
+end% func
 
