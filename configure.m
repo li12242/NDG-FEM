@@ -141,7 +141,8 @@ switch computer('arch')
         if with_omp
             cflags = ['CFLAGS=$CFLAGS -fopenmp -DDG_THREADS=',...
                 num2str(with_omp)];
-            ldflags = {'-liomp5', '-largeArrayDims', '-lmwblas'};
+            ldflags = {'LDFLAGS=$LDFLAGS -fopenmp', '-largeArrayDims', ...
+                '-lmwblas'};
         else
             cflags = 'CFLAGS=$CFLAGS, -Wall';
             ldflags = {'-largeArrayDims', '-lmwblas'};
