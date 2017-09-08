@@ -35,7 +35,7 @@ Physical Surface(0) = {1};
 Physical Surface(1) = {2};
 
 // set No. of elements on each lines
-npx = 300;
+npx = 600;
 npy = 1;
 
 // devided the line with uniform elements
@@ -52,4 +52,4 @@ Transfinite Line{7} = npy+1;
 Transfinite Surface{1} = {5, 6, 4, 1};
 Transfinite Surface{2} = {5, 6, 2, 3};
 // generate quadrilateral elements
-Recombine Surface{1, 2};
+// Recombine Surface{1, 2};

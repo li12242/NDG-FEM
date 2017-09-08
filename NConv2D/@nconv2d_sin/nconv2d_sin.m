@@ -25,7 +25,7 @@ classdef nconv2d_sin < nconv2d
                 input_var = {N, cell_type, xlim, ylim, Mx, My, bc_type};
             end
             obj = obj@nconv2d(input_type, input_var);
-            obj.ftime = 0.75;
+            obj.ftime = 0.6;
             obj.init();
         end% func
         
@@ -42,11 +42,11 @@ classdef nconv2d_sin < nconv2d
             xn = obj.mesh.x; % last step position
             yn = obj.mesh.y;
             eof = 1;
-            while ( eof > 1e-6 )
+            while ( any(eof > 1e-10) )
                 u0 = obj.init_func(xn, yn);
                 x0 = obj.mesh.x - u0*time; % postion in next step
                 y0 = obj.mesh.y - u0*time;
-                eof = mean( sqrt( (x0(:) - xn(:)).^2 + (y0(:) - yn(:)).^2 ));
+                eof = sqrt( (x0(:) - xn(:)).^2 + (y0(:) - yn(:)).^2 );
                 xn = x0; 
                 yn = y0;
             end

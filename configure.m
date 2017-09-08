@@ -63,7 +63,7 @@ file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
 
 %% +ndg_utility/+limiter
 path = '+ndg_utility/+limiter/+VB/@VB_2d/private';
-srcfile = {'vb_weno.c', 'vertex_average.c', 'vertex_extreme.c'};
+srcfile = {'vb_weno.c', 'vb_va.c', 'vb_jk.c', 'vertex_average.c', 'vertex_extreme.c'};
 libfile = {'vb.c'};
 file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
 

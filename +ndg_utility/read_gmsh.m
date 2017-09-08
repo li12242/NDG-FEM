@@ -1,4 +1,9 @@
 function read_gmsh(msh_file_name)
+%READ_GMSH
+%
+%
+%
+%
 msh_fp = fopen(msh_file_name);
 [path_str, name, ext] = fileparts(msh_file_name);
 

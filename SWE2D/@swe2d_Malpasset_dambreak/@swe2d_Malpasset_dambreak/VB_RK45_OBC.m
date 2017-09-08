@@ -25,7 +25,9 @@ resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
 f_Q  = obj.f_Q;
 obj.wetdry_detector(f_Q);
 obj.topo_grad_term(); % 计算底坡梯度
-
+% obj.arrival_A = 0;
+% obj.arrival_B = 0;
+% obj.arrival_C = 0;
 
 while(time < ftime)
     dt = time_interval( obj, f_Q );
@@ -40,20 +42,20 @@ while(time < ftime)
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
         % 应用斜率限制器限制水位与流量
-        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) + obj.bot );
-        f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2) );
-        f_Q(:,:,3) = obj.slopelimiter.limit( f_Q(:,:,3) );
+        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) + obj.bot, 0 );
+        f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2), 0 );
+        f_Q(:,:,3) = obj.slopelimiter.limit( f_Q(:,:,3), 0 );
         f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
         
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
-        %obj.draw( f_Q ); drawnow;
+       obj.draw( f_Q ); drawnow;
     end
-    obj.draw( f_Q ); drawnow;
-%     time = time + dt;
-%     t_Q(:,:,1) = f_Q(:,:,1) + obj.bot;
-%     t_Q(:,:,[2,3]) = f_Q(:,:,[2,3]);
-%     obj.detector.collect(t_Q, time);
+%     obj.draw( f_Q ); drawnow;
+    time = time + dt;
+    t_Q(:,:,1) = f_Q(:,:,1);% + obj.bot;
+    t_Q(:,:,[2,3]) = f_Q(:,:,[2,3]);
+    obj.detector.collect(t_Q, time);
 %     Postprocess(time);
 end
 obj.f_Q = f_Q;
@@ -65,3 +67,7 @@ spe = obj.char_len(f_Q); % Jacobian characteristic length
 dt = bsxfun(@times, sqrt(obj.mesh.vol)/(2*obj.mesh.cell.N+1), 1./spe);
 dt = min( min( dt ) );
 end% func
+
+% function obj = Postprocess(obj)
+% 
+% end

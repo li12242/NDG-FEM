@@ -38,6 +38,10 @@ classdef mesh < handle
         Js
     end
     
+    properties(Hidden=true)
+        draw_h  % figure handles
+    end
+    
     %% Ë½ÓÐ·½·¨
     methods(Abstract, Hidden, Access = protected)
         ele_vol_factor(obj) % get volume infomation () of each element

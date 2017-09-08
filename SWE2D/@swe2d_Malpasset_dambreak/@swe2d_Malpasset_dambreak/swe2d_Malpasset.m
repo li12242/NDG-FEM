@@ -3,8 +3,8 @@ classdef swe2d_Malpasset_dambreak < swe2d
     %   Detailed explanation goes here
     
     properties(Constant)
-        hmin = 1e-1
-        n = 0.033.^2;
+        hmin = 1e-2
+        n = (0.033).^2;
     end
     
     properties(SetAccess=private)
@@ -40,10 +40,10 @@ classdef swe2d_Malpasset_dambreak < swe2d
             obj.ftime = 2000;
 %             obj.obc_file = obj.make_obc_file(casename);
             % set detector; transformers A B C and gauges 6-14
-            xd = [5550, 11900, 13000, 4947.46, 5717.30, 6775.14,...
-                7128.20, 8585.3, 9674.97, 10939.15, 11724.37, 12723.70]; 
-            yd = [4400, 3250, 2700, 4289.71, 4407.61, 3869.23,...
-                3162.00, 3443.08, 3085.89, 3044.78, 2810.41, 2485.08];
+            xd = [5550, 11900, 13000, 4947.46, 5717.30, 6775.14, 7128.20,...
+                8585.3, 9674.97, 10939.15, 11724.37, 12723.70]; 
+            yd = [4400,3250, 2700, 4289.71, 4407.61, 3869.23, 3162.00,...
+                3443.08, 3085.89, 3044.78, 2810.41, 2485.08];
             obj.detector = ndg_utility.detector.detector2d(mesh, ...
                 xd, yd, 0.5, obj.ftime, obj.Nfield);
         end% func
@@ -74,17 +74,13 @@ classdef swe2d_Malpasset_dambreak < swe2d
             f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
             h = zeros(obj.mesh.cell.Np, obj.mesh.K);
             flag = (obj.mesh.EToR == 2);
-            h(:, flag) = 100 - obj.bot(:,flag);
-            flag = (obj.mesh.EToR == 1);
-            h(:, flag) = 0 - obj.bot(:, flag);
-            h( h< 0 ) = 0;
-%             flag = find(obj.mesh.EToR == 1);
-%             h_temp = zeros(obj.mesh.cell.Np, obj.mesh.K);
-%             h_temp(:,flag) = obj.bot(:,flag);
-%             Index = find(h_temp<0);
-%             h_temp(Index) = -obj.bot(Index);
-%             h(:,flag) =( h_temp(:,flag)-obj.bot(:,flag) )/2;
-
+            h(:,flag) = 100-obj.bot(:,flag);
+            flag = find(obj.mesh.EToR == 1);
+            h_temp = zeros(obj.mesh.cell.Np, obj.mesh.K);
+            h_temp(:,flag) = obj.bot(:,flag);
+            Index = find(h_temp<0);
+            h_temp(Index) = -obj.bot(Index);
+            h(:,flag) =( h_temp(:,flag)-obj.bot(:,flag) )/2;
             f_Q(:, :, 1) = h;
             obj.f_Q = f_Q;
         end% func

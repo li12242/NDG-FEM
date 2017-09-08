@@ -21,6 +21,10 @@ classdef swe2d_dbw < swe2d
     end% methods
     
     methods
+        function [ f_ext ] = get_ext(obj, t)
+            [ f_ext ] = ext_func( obj, t );
+        end
+        
         function obj = swe2d_dbw(varargin)
             [ input ] = set_case_parameter( varargin{:} );
             obj = obj@swe2d(input{:});
@@ -63,7 +67,7 @@ elseif( isa(varargin{2}, 'double') )
     M = varargin{2};
     type = varargin{3};
     xlim = [0, 1000]; 
-    ylim = [-10, 10];
+    ylim = [0, 20];
     Mx = M; My = 1;
     zg_bc = ndg_lib.bc_type.ZeroGrad;
     bc_type = [zg_bc, zg_bc, zg_bc, zg_bc];

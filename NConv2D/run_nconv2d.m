@@ -47,6 +47,7 @@ for n = 1:Ndeg
         else
             nconv.refine_mesh;
         end
+%         nconv = nconv2d_sin(order(n), ne(m), type);
         nconv.init; 
         tic; nconv.RK45; time(m, n) = toc;
         err2(m, n) = nconv.norm_err2(nconv.ftime);

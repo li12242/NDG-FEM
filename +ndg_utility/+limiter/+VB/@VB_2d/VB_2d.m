@@ -3,9 +3,9 @@ classdef VB_2d < ndg_utility.limiter.limiter_vert
     %   Detailed explanation goes here
     
     properties(SetAccess=private)
-        VToC
-        xc, yc % 单元形心坐标
-        vx, vy % 每个单元顶点坐标
+        VToC % vertex to cell
+        xc, yc % the centre of each cell
+        vx, vy % the vertices
     end
     
     methods(Access=private, Hidden)
@@ -28,7 +28,7 @@ classdef VB_2d < ndg_utility.limiter.limiter_vert
         end
         
         function VToC = inverse_distance_weight(obj)
-            % 计算顶点插值系数
+            % the interpolation coefficients of the vertex
             VToC = zeros( size(obj.VToE) );
             for n = 1:obj.mesh.Nv
                 eind = obj.VToE( 1:obj.Kv(n), n );
@@ -56,6 +56,28 @@ classdef VB_2d < ndg_utility.limiter.limiter_vert
             [fmax, fmin] = vertex_extreme(obj.Kv, obj.VToE, c_mean);
             [ fv ] = vertex_average(c_mean, obj.Kv, obj.VToE, obj.VToC);
             [ flimt ] = obj.HWENO_wei(f_Q, c_mean, fv, fmax, fmin);
+        end
+        
+        % different weight functions
+        function [ flimit ] = limit_HWENO(obj, f_Q)
+            c_mean = obj.mesh.cell_mean(f_Q);
+            [fmax, fmin] = vertex_extreme(obj.Kv, obj.VToE, c_mean);
+            [ fv ] = vertex_average(c_mean, obj.Kv, obj.VToE, obj.VToC);
+            [ flimit ] = obj.HWENO_wei(f_Q, c_mean, fv, fmax, fmin);
+        end
+        
+        function [ flimit ] = limit_VA(obj, f_Q)
+            c_mean = obj.mesh.cell_mean(f_Q);
+            [fmax, fmin] = vertex_extreme(obj.Kv, obj.VToE, c_mean);
+            [ fv ] = vertex_average(c_mean, obj.Kv, obj.VToE, obj.VToC);
+            [ flimit ] = obj.VA_wei(f_Q, c_mean, fv, fmax, fmin);
+        end
+        
+        function [ flimit ] = limit_JK(obj, f_Q)
+            c_mean = obj.mesh.cell_mean(f_Q);
+            [fmax, fmin] = vertex_extreme(obj.Kv, obj.VToE, c_mean);
+            [ fv ] = vertex_average(c_mean, obj.Kv, obj.VToE, obj.VToC);
+            [ flimit ] = obj.JK_wei(f_Q, c_mean, fv, fmax, fmin);
         end
     end
     

@@ -1,7 +1,6 @@
-function [ obj ] = VB_RK45( obj )
-%VB_RK45 Use SSP-RK45 temporal discretization with the vertex-based slope
-%        limiter
-%
+function [ obj ] = VB_HWENO_RK45( obj )
+%SL_RK45 Use SSP-RK45 temporal discretization with the BJ slope limiter.
+%        
 %   The SSP-RK45 is short for the strong stabilized preserving 4 order 5  
 %   stages Runge-Kutta scheme. 
 %   The slope limiter and the preserving operator is applied at each RK
@@ -36,7 +35,7 @@ f_Q  = obj.f_Q;
 
 obj.slopelimiter = ndg_utility.limiter.VB.VB_2d(obj.mesh);
 obj.wetdry_detector(f_Q);
-obj.topo_grad_term(); % Calculate the topography gradient term
+obj.topo_grad_term(); % calculate the topography gradient term
 
 while(time < ftime)
     dt = time_interval(obj, f_Q);
@@ -51,19 +50,15 @@ while(time < ftime)
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
         % use the limiter to limit the water elevation
-        f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) + obj.bot );
-%         f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) );
-        f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2) );
-        f_Q(:,:,3) = obj.slopelimiter.limit( f_Q(:,:,3) );
+        f_Q(:,:,1) = obj.slopelimiter.limit_HWENO( f_Q(:,:,1) + obj.bot );
+        f_Q(:,:,2) = obj.slopelimiter.limit_HWENO( f_Q(:,:,2) );
+        f_Q(:,:,3) = obj.slopelimiter.limit_HWENO( f_Q(:,:,3) );
         f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
         
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % judge the wet-dry elements
     end
     %obj.draw( f_Q ); drawnow;
-%     obj.mesh.draw( f_Q(:,:,1) ); view([40, 45]); 
-%     xlim([4200, 5800]); ylim([3600, 4600]);
-%     drawnow;
     time = time + dt;
 end
 
@@ -75,3 +70,4 @@ spe = obj.char_len(f_Q); % Jacobian characteristic length
 dt = bsxfun(@times, sqrt(obj.mesh.vol)/(2*obj.mesh.cell.N+1), 1./spe);
 dt = min( min( dt ) );
 end% func
+

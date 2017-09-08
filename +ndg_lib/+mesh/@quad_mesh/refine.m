@@ -35,7 +35,7 @@ for k = 1:obj.K
         newEToV(:, ksid+f1 ) = ...
             [v(f1), n1+obj.Nv, CNToE(k), n2+obj.Nv]';
         newEToBS(:, ksid+f1 ) = [bc(f1), inner, inner, bc(f2)];
-        newEToR(:, ksid+f1 ) = obj.EToR(k);
+        newEToR(ksid+f1 ) = obj.EToR(k);
     end
 end
 end
