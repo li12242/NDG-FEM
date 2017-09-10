@@ -1,5 +1,5 @@
 classdef swe2d_Malpasset_dambreak < swe2d
-    %SWE2D_TSUAMI Summary of this class goes here
+    %swe2d_Malpasset_dambreak Summary of this class goes here
     %   Detailed explanation goes here
     
     properties(Constant)
@@ -23,6 +23,19 @@ classdef swe2d_Malpasset_dambreak < swe2d
                 data(3,:)','linear');
             bot = interp(obj.mesh.x, obj.mesh.y);
         end
+        
+        function detector = set_detector(obj)
+            % set detector; transformers A B C and gauges 6-14
+            xd = [5550, 11900, 13000, 4947.46, 5717.30, 6775.14,...
+                7128.20, 8585.30, 9674.97, ...
+                10939.15, 11724.37, 12723.70]; 
+            yd = [4400, 3250, 2700, ...
+                4289.71, 4407.61, 3869.23,...
+                3162.00, 3443.08, 3085.89, ...
+                3044.78, 2810.41, 2485.08];
+            detector = ndg_utility.detector.detector2d(obj.mesh, ...
+                xd, yd, 0.5, obj.ftime, obj.Nfield);
+        end
     end
     
     methods(Access=protected)
@@ -31,42 +44,25 @@ classdef swe2d_Malpasset_dambreak < swe2d
     end
     methods
         result(obj)
-        [ obj ] = VB_RK45_OBC(obj)
+        [ obj ] = VB_RK45_detect(obj)
         
         function obj = swe2d_Malpasset_dambreak(N, casename, type)
-            [ mesh ] = read_mesh_file(N, casename, type);
-            obj = obj@swe2d(mesh);
+            obj = obj@swe2d(N, casename, type);
             obj.init();
             obj.ftime = 2000;
-%             obj.obc_file = obj.make_obc_file(casename);
-            % set detector; transformers A B C and gauges 6-14
-            xd = [5550, 11900, 13000, 4947.46, 5717.30, 6775.14,...
-                7128.20, 8585.3, 9674.97, 10939.15, 11724.37, 12723.70]; 
-            yd = [4400, 3250, 2700, 4289.71, 4407.61, 3869.23,...
-                3162.00, 3443.08, 3085.89, 3044.78, 2810.41, 2485.08];
-            obj.detector = ndg_utility.detector.detector2d(mesh, ...
-                xd, yd, 0.5, obj.ftime, obj.Nfield);
+            
+            obj.detector = obj.set_detector();
         end% func
         
-        function obj = update_ext(obj, stime)
-            % 根据开边界文件结果更新外部数据,obc_file为double类
-            vert_extQ = obj.obc_file.get_extQ(stime);
-            vertlist = obj.obc_file.vert;
-            if (stime < obj.obc_file.time(end))
-                vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 1); % 获取水位外部值
-                obj.f_extQ(:,:,1) = obj.mesh.proj_vert2node(vert_Q) - obj.bot;
-
-                vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 2); % 获取流量外部值
-                obj.f_extQ(:,:,2) = obj.mesh.proj_vert2node(vert_Q);
-
-                vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 3); % 获取流量外部值
-                obj.f_extQ(:,:,3) = obj.mesh.proj_vert2node(vert_Q);
+        function draw_dam( obj, varargin )
+            if nargin == 1
+                f_Q = obj.f_Q;
             else
-                obj.f_extQ = obj.f_Q;
+                f_Q = varargin{1};
             end
+            obj.mesh.draw( f_Q(:,:,1) ); view([40, 45]); 
+            xlim([4200, 5800]); ylim([3600, 4600]);
+            drawnow;
         end% func
         
         function init(obj)
@@ -75,16 +71,9 @@ classdef swe2d_Malpasset_dambreak < swe2d
             h = zeros(obj.mesh.cell.Np, obj.mesh.K);
             flag = (obj.mesh.EToR == 2);
             h(:, flag) = 100 - obj.bot(:,flag);
-            flag = (obj.mesh.EToR == 1);
-            h(:, flag) = 0 - obj.bot(:, flag);
+%             flag = (obj.mesh.EToR == 1);
+%             h(:, flag) = 0 - obj.bot(:, flag);
             h( h< 0 ) = 0;
-%             flag = find(obj.mesh.EToR == 1);
-%             h_temp = zeros(obj.mesh.cell.Np, obj.mesh.K);
-%             h_temp(:,flag) = obj.bot(:,flag);
-%             Index = find(h_temp<0);
-%             h_temp(Index) = -obj.bot(Index);
-%             h(:,flag) =( h_temp(:,flag)-obj.bot(:,flag) )/2;
-
             f_Q(:, :, 1) = h;
             obj.f_Q = f_Q;
         end% func

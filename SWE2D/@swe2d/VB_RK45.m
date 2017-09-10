@@ -61,9 +61,6 @@ while(time < ftime)
         obj.wetdry_detector( f_Q ) ; % judge the wet-dry elements
     end
     %obj.draw( f_Q ); drawnow;
-%     obj.mesh.draw( f_Q(:,:,1) ); view([40, 45]); 
-%     xlim([4200, 5800]); ylim([3600, 4600]);
-%     drawnow;
     time = time + dt;
 end
 

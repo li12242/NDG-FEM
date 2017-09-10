@@ -75,13 +75,13 @@ classdef detector < handle
         end% func
         
         function obj = init(obj)
-            % 将检测结果初始化
+            % init the collector data
             obj.contour = 0;
             obj.dQ = zeros(obj.Nd, obj.Nt, obj.Nfield);
         end% func
         
         function p_h = draw(obj, pointID, fldID)
-            % 绘制检测结果
+            % draw the collected result on specific point
             p_h = plot(obj.time(1:obj.contour), ...
                 obj.dQ(pointID, 1:obj.contour, fldID), 'b.-');
         end
