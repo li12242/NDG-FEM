@@ -6,8 +6,7 @@ addpath(pwd); % add the pwd path to the environment
 test_ndg_lib = 1;
 
 if test_ndg_lib
-    filepath{1} = 'testing/StdRegions/Triangle';
-    filepath{2} = 'testing/StdRegions/Quad';
+    filepath{1} = '+ndg_lib/+std_cell/test';
     test_dir(filepath);
 end
 

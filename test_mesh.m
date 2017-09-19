@@ -22,8 +22,7 @@ Nv = 4;
 EToR = [1, 1]';
 EToBS = [5, 1, 5; 1, 5, 5]';
 
-mesh = ndg_lib.mesh.tri_mesh(tri, 'variable', ...
-    {Nv, vx, vy, K, EToV, EToR, EToBS});
+mesh = ndg_lib.mesh.tri_mesh(tri, 'variable', {Nv, vx, vy, K, EToV, EToR, EToBS});
 
 casename = 'Conv2D/@conv2d_diffusion/mesh/tri_1000/mesh';
 mesh = ndg_lib.mesh.tri_mesh(tri, 'file', casename);

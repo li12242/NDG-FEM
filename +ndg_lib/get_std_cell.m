@@ -1,5 +1,5 @@
 function [ stdcell ] = get_std_cell( N, type )
-%get_std_cell 根据输出单元类型与阶数返回对应单元对象。
+%get_std_cell std cell warp function to get the specific cell object
 %   Detailed explanation goes here
 
 switch type

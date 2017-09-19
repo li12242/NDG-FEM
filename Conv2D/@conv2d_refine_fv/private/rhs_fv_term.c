@@ -9,11 +9,10 @@ void inner_fv_term(int Np, int K, double *h, double *u, double *v,
                    double *nx, double *ny, double *ds,
                    signed char *EToR, double *rhs)
 {
-    int k;
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(DG_THREADS)
 #endif
-    for (k = 0; k < K; k++)
+    for (int k = 0; k < K; k++)
     {
         if ((cell_type)EToR[k] != REFINE)
             continue;
@@ -21,8 +20,8 @@ void inner_fv_term(int Np, int K, double *h, double *u, double *v,
         int n, ind = k * Nedge;
         for (n = 0; n < Nedge; n++)
         {
-            int n1 = (int)v1[ind] - 1; // change to C type
-            int n2 = (int)v2[ind] - 1;
+            int n1 = (int)v1[n] + k*Np - 1; // change to C type
+            int n2 = (int)v2[n] + k*Np - 1;
             double nx_ = nx[ind];
             double ny_ = ny[ind];
             double delta_s = ds[ind];

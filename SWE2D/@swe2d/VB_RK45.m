@@ -44,15 +44,12 @@ while(time < ftime)
         dt = ftime - time;
     end
     for INTRK = 1:5
-        %tloc = time + rk4c(INTRK)*dt;
-        %obj.update_ext(tloc);
         rhsQ = rhs_term(obj, f_Q);
         resQ = rk4a(INTRK).*resQ + dt.*rhsQ;
         
         f_Q = f_Q + rk4b(INTRK)*resQ;
         % use the limiter to limit the water elevation
         f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) + obj.bot );
-%         f_Q(:,:,1) = obj.slopelimiter.limit( f_Q(:,:,1) );
         f_Q(:,:,2) = obj.slopelimiter.limit( f_Q(:,:,2) );
         f_Q(:,:,3) = obj.slopelimiter.limit( f_Q(:,:,3) );
         f_Q(:,:,1) = f_Q(:,:,1) - obj.bot;
@@ -60,7 +57,7 @@ while(time < ftime)
         f_Q = obj.positive_preserve( f_Q );
         obj.wetdry_detector( f_Q ) ; % judge the wet-dry elements
     end
-    %obj.draw( f_Q ); drawnow;
+    obj.draw( f_Q ); drawnow;
     time = time + dt;
 end
 

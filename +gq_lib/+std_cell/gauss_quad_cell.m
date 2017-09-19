@@ -1,16 +1,16 @@
 classdef gauss_quad_cell < ndg_lib.std_cell.std_cell
-    %GAUSS_QUAD_CELL Gauss 数值积分单元基本类型
+    %GAUSS_QUAD_CELL standard cell with gauss quadrature points
     %   Detailed explanation goes here
     
     properties(SetAccess = protected)
-        Nq % 体积分节点个数
-        Nfq % 面积分节点个数
-        Nfqtotal % 面积分节点总数
+        Nq % # of volume quadrature points
+        Nfq % # of facial quadrature points
+        TNfq % total # of facial quadrature points
     end
     % 积分节点属性
     properties(SetAccess = protected)
-        rq, sq, tq % 体积分节点
-        wq % 积分节点权重
+        rq, sq, tq % coordinate of volume quadrature points
+        wq % volume quadrature weights
         rbq, sbq, tbq % 面积分节点
         wbq % 边界积分节点权重
     end
@@ -45,7 +45,7 @@ classdef gauss_quad_cell < ndg_lib.std_cell.std_cell
             end
             
             obj.Nq = numel(obj.rq);
-            obj.Nfqtotal = numel(obj.rbq);
+            obj.TNfq = numel(obj.rbq);
             
             obj.Vq = vand_mat(obj, obj.rq, obj.sq);
             obj.Vbq = vand_mat(obj, obj.rbq, obj.sbq);

@@ -23,20 +23,24 @@ ftime = obj.ftime;
 f_Q = obj.f_Q;
 dt = time_interval( obj, f_Q );
 resQ = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
+
+obj.detect_refine_cell();
+[ f_Q ] = obj.refine2fv(f_Q);
+
 while(time < ftime)
     if(time + dt > ftime)
         dt = ftime - time;
     end
-    obj.detect_refine_cell();
-    [ f_Q ] = obj.refine2fv(f_Q);
+    
+    %[ f_Q ] = obj.refine2fv(f_Q);
     for INTRK = 1:5
         %tloc = time + rk4c(INTRK)*dt;
         [ rhsQ ] = obj.rhs_term( f_Q );
         resQ = rk4a(INTRK)*resQ + dt*rhsQ;
         f_Q = f_Q + rk4b(INTRK)*resQ;
     end
-    [ f_Q ] = obj.combine2node( f_Q );
-    %obj.draw(f_Q); drawnow; 
+    %[ f_Q ] = obj.combine2node( f_Q );
+    obj.draw( f_Q ); drawnow; 
     time = time + dt;
     
 end

@@ -11,7 +11,7 @@ function configure(varargin)
 %
 %   The user also can use their own compiler 
 %   
-%   To clear all the compiled mex files, use follow command
+%   To clear all the compiled mex files, use following command:
 %
 %       configure -clear;
 %

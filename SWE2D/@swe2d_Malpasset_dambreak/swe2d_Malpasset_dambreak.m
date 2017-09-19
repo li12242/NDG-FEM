@@ -4,7 +4,7 @@ classdef swe2d_Malpasset_dambreak < swe2d
     
     properties(Constant)
         hmin = 1e-1
-        n = 0.033.^2;
+        n = 0.027.^2;
     end
     
     properties(SetAccess=private)

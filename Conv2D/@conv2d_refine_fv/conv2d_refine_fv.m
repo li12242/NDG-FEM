@@ -19,7 +19,8 @@ classdef conv2d_refine_fv < conv2d_advection
             obj = obj@conv2d_advection(varargin{:});
             
             obj.edge = ndg_lib.mesh.edge(obj.mesh);
-            obj.loc_fv = ndg_test.mesh_test.tri_loc_fv2d(obj.mesh);
+            stdcell_fv = ndg_test.cell_test.std_fv_tri(obj.mesh.cell);
+            obj.loc_fv = ndg_test.mesh_test.mesh_loc_tri(stdcell_fv, obj.mesh);
         end
         
         function detect_refine_cell(obj)
@@ -42,7 +43,7 @@ classdef conv2d_refine_fv < conv2d_advection
         end
         
         function f_Q = combine2node( obj, f_Q )
-            v_Q = obj.loc_fv.project_node2fv(f_Q);
+            v_Q = obj.loc_fv.project_fv2node(f_Q);
             ind = obj.mesh.EToR == ndg_lib.mesh_type.Refine;
             f_Q(:, ind) = v_Q(:, ind);
         end

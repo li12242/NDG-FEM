@@ -44,6 +44,7 @@ classdef swe2d_dbw < swe2d
             xc = obj.mesh.cell_mean(x);
             h(:, xc<obj.dam_pos) = obj.h0;
             
+            obj.f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
             obj.f_Q(:, :, 1) = h;
             obj.f_Q(:, :, 2:3) = 0;
             obj.bot = zeros(obj.mesh.cell.Np, obj.mesh.K); % bottom

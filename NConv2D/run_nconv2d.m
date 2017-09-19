@@ -36,9 +36,10 @@ err2 = zeros(Nmesh, Ndeg, Nfield);
 err1 = zeros(Nmesh, Ndeg, Nfield);
 linewidth = 1.5; 
 markersize = 8;
-color = {'b', 'r', 'g', 'm'};
+% color = {'b', 'r', 'g', 'm'};
+color = {'k', 'k', 'k', 'k'};
 marker = {'o', 's', '^', '*'};
-linestyle = '--';
+linestyle = '-';
 
 for n = 1:Ndeg
     for m = 1:Nmesh
@@ -77,7 +78,7 @@ for n = 1:Ndeg
         ); 
     hold on;
     
-    figure(4); plot(ne, time(:, n), [co, ma, linestyle],...
+    figure(4); plot(dofs(:, n), time(:, n), [co, ma, linestyle],...
         'LineWidth', linewidth, ...
         'MarkerSize', markersize ...
         ); 

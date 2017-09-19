@@ -8,9 +8,9 @@ K = 505;
 nk = [0, 1, 2];
 ne = K*4.^nk;
 len = 0.5.^nk;
-order = [1, 2, 3];
-% ne = [20, 40, 60, 80];
-% len = 1./ne;
+order = [1, 2];
+ne = [20, 40, 60, 80];
+len = 1./ne;
 
 Nmesh = numel(ne);
 Ndeg = numel(order);
@@ -25,7 +25,7 @@ end
 errInf = zeros(Nmesh, Ndeg);
 err2 = zeros(Nmesh, Ndeg);
 err1 = zeros(Nmesh, Ndeg);
-quad_type = ndg_lib.std_cell_type.Quad;
+type = ndg_lib.std_cell_type.Tri;
 linewidth = 1.5; 
 markersize = 8;
 color = {'b', 'r', 'g', 'm'};
@@ -33,12 +33,12 @@ marker = {'o', 's', '^', '*'};
 linestyle = '--';
 for n = 1:Ndeg
     for m = 1:Nmesh
-        if (m == 1)
-            conv = conv2d_advection(order(n), casename{m}, quad_type);
-        else
-            conv.refine_mesh(1);
-        end
-        %conv.mesh.J = repmat(mean(conv.mesh.J), conv.mesh.cell.Np, 1);
+%         if (m == 1)
+%             conv = conv2d_advection(order(n), casename{m}, type);
+%         else
+%             conv.refine_mesh(1);
+%         end
+        conv = conv2d_refine_fv(order(n), ne(m), type);
         conv.init; 
         tic; conv.RK45; time(m, n) = toc;
         err2(m, n) = conv.norm_err2(conv.ftime);

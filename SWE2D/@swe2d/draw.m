@@ -63,7 +63,8 @@ if ( isempty(obj.draw_h) || ~isvalid(obj.draw_h{1}))
     view(20, 32); colormap(winter); box on; grid on;
 %     zlim([-0.01, .01]);
 else % 若图像存在
-    hmin = 1e-2;
+    %hmin = 1e-2;
+    hmin = obj.hmin;
     f = f_Q(:,:,1); f( f<hmin ) = nan; % 消去干网格
     set(obj.draw_h{1}, ...
         'Vertices', [obj.mesh.x(:), obj.mesh.y(:), f(:)+obj.bot(:)],...
