@@ -1,5 +1,5 @@
-classdef UEdgePoint
-    %UEDGEPOINT Summary of this class goes here
+classdef UEdgeTest < matlab.unittest.TestCase
+    %UEDGETEST Summary of this class goes here
     %   Detailed explanation goes here
     
     properties

@@ -1,5 +1,6 @@
 %% line
 line = ndg_lib.std_cell.line(1);
+line = StdLine(2);
 
 K = 100;
 Nv = K+1;
@@ -9,10 +10,13 @@ EToR = zeros(K, 1);
 EToBS = int8(ones(size(EToV)))*ndg_lib.bc_type.Inner; 
 EToBS([1, end]) = ndg_lib.bc_type.ZeroGrad;
 
+mesh = UMeshLine(line, Nv, vx, K, EToV, EToR, BCToV);
+
 mesh = ndg_lib.mesh.line_mesh(line, Nv, vx, K, EToV, EToR, EToBS);
 
 %% triangle mesh
 tri = ndg_lib.std_cell.tri(3);
+tri = StdTri(2);
 
 EToV = [1,2,3; 3,2,4]';
 vx = [0, 1, 0.5, 1.5]';
@@ -20,8 +24,10 @@ vy = [0, 0, sqrt(3)/2, sqrt(3)/2]';
 K = 2;
 Nv = 4;
 EToR = [1, 1]';
+BCToV = [1, 2, 5]'
 EToBS = [5, 1, 5; 1, 5, 5]';
 
+mesh = UMeshTri(tri, 'variable', {Nv, vx, vy, K, EToV, EToR, BCToV});
 mesh = ndg_lib.mesh.tri_mesh(tri, 'variable', {Nv, vx, vy, K, EToV, EToR, EToBS});
 
 casename = 'Conv2D/@conv2d_diffusion/mesh/tri_1000/mesh';

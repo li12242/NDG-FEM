@@ -5,7 +5,7 @@
 %> This class is part of the NDG-FEM software. 
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef UMeshTest < matlab.unittest.TestCase
+classdef UMeshUnionTest < matlab.unittest.TestCase
     %UMESHTEST Summary of this class goes here
     %   Detailed explanation goes here
     

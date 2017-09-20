@@ -14,17 +14,10 @@ classdef UMeshUnion2d < UMeshUnion
     
     methods(Hidden, Access=protected)
         [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = getElementalNodeInfo(obj)
-        %[nx, ny, nz, Js] = getElementalSurfaceInfo(obj, vx, vy, vz, EToV)
         
-%         function EToFG = getElementalAdjacentFaceGlobalIndex(obj)
-%             EToFG = zeros(obj.cell.Nface, obj.K);
-%             for f = 1:obj.cell.Nface
-%                 v1 = obj.EToV(obj.cell.FToV(1,f), :);
-%                 v2 = obj.EToV(obj.cell.FToV(2,f), :);
-%                 % calculate the indicator for each edge
-%                 EToFG(f, :) = min(v1, v2)*obj.Nv + max(v1, v2);
-%             end
-%         end
+        function [ uedge ] = setUEdgeClass(obj, BCToV)
+            uedge = UEdgeLine(obj, BCToV);
+        end
     end% methods
     
     %% public methods
@@ -33,19 +26,19 @@ classdef UMeshUnion2d < UMeshUnion
             
             switch varargin{1}
                 case 'file'
-                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                    [Nv, vx, vy, K, EToV, EToR, BCToV] ...
                         = read_from_file( varargin{2} );
                 case 'uniform'
-                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                    [Nv, vx, vy, K, EToV, EToR, BCToV] ...
                         = create_unfirm_mesh(cell, varargin{2});
                 case 'variable'
-                    [Nv, vx, vy, K, EToV, EToR, EToBS] ...
+                    [Nv, vx, vy, K, EToV, EToR, BCToV] ...
                         = check_var_input(cell, varargin{2});
                 otherwise
             end
                
             vz = zeros(size(vx)); % vz is all zeros
-            obj = obj@UMeshUnion(cell, Nv, vx, vy, vz, K, EToV, EToR, EToBS);
+            obj = obj@UMeshUnion(cell, Nv, vx, vy, vz, K, EToV, EToR, BCToV);
         end% func
         
 %         function obj = add_sponge(obj, vertlist)
@@ -123,7 +116,7 @@ classdef UMeshUnion2d < UMeshUnion
     
 end
 
-function [Nv, vx, vy, K, EToV, EToR, EToBS] = check_var_input(cell, input)
+function [Nv, vx, vy, K, EToV, EToR, BCToV] = check_var_input(cell, input)
 % check the input variables for initlizing the mesh object.
 Nv = input{1};
 vx = input{2}; 
@@ -131,7 +124,7 @@ vy = input{3};
 K  = input{4}; 
 EToV = input{5};
 EToR = int8(input{6}); 
-EToBS = int8(input{7});
+BCToV = int8(input{7});
 
 % check the number of the vertex
 if ( numel(vx) ~= Nv ) || ( numel(vy) ~= Nv )
@@ -140,12 +133,12 @@ if ( numel(vx) ~= Nv ) || ( numel(vy) ~= Nv )
 end% if
 
 % check the number of the elements
-if ( size(EToV, 2) ~= K )||( size(EToBS, 2) ~= K ) ||( numel(EToR) ~= K )
-    error(['The length of input "EToV", "EToR" or "EToBS" ', ...
+if ( size(EToV, 2) ~= K ) ||( numel(EToR) ~= K )
+    error(['The length of input "EToV" or "EToR" ', ...
         'is not equal to K']);
 end% if
 
-if ( size(EToV, 1) ~= cell.Nv) || ( size(EToBS, 1) ~= cell.Nv )
+if ( size(EToV, 1) ~= cell.Nv) || ( size(BCToV, 1) ~= 3 )
     error('The numbers of vertex in "EToV" and "EToBS" is not fault');
 end% if
 end% func

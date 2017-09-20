@@ -22,26 +22,22 @@ classdef UMeshLine < UMeshUnion
             ty = zeros(Np, K);
             tz = zeros(Np, K);
         end
-%         [nx, ny, nz, Js] = getElementalSurfaceInfo(obj, vx, vy, vz, EToV)
         
-%         function [ EToFG ] = getElementalAdjacentFaceGlobalIndex(obj)
-%             EToFG = zeros(obj.cell.Nface, obj.K);
-%             for f = 1:obj.cell.Nface
-%                 EToFG(f, :) = obj.EToV(obj.cell.FToV(1,f), :);
-%             end
-%         end% func
+        function [ uedge ] = setUEdgeClass(obj, BCToV)
+            uedge = UEdgePoint(obj, BCToV);
+        end
     end% methods
     
     methods
         obj = refine(obj, refine_level);
         
         function obj = UMeshLine(cell, varargin)
-            [cell, Nv, vx, K, EToV, EToR, EToBS] = readInput(cell, varargin{:});
+            [cell, Nv, vx, K, EToV, EToR, BCTV] = readInput(cell, varargin{:});
             
             vy = zeros(size(vx)); % vy is all zeros
             vz = zeros(size(vx)); % vz is all zeros
             
-            obj = obj@UMeshUnion(cell, Nv, vx, vy, vz, K, EToV, EToR, EToBS);
+            obj = obj@UMeshUnion(cell, Nv, vx, vy, vz, K, EToV, EToR, BCTV);
         end% func
         
         function draw(obj)
@@ -51,7 +47,7 @@ classdef UMeshLine < UMeshUnion
     
 end
 
-function [cell, Nv, vx, K, EToV, EToR, EToBS] = readInput(cell, varargin)
+function [cell, Nv, vx, K, EToV, EToR, BCToV] = readInput(cell, varargin)
 msgID = 'UMeshLine:Inputerror';
 % check cell type
 if (~isa(cell, 'StdLine'))
@@ -62,9 +58,9 @@ end
 
 if(nargin == 2) % case input
     casename = varargin{1};
-    [Nv, vx, K, EToV, EToR, EToBS] = read_from_file(casename);
+    [Nv, vx, K, EToV, EToR, BCToV] = read_from_file(casename);
 elseif(nargin == 7) % parameters input
-    [Nv, vx, K, EToV, EToR, EToBS] = checkInputVars(varargin{:});
+    [Nv, vx, K, EToV, EToR, BCToV] = checkInputVars(varargin{:});
 else
     msgtext = 'The number of input should be 2 or 7.';
     ME = MException(msgID, msgtext);
@@ -72,7 +68,7 @@ else
 end
 end% func
 
-function [Nv, vx, K, EToV, EToR, EToBS] = checkInputVars(varargin)
+function [Nv, vx, K, EToV, EToR, BCToV] = checkInputVars(varargin)
 msgID = 'UMeshLine:Inputerror';
 
 Nv = varargin{1};
@@ -86,18 +82,18 @@ end
 K = varargin{3};
 EToV = varargin{4};
 EToR = varargin{5};
-EToBS = varargin{6};
+BCToV = varargin{6};
 
 if ( size(EToV, 2) ~= K )
     msgtext = 'The number of elements in EToV is not equal to K.';
     ME = MException(msgID, msgtext);
     throw(ME);
-elseif (numel(EToR, 2) ~= K)
+elseif (numel(EToR) ~= K)
     msgtext = 'The number of elements in EToR is not equal to K.';
     ME = MException(msgID, msgtext);
     throw(ME);
-elseif (numel(EToBS, 2) ~= K) 
-    msgtext = 'The number of elements in EToBS is not equal to K.';
+elseif (size(BCToV, 1) ~= 2) 
+    msgtext = 'The number of elements in BCToV is not equal to 2.';
     ME = MException(msgID, msgtext);
     throw(ME);
 end
