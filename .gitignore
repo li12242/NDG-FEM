@@ -14,3 +14,4 @@ html
 *.mat
 *.zip
 doc/html
+debug

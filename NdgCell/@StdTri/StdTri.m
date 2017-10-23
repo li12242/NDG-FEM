@@ -1,15 +1,13 @@
-%> @brief Standard triangle class.
+%> @brief Here we have a brief description of the class.
 %
-%> The StdTri define the properties for the standard triangle element.
+%> And here we can put some more detailed informations about the class.
 % ======================================================================
-%> This class is part of the NDG-FEM software. 
-%> @author li12242, Tianjin University
-%> @email li12242@tju.edu.cn
+%> This class is part of the NDGOM software. 
+%> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
 classdef StdTri < StdCell
-
     properties(Constant)
-        type = StdCellType.Tri
+        type = NdgCellType.Tri;
         Nv = 3
         vol = 2
         vr = [-1,  1, -1]'
@@ -18,16 +16,15 @@ classdef StdTri < StdCell
         Nfv = [2,2,2];
         FToV = [1,2; 2,3; 3,1]';
         Nface = 3
-        faceType = [...
-            StdCellType.Line,...
-            StdCellType.Line,...
-            StdCellType.Line]
+        faceType = [NdgCellType.Line, ...
+                    NdgCellType.Line, ...
+                    NdgCellType.Line]
     end
     
     methods(Access=protected)
         [Np,r,s,t] = node_coor_func(obj, N);
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
-        [Nq, rq, sq, tq, wq] = quadrature_node_func(obj, N);
+        [Nq, rq, sq, tq, wq] = quad_coor_func( obj, qOrd );
     end
     
     methods
@@ -36,7 +33,7 @@ classdef StdTri < StdCell
         end
         
         f = orthogonal_func(obj, N, ind, r, s, t);
-        
+
         function node_val = project_vert2node(obj, vert_val)
             node_val = 0.5*(-(obj.r+obj.s)*vert_val(1, :) ...
                 + (1+obj.r)*vert_val(2, :)...

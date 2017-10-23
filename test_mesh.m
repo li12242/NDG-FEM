@@ -35,6 +35,7 @@ mesh = ndg_lib.mesh.tri_mesh(tri, 'file', casename);
 
 %% quad
 quad = ndg_lib.std_cell.quad(4);
+quad = StdQuad(4);
 
 EToV = [1,2,5,4; 2,3,6,5; 4,5,8,7]';
 vx = [0, 1, 2, 0, 1, 2, 0, 1]';
@@ -42,6 +43,9 @@ vy = [0, 0, 0, 1, 1, 1, 2, 2]';
 K = 3;
 Nv = 8;
 EToR = [1, 1, 1]';
+BCToV = [1,2,1]';
+
+mesh = UMeshQuad(quad, 'variable', {Nv, vx, vy, K, EToV, EToR, BCToV})
 EToBS = [5,1,1,5; 1,5,1,1; 1,5,5,5]';
 
 mesh = ndg_lib.mesh.quad_mesh(quad, 'variable', ...

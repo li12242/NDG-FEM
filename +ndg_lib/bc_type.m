@@ -4,6 +4,7 @@ classdef bc_type < int8
     
     enumeration
         Inner           (0)
+        GaussEdge       (1)
         SlipWall        (2)
         NonSlipWall     (3)
         ZeroGrad        (4)

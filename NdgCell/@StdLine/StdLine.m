@@ -1,46 +1,44 @@
-%> @brief Standard Line class.
+%> @brief Standard line class.
 %
-%> Define the properties for the StdLine class.
+%> And here we can put some more detailed informations about the class.
 % ======================================================================
-%> This class is part of the NDG-FEM software. 
-%> @author li12242, Tianjin University
-%> @email li12242@tju.edu.cn
+%> This class is part of the NDGOM software. 
+%> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
 classdef StdLine < StdCell
-    
     properties(Constant)
-        type = StdCellType.Line
+        type = NdgCellType.Line
         Nv = 2
         vol = 2
-        vr = [ -1, 1]'
-        vs = [ 0, 0 ]';
-        vt = [ 0, 0 ]';
-        Nfv = [ 1, 1 ]';
-        FToV = [ 1, 2 ];
+        vr = [-1, 1]'
+        vs = [ 0, 0]'; 
+        vt = [ 0, 0]'; 
+        Nfv = [1, 1]';
+        FToV = [1,2];
         Nface = 2;
-        faceType = [ StdCellType.Point, StdCellType.Point ];
+        faceType = [NdgCellType.Point, NdgCellType.Point];
     end
     
     methods(Access=protected)
         function [Np,r,s,t] = node_coor_func(obj, N)
             Np = N+1;
-            [ r,~ ] = Polylib.zwglj(Np);
+            [r,~] = zwglj(Np);
             s = zeros(Np, 1);
             t = zeros(Np, 1);
         end
         
         function [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
-            dr = Polylib.GradJacobiP(r, 0, 0, ind-1);
+            dr = GradJacobiP(r, 0, 0, ind-1);
             ds = zeros(obj.Np, 1);
             dt = zeros(obj.Np, 1);
         end
-        
-        function [Nq, rq, sq, tq, wq] = quadrature_node_func(obj, N)
+
+        function [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
             Nq = N+1;
-            [ rq, wq ] = Polylib.zwglj( Nq );
+            [ rq, wq ] = zwgl( Nq );
             sq = zeros(Nq, 1);
             tq = zeros(Nq, 1);
-        end% func
+        end
     end
     
     methods
@@ -49,7 +47,7 @@ classdef StdLine < StdCell
         end
         
         function f = orthogonal_func(obj, N, ind, r, s, t)
-            f = Polylib.JacobiP(r, 0, 0, ind-1);
+            f = JacobiP(r, 0, 0, ind-1);
         end% func
         
         function node_val = project_vert2node(obj, vert_val)

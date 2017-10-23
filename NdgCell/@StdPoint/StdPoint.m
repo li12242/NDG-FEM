@@ -1,24 +1,15 @@
-%> @brief Standard cell class of StdPoint.
-%
-%> And here we can put some more detailed informations about the class.
-% ======================================================================
-%> This class is part of the NDG-FEM software.
-%> @author li12242, Tianjin University
-%> @email li12242@tju.edu.cn
-% ======================================================================
 classdef StdPoint < StdCell
-    
     properties(Constant)
-        type = StdCellType.Point
-        Nv = 1
+        type = NdgCellType.Point
+        Nv = 1      
         vol = 0
-        vr = 0
-        vs = 0
-        vt = 0
-        Nfv = 1
-        FToV = 1
+        vr = 0      
+        vs = 0      
+        vt = 0      
+        Nfv = 1     
+        FToV = 1    
         Nface = 0
-        faceType = StdCellType.Point
+        faceType = NdgCellType.Point
     end
     
     methods(Access=protected)
@@ -35,17 +26,16 @@ classdef StdPoint < StdCell
             dt = 0;
         end
         
-        function [Nq, rq, sq, tq, wq] = quadrature_node_func(obj, N)
+        function [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
             Nq = 1;
-            rq = zeros(Nq, 1);
-            sq = zeros(Nq, 1);
-            tq = zeros(Nq, 1);
-            wq = ones(Nq, 1);
-        end% func
+            rq = 0;
+            sq = 0;
+            tq = 0;
+            wq = 0;
+        end
     end
     
     methods
-        %> Construct the object with specific order N
         function obj = StdPoint(N)
             obj = obj@StdCell(N);
         end

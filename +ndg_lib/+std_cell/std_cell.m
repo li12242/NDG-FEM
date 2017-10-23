@@ -1,7 +1,4 @@
 classdef std_cell
-    %STD_CELL Summary of this class goes here
-    %   Detailed explanation goes here
-    
     %% 全局属性
     properties
         N   % 基函数阶数

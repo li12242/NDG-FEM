@@ -1,171 +1,136 @@
+%======================================================================
+%> @brief Compile all the mex files.
+%>
+%> Multiple mex files are used in the NDG-FEM model to speedup the 
+%> computation, the user has to first compile these mex files and then use 
+%> the model to simulate various applications.
+%> Many mex files implement the OpenMP library to enable multi-threads
+%> computating, the user can set the number of threads based on their own
+%> computer devices as
+%>
+%> @code 
+%>   configure(4); % use 4 threads
+%> @endcode
+%> 
+%> The user also can use their own compiler 
+%>   
+%> To remove all the compiled mex files, use following command:
+%> @code
+%>   configure -clear;
+%> @endcode
+%> 
+%======================================================================
+%> This class is part of the NDG-FEM software. 
+%> @author li12242, Tianjin University, li12242@tju.edu.cn
+%======================================================================
 function configure(varargin)
-%CONFIGURE compile all the mex files.
-%   Multiple mex files are used in the NDG-FEM model to speedup the
-%   program, the user has to first compile these mex files and then use the
-%   model to compute various applications.
-%   Many mex files implement the OpenMP library to enable multi-threads
-%   computating, the user can set the number of threads based on their own
-%   computer devices as
-% 
-%       configure(4); % use 4 threads
-%
-%   The user also can use their own compiler 
-%   
-%   To clear all the compiled mex files, use following command:
-%
-%       configure -clear;
-%
-%   Author: li12242, Tianjin University.
 
-delete_model = false;
-switch nargin
-    case 1
-        compiler_path = '';
-        
-        if( isa(varargin{1}, 'double') )
-            with_omp = varargin{1};
-        elseif( isa(varargin{1}, 'char') )
-            with_omp = 0;
-            
-            if( strcmp(varargin{1}, '-clear') )
-                delete_model = true;
-            end
-        end
-    case 2
-        compiler_path = varargin{1};
-        with_omp = varargin{2};
+deleteMod = false;
+compilerPath = '';
+
+if (nargin == 1) && ( isa(varargin{1}, 'double') )
+    threadNum = varargin{1};
+elseif (nargin == 1) && ( isa(varargin{1}, 'char') )
+    threadNum = 0;
+    compilerPath = varargin{1};
+    if ( strcmp(varargin{1}, '-clear') )
+        deleteMod = true;
+    end
+elseif (nargin == 2)
+    compilerPath = varargin{1};
+    threadNum = varargin{2};
 end
 
-[compiler, cflags, ldflags] = set_the_compiler(compiler_path, with_omp);
-%% +Polylib
-path = '+Polylib';
-srcfile = {'zwglj.c', 'zwgl.c', 'JacobiP.c', 'jacobfd.c', ...
-    'GradJacobiP.c', 'Dglj.c'};
-libfile = {'polylib.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
+[compiler, cflags, ldflags] = set_the_compiler( compilerPath, threadNum );
 
-%% +ndg_lib/+mesh
-path = '+ndg_lib/+mesh/@mesh/private';
-srcfile = {'cell_mean.c'};
-libfile = {};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
+% Polylib
+path = 'thirdParty/Polylib/';
+srcfile = {[path, 'zwglj.c'], ...
+    [path, 'zwgl.c'], ... 
+    [path, 'JacobiP.c'], ...
+    [path, 'GradJacobiP.c'] };
+libfile = { [path, 'polylib.c'] };
+outPath = 'lib/';
+file_operater(outPath, srcfile, libfile, compiler, cflags, ldflags, deleteMod);
 
-path = '+ndg_lib/+mesh/@mesh2d/private';
-srcfile = {'resort_vert.c'};
-libfile = {'vert_sort.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-%% +ndg_utility/+detector
-path = '+ndg_utility/+detector/@detector2d/private';
-srcfile = {'find_loc_cell.c'};
-libfile = {'vec_operator.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-%% +ndg_utility/+limiter
-path = '+ndg_utility/+limiter/+VB/@VB_2d/private';
-srcfile = {'vb_weno.c', 'vb_va.c', 'vb_jk.c', 'vertex_average.c', 'vertex_extreme.c'};
-libfile = {'vb.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-path = '+ndg_utility/+limiter/+BJ/private';
-srcfile = {'vertex_extreme.c'};
-libfile = {};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-path = '+ndg_utility/+limiter/+BJ/@BJ_2d/private';
-srcfile = {'BJ_limit_2d.c'};
-libfile = {};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-%% Conv2d
-path = 'Conv2d/@conv2d/private';
-srcfile = {'upwind_flux.c'};
-libfile = {'conv2d.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-path = 'Conv2d/@conv2d_adv_gq/private';
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-path = 'Conv2d/@conv2d_refine_fv/private';
-srcfile = {'rhs_term.c'};
-libfile = {'conv2d.c', 'flux_term.c', 'surf_term.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-srcfile = {'rhs_fv_term.c'};
-libfile = {'conv2d.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-%% NConv2d
-path = 'NConv2d/@nconv2d/private';
-srcfile = {'lf_flux.c'};
-libfile = {'nconv2d.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
-
-%% SWE2d
-path = 'SWE2d/@swe2d/private';
-srcfile = {'hll_flux.c', 'nodal_flux.c', 'ppreserve.c', 'lf_flux.c'};
-libfile = {'swe.c', 'bound_cond.c'};
-file_operater(path, srcfile, libfile, compiler, cflags, ldflags, delete_model);
+% Advection
+srcfile = {'Advection/@AdvUniformUnion2d/src/AdvSolver2d.c'};
+libfile = {'NdgCell/src/NdgCell.c', ...
+    'NdgCell/src/NdgCellIO.c', ...
+    'NdgMesh/src/NdgMesh.c', ... 
+    'NdgMesh/src/NdgMeshIO.c', ...
+    'NdgPhys/src/NdgPhys.c', ...
+    'NdgPhys/src/NdgPhysIO.c', ...
+    'NdgPhys/src/NdgPhysSolver.c', ...
+    'NdgPhys/src/NdgTerporalDiscrete.c', ...
+    'NdgPhys/src/mxNdgPhys.c', ...
+    'NdgUtils/src/MatUtils.c',...
+    'NdgUtils/src/NdgNetCDF.c',...
+    'NdgUtils/src/Utils.c',...
+    'NdgUtils/src/NdgLimiter.c'};
+outPath = 'lib/';
+cflags = [cflags, ' -DPROFILE ', ...
+    ' -INdgCell/src/ -INdgMesh/src/ -INdgPhys/src -INdgUtils/src '];
+ldflags = [ldflags, ' -lnetcdf '];
+file_operater(outPath, srcfile, libfile, compiler, cflags, ldflags, deleteMod);
 
 end% func
 
-function file_operater(path, srcfile, libfile, ...
-    compiler, cflags, ldflags, ...
-    delete_model)
-
-if delete_model
-    clear_model(path, srcfile);
+function file_operater(outpath, srcfile, libfile, ...
+    compiler, cflags, ldflags, deleteModel)
+if deleteModel
+    remove_lib_file(outpath, srcfile);
 else
-    install(path, srcfile, libfile, compiler, cflags, ldflags);
+    install_lib_file(outpath, srcfile, libfile, compiler, cflags, ldflags);
 end
 end% func
 
-function [compiler, cflags, ldflags] = set_the_compiler(compiler_path, with_omp)
+%> set the compile options.
+function [compiler, cflags, ldflags] ...
+    = set_the_compiler( compilerPath, Nthread )
+
+compiler = '';
+cflags = 'CFLAGS=$CFLAGS -std=c99 -Wall ';
+ldflags = 'LDFLAGS=$LDFLAGS -lmwblas ';
+
 switch computer('arch')
     case 'maci64'
-        if isempty(compiler_path) % default compiler path
-            compiler = 'CC=/opt/intel/composer_xe_2015.5.222/bin/intel64/icc';
+        if isempty(compilerPath) % default compiler path
+            compiler = ...
+                'CC=/opt/intel/composer_xe_2015.5.222/bin/intel64/icc';
         else
-            compiler = ['CC=',compiler_path, '/icc'];
+            compiler = ['CC=',compilerPath, '/icc'];
         end
         
-        if with_omp
-            cflags = ['CFLAGS=$CFLAGS, -std=c99 -Wall -qopenmp -DDG_THREADS=', ...
-                num2str(with_omp)];
-            ldflags = {'-liomp5', '-largeArrayDims', '-lmwblas'};
-        else
-            cflags = 'CFLAGS=$CFLAGS, -std=c99 -Wall';
-            ldflags = {'-largeArrayDims', '-lmwblas'};
+        if Nthread
+            cflags = [cflags, ' -qopenmp -DDG_THREADS=', num2str(Nthread)];
+            ldflags = [ldflags, '-liomp5 '];
         end
     case 'win64'
-        compiler = '';
-        if with_omp
-            cflags = ['CFLAGS=$CFLAGS -fopenmp -DDG_THREADS=',...
-                num2str(with_omp)];
-            ldflags = {'LDFLAGS=$LDFLAGS -fopenmp', '-largeArrayDims', ...
-                '-lmwblas'};
-        else
-            cflags = 'CFLAGS=$CFLAGS, -Wall';
-            ldflags = {'-largeArrayDims', '-lmwblas'};
+        if Nthread
+            cflags = [cflags,' -fopenmp -DDG_THREADS=',num2str(Nthread)];
+            ldflags = [ldflags, ' -fopenmp'];
         end
     case 'glnxa64'
     otherwise
-        error('configure error: Unknown platform.');
+        msgID = 'configure:set_the_compiler';
+        msgtext = 'Unknown computer architecture.';
+        ME = MException(msgID, msgtext);
+        throw(ME);
 end
 end% func
 
-function clear_model(path, src)
-fullPath = fullfile(pwd, path);
-srcfile  = fullfile(fullPath, src);
-fold = dir(fullPath);
-obj_exten = mex_extern();
+%> remove the compiled object files.
+function remove_lib_file( path, srcfile )
+libPath = [pwd, '/', path];
+ext = mex_extern();
+fold = dir(libPath);
 for n = 1:numel(srcfile)
     [ ~, name, ~ ] = fileparts( srcfile{n} );
-    obj_file = [name, obj_exten];
-    
+    obj_file = [name, ext];
     for i = 1:numel(fold)
         if ( strcmp(fold(i).name, obj_file) ) % find the compiled mex file
-            obj_file = fullfile(fullPath, obj_file);
-            delete(obj_file);
+            delete( fullfile(libPath, obj_file) );
             break;
         end
     end
@@ -173,45 +138,32 @@ end% for
 
 end% func
 
-%% install function
-function install(path, src, libsrc, compiler, cflags, ldflags)
-% Compile the source file and put into spicific directory.
-addpath(pwd)
-pwdPath  = pwd;
-fullPath = fullfile(pwd, path);
+%> compile the source file and install the object files.
+function install_lib_file(outpath, src, libsrc, compiler, cflags, ldflags)
+outDir = [pwd, '/', outpath];
+fprintf('installing source files to %s.\n', outpath);
+fprintf('%s\nCFLAGS=%s\nLDFLAGS=%s\n', compiler, cflags, ldflags);
 
-srcfile  = fullfile(fullPath, src);
-libfile  = fullfile(fullPath, libsrc);
-
-cd(fullPath);
-
-sformat = repmat('%s ', 1, numel(ldflags));
-ndg_utility.cprintf('key', '=========installing %s=========\n', path);
-ndg_utility.cprintf('string', ...
-    ['%s\nCFLAGS=%s\nLDFLAGS=', sformat, '\n'], ...
-    compiler, cflags, ldflags{:});
-
-for i = 1:numel(srcfile)
-    if ( iscompiled(srcfile{i}, libfile) ) 
+for i = 1:numel(src)
+    if ( isCompiled(outDir, src{i}, libsrc) ) 
         continue; 
     end
-    fprintf('\n%s/%s...\n', path,src{i});
-    file = [srcfile(i), libfile{:}];
-    mex(compiler, cflags, '-O', ldflags{:}, file{:});
+    fprintf('\n%s...\n', src{i});
+    file = [src(i), libsrc{:}];
+    mex(compiler, cflags, '-O', '-largeArrayDims', ...
+        ldflags, file{:}, '-outdir', outDir);
 end% for
-ndg_utility.cprintf('key', ...
-    '=========finish installing %s=========\n\n', path);
-cd(pwdPath);
+fprintf('finish installing srouce files.\n');
 end
 
-function tf = iscompiled( src_file, lib_files )
-% Check whether the source files and library files are changed.
+%> check whether the source and library files are changed.
+function tf = isCompiled( outPath, srcFile, libSrdFile )
 tf = false;
 obj_exten = mex_extern();
-[ path,name,src_exten ] = fileparts( src_file );
+[ ~,name,src_exten ] = fileparts( srcFile );
 src_file_name = [ name, src_exten ];
 obj_file_name = [ name, obj_exten ];
-fold = dir(path);
+fold = dir( outPath );
 obj_datenum = 0;
 src_datenum = 0;
 lib_datenum = 0;
@@ -222,8 +174,8 @@ for i = 1:numel( fold )
         src_datenum = fold(i).datenum;
     end
     
-    for j = 1:numel(lib_files)
-        [ ~,name,src_exten ] = fileparts( lib_files{j} );
+    for j = 1:numel(libSrdFile)
+        [ ~,name,src_exten ] = fileparts( libSrdFile{j} );
         lib_file_name = [ name,src_exten ];
         if strcmp( fold(i).name, lib_file_name )
             lib_datenum = max(lib_datenum, fold(i).datenum);
@@ -240,14 +192,15 @@ end% if
 
 end% func
 
-function obj_exten = mex_extern()
+%> return the file suffixion based on different platform
+function ext = mex_extern()
 switch computer('arch')
     case 'maci64'
-        obj_exten = '.mexmaci64';
+        ext = '.mexmaci64';
     case 'win64'
-        obj_exten = '.mexw64';
+        ext = '.mexw64';
     case 'glnxa64'
-        obj_exten = '.mexa64';
+        ext = '.mexa64';
 end
 end% func
 

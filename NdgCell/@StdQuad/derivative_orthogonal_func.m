@@ -1,13 +1,24 @@
+%======================================================================
+%> @brief Brief description of the function
+%>
+%> More detailed description.
+%>
+%> @param arg1 First argument
+%> @param arg2 Second argument
+%>
+%> @retval out1 return value for the first output variable
+%> @retval out2 return value for the second output variable
+%======================================================================
+%> This function is part of the NDGOM software. 
+%> @author li12242, Tianjin University, li12242@tju.edu.cn
+%======================================================================
 function [ fdr, fds, fdt ] = derivative_orthogonal_func(obj, N, ind, r, s, t)
-%GRADORTHOGONALFUN Summary of this function goes here
-%   Detailed explanation goes here
 
-% 转换编号为（i,j）形式
+% transform the index to two indexes.
 [i,j] = trans_ind(N,ind);
-% 计算正交基函数函数值
-
-fdr = Polylib.GradJacobiP(r(:), 0, 0, i).*Polylib.JacobiP(s(:), 0, 0, j);
-fds = Polylib.JacobiP(r(:), 0, 0, i).*Polylib.GradJacobiP(s(:), 0, 0, j);
+% calculate the derivative basis function values.
+fdr = GradJacobiP(r(:), 0, 0, i).*JacobiP(s(:), 0, 0, j);
+fds = JacobiP(r(:), 0, 0, i).*GradJacobiP(s(:), 0, 0, j);
 fdt = zeros(size(fdr));
 end
 
