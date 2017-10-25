@@ -1,6 +1,6 @@
 function setOutputFile( obj, casename, intervalType, interval )
 
-obj.outputNetcdfFileName = casename;
+obj.outputNetcdfCaseName = casename;
 
 % set output interval type
 try

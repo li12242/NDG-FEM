@@ -7,42 +7,63 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		040012E41F93AE63009D1B53 /* NdgCellTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 040012E21F93AE63009D1B53 /* NdgCellTest.c */; };
+		040DE6B71F9F59DC00EF394D /* NdgPhysTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 040DE6B61F9F59DC00EF394D /* NdgPhysTest.c */; };
+		040DE6C31F9F5B7B00EF394D /* NdgPhysTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 040DE6B61F9F59DC00EF394D /* NdgPhysTest.c */; };
+		040DE6C41F9F5B8000EF394D /* libNdgPhys.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04BDCBDB1F9BAA260096E5CE /* libNdgPhys.a */; };
+		040DE6C51F9F5E1A00EF394D /* NdgPhysTest.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 040DE6BC1F9F5B6700EF394D /* NdgPhysTest.mexmaci64 */; };
 		04137FEC1F93375500DD4CA0 /* GradJacobiP.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04137FE21F93371F00DD4CA0 /* GradJacobiP.mexmaci64 */; };
 		04137FFB1F93384E00DD4CA0 /* JacobiP.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04137FF11F9337FE00DD4CA0 /* JacobiP.mexmaci64 */; };
 		041380151F93389100DD4CA0 /* zwgl.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 041380001F93385F00DD4CA0 /* zwgl.mexmaci64 */; };
 		041380161F93389D00DD4CA0 /* zwglj.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0413800E1F93388600DD4CA0 /* zwglj.mexmaci64 */; };
-		0426A9681F965BCB0054A058 /* AdvSolver2d.c in Sources */ = {isa = PBXBuildFile; fileRef = 0426A9661F965BCB0054A058 /* AdvSolver2d.c */; };
 		0426A96C1F965C110054A058 /* AdvSolver2d.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0426A95F1F965B940054A058 /* AdvSolver2d.mexmaci64 */; };
+		0493D7DD1F9EF53C003F83EB /* NdgCellTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE0A1F9EC91A002666B1 /* NdgCellTest.c */; };
+		0493D7E61F9F09E6003F83EB /* mxNdgSolver.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE161F9EC99E002666B1 /* mxNdgSolver.c */; };
+		0493D7E71F9F09E6003F83EB /* NdgSolver.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE181F9EC99E002666B1 /* NdgSolver.c */; };
+		0493D7E81F9F09EE003F83EB /* libNdgUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0F01F9B7FB40050ED1C /* libNdgUtils.a */; };
+		0493D7E91F9F0A2B003F83EB /* libNdgSolver.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0493D7E21F9F09CF003F83EB /* libNdgSolver.a */; };
+		04A2BE061F9EC8E0002666B1 /* NdgCell.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE021F9EC8E0002666B1 /* NdgCell.c */; };
+		04A2BE071F9EC8E0002666B1 /* NdgCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE031F9EC8E0002666B1 /* NdgCell.h */; };
+		04A2BE081F9EC8E0002666B1 /* mxNdgCell.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE041F9EC8E0002666B1 /* mxNdgCell.c */; };
+		04A2BE091F9EC8E0002666B1 /* mxNdgCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE051F9EC8E0002666B1 /* mxNdgCell.h */; };
+		04A2BE101F9EC967002666B1 /* NdgMesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE0C1F9EC967002666B1 /* NdgMesh.c */; };
+		04A2BE111F9EC967002666B1 /* NdgMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE0D1F9EC967002666B1 /* NdgMesh.h */; };
+		04A2BE121F9EC967002666B1 /* NdgMeshIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE0E1F9EC967002666B1 /* NdgMeshIO.c */; };
+		04A2BE131F9EC967002666B1 /* NdgMeshIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE0F1F9EC967002666B1 /* NdgMeshIO.h */; };
+		04A2BE151F9EC978002666B1 /* NdgMeshTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE141F9EC978002666B1 /* NdgMeshTest.c */; };
+		04A2BE1A1F9EC99E002666B1 /* mxNdgSolver.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE161F9EC99E002666B1 /* mxNdgSolver.c */; };
+		04A2BE1B1F9EC99E002666B1 /* mxNdgSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE171F9EC99E002666B1 /* mxNdgSolver.h */; };
+		04A2BE1C1F9EC99E002666B1 /* NdgSolver.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE181F9EC99E002666B1 /* NdgSolver.c */; };
+		04A2BE1D1F9EC99E002666B1 /* NdgSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE191F9EC99E002666B1 /* NdgSolver.h */; };
+		04A2BE241F9EC9C7002666B1 /* MatUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE1E1F9EC9C7002666B1 /* MatUtils.c */; };
+		04A2BE251F9EC9C7002666B1 /* MatUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE1F1F9EC9C7002666B1 /* MatUtils.h */; };
+		04A2BE261F9EC9C7002666B1 /* NdgNetCDF.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE201F9EC9C7002666B1 /* NdgNetCDF.c */; };
+		04A2BE271F9EC9C7002666B1 /* NdgNetCDF.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE211F9EC9C7002666B1 /* NdgNetCDF.h */; };
+		04A2BE281F9EC9C7002666B1 /* NdgUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE221F9EC9C7002666B1 /* NdgUtils.c */; };
+		04A2BE291F9EC9C7002666B1 /* NdgUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE231F9EC9C7002666B1 /* NdgUtils.h */; };
+		04A2BE321F9EC9DF002666B1 /* NdgLimiter.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE2A1F9EC9DF002666B1 /* NdgLimiter.c */; };
+		04A2BE331F9EC9DF002666B1 /* NdgLimiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE2B1F9EC9DF002666B1 /* NdgLimiter.h */; };
+		04A2BE341F9EC9DF002666B1 /* NdgPhys.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE2C1F9EC9DF002666B1 /* NdgPhys.c */; };
+		04A2BE351F9EC9DF002666B1 /* NdgPhys.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE2D1F9EC9DF002666B1 /* NdgPhys.h */; };
+		04A2BE361F9EC9DF002666B1 /* NdgPhysIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE2E1F9EC9DF002666B1 /* NdgPhysIO.c */; };
+		04A2BE371F9EC9DF002666B1 /* NdgPhysIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE2F1F9EC9DF002666B1 /* NdgPhysIO.h */; };
+		04A2BE381F9EC9DF002666B1 /* NdgTerporalDiscrete.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE301F9EC9DF002666B1 /* NdgTerporalDiscrete.c */; };
+		04A2BE391F9EC9DF002666B1 /* NdgTerporalDiscrete.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE311F9EC9DF002666B1 /* NdgTerporalDiscrete.h */; };
+		04A2BE3B1F9EC9F7002666B1 /* AdvSolver2d.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE3A1F9EC9F7002666B1 /* AdvSolver2d.c */; };
+		04A2BE3E1F9ECB24002666B1 /* mxNdgMesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE3C1F9ECB24002666B1 /* mxNdgMesh.c */; };
+		04A2BE3F1F9ECB24002666B1 /* mxNdgMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE3D1F9ECB24002666B1 /* mxNdgMesh.h */; };
+		04A2BE421F9ECDA6002666B1 /* mxNdgPhys.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A2BE401F9ECDA6002666B1 /* mxNdgPhys.c */; };
+		04A2BE431F9ECDA6002666B1 /* mxNdgPhys.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A2BE411F9ECDA6002666B1 /* mxNdgPhys.h */; };
 		04BDCBC51F9BA78E0096E5CE /* libNdgUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0F01F9B7FB40050ED1C /* libNdgUtils.a */; };
 		04BDCBC61F9BA9790096E5CE /* libNdgCell.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0CF1F9B7BFC0050ED1C /* libNdgCell.a */; };
-		04BDCBCF1F9BA9B80096E5CE /* NdgMesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 04DD485C1F94491C007027AB /* NdgMesh.c */; };
-		04BDCBD01F9BA9B80096E5CE /* NdgMeshIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 04DD485E1F94491C007027AB /* NdgMeshIO.c */; };
-		04BDCBD11F9BA9B80096E5CE /* NdgNetCDF.c in Sources */ = {isa = PBXBuildFile; fileRef = 041380501F93400200DD4CA0 /* NdgNetCDF.c */; };
 		04BDCBD21F9BA9BE0096E5CE /* libNdgCell.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0CF1F9B7BFC0050ED1C /* libNdgCell.a */; };
-		04BDCBD31F9BA9C80096E5CE /* NdgMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 04DD485D1F94491C007027AB /* NdgMesh.h */; };
-		04BDCBD41F9BA9C80096E5CE /* NdgMeshIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 04DD485F1F94491C007027AB /* NdgMeshIO.h */; };
-		04BDCBD51F9BA9C80096E5CE /* NdgNetCDF.h in Headers */ = {isa = PBXBuildFile; fileRef = 041380511F93400200DD4CA0 /* NdgNetCDF.h */; };
 		04BDCBD61F9BAA0F0096E5CE /* libNdgMesh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04BDCBCB1F9BA99C0096E5CE /* libNdgMesh.a */; };
-		04BDCBDF1F9BAA3B0096E5CE /* NdgPhys.c in Sources */ = {isa = PBXBuildFile; fileRef = 04FBA4BD1F94B51C00DA65FF /* NdgPhys.c */; };
-		04BDCBE01F9BAA3B0096E5CE /* NdgSolver.c in Sources */ = {isa = PBXBuildFile; fileRef = 0426A94D1F9594580054A058 /* NdgSolver.c */; };
-		04BDCBE11F9BAA3B0096E5CE /* NdgTerporalDiscrete.c in Sources */ = {isa = PBXBuildFile; fileRef = 0426A9531F962F600054A058 /* NdgTerporalDiscrete.c */; };
-		04BDCBE21F9BAA3B0096E5CE /* NdgPhysIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 04829F6E1F989C1100365FC5 /* NdgPhysIO.c */; };
-		04BDCBE31F9BAA3B0096E5CE /* NdgLimiter.c in Sources */ = {isa = PBXBuildFile; fileRef = 0426A9571F9644180054A058 /* NdgLimiter.c */; };
-		04BDCBE41F9BAA3B0096E5CE /* mxNdgPhys.c in Sources */ = {isa = PBXBuildFile; fileRef = 04F6B0A11F9B75B40050ED1C /* mxNdgPhys.c */; };
 		04BDCBE51F9BAA440096E5CE /* libNdgMesh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04BDCBCB1F9BA99C0096E5CE /* libNdgMesh.a */; };
-		04BDCBE61F9BAA800096E5CE /* NdgPhysTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 0426A9501F95CAF60054A058 /* NdgPhysTest.c */; };
-		04BDCBE71F9BAA840096E5CE /* libNdgPhys.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04BDCBDB1F9BAA260096E5CE /* libNdgPhys.a */; };
+		04BDCBE61F9BAA800096E5CE /* NdgSolverTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 0426A9501F95CAF60054A058 /* NdgSolverTest.c */; };
 		04BDCBE81F9BAA980096E5CE /* libNdgPhys.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04BDCBDB1F9BAA260096E5CE /* libNdgPhys.a */; };
 		04BEAAAF1F93B64000682F40 /* GradJacobiP.c in Sources */ = {isa = PBXBuildFile; fileRef = 04BEAAA91F93B64000682F40 /* GradJacobiP.c */; };
 		04BEAAB41F93B64000682F40 /* JacobiP.c in Sources */ = {isa = PBXBuildFile; fileRef = 04BEAAAA1F93B64000682F40 /* JacobiP.c */; };
 		04BEAAC21F93B64000682F40 /* zwglj.c in Sources */ = {isa = PBXBuildFile; fileRef = 04BEAAAE1F93B64000682F40 /* zwglj.c */; };
 		04DD485A1F943D97007027AB /* NdgCellTest.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 041380201F933EE300DD4CA0 /* NdgCellTest.mexmaci64 */; };
-		04DD48631F94491C007027AB /* NdgMeshTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 04DD48601F94491C007027AB /* NdgMeshTest.c */; };
-		04F6B0D31F9B7C090050ED1C /* NdgCell.c in Sources */ = {isa = PBXBuildFile; fileRef = 040012E01F93AE63009D1B53 /* NdgCell.c */; };
-		04F6B0D41F9B7C090050ED1C /* NdgCellIO.c in Sources */ = {isa = PBXBuildFile; fileRef = 04F6B09B1F9B6D0E0050ED1C /* NdgCellIO.c */; };
-		04F6B0D71F9B7C220050ED1C /* NdgCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 040012E11F93AE63009D1B53 /* NdgCell.h */; };
-		04F6B0D81F9B7C220050ED1C /* NdgCellIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 04F6B09C1F9B6D0E0050ED1C /* NdgCellIO.h */; };
 		04F6B0E51F9B7F070050ED1C /* polylib.c in Sources */ = {isa = PBXBuildFile; fileRef = 04BEAAAB1F93B64000682F40 /* polylib.c */; };
 		04F6B0E61F9B7F0E0050ED1C /* polylib.h in Headers */ = {isa = PBXBuildFile; fileRef = 04BEAAAC1F93B64000682F40 /* polylib.h */; };
 		04F6B0E71F9B7F360050ED1C /* zwgl.c in Sources */ = {isa = PBXBuildFile; fileRef = 04BEAAAD1F93B64000682F40 /* zwgl.c */; };
@@ -50,14 +71,8 @@
 		04F6B0E91F9B7F4F0050ED1C /* libPolylib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0E11F9B7EA60050ED1C /* libPolylib.a */; };
 		04F6B0EA1F9B7F530050ED1C /* libPolylib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0E11F9B7EA60050ED1C /* libPolylib.a */; };
 		04F6B0EB1F9B7F580050ED1C /* libPolylib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F6B0E11F9B7EA60050ED1C /* libPolylib.a */; };
-		04F6B0F41F9B7FBF0050ED1C /* MatUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 0413804E1F93400200DD4CA0 /* MatUtils.c */; };
-		04F6B0F51F9B7FBF0050ED1C /* NdgNetCDF.c in Sources */ = {isa = PBXBuildFile; fileRef = 041380501F93400200DD4CA0 /* NdgNetCDF.c */; };
-		04F6B0F61F9B7FBF0050ED1C /* Utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 041380521F93400200DD4CA0 /* Utils.c */; };
-		04F6B0F71F9B7FCC0050ED1C /* MatUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0413804F1F93400200DD4CA0 /* MatUtils.h */; };
-		04F6B0F81F9B7FCC0050ED1C /* NdgNetCDF.h in Headers */ = {isa = PBXBuildFile; fileRef = 041380511F93400200DD4CA0 /* NdgNetCDF.h */; };
-		04F6B0F91F9B7FCC0050ED1C /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 041380531F93400200DD4CA0 /* Utils.h */; };
 		04FBA4BC1F94A03C00DA65FF /* NdgMeshTest.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 041380301F933F2A00DD4CA0 /* NdgMeshTest.mexmaci64 */; };
-		04FBA4D01F94B73900DA65FF /* NdgPhysTest.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04FBA4C31F94B71300DA65FF /* NdgPhysTest.mexmaci64 */; };
+		04FBA4D01F94B73900DA65FF /* NdgSolverTest.mexmaci64 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04FBA4C31F94B71300DA65FF /* NdgSolverTest.mexmaci64 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,13 +111,6 @@
 			remoteGlobalIDString = 04BDCBCA1F9BA99C0096E5CE;
 			remoteInfo = NdgMesh;
 		};
-		04BDCBF31F9BAD0D0096E5CE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 04137FB61F932F8600DD4CA0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 04BDCBDA1F9BAA260096E5CE;
-			remoteInfo = NdgPhys;
-		};
 		04BDCBF51F9BAD110096E5CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 04137FB61F932F8600DD4CA0 /* Project object */;
@@ -113,6 +121,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		040DE6BA1F9F5B6700EF394D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "/Users/mac/Documents/MATLAB/NDG-FEM/lib";
+			dstSubfolderSpec = 0;
+			files = (
+				040DE6C51F9F5E1A00EF394D /* NdgPhysTest.mexmaci64 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		04137FE01F93371F00DD4CA0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -189,39 +207,57 @@
 			dstPath = "/Users/mac/Documents/MATLAB/NDG-FEM/lib";
 			dstSubfolderSpec = 0;
 			files = (
-				04FBA4D01F94B73900DA65FF /* NdgPhysTest.mexmaci64 in CopyFiles */,
+				04FBA4D01F94B73900DA65FF /* NdgSolverTest.mexmaci64 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		040012E01F93AE63009D1B53 /* NdgCell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgCell.c; path = ../../../NdgCell/src/NdgCell.c; sourceTree = "<group>"; };
-		040012E11F93AE63009D1B53 /* NdgCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgCell.h; path = ../../../NdgCell/src/NdgCell.h; sourceTree = "<group>"; };
-		040012E21F93AE63009D1B53 /* NdgCellTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgCellTest.c; path = ../../../NdgCell/src/NdgCellTest.c; sourceTree = "<group>"; };
+		040DE6B61F9F59DC00EF394D /* NdgPhysTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgPhysTest.c; path = NdgPhys/NdgPhysTest.c; sourceTree = SOURCE_ROOT; };
+		040DE6BC1F9F5B6700EF394D /* NdgPhysTest.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgPhysTest.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 		04137FE21F93371F00DD4CA0 /* GradJacobiP.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GradJacobiP.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 		04137FF11F9337FE00DD4CA0 /* JacobiP.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JacobiP.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 		041380001F93385F00DD4CA0 /* zwgl.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = zwgl.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 		0413800E1F93388600DD4CA0 /* zwglj.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = zwglj.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 		041380201F933EE300DD4CA0 /* NdgCellTest.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgCellTest.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 		041380301F933F2A00DD4CA0 /* NdgMeshTest.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgMeshTest.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
-		0413804E1F93400200DD4CA0 /* MatUtils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = MatUtils.c; path = ../../../NdgUtils/src/MatUtils.c; sourceTree = "<group>"; };
-		0413804F1F93400200DD4CA0 /* MatUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MatUtils.h; path = ../../../NdgUtils/src/MatUtils.h; sourceTree = "<group>"; };
-		041380501F93400200DD4CA0 /* NdgNetCDF.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NdgNetCDF.c; path = ../../../NdgUtils/src/NdgNetCDF.c; sourceTree = "<group>"; };
-		041380511F93400200DD4CA0 /* NdgNetCDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NdgNetCDF.h; path = ../../../NdgUtils/src/NdgNetCDF.h; sourceTree = "<group>"; };
-		041380521F93400200DD4CA0 /* Utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Utils.c; path = ../../../NdgUtils/src/Utils.c; sourceTree = "<group>"; };
-		041380531F93400200DD4CA0 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = ../../../NdgUtils/src/Utils.h; sourceTree = "<group>"; };
-		0426A94D1F9594580054A058 /* NdgSolver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgSolver.c; path = ../../../NdgPhys/src/NdgSolver.c; sourceTree = "<group>"; };
-		0426A94E1F9594580054A058 /* NdgSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgSolver.h; path = ../../../NdgPhys/src/NdgSolver.h; sourceTree = "<group>"; };
-		0426A9501F95CAF60054A058 /* NdgPhysTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgPhysTest.c; path = ../../../NdgPhys/src/NdgPhysTest.c; sourceTree = "<group>"; };
-		0426A9531F962F600054A058 /* NdgTerporalDiscrete.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgTerporalDiscrete.c; path = ../../../NdgPhys/src/NdgTerporalDiscrete.c; sourceTree = "<group>"; };
-		0426A9541F962F600054A058 /* NdgTerporalDiscrete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgTerporalDiscrete.h; path = ../../../NdgPhys/src/NdgTerporalDiscrete.h; sourceTree = "<group>"; };
-		0426A9571F9644180054A058 /* NdgLimiter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgLimiter.c; path = ../../../NdgUtils/src/NdgLimiter.c; sourceTree = "<group>"; };
-		0426A9581F9644180054A058 /* NdgLimiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgLimiter.h; path = ../../../NdgUtils/src/NdgLimiter.h; sourceTree = "<group>"; };
+		0426A9501F95CAF60054A058 /* NdgSolverTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgSolverTest.c; path = ../../../NdgPhys/src/NdgSolverTest.c; sourceTree = "<group>"; };
 		0426A95F1F965B940054A058 /* AdvSolver2d.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdvSolver2d.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
-		0426A9661F965BCB0054A058 /* AdvSolver2d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AdvSolver2d.c; path = "../../../Advection/@AdvUniformUnion2d/src/AdvSolver2d.c"; sourceTree = "<group>"; };
-		04829F6E1F989C1100365FC5 /* NdgPhysIO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgPhysIO.c; path = ../../../NdgPhys/src/NdgPhysIO.c; sourceTree = "<group>"; };
-		04829F6F1F989C1100365FC5 /* NdgPhysIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgPhysIO.h; path = ../../../NdgPhys/src/NdgPhysIO.h; sourceTree = "<group>"; };
+		0493D7E21F9F09CF003F83EB /* libNdgSolver.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNdgSolver.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		04A2BE021F9EC8E0002666B1 /* NdgCell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgCell.c; sourceTree = "<group>"; };
+		04A2BE031F9EC8E0002666B1 /* NdgCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgCell.h; sourceTree = "<group>"; };
+		04A2BE041F9EC8E0002666B1 /* mxNdgCell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mxNdgCell.c; sourceTree = "<group>"; };
+		04A2BE051F9EC8E0002666B1 /* mxNdgCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mxNdgCell.h; sourceTree = "<group>"; };
+		04A2BE0A1F9EC91A002666B1 /* NdgCellTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgCellTest.c; sourceTree = "<group>"; };
+		04A2BE0C1F9EC967002666B1 /* NdgMesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgMesh.c; sourceTree = "<group>"; };
+		04A2BE0D1F9EC967002666B1 /* NdgMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgMesh.h; sourceTree = "<group>"; };
+		04A2BE0E1F9EC967002666B1 /* NdgMeshIO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgMeshIO.c; sourceTree = "<group>"; };
+		04A2BE0F1F9EC967002666B1 /* NdgMeshIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgMeshIO.h; sourceTree = "<group>"; };
+		04A2BE141F9EC978002666B1 /* NdgMeshTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgMeshTest.c; sourceTree = "<group>"; };
+		04A2BE161F9EC99E002666B1 /* mxNdgSolver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mxNdgSolver.c; path = NdgSolver/mxNdgSolver.c; sourceTree = SOURCE_ROOT; };
+		04A2BE171F9EC99E002666B1 /* mxNdgSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mxNdgSolver.h; path = NdgSolver/mxNdgSolver.h; sourceTree = SOURCE_ROOT; };
+		04A2BE181F9EC99E002666B1 /* NdgSolver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgSolver.c; path = NdgSolver/NdgSolver.c; sourceTree = SOURCE_ROOT; };
+		04A2BE191F9EC99E002666B1 /* NdgSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgSolver.h; path = NdgSolver/NdgSolver.h; sourceTree = SOURCE_ROOT; };
+		04A2BE1E1F9EC9C7002666B1 /* MatUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MatUtils.c; sourceTree = "<group>"; };
+		04A2BE1F1F9EC9C7002666B1 /* MatUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatUtils.h; sourceTree = "<group>"; };
+		04A2BE201F9EC9C7002666B1 /* NdgNetCDF.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgNetCDF.c; sourceTree = "<group>"; };
+		04A2BE211F9EC9C7002666B1 /* NdgNetCDF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgNetCDF.h; sourceTree = "<group>"; };
+		04A2BE221F9EC9C7002666B1 /* NdgUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NdgUtils.c; sourceTree = "<group>"; };
+		04A2BE231F9EC9C7002666B1 /* NdgUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgUtils.h; sourceTree = "<group>"; };
+		04A2BE2A1F9EC9DF002666B1 /* NdgLimiter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgLimiter.c; path = NdgPhys/NdgLimiter.c; sourceTree = SOURCE_ROOT; };
+		04A2BE2B1F9EC9DF002666B1 /* NdgLimiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgLimiter.h; path = NdgPhys/NdgLimiter.h; sourceTree = SOURCE_ROOT; };
+		04A2BE2C1F9EC9DF002666B1 /* NdgPhys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgPhys.c; path = NdgPhys/NdgPhys.c; sourceTree = SOURCE_ROOT; };
+		04A2BE2D1F9EC9DF002666B1 /* NdgPhys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgPhys.h; path = NdgPhys/NdgPhys.h; sourceTree = SOURCE_ROOT; };
+		04A2BE2E1F9EC9DF002666B1 /* NdgPhysIO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgPhysIO.c; path = NdgPhys/NdgPhysIO.c; sourceTree = SOURCE_ROOT; };
+		04A2BE2F1F9EC9DF002666B1 /* NdgPhysIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgPhysIO.h; path = NdgPhys/NdgPhysIO.h; sourceTree = SOURCE_ROOT; };
+		04A2BE301F9EC9DF002666B1 /* NdgTerporalDiscrete.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgTerporalDiscrete.c; path = NdgPhys/NdgTerporalDiscrete.c; sourceTree = SOURCE_ROOT; };
+		04A2BE311F9EC9DF002666B1 /* NdgTerporalDiscrete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgTerporalDiscrete.h; path = NdgPhys/NdgTerporalDiscrete.h; sourceTree = SOURCE_ROOT; };
+		04A2BE3A1F9EC9F7002666B1 /* AdvSolver2d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AdvSolver2d.c; sourceTree = "<group>"; };
+		04A2BE3C1F9ECB24002666B1 /* mxNdgMesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mxNdgMesh.c; sourceTree = "<group>"; };
+		04A2BE3D1F9ECB24002666B1 /* mxNdgMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mxNdgMesh.h; sourceTree = "<group>"; };
+		04A2BE401F9ECDA6002666B1 /* mxNdgPhys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mxNdgPhys.c; path = NdgPhys/mxNdgPhys.c; sourceTree = SOURCE_ROOT; };
+		04A2BE411F9ECDA6002666B1 /* mxNdgPhys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mxNdgPhys.h; path = NdgPhys/mxNdgPhys.h; sourceTree = SOURCE_ROOT; };
 		04BDCBCB1F9BA99C0096E5CE /* libNdgMesh.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNdgMesh.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		04BDCBDB1F9BAA260096E5CE /* libNdgPhys.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNdgPhys.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		04BEAAA91F93B64000682F40 /* GradJacobiP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GradJacobiP.c; path = ../../../thirdParty/Polylib/GradJacobiP.c; sourceTree = "<group>"; };
@@ -230,24 +266,21 @@
 		04BEAAAC1F93B64000682F40 /* polylib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polylib.h; path = ../../../thirdParty/Polylib/polylib.h; sourceTree = "<group>"; };
 		04BEAAAD1F93B64000682F40 /* zwgl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zwgl.c; path = ../../../thirdParty/Polylib/zwgl.c; sourceTree = "<group>"; };
 		04BEAAAE1F93B64000682F40 /* zwglj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zwglj.c; path = ../../../thirdParty/Polylib/zwglj.c; sourceTree = "<group>"; };
-		04DD485C1F94491C007027AB /* NdgMesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgMesh.c; path = ../../../NdgMesh/src/NdgMesh.c; sourceTree = "<group>"; };
-		04DD485D1F94491C007027AB /* NdgMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgMesh.h; path = ../../../NdgMesh/src/NdgMesh.h; sourceTree = "<group>"; };
-		04DD485E1F94491C007027AB /* NdgMeshIO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgMeshIO.c; path = ../../../NdgMesh/src/NdgMeshIO.c; sourceTree = "<group>"; };
-		04DD485F1F94491C007027AB /* NdgMeshIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgMeshIO.h; path = ../../../NdgMesh/src/NdgMeshIO.h; sourceTree = "<group>"; };
-		04DD48601F94491C007027AB /* NdgMeshTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgMeshTest.c; path = ../../../NdgMesh/src/NdgMeshTest.c; sourceTree = "<group>"; };
-		04F6B09B1F9B6D0E0050ED1C /* NdgCellIO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NdgCellIO.c; path = ../../../NdgCell/src/NdgCellIO.c; sourceTree = "<group>"; };
-		04F6B09C1F9B6D0E0050ED1C /* NdgCellIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NdgCellIO.h; path = ../../../NdgCell/src/NdgCellIO.h; sourceTree = "<group>"; };
-		04F6B0A11F9B75B40050ED1C /* mxNdgPhys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mxNdgPhys.c; path = ../../../NdgPhys/src/mxNdgPhys.c; sourceTree = "<group>"; };
-		04F6B0A21F9B75B40050ED1C /* mxNdgPhys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mxNdgPhys.h; path = ../../../NdgPhys/src/mxNdgPhys.h; sourceTree = "<group>"; };
 		04F6B0CF1F9B7BFC0050ED1C /* libNdgCell.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNdgCell.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F6B0E11F9B7EA60050ED1C /* libPolylib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPolylib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F6B0F01F9B7FB40050ED1C /* libNdgUtils.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNdgUtils.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		04FBA4BD1F94B51C00DA65FF /* NdgPhys.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NdgPhys.c; path = ../../../NdgPhys/src/NdgPhys.c; sourceTree = "<group>"; };
-		04FBA4BE1F94B51C00DA65FF /* NdgPhys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NdgPhys.h; path = ../../../NdgPhys/src/NdgPhys.h; sourceTree = "<group>"; };
-		04FBA4C31F94B71300DA65FF /* NdgPhysTest.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgPhysTest.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
+		04FBA4C31F94B71300DA65FF /* NdgSolverTest.mexmaci64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgSolverTest.mexmaci64; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		040DE6B91F9F5B6700EF394D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				040DE6C41F9F5B8000EF394D /* libNdgPhys.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		04137FDF1F93371F00DD4CA0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,6 +337,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0493D7DF1F9F09CF003F83EB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0493D7E81F9F09EE003F83EB /* libNdgUtils.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		04BDCBC81F9BA99C0096E5CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -346,22 +387,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04BDCBE71F9BAA840096E5CE /* libNdgPhys.a in Frameworks */,
+				0493D7E91F9F0A2B003F83EB /* libNdgSolver.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		040DE6B51F9F59BD00EF394D /* NdgPhysTest */ = {
+			isa = PBXGroup;
+			children = (
+				040DE6B61F9F59DC00EF394D /* NdgPhysTest.c */,
+			);
+			name = NdgPhysTest;
+			sourceTree = "<group>";
+		};
 		04137FB51F932F8600DD4CA0 = {
 			isa = PBXGroup;
 			children = (
 				04137FCD1F93369F00DD4CA0 /* Polylib */,
+				041380481F933FEC00DD4CA0 /* NdgUtils */,
 				041380211F933EE300DD4CA0 /* NdgCell */,
 				041380311F933F2A00DD4CA0 /* NdgMesh */,
-				04BEAA8E1F93B5CE00682F40 /* NdgPhys */,
-				0435F49A1F9D8E530094AEE2 /* NdgSolver */,
-				041380481F933FEC00DD4CA0 /* NdgUtils */,
+				04BEAA8E1F93B5CE00682F40 /* NdgSolver */,
+				0435F49A1F9D8E530094AEE2 /* NdgPhys */,
 				0426A9601F965B940054A058 /* Advection */,
 				04137FBF1F932F8600DD4CA0 /* Products */,
 			);
@@ -376,13 +425,15 @@
 				0413800E1F93388600DD4CA0 /* zwglj.mexmaci64 */,
 				041380201F933EE300DD4CA0 /* NdgCellTest.mexmaci64 */,
 				041380301F933F2A00DD4CA0 /* NdgMeshTest.mexmaci64 */,
-				04FBA4C31F94B71300DA65FF /* NdgPhysTest.mexmaci64 */,
+				04FBA4C31F94B71300DA65FF /* NdgSolverTest.mexmaci64 */,
 				0426A95F1F965B940054A058 /* AdvSolver2d.mexmaci64 */,
 				04F6B0CF1F9B7BFC0050ED1C /* libNdgCell.a */,
 				04F6B0E11F9B7EA60050ED1C /* libPolylib.a */,
 				04F6B0F01F9B7FB40050ED1C /* libNdgUtils.a */,
 				04BDCBCB1F9BA99C0096E5CE /* libNdgMesh.a */,
 				04BDCBDB1F9BAA260096E5CE /* libNdgPhys.a */,
+				0493D7E21F9F09CF003F83EB /* libNdgSolver.a */,
+				040DE6BC1F9F5B6700EF394D /* NdgPhysTest.mexmaci64 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -403,11 +454,11 @@
 		041380211F933EE300DD4CA0 /* NdgCell */ = {
 			isa = PBXGroup;
 			children = (
+				04A2BE021F9EC8E0002666B1 /* NdgCell.c */,
+				04A2BE031F9EC8E0002666B1 /* NdgCell.h */,
+				04A2BE041F9EC8E0002666B1 /* mxNdgCell.c */,
+				04A2BE051F9EC8E0002666B1 /* mxNdgCell.h */,
 				04B0992D1F96F99A002266D0 /* NdgCellTest */,
-				040012E01F93AE63009D1B53 /* NdgCell.c */,
-				040012E11F93AE63009D1B53 /* NdgCell.h */,
-				04F6B09B1F9B6D0E0050ED1C /* NdgCellIO.c */,
-				04F6B09C1F9B6D0E0050ED1C /* NdgCellIO.h */,
 			);
 			path = NdgCell;
 			sourceTree = "<group>";
@@ -416,10 +467,12 @@
 			isa = PBXGroup;
 			children = (
 				04B0992C1F96F98E002266D0 /* NdgMeshTest */,
-				04DD485C1F94491C007027AB /* NdgMesh.c */,
-				04DD485D1F94491C007027AB /* NdgMesh.h */,
-				04DD485E1F94491C007027AB /* NdgMeshIO.c */,
-				04DD485F1F94491C007027AB /* NdgMeshIO.h */,
+				04A2BE0C1F9EC967002666B1 /* NdgMesh.c */,
+				04A2BE0D1F9EC967002666B1 /* NdgMesh.h */,
+				04A2BE0E1F9EC967002666B1 /* NdgMeshIO.c */,
+				04A2BE0F1F9EC967002666B1 /* NdgMeshIO.h */,
+				04A2BE3C1F9ECB24002666B1 /* mxNdgMesh.c */,
+				04A2BE3D1F9ECB24002666B1 /* mxNdgMesh.h */,
 			);
 			path = NdgMesh;
 			sourceTree = "<group>";
@@ -427,12 +480,12 @@
 		041380481F933FEC00DD4CA0 /* NdgUtils */ = {
 			isa = PBXGroup;
 			children = (
-				0413804E1F93400200DD4CA0 /* MatUtils.c */,
-				0413804F1F93400200DD4CA0 /* MatUtils.h */,
-				041380501F93400200DD4CA0 /* NdgNetCDF.c */,
-				041380511F93400200DD4CA0 /* NdgNetCDF.h */,
-				041380521F93400200DD4CA0 /* Utils.c */,
-				041380531F93400200DD4CA0 /* Utils.h */,
+				04A2BE1E1F9EC9C7002666B1 /* MatUtils.c */,
+				04A2BE1F1F9EC9C7002666B1 /* MatUtils.h */,
+				04A2BE201F9EC9C7002666B1 /* NdgNetCDF.c */,
+				04A2BE211F9EC9C7002666B1 /* NdgNetCDF.h */,
+				04A2BE221F9EC9C7002666B1 /* NdgUtils.c */,
+				04A2BE231F9EC9C7002666B1 /* NdgUtils.h */,
 			);
 			path = NdgUtils;
 			sourceTree = "<group>";
@@ -440,35 +493,42 @@
 		0426A9601F965B940054A058 /* Advection */ = {
 			isa = PBXGroup;
 			children = (
-				0426A9661F965BCB0054A058 /* AdvSolver2d.c */,
+				04A2BE3A1F9EC9F7002666B1 /* AdvSolver2d.c */,
 			);
 			path = Advection;
 			sourceTree = "<group>";
 		};
-		0435F49A1F9D8E530094AEE2 /* NdgSolver */ = {
+		0435F49A1F9D8E530094AEE2 /* NdgPhys */ = {
 			isa = PBXGroup;
 			children = (
-				0426A94D1F9594580054A058 /* NdgSolver.c */,
-				0426A94E1F9594580054A058 /* NdgSolver.h */,
-				0426A9531F962F600054A058 /* NdgTerporalDiscrete.c */,
-				0426A9541F962F600054A058 /* NdgTerporalDiscrete.h */,
+				040DE6B51F9F59BD00EF394D /* NdgPhysTest */,
+				04A2BE2A1F9EC9DF002666B1 /* NdgLimiter.c */,
+				04A2BE2B1F9EC9DF002666B1 /* NdgLimiter.h */,
+				04A2BE2C1F9EC9DF002666B1 /* NdgPhys.c */,
+				04A2BE2D1F9EC9DF002666B1 /* NdgPhys.h */,
+				04A2BE2E1F9EC9DF002666B1 /* NdgPhysIO.c */,
+				04A2BE2F1F9EC9DF002666B1 /* NdgPhysIO.h */,
+				04A2BE301F9EC9DF002666B1 /* NdgTerporalDiscrete.c */,
+				04A2BE311F9EC9DF002666B1 /* NdgTerporalDiscrete.h */,
+				04A2BE401F9ECDA6002666B1 /* mxNdgPhys.c */,
+				04A2BE411F9ECDA6002666B1 /* mxNdgPhys.h */,
 			);
-			name = NdgSolver;
+			name = NdgPhys;
 			path = Polylib;
 			sourceTree = "<group>";
 		};
-		04B0992B1F96F97D002266D0 /* NdgPhysTest */ = {
+		04B0992B1F96F97D002266D0 /* NdgSolverTest */ = {
 			isa = PBXGroup;
 			children = (
-				0426A9501F95CAF60054A058 /* NdgPhysTest.c */,
+				0426A9501F95CAF60054A058 /* NdgSolverTest.c */,
 			);
-			name = NdgPhysTest;
+			name = NdgSolverTest;
 			sourceTree = "<group>";
 		};
 		04B0992C1F96F98E002266D0 /* NdgMeshTest */ = {
 			isa = PBXGroup;
 			children = (
-				04DD48601F94491C007027AB /* NdgMeshTest.c */,
+				04A2BE141F9EC978002666B1 /* NdgMeshTest.c */,
 			);
 			name = NdgMeshTest;
 			sourceTree = "<group>";
@@ -476,38 +536,41 @@
 		04B0992D1F96F99A002266D0 /* NdgCellTest */ = {
 			isa = PBXGroup;
 			children = (
-				040012E21F93AE63009D1B53 /* NdgCellTest.c */,
+				04A2BE0A1F9EC91A002666B1 /* NdgCellTest.c */,
 			);
 			name = NdgCellTest;
 			sourceTree = "<group>";
 		};
-		04BEAA8E1F93B5CE00682F40 /* NdgPhys */ = {
+		04BEAA8E1F93B5CE00682F40 /* NdgSolver */ = {
 			isa = PBXGroup;
 			children = (
-				04B0992B1F96F97D002266D0 /* NdgPhysTest */,
-				04FBA4BD1F94B51C00DA65FF /* NdgPhys.c */,
-				04FBA4BE1F94B51C00DA65FF /* NdgPhys.h */,
-				04829F6E1F989C1100365FC5 /* NdgPhysIO.c */,
-				04829F6F1F989C1100365FC5 /* NdgPhysIO.h */,
-				0426A9571F9644180054A058 /* NdgLimiter.c */,
-				0426A9581F9644180054A058 /* NdgLimiter.h */,
-				04F6B0A11F9B75B40050ED1C /* mxNdgPhys.c */,
-				04F6B0A21F9B75B40050ED1C /* mxNdgPhys.h */,
+				04A2BE161F9EC99E002666B1 /* mxNdgSolver.c */,
+				04A2BE171F9EC99E002666B1 /* mxNdgSolver.h */,
+				04A2BE181F9EC99E002666B1 /* NdgSolver.c */,
+				04A2BE191F9EC99E002666B1 /* NdgSolver.h */,
+				04B0992B1F96F97D002266D0 /* NdgSolverTest */,
 			);
-			name = NdgPhys;
+			name = NdgSolver;
 			path = Polylib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0493D7E01F9F09CF003F83EB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		04BDCBC91F9BA99C0096E5CE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04BDCBD31F9BA9C80096E5CE /* NdgMesh.h in Headers */,
-				04BDCBD41F9BA9C80096E5CE /* NdgMeshIO.h in Headers */,
-				04BDCBD51F9BA9C80096E5CE /* NdgNetCDF.h in Headers */,
+				04A2BE3F1F9ECB24002666B1 /* mxNdgMesh.h in Headers */,
+				04A2BE131F9EC967002666B1 /* NdgMeshIO.h in Headers */,
+				04A2BE111F9EC967002666B1 /* NdgMesh.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +578,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04A2BE391F9EC9DF002666B1 /* NdgTerporalDiscrete.h in Headers */,
+				04A2BE371F9EC9DF002666B1 /* NdgPhysIO.h in Headers */,
+				04A2BE351F9EC9DF002666B1 /* NdgPhys.h in Headers */,
+				04A2BE1B1F9EC99E002666B1 /* mxNdgSolver.h in Headers */,
+				04A2BE1D1F9EC99E002666B1 /* NdgSolver.h in Headers */,
+				04A2BE331F9EC9DF002666B1 /* NdgLimiter.h in Headers */,
+				04A2BE431F9ECDA6002666B1 /* mxNdgPhys.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,8 +592,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04F6B0D71F9B7C220050ED1C /* NdgCell.h in Headers */,
-				04F6B0D81F9B7C220050ED1C /* NdgCellIO.h in Headers */,
+				04A2BE091F9EC8E0002666B1 /* mxNdgCell.h in Headers */,
+				04A2BE071F9EC8E0002666B1 /* NdgCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,15 +609,32 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04F6B0F71F9B7FCC0050ED1C /* MatUtils.h in Headers */,
-				04F6B0F81F9B7FCC0050ED1C /* NdgNetCDF.h in Headers */,
-				04F6B0F91F9B7FCC0050ED1C /* Utils.h in Headers */,
+				04A2BE291F9EC9C7002666B1 /* NdgUtils.h in Headers */,
+				04A2BE271F9EC9C7002666B1 /* NdgNetCDF.h in Headers */,
+				04A2BE251F9EC9C7002666B1 /* MatUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		040DE6BB1F9F5B6700EF394D /* NdgPhysTest.mexmaci64 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 040DE6C01F9F5B6700EF394D /* Build configuration list for PBXNativeTarget "NdgPhysTest.mexmaci64" */;
+			buildPhases = (
+				040DE6B81F9F5B6700EF394D /* Sources */,
+				040DE6B91F9F5B6700EF394D /* Frameworks */,
+				040DE6BA1F9F5B6700EF394D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NdgPhysTest.mexmaci64;
+			productName = NdgPhysTest;
+			productReference = 040DE6BC1F9F5B6700EF394D /* NdgPhysTest.mexmaci64 */;
+			productType = "com.apple.product-type.tool";
+		};
 		04137FE11F93371F00DD4CA0 /* GradJacobiP.mexmaci64 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 04137FE61F93371F00DD4CA0 /* Build configuration list for PBXNativeTarget "GradJacobiP.mexmaci64" */;
@@ -670,6 +757,23 @@
 			productReference = 0426A95F1F965B940054A058 /* AdvSolver2d.mexmaci64 */;
 			productType = "com.apple.product-type.tool";
 		};
+		0493D7E11F9F09CF003F83EB /* NdgSolver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0493D7E31F9F09CF003F83EB /* Build configuration list for PBXNativeTarget "NdgSolver" */;
+			buildPhases = (
+				0493D7DE1F9F09CF003F83EB /* Sources */,
+				0493D7DF1F9F09CF003F83EB /* Frameworks */,
+				0493D7E01F9F09CF003F83EB /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NdgSolver;
+			productName = NdgSolver;
+			productReference = 0493D7E21F9F09CF003F83EB /* libNdgSolver.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		04BDCBCA1F9BA99C0096E5CE /* NdgMesh */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 04BDCBCC1F9BA99C0096E5CE /* Build configuration list for PBXNativeTarget "NdgMesh" */;
@@ -758,9 +862,9 @@
 			productReference = 04F6B0F01F9B7FB40050ED1C /* libNdgUtils.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		04FBA4C21F94B71300DA65FF /* NdgPhysTest.mexmaci64 */ = {
+		04FBA4C21F94B71300DA65FF /* NdgSolverTest.mexmaci64 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 04FBA4C71F94B71300DA65FF /* Build configuration list for PBXNativeTarget "NdgPhysTest.mexmaci64" */;
+			buildConfigurationList = 04FBA4C71F94B71300DA65FF /* Build configuration list for PBXNativeTarget "NdgSolverTest.mexmaci64" */;
 			buildPhases = (
 				04FBA4BF1F94B71300DA65FF /* Sources */,
 				04FBA4C01F94B71300DA65FF /* Frameworks */,
@@ -769,11 +873,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				04BDCBF41F9BAD0D0096E5CE /* PBXTargetDependency */,
 			);
-			name = NdgPhysTest.mexmaci64;
+			name = NdgSolverTest.mexmaci64;
 			productName = NdgPhysTest;
-			productReference = 04FBA4C31F94B71300DA65FF /* NdgPhysTest.mexmaci64 */;
+			productReference = 04FBA4C31F94B71300DA65FF /* NdgSolverTest.mexmaci64 */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -785,6 +888,9 @@
 				LastUpgradeCheck = 0620;
 				ORGANIZATIONNAME = li12242;
 				TargetAttributes = {
+					040DE6BB1F9F5B6700EF394D = {
+						CreatedOnToolsVersion = 6.2;
+					};
 					04137FE11F93371F00DD4CA0 = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -804,6 +910,9 @@
 						CreatedOnToolsVersion = 6.2;
 					};
 					0426A95E1F965B940054A058 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					0493D7E11F9F09CF003F83EB = {
 						CreatedOnToolsVersion = 6.2;
 					};
 					04BDCBCA1F9BA99C0096E5CE = {
@@ -848,14 +957,24 @@
 				0413801F1F933EE300DD4CA0 /* NdgCellTest.mexmaci64 */,
 				04BDCBCA1F9BA99C0096E5CE /* NdgMesh */,
 				0413802F1F933F2A00DD4CA0 /* NdgMeshTest.mexmaci64 */,
+				0493D7E11F9F09CF003F83EB /* NdgSolver */,
+				04FBA4C21F94B71300DA65FF /* NdgSolverTest.mexmaci64 */,
 				04BDCBDA1F9BAA260096E5CE /* NdgPhys */,
-				04FBA4C21F94B71300DA65FF /* NdgPhysTest.mexmaci64 */,
+				040DE6BB1F9F5B6700EF394D /* NdgPhysTest.mexmaci64 */,
 				0426A95E1F965B940054A058 /* AdvSolver2d.mexmaci64 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		040DE6B81F9F5B6700EF394D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				040DE6C31F9F5B7B00EF394D /* NdgPhysTest.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		04137FDE1F93371F00DD4CA0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -892,7 +1011,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				040012E41F93AE63009D1B53 /* NdgCellTest.c in Sources */,
+				0493D7DD1F9EF53C003F83EB /* NdgCellTest.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,7 +1019,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04DD48631F94491C007027AB /* NdgMeshTest.c in Sources */,
+				04A2BE151F9EC978002666B1 /* NdgMeshTest.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -908,7 +1027,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0426A9681F965BCB0054A058 /* AdvSolver2d.c in Sources */,
+				04A2BE3B1F9EC9F7002666B1 /* AdvSolver2d.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0493D7DE1F9F09CF003F83EB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0493D7E61F9F09E6003F83EB /* mxNdgSolver.c in Sources */,
+				0493D7E71F9F09E6003F83EB /* NdgSolver.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -916,9 +1044,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04BDCBCF1F9BA9B80096E5CE /* NdgMesh.c in Sources */,
-				04BDCBD01F9BA9B80096E5CE /* NdgMeshIO.c in Sources */,
-				04BDCBD11F9BA9B80096E5CE /* NdgNetCDF.c in Sources */,
+				04A2BE3E1F9ECB24002666B1 /* mxNdgMesh.c in Sources */,
+				04A2BE101F9EC967002666B1 /* NdgMesh.c in Sources */,
+				04A2BE121F9EC967002666B1 /* NdgMeshIO.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -926,12 +1054,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04BDCBDF1F9BAA3B0096E5CE /* NdgPhys.c in Sources */,
-				04BDCBE01F9BAA3B0096E5CE /* NdgSolver.c in Sources */,
-				04BDCBE11F9BAA3B0096E5CE /* NdgTerporalDiscrete.c in Sources */,
-				04BDCBE21F9BAA3B0096E5CE /* NdgPhysIO.c in Sources */,
-				04BDCBE31F9BAA3B0096E5CE /* NdgLimiter.c in Sources */,
-				04BDCBE41F9BAA3B0096E5CE /* mxNdgPhys.c in Sources */,
+				04A2BE361F9EC9DF002666B1 /* NdgPhysIO.c in Sources */,
+				04A2BE1C1F9EC99E002666B1 /* NdgSolver.c in Sources */,
+				04A2BE421F9ECDA6002666B1 /* mxNdgPhys.c in Sources */,
+				040DE6B71F9F59DC00EF394D /* NdgPhysTest.c in Sources */,
+				04A2BE321F9EC9DF002666B1 /* NdgLimiter.c in Sources */,
+				04A2BE381F9EC9DF002666B1 /* NdgTerporalDiscrete.c in Sources */,
+				04A2BE1A1F9EC99E002666B1 /* mxNdgSolver.c in Sources */,
+				04A2BE341F9EC9DF002666B1 /* NdgPhys.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -939,8 +1069,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04F6B0D31F9B7C090050ED1C /* NdgCell.c in Sources */,
-				04F6B0D41F9B7C090050ED1C /* NdgCellIO.c in Sources */,
+				04A2BE061F9EC8E0002666B1 /* NdgCell.c in Sources */,
+				04A2BE081F9EC8E0002666B1 /* mxNdgCell.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -956,9 +1086,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04F6B0F41F9B7FBF0050ED1C /* MatUtils.c in Sources */,
-				04F6B0F51F9B7FBF0050ED1C /* NdgNetCDF.c in Sources */,
-				04F6B0F61F9B7FBF0050ED1C /* Utils.c in Sources */,
+				04A2BE281F9EC9C7002666B1 /* NdgUtils.c in Sources */,
+				04A2BE241F9EC9C7002666B1 /* MatUtils.c in Sources */,
+				04A2BE261F9EC9C7002666B1 /* NdgNetCDF.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -966,7 +1096,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04BDCBE61F9BAA800096E5CE /* NdgPhysTest.c in Sources */,
+				04BDCBE61F9BAA800096E5CE /* NdgSolverTest.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -998,11 +1128,6 @@
 			target = 04BDCBCA1F9BA99C0096E5CE /* NdgMesh */;
 			targetProxy = 04BDCBF11F9BAD070096E5CE /* PBXContainerItemProxy */;
 		};
-		04BDCBF41F9BAD0D0096E5CE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 04BDCBDA1F9BAA260096E5CE /* NdgPhys */;
-			targetProxy = 04BDCBF31F9BAD0D0096E5CE /* PBXContainerItemProxy */;
-		};
 		04BDCBF61F9BAD110096E5CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 04BDCBDA1F9BAA260096E5CE /* NdgPhys */;
@@ -1011,6 +1136,26 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		040DE6C11F9F5B6700EF394D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		040DE6C21F9F5B6700EF394D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		04137FC31F932F8600DD4CA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1030,7 +1175,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1094,7 +1239,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MATLAB_MEX_FILE,
 					"MX_COMPAT_32_MATLAB_=901",
@@ -1286,6 +1432,30 @@
 			};
 			name = Release;
 		};
+		0493D7E41F9F09CF003F83EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACH_O_TYPE = staticlib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0493D7E51F9F09CF003F83EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				EXECUTABLE_PREFIX = lib;
+				MACH_O_TYPE = staticlib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		04BDCBCD1F9BA99C0096E5CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1429,6 +1599,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		040DE6C01F9F5B6700EF394D /* Build configuration list for PBXNativeTarget "NdgPhysTest.mexmaci64" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				040DE6C11F9F5B6700EF394D /* Debug */,
+				040DE6C21F9F5B6700EF394D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		04137FB91F932F8600DD4CA0 /* Build configuration list for PBXProject "NDG-FEM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1501,6 +1680,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		0493D7E31F9F09CF003F83EB /* Build configuration list for PBXNativeTarget "NdgSolver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0493D7E41F9F09CF003F83EB /* Debug */,
+				0493D7E51F9F09CF003F83EB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		04BDCBCC1F9BA99C0096E5CE /* Build configuration list for PBXNativeTarget "NdgMesh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1546,7 +1734,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		04FBA4C71F94B71300DA65FF /* Build configuration list for PBXNativeTarget "NdgPhysTest.mexmaci64" */ = {
+		04FBA4C71F94B71300DA65FF /* Build configuration list for PBXNativeTarget "NdgSolverTest.mexmaci64" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				04FBA4C81F94B71300DA65FF /* Debug */,

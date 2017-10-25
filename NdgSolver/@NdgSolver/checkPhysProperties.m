@@ -8,41 +8,41 @@
 %======================================================================
 function checkPhysProperties( obj )
 
-if ( isempty( obj.finalTime) )
-    msgID = 'Phys:checkPhysProperties';
-    msgtext = 'The finalTime is not assigned.';
-    throwError(msgID, msgtext);
-end
+% if ( isempty( obj.finalTime) )
+%     msgID = 'Phys:checkPhysProperties';
+%     msgtext = 'The finalTime is not assigned.';
+%     throwError(msgID, msgtext);
+% end
 
 if ( isempty(obj.limiterType) ) || ( ~isa(obj.limiterType, 'NdgLimiterType') )
-    msgID = 'Phys:checkPhysProperties';
+    msgID = 'NdgSolver:checkPhysProperties';
     msgtext = 'The limiterType is incorrect or not assigned.';
     throwError(msgID, msgtext);
 end
 
 if ( isempty(obj.temporalDiscreteType) ) || ...
         ( ~isa(obj.temporalDiscreteType, 'NdgTemporalDiscreteType') )
-    msgID = 'Phys:checkPhysProperties';
+    msgID = 'NdgSolver:checkPhysProperties';
     msgtext = 'The temporalDiscreteType is incorrect or not assigned.';
     throwError(msgID, msgtext);
 end
 
 if ( isempty(obj.timeIntervalType) ) || ...
         ( ~isa(obj.timeIntervalType, 'NdgIntervalType') )
-    msgID = 'Phys:checkPhysProperties';
+    msgID = 'NdgSolver:checkPhysProperties';
     msgtext = 'The timeIntervalType is incorrect or not assigned.';
     throwError(msgID, msgtext);
 end
 
 if ( obj.timeIntervalType == NdgIntervalType.Constant ) && ...
         isempty( obj.timeInterval )
-    msgID = 'Phys:checkPhysProperties';
+    msgID = 'NdgSolver:checkPhysProperties';
     msgtext = 'The timeInterval is not assigned.';
     throwError(msgID, msgtext);
 end
 
 if ( isempty( obj.obcType ) ) || ( ~isa(obj.obcType, 'NdgBCType') )
-    msgID = 'Phys:checkPhysProperties';
+    msgID = 'NdgSolver:checkPhysProperties';
     msgtext = 'The obcType is incorrect or not assigned.';
     throwError(msgID, msgtext);
 end
@@ -50,7 +50,7 @@ end
 if ( obj.obcType == NdgBCType.Function ) || ( obj.obcType == NdgBCType.File )
     if ( isempty( obj.obcIntervalType) ) ...
             || ( ~isa( obj.obcIntervalType, 'NdgIntervalType') )
-        msgID = 'Phys:checkPhysProperties';
+        msgID = 'NdgSolver:checkPhysProperties';
         msgtext = 'The obcIntervalType is incorrect or not assigned.';
         throwError(msgID, msgtext);
     end
@@ -58,11 +58,13 @@ end
 
 if ( obj.obcType == NdgBCType.File )
     if ( isempty( obj.obcFileName) )
-        msgID = 'Phys:checkPhysProperties';
+        msgID = 'NdgSolver:checkPhysProperties';
         msgtext = 'The obcFileName is not assigned.';
         throwError(msgID, msgtext);
     end
 end
+
+fprintf('NdgSolver: All properties are well assigned.\n');
 end
 
 function throwError(msgID, msgtext)

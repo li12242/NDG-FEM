@@ -1,4 +1,4 @@
-classdef AdvUniformUnion2d < handle
+classdef AdvUniformUnion2d < Adv2d
     %ADVUNIFORMUNION Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -11,64 +11,56 @@ classdef AdvUniformUnion2d < handle
         u0 = 0.5
         %> const flow field
         v0 = 0.5
-    end
-    
-    properties(SetAccess = protected )
-        %> physical field
-        phys
-        %> flow velocity
-        u
-        %> flow velocity
-        v
-    end
-    
-    properties
-        %> scal
-        fvar
+        %> final time
+        finalTime = 2
+        %> start time
+        initialTime = 0
+        
     end
     
     methods
-        function solve(obj)
-            obj.fvar = AdvSolver2d(obj);
-        end
         
         function obj = AdvUniformUnion2d(N, M, type)
             % check input and create uniform mesh
-            mesh = makeUniformMesh(N, M, type);            
-            obj.phys = NdgPhys(1, mesh);
-            % set initial condition
-            obj.init;
+            mesh = makeUniformMesh(N, M, type);
+            solver = NdgSolver();
+            obj = obj@Adv2d(solver, mesh);
+            obj.initSolver(solver, mesh);
+            obj.initPhysField;
         end% func
         
-        function init(obj)
-            obj.phys.finalTime = 2;
-            mesh = obj.phys.mesh;
-            vel = sqrt( obj.u0.^2 + obj.v0^2 );
-            range = max( mesh.x(:, 1) ) - min( mesh.x(:, 1) );
-            dt = range/vel/(2*mesh.cell.N + 1);
+        function initSolver(obj, solver, mesh)
+            udet = sqrt( obj.u0.^2 + obj.v0^2 );
+            dx = max( mesh.x(:, 1) ) - min( mesh.x(:, 1) );
+            dt = dx/udet/(2*mesh.cell.N + 1);
             
-            obj.phys.setTimeIntervalType( NdgIntervalType.Constant,  dt);
-            obj.phys.setLimiterType( NdgLimiterType.None );
-            obj.phys.setTemporalDiscreteType( NdgTemporalDiscreteType.RK45 );
-            obj.phys.setBoundaryType( NdgBCType.None );
-            obj.phys.setOutputFile( 'advUniformMesh', ...
+            solver.setTimeIntervalType( NdgIntervalType.Constant,  dt);
+            solver.setLimiterType( NdgLimiterType.None );
+            solver.setTemporalDiscreteType( NdgTemporalDiscreteType.RK45 );
+            solver.setBoundaryType( NdgBCType.None );
+            solver.setOutputFile( 'advUniformMesh', ...
                 NdgIntervalType.DeltaTime, 0.002 );
-            
+        end
+        
+        function initPhysField(obj)
+            mesh = obj.mesh;
+            Nmesh = obj.Nmesh;
             K = mesh.K;
             Np = mesh.cell.Np;
-            obj.u = obj.u0 * ones(Np, K);
-            obj.v = obj.v0 * ones(Np, K);
-            obj.fvar = obj.ext_func(0);
+            obj.fphy = zeros(Np, K, obj.Nfield, Nmesh);
+            obj.fphy(:, :, 1, 1) = obj.ext_func(0);
+            obj.fphy(:, :, 2, 1) = obj.u0;
+            obj.fphy(:, :, 3, 1) = obj.v0;
         end% func
     end
     
     methods(Access = protected)
         %> the exact function
         function f_ext = ext_func(obj, time)
-            xc = obj.x0 + obj.u.*time;
-            yc = obj.y0 + obj.v.*time;
+            xc = obj.x0 + obj.u0.*time;
+            yc = obj.y0 + obj.v0.*time;
             
-            mesh = obj.phys.mesh;
+            mesh = obj.mesh;
             sigma = 125*1e3/(33*33);
             t = -( (mesh.x-xc).^2+(mesh.y-yc).^2 )*sigma;
             f_ext = exp(t);

@@ -6,13 +6,13 @@
 //  Copyright (c) 2017年 li12242. All rights reserved.
 //
 
-#include "NdgPhys.h"
+#include "NdgSolver.h"
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs,
                  const mxArray *prhs[])
 {
-    NdgPhysUnion *phys = mxGetNdgPhysUnion(prhs[0]);
-    mxPrintNdgPhys(phys, "Phys");
-    freeNdgPhys(phys);
+    NdgSolver solver;
+    mxGetNdgSolver(prhs[0], &solver);
+    mxPrintNdgSolver(solver, "Solver");
     return;
 }

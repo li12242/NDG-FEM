@@ -1,5 +1,5 @@
 fprintf('\n----------------------------------------------------------\n')
-fprintf('setup environment path.\n');
+fprintf('%s:: Setup environment path.\n', mfilename);
 addpath( genpath( 'lib' ) );
 addpath( genpath( 'NdgCell' ) );
 addpath( genpath( 'NdgMesh') );
@@ -9,7 +9,7 @@ addpath( genpath( 'NdgUtils') );
 addpath( genpath( 'Advection') );
 fprintf('----------------------------------------------------------\n')
 
-fprintf('compile mex files:\n');
-configure(2)
+fprintf('%s:: Compile mex files.\n', mfilename);
+NdgConfigure(2)
 fprintf('----------------------------------------------------------\n')
-fprintf('finish all the setup process.\n\n');
+fprintf('%s:: Finish all the setup process.\n\n', mfilename);

@@ -7,7 +7,7 @@
 		<key>Advection.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
+			<integer>6</integer>
 		</dict>
 		<key>NdgCell.xcscheme</key>
 		<dict>
@@ -20,6 +20,11 @@
 			<integer>3</integer>
 		</dict>
 		<key>NdgPhys.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>NdgSolver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>4</integer>
@@ -39,6 +44,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>040DE6BB1F9F5B6700EF394D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>04137FBD1F932F8600DD4CA0</key>
 		<dict>
 			<key>primary</key>
@@ -90,6 +100,11 @@
 			<true/>
 		</dict>
 		<key>0426A95E1F965B940054A058</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0493D7E11F9F09CF003F83EB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
