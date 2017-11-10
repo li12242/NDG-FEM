@@ -1,5 +1,5 @@
 function NdgConfigure( varargin )
-global COMPILER
+global COMPILER CFLAGS
 % initialize CFLAGS & LDFLAGS
 configureCompilerSetting();
 
@@ -32,27 +32,29 @@ srcfile = {[path, 'zwglj.c'], ...
     [path, 'GradJacobiP.c'] };
 libfile = { [path, 'polylib.c'] };
 FuncHandle(outPath, srcfile, libfile);
+% NdgMesh
+path = 'NdgMesh/@NdgMesh/private/';
+srcfile = {[path, 'mxGetMeshIntegralValue.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+% Limiter
+path = 'NdgLimiter/NdgVertLimiter/@NdgVertLimiter/private/';
+srcfile = {[path, 'mxEvaluateVertAverage.c']};
+FuncHandle(path, srcfile, libfile);
 
-% path to the NDG-FEM library
-path = 'debug/NDG-FEM/';
-libfile = {[path, 'NdgCell/NdgCell.c'], ...
-    [path, 'NdgCell/mxNdgCell.c'], ...
-    [path, 'NdgMesh/NdgMesh.c'], ... 
-    [path, 'NdgMesh/NdgMeshIO.c'], ...
-    [path, 'NdgMesh/mxNdgMesh.c'], ...
-    [path, 'NdgPhys/NdgPhys.c'], ...
-    [path, 'NdgPhys/NdgPhysIO.c'], ...
-    [path, 'NdgPhys/mxNdgPhys.c'], ...
-    [path, 'NdgPhys/NdgTerporalDiscrete.c'], ...
-    [path, 'NdgPhys/NdgLimiter.c'], ...
-    [path, 'NdgUtils/MatUtils.c'],...
-    [path, 'NdgUtils/NdgNetCDF.c'],...
-    [path, 'NdgUtils/NdgUtils.c'],...
-    [path, 'NdgSolver/NdgSolver.c'],...
-    [path, 'NdgSolver/mxNdgSolver.c']};
+path = 'NdgLimiter/NdgVertLimiter/@NdgVertLimiter2d/private/';
+srcfile = {[path, 'mxVertLimit2d.c']};
+FuncHandle(path, srcfile, libfile);
 
-srcfile = {[path, 'Advection/AdvSolver2d.c']};
-FuncHandle(outPath, srcfile, libfile);
+% SWE
+path = 'ShallowWaterEquation/@SWESolidTopography/private/';
+CFLAGS = [CFLAGS, ' -I', path, ' '];
+libfile = {[path, 'mxSWE2d.c']};
+srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
+    [path, 'mxEvaluateNumericalFlux2d.c'], ...
+    [path, 'mxEvaluatePostFunc2d.c'], ...
+    [path, 'mxUpdateTimeInterval2d.c']};
+FuncHandle(path, srcfile, libfile);
 
 fprintf('\n%s:: Compiled all the mex files.\n', mfilename);
 end
@@ -73,7 +75,7 @@ function CompileMexFile(outPath, srcfile, libfile)
 global CFLAGS LDFLAGS COMPILER
 for n = 1:numel(srcfile)
     if( isNeedCompile(outPath, srcfile{n}, libfile) )
-        fprintf('\n%s:: Compiling source file %s to %s.\n', ...
+        fprintf('\n%s:: Compiling source file - \n%s to %s.\n', ...
             mfilename, srcfile{n}, outPath);
         fprintf('%s\nCFLAGS=%s\nLDFLAGS=%s\n', COMPILER, CFLAGS, LDFLAGS);
         file = [srcfile(n), libfile{:}];
@@ -121,7 +123,7 @@ switch computer('arch')
     case 'maci64'
         CFLAGS = [CFLAGS, '-qopenmp -DDG_THREADS=', ...
             num2str(parallelThreadNum), ' '];
-        LDFLAGS = [LDFLAGS, ' -liomp5 '];
+        LDFLAGS = [LDFLAGS, ' -lmwblas -liomp5 '];
     case 'win64'
         CFLAGS = [CFLAGS,' -fopenmp -DDG_THREADS=', ...
             num2str(parallelThreadNum), ' '];
@@ -133,13 +135,9 @@ end
 function configureCompilerSetting()
 global CFLAGS LDFLAGS
 global COMPILER
-path = 'debug/NDG-FEM/';
-CFLAGS = ['CFLAGS=$CFLAGS -std=c99 -Wall -DPROFILE -largeArrayDims ', ...
-    ' -I', path, 'NdgCell/ ', ' -I', path, 'NdgMesh/ ',...
-    ' -I', path, 'NdgPhys/ ', ' -I', path, 'NdgUtils/ ',...
-    ' -I', path, 'NdgSolver/ '];
-LDFLAGS = 'LDFLAGS=$LDFLAGS -lmwblas -lnetcdf ';
-COMPILER = [];
+CFLAGS = 'CFLAGS=$CFLAGS -std=c99 -Wall -DPROFILE -largeArrayDims ';
+LDFLAGS = 'LDFLAGS=$LDFLAGS ';
+COMPILER = [''];
 if ( strcmp(computer('arch'), 'maci64') )
     COMPILER = 'CC=/opt/intel/composer_xe_2015.5.222/bin/intel64/icc';
 end

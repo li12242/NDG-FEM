@@ -3,10 +3,13 @@ fprintf('%s:: Setup environment path.\n', mfilename);
 addpath( genpath( 'lib' ) );
 addpath( genpath( 'NdgCell' ) );
 addpath( genpath( 'NdgMesh') );
+addpath( genpath( 'NdgEdge') );
 addpath( genpath( 'NdgPhys') );
-addpath( genpath( 'NdgSolver') );
 addpath( genpath( 'NdgUtils') );
+addpath( genpath( 'NdgNetCDF') );
+addpath( genpath( 'NdgLimiter') );
 addpath( genpath( 'Advection') );
+addpath( genpath( 'ShallowWaterEquation') );
 fprintf('----------------------------------------------------------\n')
 
 fprintf('%s:: Compile mex files.\n', mfilename);

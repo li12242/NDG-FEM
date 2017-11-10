@@ -9,7 +9,7 @@ classdef StdTri < StdCell
     properties(Constant)
         type = NdgCellType.Tri;
         Nv = 3
-        vol = 2
+        LAV = 2
         vr = [-1,  1, -1]'
         vs = [-1, -1,  1]'
         vt = [ 0,  0,  0]'

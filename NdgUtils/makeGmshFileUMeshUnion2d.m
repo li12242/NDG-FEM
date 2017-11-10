@@ -14,7 +14,7 @@ end
 Ne = fscanf(fid1,'%d\n',1);
 Nedge = 0; 
 Ntri = 0; 
-Nquad =0;
+Nquad = 0;
 for i = 1:Ne
     temp = fgetl(fid1);
     data = str2num(temp);
@@ -41,7 +41,7 @@ if Ntri > 0
     EToVTri = [data(6, :); data(7, :); data(8, :)];
     EToRTri = data(4, :);
     stdTri = StdTri(N);
-    mesh = UMeshUnion2d(stdTri, Nv, vx, vy, Ntri, EToVTri, EToRTri, BCToV);
+    triMesh = NdgMesh2d(stdTri, Nv, vx, vy, Ntri, EToVTri, EToRTri, BCToV);
 end
 
 if Nquad > 0
@@ -49,7 +49,16 @@ if Nquad > 0
     EToVQuad = [data(6, :); data(7, :); data(8, :); data(9, :)];
     EToRQuad = data(4, :);
     stdQuad = StdQuad(N);
-    mesh = UMeshUnion2d(stdQuad, Nv, vx, vy, Nquad, EToVQuad, EToRQuad, BCToV);
+    quadMesh = NdgMesh2d(stdQuad, Nv, vx, vy, Nquad, EToVQuad, EToRQuad, BCToV);
 end
+
+if (Ntri > 0) && (Nquad > 0)
+    mesh = makeMeshUnion(2, triMesh, quadMesh);
+elseif (Ntri > 0) && (Nquad == 0)
+    mesh = triMesh;
+elseif (Nquad > 0) && (Ntri == 0)
+    mesh = quadMesh;
+end
+
 end
 

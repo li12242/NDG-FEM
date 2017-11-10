@@ -18,7 +18,8 @@ function [Nq, rq, sq, tq, wq] = quad_coor_func(obj, N)
 %   Detailed explanation goes here
 
 np = N+1;
-[zq, w] = zwgl(np); % the 1D LGL quadrature points and their weights
+% [zq, w] = zwgl(np); % the 1D LGL quadrature points and their weights
+[ zq, w ] = zwglj(np);
 % loop along the r-axis first
 rq = zq*ones(1, np);
 sq = ones(np, 1)*zq';

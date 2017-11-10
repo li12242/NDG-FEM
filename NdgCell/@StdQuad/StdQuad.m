@@ -3,7 +3,7 @@ classdef StdQuad < StdCell
     properties(Constant)
         type = NdgCellType.Quad
         Nv = 4
-        vol = 4
+        LAV = 4
         vr = [-1,  1,  1, -1]'
         vs = [-1, -1,  1,  1]'
         vt = [ 0,  0,  0,  0]'

@@ -23,7 +23,7 @@ classdef StdCell < handle
         %> vertex coordinate
         vt
         %> length/area/volume of standard cell
-        vol
+        LAV
         %> number of vertex on each face
         Nfv
         %> veretx list on each face
@@ -55,6 +55,8 @@ classdef StdCell < handle
         V
         %> mass matrix
         M
+        %> inverse of mass matrix
+        invM
         %> derivative matrix, 
         %> \f$ [Dr]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_i} \f$
         Dr
@@ -100,14 +102,14 @@ classdef StdCell < handle
     methods
         function obj = StdCell(N)
             obj.N = N;
-            [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func(N);
+            [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func( N );            
+            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( N );
             [ obj.V ] = obj.Vandmode_Matrix( @obj.orthogonal_func );
-            [ obj.M ] = obj.Mass_Matrix();
+            [ obj.Vq ] = quad_matrix( obj );
+            [ obj.M, obj.invM ] = obj.Mass_Matrix();
             [ obj.Dr, obj.Ds, obj.Dt ] = ...
                 obj.Derivative_Matrix( @obj.derivative_orthogonal_func );
             
-            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = quad_coor_func(obj, N);
-            [ obj.Vq ] = quad_matrix( obj );
             % face
             if obj.Nface > 0
                 obj.Nfp = zeros(obj.Nface, 1);
@@ -150,9 +152,12 @@ classdef StdCell < handle
             end% for
         end% func
         
-        function M = Mass_Matrix( obj )
+        function [ M, invM ] = Mass_Matrix( obj )
             invV = inv(obj.V);
             M = (invV')*invV;
+            invM = obj.V * obj.V';
+%             M = obj.Vq' * diag( obj.wq ) * obj.Vq;
+%             invM = inv( M );
         end% func
         
         function [Dr, Ds, Dt] = Derivative_Matrix(obj, deri_orthogonal_func)

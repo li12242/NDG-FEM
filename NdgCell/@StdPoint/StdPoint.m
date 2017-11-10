@@ -2,7 +2,7 @@ classdef StdPoint < StdCell
     properties(Constant)
         type = NdgCellType.Point
         Nv = 1      
-        vol = 0
+        LAV = 0
         vr = 0      
         vs = 0      
         vt = 0      

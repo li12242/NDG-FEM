@@ -15,6 +15,7 @@ classdef mesh < handle
         Eind
         EToE, EToF
         x, y, z
+        xc, yc, zc
         rx, ry, rz
         sx, sy, sz
         tx, ty, tz
@@ -166,6 +167,10 @@ classdef mesh < handle
             obj = ele_node_connect(obj);
             
             obj = ele_scale(obj);
+            
+            [ obj.xc ] = obj.cell_mean(obj.x);
+            [ obj.yc ] = obj.cell_mean(obj.y);
+            [ obj.zc ] = obj.cell_mean(obj.z);
         end% func
         
         function nodeQ = proj_vert2node(obj, vertQ)

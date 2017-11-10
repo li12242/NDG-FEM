@@ -9,7 +9,7 @@ classdef StdLine < StdCell
     properties(Constant)
         type = NdgCellType.Line
         Nv = 2
-        vol = 2
+        LAV = 2
         vr = [-1, 1]'
         vs = [ 0, 0]'; 
         vt = [ 0, 0]'; 
