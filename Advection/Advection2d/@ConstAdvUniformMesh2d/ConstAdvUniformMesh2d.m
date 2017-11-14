@@ -1,6 +1,6 @@
 %> The advection problem with the contant flow filed.
 %> 
-classdef ConstAdvUniformMesh2d < NdgPhysMat
+classdef ConstAdvUniformMesh2d < NdgPhysMat2d
     
     properties( Constant )
         Nfield = 1
@@ -26,10 +26,10 @@ classdef ConstAdvUniformMesh2d < NdgPhysMat
         function obj = ConstAdvUniformMesh2d(N, M, cellType)
             
             mesh = makeUniformMesh(N, M, cellType);
-            obj = obj@NdgPhysMat();
+            obj = obj@NdgPhysMat2d();
             obj.N = N;
             obj.M = M;
-            obj.setNdgPhys( mesh );            
+            obj.initPhysFromOptions( mesh );            
         end
         
         function drawResult(obj, n)
@@ -59,18 +59,14 @@ classdef ConstAdvUniformMesh2d < NdgPhysMat
             option('startTime') = 0.0;
             option('finalTime') = 2.0;
             option('LimiterType') = NdgLimiterType.None;
-            option('temporalDiscreteType') = NdgIntervalType.Constant;
+            option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
             option('timeInterval') ...
                 = 2/obj.M/sqrt(obj.u0 ^ 2 + obj.v0 ^2)/(2*obj.N + 1);
             option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIntervalType.DeltaTime;
+            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = 2/outputIntervalNum;
-            option('outputNetcdfCaseName') = 'ConstAdvUniformMesh2d';
+            option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-        end
-        
-        function matEvaluateRHS( obj, fphys )
-            obj.matEvaluateRHS2d( fphys );
         end
         
         function [E, G] = matEvaluateFlux( obj, mesh, fieldValue )

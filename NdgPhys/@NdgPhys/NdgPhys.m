@@ -38,7 +38,7 @@ classdef NdgPhys < handle
         end
         
         %> @brief Public function to call initial function
-        function setNdgPhys( obj, mesh )
+        function initPhysFromOptions( obj, mesh )
             [ obj.meshUnion ] = mesh;
             [ obj.Nmesh ] = numel(mesh);
             [ obj.option ] = obj.setOption( containers.Map() );
@@ -71,13 +71,13 @@ classdef NdgPhys < handle
             end
         end% func
         
-        [ err ] = evaluateNormErr2( obj );
-        [ err ] = evaluateNormErr1( obj );
-        [ err ] = evaluateNromErrInf( obj );
-        
-        [ fg ] = interpolateOutputStepResultToGaugePoint( obj, xg, yg, zg, outputStep );
-        [ fg ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg );
-        [ fg ] = interpolatePhysFieldToGaugePoint( obj, xg, yg, zg );
+%         [ err ] = evaluateNormErr2( obj );
+%         [ err ] = evaluateNormErr1( obj );
+%         [ err ] = evaluateNromErrInf( obj );
+%         
+%         [ fg ] = interpolateOutputStepResultToGaugePoint( obj, xg, yg, zg, outputStep );
+%         [ fg ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg );
+%         [ fg ] = interpolatePhysFieldToGaugePoint( obj, xg, yg, zg );
         
         %> @brief Draw the physical field on all meshes.
         function draw(obj, fieldId)
@@ -95,7 +95,7 @@ classdef NdgPhys < handle
     end
     
     methods( Access = protected )
-        [ Noutput ] = accessOutputResultStepNumber( obj )
-        [ fphys ] = accessOutputResultAtStepNum(obj, stepId)
+%         [ Noutput ] = accessOutputResultStepNumber( obj )
+%         [ fphys ] = accessOutputResultAtStepNum(obj, stepId)
     end
 end

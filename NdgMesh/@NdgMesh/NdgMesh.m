@@ -1,6 +1,21 @@
-%> @brief Here we have a brief description of the class.
+%> @brief Unstructed mesh object
 %
-%> And here we can put some more detailed informations about the class.
+%> NdgMesh class stores the information of the unstructed mesh,
+%> including the elements and interpolation nodes connection.
+%> Each NdgMesh objects only contain one kind of std cell. For the hybrid
+%> mesh, the user have to setup multiple NdgMesh objects and connect them
+%> with the NdgEdge object by
+%> @code Matlab
+%>   mesh1 = NdgMesh2d(tri, Nvt, vxt, vyt, vzt, Kt, EToVt, EToRt, BCToVt); 
+%>   mesh2 = NdgMesh2d(quad, Nvq, vxq, vyq, vzq, Kq, EToVq, EToRq, BCToVq); 
+%>   % first to connect the mesh object 
+%>   mesh1.assembleMeshConnection(mesh2, 1, 2);
+%>   mesh2.assembleMeshConnection(mesh1, 2, 1);
+%>   % create the edge connection in the mesh object 
+%>   mesh1.assembleNdgEdgeConnection(mesh2, 1, 2);
+%>   mesh2.assembleNdgEdgeConnection(mesh1, 2, 1);
+%> @endcode
+%> 
 % ======================================================================
 %> This class is part of the NDGOM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
@@ -83,15 +98,16 @@ classdef NdgMesh < handle
     end
     
     properties( Hidden = true, SetAccess = protected )
-        figureHandle  % figure handle
+        %> figure handle
+        figureHandle  
     end
     
     methods( Abstract, Hidden, Access = protected )
-        %> get volume infomation of each element
-        assembleJacobiFactor( obj )
-        %> get out normal vector of each elemental edges
-        assembleFacialJaobiFactor( obj )
-        faceId = assembleGlobalFaceIndex( obj )
+        %> Get volume infomation of each element
+        [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
+        %> Get outward normal vector of each elemental edges
+        [ nx, ny, nz, Js ] = assembleFacialJaobiFactor( obj )
+        [ faceId ] = assembleGlobalFaceIndex( obj )
         [ edge ] = makeConnectNdgEdge( obj, mesh1, mid0, mid1 )
     end
     

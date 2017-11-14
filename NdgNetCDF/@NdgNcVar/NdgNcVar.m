@@ -54,21 +54,21 @@ end
 function dataType = checkDataType( type )
 % set variable types as double, float, short or int.
 switch type
-    case NdgNcType.NC_DOUBLE
+    case NdgNcDataType.NC_DOUBLE
         dataType = 'double';
-    case NdgNcType.NC_FLOAT
+    case NdgNcDataType.NC_FLOAT
         dataType = 'single';
-    case NdgNcType.NC_INT
+    case NdgNcDataType.NC_INT
         dataType = 'int';
-    case NdgNcType.NC_SHORT
+    case NdgNcDataType.NC_SHORT
         dataType = 'int16';
-    case NdgNcType.NC_CHAR
+    case NdgNcDataType.NC_CHAR
         dataType = 'char';
-    case NdgNcType.NC_BYTE
+    case NdgNcDataType.NC_BYTE
         dataType = 'int8';
     otherwise
-        msgID = [mfilename, ':UnknownDataType.'];
-        msgtext = 'The data type should be an enumeration of NdgNcType class.';
+        msgID = [mfilename, ':UnknownNcDataType.'];
+        msgtext = 'The data type should be an enumeration of NdgNcDataType class.';
         throw( MException(msgID, msgtext) );
 end% switch
 end% func

@@ -49,7 +49,8 @@ while(time < ftime)
         obj.wetdry_detector( f_Q ) ; % 重新判断干湿单元  
         %obj.draw( f_Q ); drawnow;
     end
-    obj.draw_dam( f_Q ); drawnow;
+    obj.draw( f_Q ); drawnow;
+%     obj.draw_dam( f_Q ); drawnow;
     time = time + dt;
     
     t_Q = f_Q;

@@ -1,4 +1,4 @@
-classdef SWESolidTopography < NdgPhysMat
+classdef SWESolidTopography < NdgPhysMat2d
     %SWESOLIDTOPOGRAPHY Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -19,7 +19,7 @@ classdef SWESolidTopography < NdgPhysMat
     
     methods
         function obj = SWESolidTopography()
-            obj = obj@NdgPhysMat();
+            obj = obj@NdgPhysMat2d();
         end
     end
     
@@ -31,9 +31,9 @@ classdef SWESolidTopography < NdgPhysMat
         [ dflux ] = matEvaluateNumericalFlux( obj, mesh, fphys, fext )
         [ dt ] = matUpdateTimeInterval( obj, fphys )
                 
-        function matEvaluateRHS( obj, fphys )
-            obj.matEvaluateRHS2d( fphys );
-        end
+%         function matEvaluateRHS( obj, fphys )
+%             obj.matEvaluateRHS2d( fphys );
+%         end
         
         function matUpdateWetDryState(obj, fphys)
             for m = 1:obj.Nmesh

@@ -8,11 +8,12 @@ addpath( genpath( 'NdgPhys') );
 addpath( genpath( 'NdgUtils') );
 addpath( genpath( 'NdgNetCDF') );
 addpath( genpath( 'NdgLimiter') );
+addpath( genpath( 'NdgPostProcess') );
 addpath( genpath( 'Advection') );
 addpath( genpath( 'ShallowWaterEquation') );
-fprintf('----------------------------------------------------------\n')
+fprintf('\n----------------------------------------------------------\n')
 
 fprintf('%s:: Compile mex files.\n', mfilename);
 NdgConfigure(2)
-fprintf('----------------------------------------------------------\n')
+fprintf('\n----------------------------------------------------------\n')
 fprintf('%s:: Finish all the setup process.\n\n', mfilename);

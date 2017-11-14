@@ -1,12 +1,8 @@
-classdef NdgVertLimiter < handle
+classdef NdgVertLimiter < NdgAbstractLimiter
     
     properties( SetAccess = protected )
         %> Number of vertices
         Nv
-        %> Number of mesh objects
-        Nmesh
-        %> mesh object array
-        meshUnion
         %> number of cells connecting at each vertex
         Nvc
         %> maximum number of cells connecting at each vertex
@@ -20,9 +16,8 @@ classdef NdgVertLimiter < handle
     end
     
     methods
-        function obj = NdgVertLimiter(mesh)
-            obj.Nmesh = numel(mesh);
-            obj.meshUnion = mesh;
+        function obj = NdgVertLimiter( mesh )
+            obj = obj@NdgAbstractLimiter( mesh );
             obj.Nv = mesh(1).Nv;
             [ obj.Nvcmax, obj.Nvc, obj.VToK, obj.VToM, obj.VToW ] = ...
                 assembleVertexCellConnect( obj );
@@ -30,7 +25,7 @@ classdef NdgVertLimiter < handle
     end
     
     methods( Abstract )
-        fphys = matVertLimit( obj, fphys, fieldId );
+        fphys = matLimit( obj, fphys, fieldId );
     end
     
     methods( Hidden)%, Access = protected )
