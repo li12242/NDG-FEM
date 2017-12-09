@@ -10,10 +10,10 @@ addpath( genpath( 'NdgNetCDF') );
 addpath( genpath( 'NdgLimiter') );
 addpath( genpath( 'NdgPostProcess') );
 addpath( genpath( 'Advection') );
-addpath( genpath( 'ShallowWaterEquation') );
+addpath( genpath( 'SWE') );
 fprintf('\n----------------------------------------------------------\n')
 
 fprintf('%s:: Compile mex files.\n', mfilename);
-NdgConfigure(2)
+NdgConfigure(4)
 fprintf('\n----------------------------------------------------------\n')
 fprintf('%s:: Finish all the setup process.\n\n', mfilename);

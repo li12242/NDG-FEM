@@ -22,7 +22,7 @@ for m = 1:obj.Nmesh
     totalArea = sum( obj.meshUnion(m).LAV );
     for fld = 1:obj.Nvar
         temp = fphys{m}(:,:,fld) - fext{m}(:,:,fld);
-        absErr = sum( abs( temp ) );
+        absErr = sum( abs( temp(:) ) );
         err(fld) = err(fld) + absErr/totalArea;
     end
 end

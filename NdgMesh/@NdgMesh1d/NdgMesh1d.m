@@ -2,8 +2,12 @@ classdef NdgMesh1d < NdgMesh
     %LINE_MESH Summary of this class goes here
     %   Detailed explanation goes here
 
+    properties(Constant)
+        type = NdgMeshType.OneDim
+    end
+    
     methods(Hidden, Access = protected)
-        function [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] = assembleJacobiFactor(obj)
+        function [ J ] = assembleJacobiFactor( obj )
             xr = obj.cell.Dr*obj.x;
             J = xr; rx = 1./J;
 
@@ -13,9 +17,10 @@ classdef NdgMesh1d < NdgMesh
             sy = zeros(size(rx));
             sz = zeros(size(rx)); 
             tx = zeros(size(rx));
-            ty = zeros(size(ry));
+            ty = zeros(size(rx));
             tz = zeros(size(rx)); 
         end
+        
         function [nx, ny, nz, Js] = assembleFacialJaobiFactor( obj )
             xb = obj.x(obj.cell.Fmask, :);
             nx = ones(obj.cell.TNfp, obj.K);

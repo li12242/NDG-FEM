@@ -40,6 +40,26 @@ classdef StdPoint < StdCell
             obj = obj@StdCell(N);
         end
         
+        function [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z )
+            nx = 0;
+            ny = 0;
+            nz = 0;
+            Js = 1;
+        end
+        
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x, y, z )
+            rx = ones( size(x) );
+            ry = ones( size(x) );
+            rz = ones( size(x) );
+            sx = ones( size(x) );
+            sy = ones( size(x) );
+            sz = ones( size(x) );
+            tx = ones( size(x) );
+            ty = ones( size(x) );
+            tz = ones( size(x) );
+            J = ones( size(x) );
+        end
+        
         function fun = orthogonal_func(obj, N, ind, r, s, t)
             fun = 1;
         end

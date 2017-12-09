@@ -46,6 +46,32 @@ classdef StdLine < StdCell
             obj = obj@StdCell(N);
         end
         
+        function [ nx, ny, nz, Js ] = assembleNormalVector( obj, x )
+            xr = obj.Dr * x;
+            
+            nr = [-1, 1]';
+            nx = 1./xr( obj.Fmask(:) ) .* nr;
+            nx = nx ./ sqrt( nx.^2 ); 
+            Js = ones( size(nx) );
+            
+            ny = zeros( size(nx) );
+            nz = zeros( size(nx) );
+        end
+        
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x )
+            xr = obj.Dr * x;
+            J = xr; rx = 1./J;
+            
+            ry = ones( size(x) );
+            rz = ones( size(x) );
+            sx = ones( size(x) );
+            sy = ones( size(x) );
+            sz = ones( size(x) );
+            tx = ones( size(x) );
+            ty = ones( size(x) );
+            tz = ones( size(x) );
+        end
+        
         function f = orthogonal_func(obj, N, ind, r, s, t)
             f = JacobiP(r, 0, 0, ind-1);
         end% func

@@ -1,15 +1,25 @@
-%> @brief Standard cell class.
+%> @brief Abstract class of the standard cells.
 %>
-%> StdCell is the superclass of standard cell class. The basic properties
-%> of the StdCell object include its geometry information and the matrix
-%> coefficients.
+%> The basic properties of the StdCell object include its geometry 
+%> information and the matrix coefficients.
 %>
 %> All StdCell use the nodal interpolation polynomial as the basis
-%> functions, and the LGL nodes are choosen as the interpolation nodes.
+%> functions, while the LGL nodes are choosen as the interpolation nodes.
 %> To create a new StdCell object, the user has to input the maximum degree
 %> of the basis functions, such as
 %> @code
-%>  tri = StdTri(2); % the maximum degree of the basis function is 2.
+%>  tri = StdTri(2); % the maximum degree of the basis polynomial is 2.
+%> @endcode
+%> 
+% ======================================================================
+%> The public interface of StdCell includes:
+%> @code
+%>   [ func ] = orthogonal_func(obj, N, ind, r, s, t); //evaluate the orthogonal function values at points
+%>   [ func ] = nodal_func(obj, r, s, t); // evaluate all the nodal basis function values at points
+%>   [ Dx, Dy, Dz ] = nodal_deri_func(obj, x, y, z);
+%>   [ node_val ] = project_vert2node(obj, vert_val); // evaluate the node values from the vertice values
+%>   [ quad_val ] = project_node2quad(obj, node_val); // evaluate the quadrature node values from the node values
+%>   [ quad_val ] = project_vert2quad(obj, vert_val); // evaluate the quadrature node values from the vertice values
 %> @endcode
 % ======================================================================
 %> This class is part of the NDGOM software. 
@@ -60,9 +70,11 @@ classdef StdCell < handle
         %> total number of face points
         TNfp
     end
-    properties(Hidden, SetAccess = protected)
+    properties( SetAccess = protected)
         %> Vandermonde matrix
         V
+        %> project matrx from interpolation points to quadrature points
+        Vq
         %> mass matrix
         M
         %> inverse of mass matrix
@@ -77,12 +89,19 @@ classdef StdCell < handle
         %> \f$ [Dt]_{ij} = \left.\frac{\partial l_j}{\partial t}\right|_{r_i} \f$
         Dt
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
-        LIFT
-        %> project matrx from interpolation points to quadrature points
-        Vq
+        %LIFT
+        % derivative matrix, 
+        %> \f$ [Drq]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_{q,i}} \f$
+        %Drq
+        % derivative matrix, 
+        %> \f$ [Dsq]_{ij} = \left.\frac{\partial l_j}{\partial s}\right|_{r_{q,i}} \f$
+        %Dsq
+        % derivative matrix, 
+        %> \f$ [Dtq]_{ij} = \left.\frac{\partial l_j}{\partial t}\right|_{r_{q,i}} \f$
+        %Dtq
     end
 
-    properties(Hidden, SetAccess = protected)
+    properties( SetAccess = protected )
         %> number of gauss quadrature points
         Nq
         %> coordinate of quadrature points
@@ -100,8 +119,8 @@ classdef StdCell < handle
         [ Np,r,s,t ] = node_coor_func(obj, N)
         %> get the total number and coordinate of gauss quadrature points
         [ Nq,rq,sq,tq ] = quad_coor_func(obj, N)
-        %> get the derivative of basis function at each interpolation points
-        [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
+        %> get the derivative of orthogonal function at each interpolation points
+        [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
     end
     
     methods(Abstract)
@@ -113,12 +132,17 @@ classdef StdCell < handle
         %> @param[in] s Coordinate of the nodes
         %> @param[in] t Coordinate of the nodes
         [ fun ] = orthogonal_func(obj, N, ind, r, s, t);
-        
         %> @brief Project the scalar field from the cell vertices to the interpolation nodes.
         %> @param[in] obj StdCell class
         %> @param[in] vert_val the vertice values, the first dimension of
         %> this variable should be equal to the Nv of the object.
         [ node_val ] = project_vert2node(obj, vert_val);
+        %> @brief 
+        assembleJacobianMatrix( obj, x, y, z );
+        %> @brief Assemble the outword normal vectors.
+        %> @param[in]
+        %> @param[in]
+        assembleNormalVector( obj, x, y, z )
     end
     
     methods
@@ -131,7 +155,9 @@ classdef StdCell < handle
             [ obj.V ] = obj.assembleVandMatrix( @obj.orthogonal_func );
             [ obj.Vq ] = obj.assembleQuadratureMatrix();
             [ obj.M, obj.invM ] = obj.assembleMassMatrix();
-            [ obj.Dr, obj.Ds, obj.Dt ] = obj.assembleDerivativeMatrix( @obj.derivative_orthogonal_func );
+            [ obj.Dr, obj.Ds, obj.Dt ] = obj.nodal_derivative_func(obj.r, obj.s, obj.t);
+            %[ obj.Drq, obj.Dsq, obj.Dtq ] ...
+            %    = obj.assembleQuadratureDerivativeMatrix( @obj.derivative_orthogonal_func );
             
             % get the number of nodes on each face
             if obj.Nface > 0
@@ -145,7 +171,40 @@ classdef StdCell < handle
             end
             [ obj.TNfp ] = sum(obj.Nfp);
             [ obj.Fmask ] = obj.assembleFacialNodeIndex();
-            [ obj.LIFT ] = obj.assembleLiftMatrix();
+            %[ obj.LIFT ] = obj.assembleLiftMatrix();
+        end
+        
+        %> @brief Evaluate all the nodal basis function values at points
+        %> @param[in] obj The StdCell class
+        %> @param[in] r The node coordinate
+        %> @param[in] s The node coordinate
+        %> @param[in] t The node coordinate
+        %> @param[out] func The basis function values at points
+        function [ func ] = nodal_func(obj, r, s, t)
+            func = zeros(numel(r), obj.Np);
+            for n = 1:obj.Np
+                func(:, n) = obj.orthogonal_func(obj.N, n, r, s, t);
+            end
+            func = func/obj.V;
+        end
+        
+        function [ dfr, dfs, dft ] = orthogonal_derivative_func(obj, ind, r, s, t)
+            [ dfr, dfs, dft ] = obj.derivative_orthogonal_func( obj.N, ind, r, s, t );
+        end
+        
+        %> @brief Evaluate the derivative nodal function values at points
+        function [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
+            Nr = numel( r );
+            Vr = zeros(Nr, obj.Np);
+            Vs = zeros(Nr, obj.Np);
+            Vt = zeros(Nr, obj.Np);
+            for n = 1:obj.Np
+                [Vr(:, n), Vs(:, n), Vt(:, n)] = ...
+                    obj.derivative_orthogonal_func(obj.N, n, r, s, t);
+            end
+            fDr = Vr/obj.V; 
+            fDs = Vs/obj.V; 
+            fDt = Vt/obj.V;
         end
 
         %> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
@@ -171,11 +230,7 @@ classdef StdCell < handle
         %> \f$ [V_q]_{i,j} = l_j(\xi_i) \f$
         %> where \f$ \xi_i \f$ is the ith Gauss quadrature nodes.
         function [ Vq ] = assembleQuadratureMatrix( obj )
-            Vq = zeros(obj.Nq, obj.Np);
-            for n = 1:obj.Np
-                Vq(:, n) = obj.orthogonal_func(obj.N, n, obj.rq, obj.sq, obj.tq);
-            end
-            Vq = Vq/obj.V;
+            Vq = obj.nodal_func( obj.rq, obj.sq, obj.tq );
         end
         
         %> @brief Assemble the Vandermonde matrix
@@ -200,19 +255,31 @@ classdef StdCell < handle
             invM = obj.V * obj.V';
         end% func
         
-        function [Dr, Ds, Dt] = assembleDerivativeMatrix(obj, deri_orthogonal_func)
-            Vr = zeros(obj.Np, obj.Np);
-            Vs = zeros(obj.Np, obj.Np);
-            Vt = zeros(obj.Np, obj.Np);
-            for n = 1:obj.Np
-                [Vr(:, n), Vs(:, n), Vt(:, n)] = deri_orthogonal_func...
-                    (obj.N, n, obj.r, obj.s, obj.t);
-            end
-            Dr = Vr/obj.V; 
-            Ds = Vs/obj.V; 
-            Dt = Vt/obj.V;
-        end% func
+%         function [Dr, Ds, Dt] = assembleDerivativeMatrix( obj )
+%             Vr = zeros(obj.Np, obj.Np);
+%             Vs = zeros(obj.Np, obj.Np);
+%             Vt = zeros(obj.Np, obj.Np);
+%             for n = 1:obj.Np
+%                 [Vr(:, n), Vs(:, n), Vt(:, n)] = obj.derivative_orthogonal_func...
+%                     (obj.N, n, obj.r, obj.s, obj.t);
+%             end
+%             Dr = Vr/obj.V; 
+%             Ds = Vs/obj.V; 
+%             Dt = Vt/obj.V;
+%         end% func
         
+%         function [Drq, Dsq, Dtq] = assembleQuadratureDerivativeMatrix(obj, deri_orthogonal_func)
+%             Vrq = zeros(obj.Nq, obj.Np);
+%             Vsq = zeros(obj.Nq, obj.Np);
+%             Vtq = zeros(obj.Nq, obj.Np);
+%             for n = 1:obj.Np
+%                 [Vrq(:, n), Vsq(:, n), Vtq(:, n)] = deri_orthogonal_func...
+%                     (obj.N, n, obj.rq, obj.sq, obj.tq);
+%             end
+%             Drq = Vrq/obj.V; 
+%             Dsq = Vsq/obj.V; 
+%             Dtq = Vtq/obj.V;
+%         end% func
         
         function Fmask = assembleFacialNodeIndex(obj)
             maxnfp = max(obj.Nfp);
@@ -240,19 +307,19 @@ classdef StdCell < handle
             end
         end% func
         
-        function LIFT = assembleLiftMatrix(obj)
-            Mes = zeros(obj.Np, obj.TNfp);
-            sk = 1;
-            for f = 1:obj.Nface
-                fcell = getStdCell(obj.N, obj.faceType(f));
-                row = obj.Fmask(:, f);
-                row = row(row ~= 0);
-                for n = 1:fcell.Np
-                    Mes(row, sk) = fcell.M(:, n);
-                    sk = sk + 1;
-                end
-            end
-            LIFT = obj.invM * Mes;
-        end
+%         function LIFT = assembleLiftMatrix(obj)
+%             Mes = zeros(obj.Np, obj.TNfp);
+%             sk = 1;
+%             for f = 1:obj.Nface
+%                 fcell = getStdCell(obj.N, obj.faceType(f));
+%                 row = obj.Fmask(:, f);
+%                 row = row(row ~= 0);
+%                 for n = 1:fcell.Np
+%                     Mes(row, sk) = fcell.M(:, n);
+%                     sk = sk + 1;
+%                 end
+%             end
+%             LIFT = obj.invM * Mes;
+%         end
     end% methods
 end

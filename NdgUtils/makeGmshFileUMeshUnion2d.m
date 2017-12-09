@@ -1,6 +1,14 @@
 function [ mesh ] = makeGmshFileUMeshUnion2d( N, filename )
 
 fid1 = fopen(filename, 'r');
+if( fid1 < 0 )
+    msgID = [mfilename, ':inputFileNameError'];
+    msgtext = ['The input file name: ', filename...
+        ' is incorrect'];
+    ME = MException(msgID, msgtext);
+    throw(ME);
+end
+
 for i=1:4
    fgetl(fid1);
 end

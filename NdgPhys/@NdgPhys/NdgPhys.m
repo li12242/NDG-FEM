@@ -1,6 +1,18 @@
-%> @brief Here we have a brief description of the class.
+%> @brief Abstract class of the solver.
 %
-%> And here we can put some more detailed informations about the class.
+%> NdgPhys is the abstract superclass of all the solvers. The class stores
+%> the options for solving problem with specific spacial scheme, such as 
+%> using the quadrature-free scheme for strong form discrete equations, 
+%> and the temporal discrete methods used.
+%>
+%> The public functions includes: 
+%> @code
+%>  [ ] = initPhysFromOptions( obj, mesh ); // Public function to call initial function;
+%>  [ ] = listOption( obj ); // List all the options in the solver;
+%>  [ field ] = getOption( obj, fieldName ); // get the option values;
+%>  [ ] = addOption( obj, optionName, optionValue ); // add new options into the solver; 
+%>  [ ] = draw(obj, fieldId); // draw the field;
+%> @endcode
 % ======================================================================
 %> This class is part of the NDGOM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
@@ -30,28 +42,38 @@ classdef NdgPhys < handle
     
     properties( SetAccess = protected )
         %> setting options
-        option
+        option = containers.Map();
     end
     
     methods
         function obj = NdgPhys()
         end
         
-        %> @brief Public function to call initial function
+        %> @brief Initial function
+        %> This function will set the solver's mesh objects and initialize
+        %> the physical field
         function initPhysFromOptions( obj, mesh )
+            % set the mesh object
             [ obj.meshUnion ] = mesh;
             [ obj.Nmesh ] = numel(mesh);
-            [ obj.option ] = obj.setOption( containers.Map() );
+            % set the option
+            [ obj.option ] = obj.setOption( obj.option );
+            % initilize the physical field
             [ obj.fphys ] = obj.setInitialField( );
         end% func
+
+        %> @brief Add new setting option into the solver
+        function addOption( obj, optionName, optionValue )
+            obj.option( optionName ) = optionValue;
+        end
         
         %> @brief List all the options in the solver
         function listOption( obj )
             keys = obj.option.keys;
             values = obj.option.values;
-            fprintf('option = {\n');
+            fprintf('Options = {\n');
             for n = 1:obj.option.Count
-                if isnumeric(values{n})
+                if isnumeric( values{n} )
                     fprintf('\t %s: %d\n', keys{n}, values{n});
                 else
                     fprintf('\t %s: %s\n', keys{n}, values{n});
@@ -65,19 +87,11 @@ classdef NdgPhys < handle
             if obj.option.isKey( fieldName )
                 value = obj.option( fieldName );
             else
-                msgID = 'NdgPhys:UnknownOptionField';
-                msgtext = ['The option field ', fieldName ,' is invalid.'];
+                msgID = [ mfilename, ':UnknownOptionField'];
+                msgtext = ['The option field ', fieldName ,' does not exist.'];
                 throw( MException(msgID, msgtext) );
             end
         end% func
-        
-%         [ err ] = evaluateNormErr2( obj );
-%         [ err ] = evaluateNormErr1( obj );
-%         [ err ] = evaluateNromErrInf( obj );
-%         
-%         [ fg ] = interpolateOutputStepResultToGaugePoint( obj, xg, yg, zg, outputStep );
-%         [ fg ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg );
-%         [ fg ] = interpolatePhysFieldToGaugePoint( obj, xg, yg, zg );
         
         %> @brief Draw the physical field on all meshes.
         function draw(obj, fieldId)
@@ -94,8 +108,4 @@ classdef NdgPhys < handle
         [ fphys ] = setInitialField( obj );
     end
     
-    methods( Access = protected )
-%         [ Noutput ] = accessOutputResultStepNumber( obj )
-%         [ fphys ] = accessOutputResultAtStepNum(obj, stepId)
-    end
 end

@@ -62,9 +62,9 @@ classdef NdgMesh < handle
         %> determination of Jacobian matrix at each interpolation points
         J
         %> 
-        rx, ry, rz
-        sx, sy, sz
-        tx, ty, tz
+%         rx, ry, rz
+%         sx, sy, sz
+%         tx, ty, tz
         %> length/area/volume of each cell
         LAV
         %> character length of each cell
@@ -87,14 +87,14 @@ classdef NdgMesh < handle
         yc
         %> central coordinate
         zc
-        %> normal vector of each facial point
-        nx
-        %> normal vector of each facial point
-        ny
-        %> normal vector of each facial point
-        nz
-        %> determination of facial integral at each face points
-        Js
+%         %> normal vector of each facial point
+%         nx
+%         %> normal vector of each facial point
+%         ny
+%         %> normal vector of each facial point
+%         nz
+%         %> determination of facial integral at each face points
+%         Js
     end
     
     properties( Hidden = true, SetAccess = protected )
@@ -104,9 +104,10 @@ classdef NdgMesh < handle
     
     methods( Abstract, Hidden, Access = protected )
         %> Get volume infomation of each element
-        [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
+        [ J ] = assembleJacobiFactor( obj )
+%         [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
         %> Get outward normal vector of each elemental edges
-        [ nx, ny, nz, Js ] = assembleFacialJaobiFactor( obj )
+%         [ nx, ny, nz, Js ] = assembleFacialJaobiFactor( obj )
         [ faceId ] = assembleGlobalFaceIndex( obj )
         [ edge ] = makeConnectNdgEdge( obj, mesh1, mid0, mid1 )
     end
@@ -154,11 +155,12 @@ classdef NdgMesh < handle
             [ obj.x, obj.y, obj.z ] = assembleNodeCoor( obj, vx, vy, vz );
             [ obj.EToB ] = assembleCellBoundary(obj, BCToV);
             
-            [ obj.rx, obj.ry, obj.rz, ...
-                obj.sx, obj.sy, obj.sz, ...
-                obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
+%             [ obj.rx, obj.ry, obj.rz, ...
+%                 obj.sx, obj.sy, obj.sz, ...
+%                 obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
+            [ obj.J ] = assembleJacobiFactor( obj );
             
-            [ obj.nx, obj.ny, obj.nz, obj.Js ] = assembleFacialJaobiFactor( obj );
+%             [ obj.nx, obj.ny, obj.nz, obj.Js ] = assembleFacialJaobiFactor( obj );
             [ obj.eidM, obj.eidP, obj.eidtype ] = assembleEdgeNode( obj );
             
             [ obj.LAV, obj.charLength ] = assembleCellScale( obj );

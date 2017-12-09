@@ -66,7 +66,7 @@ classdef NdgPostProcess < handle
         
         [ err ] = evaluateNormErr1( obj, fphys, fext );
         [ err ] = evaluateNormErr2( obj, fphys, fext );
-        [ err ] = evaluateNromErrInf( obj, fphys, fext );
+        [ err ] = evaluateNormErrInf( obj, fphys, fext );
         
         [ fg ] = interpolateOutputStepResultToGaugePoint( obj, xg, yg, zg, outputStep );
         [ fg ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg );

@@ -79,12 +79,12 @@ classdef StdCellTest < matlab.unittest.TestCase
             test.verifyEqual(test.cell.V, vand_ext, 'AbsTol', test.tol);
         end
         
-        function test_deri_matrix(test)
-            [ dr, ds, dt ] = get_ext_derimatrix(test.cell);
-            test.verifyEqual(test.cell.Dr, dr, 'AbsTol', test.tol);
-            test.verifyEqual(test.cell.Ds, ds, 'AbsTol', test.tol);
-            test.verifyEqual(test.cell.Dt, dt, 'AbsTol', test.tol);
-        end
+%         function test_deri_matrix(test)
+%             [ dr, ds, dt ] = get_ext_derimatrix(test.cell);
+%             test.verifyEqual(test.cell.Dr, dr, 'AbsTol', test.tol);
+%             test.verifyEqual(test.cell.Ds, ds, 'AbsTol', test.tol);
+%             test.verifyEqual(test.cell.Dt, dt, 'AbsTol', test.tol);
+%         end
         
         function test_quadrature_weight(test)
             N = test.cell.N;
@@ -140,51 +140,51 @@ classdef StdCellTest < matlab.unittest.TestCase
             end
         end% func
         
-        function test_derivative_matrix(test)
-            Dr = test.cell.Dr;
-            Ds = test.cell.Ds;
-            Dt = test.cell.Dt;
-            
-            r = test.cell.r;
-            s = test.cell.s;
-            t = test.cell.t;
-            switch test.cell.type
-                case NdgCellType.Line
-                    test.verifyEqual( Dr*r, ones(test.cell.Np, 1), ...
-                        'AbsTol', test.tol );
-                case {NdgCellType.Tri, NdgCellType.Quad}
-                    test.verifyEqual( Dr*r, ones(test.cell.Np, 1), ...
-                        'AbsTol', test.tol );
-                    test.verifyEqual( Ds*s, ones(test.cell.Np, 1), ...
-                        'AbsTol', test.tol );
-                    test.verifyEqual( Dr*s, zeros(test.cell.Np, 1), ...
-                        'AbsTol', test.tol );
-                    test.verifyEqual( Ds*r, zeros(test.cell.Np, 1), ...
-                        'AbsTol', test.tol );
-            end
-        end% func
+%         function test_derivative_matrix(test)
+%             Dr = test.cell.Dr;
+%             Ds = test.cell.Ds;
+%             Dt = test.cell.Dt;
+%             
+%             r = test.cell.r;
+%             s = test.cell.s;
+%             t = test.cell.t;
+%             switch test.cell.type
+%                 case NdgCellType.Line
+%                     test.verifyEqual( Dr*r, ones(test.cell.Np, 1), ...
+%                         'AbsTol', test.tol );
+%                 case {NdgCellType.Tri, NdgCellType.Quad}
+%                     test.verifyEqual( Dr*r, ones(test.cell.Np, 1), ...
+%                         'AbsTol', test.tol );
+%                     test.verifyEqual( Ds*s, ones(test.cell.Np, 1), ...
+%                         'AbsTol', test.tol );
+%                     test.verifyEqual( Dr*s, zeros(test.cell.Np, 1), ...
+%                         'AbsTol', test.tol );
+%                     test.verifyEqual( Ds*r, zeros(test.cell.Np, 1), ...
+%                         'AbsTol', test.tol );
+%             end
+%         end% func
         
     end% methods
 end% classdef
 
-function [Dr, Ds, Dt] = get_ext_derimatrix(cell)
-Dr = zeros(cell.Np, cell.Np);
-Ds = zeros(cell.Np, cell.Np);
-Dt = zeros(cell.Np, cell.Np);
-switch cell.type
-    case NdgCellType.Line
-        folder = 'StdLineTest/DrDs_Test/';
-        Dr = load([folder, 'Dr_', num2str(cell.N), '.cc']);
-    case NdgCellType.Tri
-        folder = 'StdTriTest/DrDs_Test/';
-        Dr = load([folder, 'Dr_', num2str(cell.N), '.cc']);
-        Ds = load([folder, 'Ds_', num2str(cell.N), '.cc']);
-    case NdgCellType.Quad
-        folder = 'StdQuadTest/DrDs_Test/';
-        Dr = load([folder, 'Dr_', num2str(cell.N), '.cc']);
-        Ds = load([folder, 'Ds_', num2str(cell.N), '.cc']);
-end
-end% func
+% function [Dr, Ds, Dt] = get_ext_derimatrix(cell)
+% Dr = zeros(cell.Np, cell.Np);
+% Ds = zeros(cell.Np, cell.Np);
+% Dt = zeros(cell.Np, cell.Np);
+% switch cell.type
+%     case NdgCellType.Line
+%         folder = 'StdLineTest/DrDs_Test/';
+%         Dr = load([folder, 'Dr_', num2str(cell.N), '.cc']);
+%     case NdgCellType.Tri
+%         folder = 'StdTriTest/DrDs_Test/';
+%         Dr = load([folder, 'Dr_', num2str(cell.N), '.cc']);
+%         Ds = load([folder, 'Ds_', num2str(cell.N), '.cc']);
+%     case NdgCellType.Quad
+%         folder = 'StdQuadTest/DrDs_Test/';
+%         Dr = load([folder, 'Dr_', num2str(cell.N), '.cc']);
+%         Ds = load([folder, 'Ds_', num2str(cell.N), '.cc']);
+% end
+% end% func
 
 function [r_ext, s_ext, t_ext] = get_ext_coor(cell)
 r_ext = zeros(cell.Np, 1);

@@ -32,6 +32,25 @@ classdef StdTri < StdCell
             obj = obj@StdCell(N);
         end
         
+        [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z );
+        
+        %> @brief Return the jacobian matrix and its determination.
+        %> 
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x, y, z )
+            xr = obj.Dr * x; xs = obj.Ds * x;
+            yr = obj.Dr * y; ys = obj.Ds * y;
+            J = -xs.*yr + xr.*ys;
+            
+            rx = ys./J; sx =-yr./J;
+            ry =-xs./J; sy = xr./J; 
+            
+            rz = ones( size(x) );
+            sz = ones( size(x) );
+            tx = ones( size(x) );
+            ty = ones( size(x) );
+            tz = ones( size(x) );
+        end
+        
         f = orthogonal_func(obj, N, ind, r, s, t);
 
         function node_val = project_vert2node(obj, vert_val)

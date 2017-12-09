@@ -1,6 +1,0 @@
-function [ dflux ] = matEvaluateNumericalFlux( obj, mesh, fphys, fext )
-
-[ dflux ] = mxEvaluateNumericalFlux2d( obj.hmin, obj.gra, ...
-    mesh.eidM, mesh.eidP, mesh.eidtype, mesh.nx, mesh.ny, ...
-    fext, fphys );
-end

@@ -11,7 +11,7 @@ classdef NdgMeshTest < matlab.unittest.TestCase
     
     properties(MethodSetupParameter)
         type = {...
-            NdgCellType.Line, ...
+            %NdgCellType.Line, ...
             NdgCellType.Tri, ...
             NdgCellType.Quad, ...
             }
@@ -84,41 +84,41 @@ classdef NdgMeshTest < matlab.unittest.TestCase
             end
         end
         
-        function test_Jacobian(test)
-            switch test.cell.type
-                case NdgCellType.Line
-                    test.verifyEqual(1/2*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol);
-                case NdgCellType.Tri
-                    test.verifyEqual(1/4*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol);                   
-                case NdgCellType.Quad 
-                    test.verifyEqual(3/2*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol); 
-            end
-        end
+%         function test_Jacobian(test)
+%             switch test.cell.type
+%                 case NdgCellType.Line
+%                     test.verifyEqual(1/2*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol);
+%                 case NdgCellType.Tri
+%                     test.verifyEqual(1/4*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol);                   
+%                 case NdgCellType.Quad 
+%                     test.verifyEqual(3/2*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol); 
+%             end
+%         end
         
-        function test_transMatrix(test)
-            Dr = test.cell.Dr; rx = test.mesh.rx; ry = test.mesh.sx;
-            Ds = test.cell.Ds; sx = test.mesh.sx; sy = test.mesh.sy;
-            Dt = test.cell.Dt; tx = test.mesh.tx; ty = test.mesh.tx;
-            
-            x = test.mesh.x;
-            y = test.mesh.y;
-            z = test.mesh.z;
-            switch test.cell.type
-                case NdgCellType.Line
-                    test.verifyEqual(ones(size(test.mesh.rx)), ...
-                        Dr*x.*rx, 'AbsTol', test.tol);
-                case NdgCellType.Tri
-                    test.verifyEqual(ones(size(test.mesh.rx)), ...
-                        Dr*x.*rx+Ds*x.*sx, 'AbsTol', test.tol);                   
-                    test.verifyEqual(ones(size(test.mesh.rx)), ...
-                        Dr*y.*ry+ Ds*y.*sy, 'AbsTol', test.tol);                     
-                case NdgCellType.Quad
-                    test.verifyEqual(ones(size(test.mesh.rx)), ...
-                        Dr*x.*rx+Ds*x.*sx, 'AbsTol', test.tol);                   
-                    test.verifyEqual(ones(size(test.mesh.ry)), ...
-                        Dr*y.*ry+Ds*y.*sy, 'AbsTol', test.tol);                   
-            end
-        end
+%         function test_transMatrix(test)
+%             Dr = test.cell.Dr; rx = test.mesh.rx; ry = test.mesh.sx;
+%             Ds = test.cell.Ds; sx = test.mesh.sx; sy = test.mesh.sy;
+%             Dt = test.cell.Dt; tx = test.mesh.tx; ty = test.mesh.tx;
+%             
+%             x = test.mesh.x;
+%             y = test.mesh.y;
+%             z = test.mesh.z;
+%             switch test.cell.type
+%                 case NdgCellType.Line
+%                     test.verifyEqual(ones(size(test.mesh.rx)), ...
+%                         Dr*x.*rx, 'AbsTol', test.tol);
+%                 case NdgCellType.Tri
+%                     test.verifyEqual(ones(size(test.mesh.rx)), ...
+%                         Dr*x.*rx+Ds*x.*sx, 'AbsTol', test.tol);                   
+%                     test.verifyEqual(ones(size(test.mesh.rx)), ...
+%                         Dr*y.*ry+ Ds*y.*sy, 'AbsTol', test.tol);                     
+%                 case NdgCellType.Quad
+%                     test.verifyEqual(ones(size(test.mesh.rx)), ...
+%                         Dr*x.*rx+Ds*x.*sx, 'AbsTol', test.tol);                   
+%                     test.verifyEqual(ones(size(test.mesh.ry)), ...
+%                         Dr*y.*ry+Ds*y.*sy, 'AbsTol', test.tol);                   
+%             end
+%         end
     
     end% methods
 end% class

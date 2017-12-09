@@ -4,6 +4,9 @@
 %> and allocate multiple choices to create the object. The input
 %> methods include
 classdef NdgMesh2d < NdgMesh
+    properties(Constant)
+        type = NdgMeshType.TwoDim
+    end
     
     properties( Hidden=true )
         point_h
@@ -14,8 +17,7 @@ classdef NdgMesh2d < NdgMesh
             edge = NdgEdge2d( obj, mesh1, mid0, mid1 );
         end
         
-        function [rx, ry, rz, sx, sy, sz, tx, ty, tz, J] ...
-                = assembleJacobiFactor(obj)
+        function [ J ] = assembleJacobiFactor(obj)
             xr = obj.cell.Dr*obj.x; xs = obj.cell.Ds*obj.x;
             yr = obj.cell.Dr*obj.y; ys = obj.cell.Ds*obj.y;
             J = -xs.*yr + xr.*ys;
@@ -30,8 +32,7 @@ classdef NdgMesh2d < NdgMesh
             tz = zeros(size(rx));
         end
         
-        function [nx, ny, nz, Js] ...
-                = assembleFacialJaobiFactor( obj )
+        function [nx, ny, nz, Js] = assembleFacialJaobiFactor( obj )
             Nface = obj.cell.Nface;
             TNfp = obj.cell.TNfp;
             nx = zeros(TNfp, obj.K);
@@ -127,6 +128,7 @@ classdef NdgMesh2d < NdgMesh
     
 end
 
+%> Check input variables with correct size.
 function [cell, Nv, vx, vy, K, EToV, EToR, BCToV] ...
     = checkInput(cell, Nv, vx, vy, K, EToV, EToR, BCToV)
 % check the input variables for initlizing the mesh object.
@@ -145,7 +147,7 @@ if( size(EToV, 1) ~= cell.Nv )
 end
 
 if( size(BCToV, 1) ~= 3 )
-    msgID = [mfilename, ':InputBCToV'];
+    msgID = [mfilename, ':InputBCToVError'];
     msgtext = 'The rows of input BCToV should be 3 ( [v1, v2, bcType] ).';
     ME = MException(msgID, msgtext);
     throw(ME);
@@ -153,3 +155,16 @@ end
 
 EToR = NdgRegionType( EToR );
 end% func
+
+function [ EToV ] = makeCounterclockwiseVertexOrder( EToV, vx, vy )
+K = size(EToV, 2);
+for k = 1:K
+    vertId = EToV(:, k);
+    vxk = vx( EToV(:, k) );
+    vyk = vy( EToV(:, k) );
+
+    vertOrder = convhull(vxk, vyk);
+    EToV(:, k) = vertId( vertOrder(1:end-1) );
+end
+
+end

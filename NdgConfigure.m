@@ -47,13 +47,22 @@ srcfile = {[path, 'mxVertLimit2d.c']};
 FuncHandle(path, srcfile, libfile);
 
 % SWE
-path = 'ShallowWaterEquation/@SWESolidTopography/private/';
+path = 'SWE/@SWEAbstractCB2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {[path, 'mxSWE2d.c']};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
-    [path, 'mxEvaluateNumericalFlux2d.c'], ...
+    [path, 'mxEvaluateSurfFlux.c'], ...
+    [path, 'mxEvaluateSurfNumFlux.c'], ...
     [path, 'mxEvaluatePostFunc2d.c'], ...
-    [path, 'mxUpdateTimeInterval2d.c']};
+    [path, 'mxUpdateTimeInterval2d.c'],...
+    [path, 'mxEvaluateSourceTopography2d.c']};
+FuncHandle(path, srcfile, libfile);
+
+path = 'SWE/@SWEAbstractDB2d/private/';
+CFLAGS = [CFLAGS, ' -I', path, ' '];
+libfile = {[path, 'mxSWE2d.c']};
+srcfile = {[path, 'mxEvaluateSurfFlux2d.c'], ...
+    [path, 'mxEvaluateSurfNumFlux2d.c']};
 FuncHandle(path, srcfile, libfile);
 
 fprintf('\n%s:: Compiled all the mex files.\n', mfilename);

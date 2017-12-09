@@ -1,5 +1,6 @@
-function [Nq, rq, sq, tq, wq] = quad_coor_func( obj, qOrd )
+function [Nq, rq, sq, tq, wq] = quad_coor_func( obj, N )
 % third party function, see references
+qOrd = N+1;
 [X,Y,Wx,Wy] = triquad(qOrd, [-1 -1; 1 -1; -1 1]); 
 rq = X(:);
 sq = Y(:);
