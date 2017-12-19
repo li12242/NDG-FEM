@@ -70,7 +70,7 @@ classdef NdgPostProcess < handle
         
         [ fg ] = interpolateOutputStepResultToGaugePoint( obj, xg, yg, zg, outputStep );
         [ fg ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg );
-        [ fg ] = interpolatePhysFieldToGaugePoint( obj, xg, yg, zg );
+        [ fg ] = interpolatePhysFieldToGaugePoint( obj, fphys, xg, yg, zg );
         
     end
     

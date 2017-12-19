@@ -7,7 +7,7 @@ classdef NdgMesh1d < NdgMesh
     end
     
     methods(Hidden, Access = protected)
-        function [ J ] = assembleJacobiFactor( obj )
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
             xr = obj.cell.Dr*obj.x;
             J = xr; rx = 1./J;
 

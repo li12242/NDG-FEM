@@ -17,7 +17,7 @@ classdef NdgMesh2d < NdgMesh
             edge = NdgEdge2d( obj, mesh1, mid0, mid1 );
         end
         
-        function [ J ] = assembleJacobiFactor(obj)
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor(obj)
             xr = obj.cell.Dr*obj.x; xs = obj.cell.Ds*obj.x;
             yr = obj.cell.Dr*obj.y; ys = obj.cell.Ds*obj.y;
             J = -xs.*yr + xr.*ys;

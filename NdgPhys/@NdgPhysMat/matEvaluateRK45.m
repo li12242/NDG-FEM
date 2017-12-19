@@ -34,7 +34,8 @@ while( time < ftime )
         
     end
 %     for m = 1:obj.Nmesh
-%         obj.meshUnion(m).draw( fphys{m}(:,:,1) );
+% %         obj.meshUnion(m).draw( fphys{m}(:,:,2) );
+%         obj.meshUnion(m).draw( fphys{m}(:,:,1) + fphys{m}(:,:,4) );
 %     end
 %     drawnow;
     

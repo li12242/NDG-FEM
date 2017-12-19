@@ -172,7 +172,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         double xm = xc[k];
         double ym = yc[k];
         double fm = cvar[k];
-//        bool troubleCellFlag = 0;
+//         bool troubleCellFlag = 0;
         bool troubleCellFlag = 1;
         
         double cellvf[Nv];

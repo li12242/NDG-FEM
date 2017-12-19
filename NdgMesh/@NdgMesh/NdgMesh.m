@@ -62,9 +62,9 @@ classdef NdgMesh < handle
         %> determination of Jacobian matrix at each interpolation points
         J
         %> 
-%         rx, ry, rz
-%         sx, sy, sz
-%         tx, ty, tz
+        rx, ry, rz
+        sx, sy, sz
+        tx, ty, tz
         %> length/area/volume of each cell
         LAV
         %> character length of each cell
@@ -104,8 +104,8 @@ classdef NdgMesh < handle
     
     methods( Abstract, Hidden, Access = protected )
         %> Get volume infomation of each element
-        [ J ] = assembleJacobiFactor( obj )
-%         [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
+%         [ J ] = assembleJacobiFactor( obj )
+        [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
         %> Get outward normal vector of each elemental edges
 %         [ nx, ny, nz, Js ] = assembleFacialJaobiFactor( obj )
         [ faceId ] = assembleGlobalFaceIndex( obj )
@@ -155,10 +155,10 @@ classdef NdgMesh < handle
             [ obj.x, obj.y, obj.z ] = assembleNodeCoor( obj, vx, vy, vz );
             [ obj.EToB ] = assembleCellBoundary(obj, BCToV);
             
-%             [ obj.rx, obj.ry, obj.rz, ...
-%                 obj.sx, obj.sy, obj.sz, ...
-%                 obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
-            [ obj.J ] = assembleJacobiFactor( obj );
+            [ obj.rx, obj.ry, obj.rz, ...
+                obj.sx, obj.sy, obj.sz, ...
+                obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
+%             [ obj.J ] = assembleJacobiFactor( obj );
             
 %             [ obj.nx, obj.ny, obj.nz, obj.Js ] = assembleFacialJaobiFactor( obj );
             [ obj.eidM, obj.eidP, obj.eidtype ] = assembleEdgeNode( obj );

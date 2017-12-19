@@ -10,7 +10,7 @@ addpath( genpath( 'NdgNetCDF') );
 addpath( genpath( 'NdgLimiter') );
 addpath( genpath( 'NdgPostProcess') );
 addpath( genpath( 'Advection') );
-addpath( genpath( 'SWE') );
+addpath( genpath( 'SWE2d') );
 fprintf('\n----------------------------------------------------------\n')
 
 fprintf('%s:: Compile mex files.\n', mfilename);
