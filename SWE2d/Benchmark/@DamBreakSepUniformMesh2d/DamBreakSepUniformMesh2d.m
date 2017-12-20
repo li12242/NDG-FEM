@@ -1,10 +1,10 @@
-classdef DamBreakSepUniformMesh2d < SWEAbstractDBN62d
+classdef DamBreakSepUniformMesh2d < SWEPreBlanaced2d
     %DAMBREAKSEPUNIFORMMESH2D Summary of this class goes here
     %   Detailed explanation goes here
     
     properties(Constant)
         %> wet/dry depth threshold
-        hmin = 1e-4
+        hmin = 1e-6
         %> gravity acceleration
         gra = 9.8
         %> Dam position
@@ -19,7 +19,7 @@ classdef DamBreakSepUniformMesh2d < SWEAbstractDBN62d
     methods
         function obj = DamBreakSepUniformMesh2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEAbstractDBN62d();
+            obj = obj@SWEPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
         end
         

@@ -47,23 +47,46 @@ srcfile = {[path, 'mxVertLimit2d.c']};
 FuncHandle(path, srcfile, libfile);
 
 % SWE
-path = 'SWE2d/@SWEAbstractCB2d/private/';
+path = 'SWE2d/@SWEAbstract2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {[path, 'mxSWE2d.c']};
-srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
-    [path, 'mxEvaluateSurfFlux.c'], ...
-    [path, 'mxEvaluateSurfNumFlux.c'], ...
+srcfile = {[path, 'mxEvaluateHLLNumFlux2d.c'], ...
     [path, 'mxEvaluatePostFunc2d.c'], ...
-    [path, 'mxUpdateTimeInterval2d.c'],...
+    [path, 'mxEvaluateSurfaceValue.c'], ...
+    [path, 'mxEvaluateSurfFlux.c'], ...
+    [path, 'mxUpdateTimeInterval2d.c']};
+FuncHandle(path, srcfile, libfile);
+    
+path = 'SWE2d/@SWEConventional2d/private/';
+%CFLAGS = [CFLAGS, ' -I', path, ' '];
+libfile = {};
+srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE2d/@SWEAbstractDB2d/private/';
-CFLAGS = [CFLAGS, ' -I', path, ' '];
-libfile = {[path, 'mxSWE2d.c']};
-srcfile = {[path, 'mxEvaluateSurfFlux2d.c'], ...
-    [path, 'mxEvaluateSurfNumFlux2d.c']};
+path = 'SWE2d/@SWEPreBlanaced2d/private/';
+libfile = {};
+srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
+    [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
+
+% path = 'SWE2d/@SWEAbstractCB2d/private/';
+% CFLAGS = [CFLAGS, ' -I', path, ' '];
+% libfile = {[path, 'mxSWE2d.c']};
+% srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
+%     [path, 'mxEvaluateSurfFlux.c'], ...
+%     [path, 'mxEvaluateSurfNumFlux.c'], ...
+%     [path, 'mxEvaluatePostFunc2d.c'], ...
+%     [path, 'mxUpdateTimeInterval2d.c'],...
+%     [path, 'mxEvaluateSourceTopography2d.c']};
+% FuncHandle(path, srcfile, libfile);
+% 
+% path = 'SWE2d/@SWEAbstractDB2d/private/';
+% CFLAGS = [CFLAGS, ' -I', path, ' '];
+% libfile = {[path, 'mxSWE2d.c']};
+% srcfile = {[path, 'mxEvaluateSurfFlux2d.c'], ...
+%     [path, 'mxEvaluateSurfNumFlux2d.c']};
+% FuncHandle(path, srcfile, libfile);
 
 path = 'SWE2d/Benchmark/@SteadyMount2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];

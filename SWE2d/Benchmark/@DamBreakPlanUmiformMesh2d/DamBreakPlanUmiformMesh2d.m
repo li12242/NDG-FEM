@@ -13,11 +13,11 @@
 %> This class is part of the NDGOM software. 
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef DamBreakPlanUmiformMesh2d < SWEAbstractDBN62d
+classdef DamBreakPlanUmiformMesh2d < SWEConventional2d
     
     properties(Constant)
         %> wet/dry depth threshold
-        hmin = 1e-4
+        hmin = 5e-4
         %> gravity acceleration
         gra = 9.8
         %> Dam position
@@ -29,7 +29,7 @@ classdef DamBreakPlanUmiformMesh2d < SWEAbstractDBN62d
     methods
         function obj = DamBreakPlanUmiformMesh2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEAbstractDBN62d();
+            obj = obj@SWEConventional2d();
             obj.initPhysFromOptions( mesh );
         end
         
@@ -52,12 +52,11 @@ classdef DamBreakPlanUmiformMesh2d < SWEAbstractDBN62d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')=CoriolisType.None;
-            option('WindType')=WindType.None;
-            option('FrictionType')=FrictionType.None;
-%             option('WellBlancedType') = true;
+            option('equationType') = NdgDiscreteEquationType.Weak;
+            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
+            option('CoriolisType') = CoriolisType.None;
+            option('WindType') = WindType.None;
+            option('FrictionType') = FrictionType.None;
         end
         
         function fphys = getExactFunction( obj, time )
@@ -85,12 +84,14 @@ bctype = [...
     NdgEdgeType.SlipWall, ...
     NdgEdgeType.ZeroGrad];
 
+xlim = [-15, 15];
+ylim = [-2, 2];
 if (type == NdgCellType.Tri)
-    mesh = makeUniformTriMesh(N, [-15, 15], [-15, 15], M, ceil(M/30), bctype);
+    mesh = makeUniformTriMesh(N, xlim, ylim, M, ceil(M/30), bctype);
 elseif(type == NdgCellType.Quad)
-    mesh = makeUniformQuadMesh(N, [-15, 15], [-15, 15], M, ceil(M/30), bctype);
+    mesh = makeUniformQuadMesh(N, xlim, ylim, M, ceil(M/30), bctype);
 else
-    msgID = [mfile, ':inputCellTypeError'];
+    msgID = [mfilename, ':inputCellTypeError'];
     msgtext = 'The input cell type should be NdgCellType.Tri or NdgCellType.Quad.';
     ME = MException(msgID, msgtext);
     throw(ME);

@@ -51,7 +51,7 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('timeInterval') = sqrt(2)/obj.M/obj.w/(2*obj.N + 1);
             option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
+            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('limiterType') = NdgLimiterType.None;
         end
                 

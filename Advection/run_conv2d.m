@@ -6,10 +6,10 @@ function run_conv2d
 % nk = [0, 1, 2];
 % ne = K*4.^nk;
 % len = 0.5.^nk;
-order = [1, 2];
+order = [1, 2, 3];
 ne = [20, 40, 60, 80];
 len = 1./ne;
-type = NdgCellType.Quad;
+type = NdgCellType.Tri;
 
 Nmesh = numel(ne);
 Ndeg = numel(order);
@@ -27,9 +27,18 @@ err1 = zeros(Nmesh, Ndeg);
 
 linewidth = 1.5; 
 markersize = 8;
-color = {'b', 'r', 'g', 'm'};
-marker = {'o', 's', '^', '*'};
+% c = 'b';
+% c = 'r';
+% c = 'g';
+c = 'c';
+% linestyle = '-';
+% linestyle = ':';
+% linestyle = '-.';
 linestyle = '--';
+
+color = {c, c, c, c};
+marker = {'o', 's', '^', '*'};
+
 for n = 1:Ndeg
     for m = 1:Nmesh
         adv = ConstAdvUniformMesh2d( order(n), ne(m), type );

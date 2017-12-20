@@ -48,7 +48,7 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             
-            option('equationType') = NdgDiscreteEquationType.Strong;
+            option('equationType') = NdgDiscreteEquationType.Weak;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('limiterType') = NdgLimiterType.None;
         end

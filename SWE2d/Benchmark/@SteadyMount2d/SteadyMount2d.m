@@ -1,4 +1,4 @@
-classdef SteadyMount2d < SWEAbstractMBN72d %& SDBAbstractTest & CSBAbstractTest
+classdef SteadyMount2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
     
     properties( Constant )
         %> wet/dry depth threshold
@@ -13,7 +13,7 @@ classdef SteadyMount2d < SWEAbstractMBN72d %& SDBAbstractTest & CSBAbstractTest
     methods
         function obj = SteadyMount2d( N, M, cellType )
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEAbstractMBN72d();
+            obj = obj@SWEPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
             obj.fphys = obj.matEvaluatePostFunc( obj.fphys );
             obj.fext = obj.setBoundaryCondition( );

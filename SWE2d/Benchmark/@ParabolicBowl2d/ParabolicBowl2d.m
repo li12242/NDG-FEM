@@ -9,7 +9,7 @@
 %> International Journal for Numerical Methods in Fluids 2008;58:1–25.
 %> doi:10.1002/fld.1674.
 %>
-classdef ParabolicBowl2d < SWEAbstractDBN62d
+classdef ParabolicBowl2d < SWEConventional2d
     
     properties( Constant )
         hmin = 1e-4
@@ -37,7 +37,7 @@ classdef ParabolicBowl2d < SWEAbstractDBN62d
                 cellType = varargin{3};
                 [ mesh ] = makeUniformMesh(N, M, cellType );
             end
-            obj = obj@SWEAbstractDBN62d();
+            obj = obj@SWEConventional2d();
             obj.initPhysFromOptions( mesh );
             obj.fext = obj.setExtField(  );
         end
@@ -66,7 +66,7 @@ classdef ParabolicBowl2d < SWEAbstractDBN62d
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
 %             option('WellBlancedType') = true;
         end
         

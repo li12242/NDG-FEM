@@ -52,6 +52,15 @@ classdef NdgPhysMat < NdgPhys
         %> @param[in] fphys The physical field on the ith mesh grid
         %> @retval[out] the flux term of the variable on each axis
         matEvaluateFlux( obj, mesh, fphys )
+        %> @brief function for calculating the surface point values
+        %> @details
+        %> Function to calculate the flux term of the equation.
+        %> @param[in] mesh The ith mesh object
+        %> @param[in] fphys The physical field on the ith mesh grid
+        %> @param[in] fext The external field on the ith mesh grid
+        %> @retval[out] fm the variable in local element
+        %> @retval[out] fp the variable on adjacent element
+        [ fm, fp ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
         %> @brief Evaluate the numerical flux
         %> @details
         %> Function calculates the flux division of the normal flux
@@ -60,7 +69,7 @@ classdef NdgPhysMat < NdgPhys
         %> @param [in] mesh The ith mesh object
         %> @param [in] fphys The physical field on the mesh grid
         %>
-        [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, nz, fphys, fext )
+        [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, nz, fm, fp )
         %> @brief Evaluate the flux term on surface nodes
         %> @details
         %> Function calculates the flux division of the normal flux
@@ -69,7 +78,7 @@ classdef NdgPhysMat < NdgPhys
         %> @param [in] mesh The ith mesh object
         %> @param [in] fphys The physical field on the mesh grid
         %>
-        [ flux ] = matEvaluateSurfFlux( obj, mesh, nx, ny, nz, fphys )
+        [ flux ] = matEvaluateSurfFlux( obj, mesh, nx, ny, nz, fm )
     end
     
     methods( Access = protected )

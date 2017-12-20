@@ -1,4 +1,4 @@
-classdef SolitaryRossbyWave < SWEAbstractDBN62d
+classdef SolitaryRossbyWave < SWEConventional2d
     
     
     properties( SetAccess = protected )
@@ -17,7 +17,7 @@ classdef SolitaryRossbyWave < SWEAbstractDBN62d
     methods
         function obj = SolitaryRossbyWave(N, M, cellType )
             [ mesh ] = makeUniformMesh(N, M, cellType );
-            obj = obj@SWEAbstractDBN62d();
+            obj = obj@SWEConventional2d();
             obj.initPhysFromOptions( mesh );
         end
         

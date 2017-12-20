@@ -1,35 +1,18 @@
-classdef SDBAbstractTest < SWEAbstractMBN72d
-    %SDBABSTRACTTEST Summary of this class goes here
-    %   Detailed explanation goes here
-    
-    properties( Constant )
-%         xlim = [-1, 1]
-%         ylim = [-1, 1]
-    end
-    
-    properties( Abstract, Constant )
-%         zm
-%         zp
-%         hm
-%         hp
-    end
+classdef SDBAbstractTest < SWEPreBlanaced2d
     
     methods
-        function obj = SDBAbstractTest()
-%             obj = obj@SWEAbstractMBN72d();
-%             mesh = makeUniformMesh( obj );
-%             obj.initPhysFromOptions( mesh );
-%             obj.matEvaluatePostFunc( obj.fphys );
+        function obj = SDBAbstractTest
         end
         
         function checkFluxTerm( obj, m, k1, f1 )
             
             mesh = obj.meshUnion(m);
-            nx = obj.advectionSolver.nx{m};
-            ny = obj.advectionSolver.ny{m};
+            nx = obj.meshUnion.nx;
+            ny = obj.meshUnion.ny;
+            [ fM, fP ] = obj.matEvaluateSurfaceValue( mesh, obj.fphys{m}, obj.fext{m} );
             [ frecM, frecP ] = obj.boundaryHydroReconst( mesh, obj.fphys{m} );
-            [ flux  ] = obj.matEvaluateSurfFlux( mesh, nx, ny, obj.fphys{m} );
-            [ fluxS ] = obj.matEvaluateSurfNumFlux( mesh, nx, ny, obj.fphys{m}, obj.fext{m} );
+            [ flux  ] = obj.matEvaluateSurfFlux( mesh, nx, ny, fM );
+            [ fluxS ] = obj.matEvaluateSurfNumFlux( mesh, nx, ny, fM, fP );
 
             K = [k1, 2];
             fL = f1;
@@ -50,8 +33,10 @@ classdef SDBAbstractTest < SWEAbstractMBN72d
 
             for fld = 1:3
                 fprintf(' physical field = %d \n', fld);
-                fprintf('| U- and U+ at %d |  %f  |   %f   |\n', K(1), frecM(fpm(1), K(1), fld), frecP(fpm(1), K(1), fld) );
-                fprintf('| U+ and U- at %d |  %f  |   %f   |\n', K(2), frecM(fpp(1), K(2), fld), frecP(fpp(1), K(2), fld) );
+                fprintf('| U- and U+ at %d |  %f  |   %f   |\n', K(1), fM(fpm(1), K(1), fld), fP(fpm(1), K(1), fld) );
+                fprintf('| Ue- and Ue+ at %d |  %f  |   %f   |\n', K(1), frecM(fpm(1), K(1), fld), frecP(fpm(1), K(1), fld) );
+                fprintf('| U+ and U- at %d |  %f  |   %f   |\n', K(2), fM(fpp(1), K(2), fld), fP(fpp(1), K(2), fld) );
+                fprintf('| Ue+ and Ue- at %d |  %f  |   %f   |\n', K(2), frecM(fpp(1), K(2), fld), frecP(fpp(1), K(2), fld) );
                 fprintf('| F- and F+ at %d |  %f  |   %f   |\n', K(1), flux(fpm(1), K(1), fld), flux(fpp(1), K(2), fld) );
                 fprintf('| F+ and F- at %d |  %f  |   %f   |\n', K(2), flux(fpp(1), K(2), fld), flux(fpm(1), K(1), fld) );
                 fprintf('| Flux* at %d |  %f  |  %f  |\n', K(1), fluxS(fpm(1), K(1), fld), fluxS(fpp(1), K(2), fld) );
@@ -127,14 +112,16 @@ classdef SDBAbstractTest < SWEAbstractMBN72d
             option('WellBlancedType') = true;
         end
     end
+    
+    methods( Static )
+        function [ mesh ] = makeUniformMesh( xlim, ylim )
+            bctype = [...
+                NdgEdgeType.ZeroGrad, NdgEdgeType.ZeroGrad, ...
+                NdgEdgeType.ZeroGrad, NdgEdgeType.ZeroGrad];
+            
+            mesh = makeUniformQuadMesh(1, xlim, ylim, 2, 1, bctype);
+        end% func
+    end
 end
 
-function [ mesh ] = makeUniformMesh( test )
-bctype = [...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad];
 
-mesh = makeUniformQuadMesh(1, test.xlim, test.ylim, 2, 1, bctype);
-end% func

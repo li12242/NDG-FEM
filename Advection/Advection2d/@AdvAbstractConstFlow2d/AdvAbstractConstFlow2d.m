@@ -27,23 +27,25 @@ classdef AdvAbstractConstFlow2d < NdgPhysMat
             end
         end
         
+        function [fm, fp] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
+            fm = fphys( mesh.eidM );
+            fp = fphys( mesh.eidP );
+            ind = ( mesh.eidtype == int8(NdgEdgeType.Clamped) );
+            fp(ind) = 0;
+        end
+        
         function [E, G] = matEvaluateFlux( obj, mesh, fieldValue )
             E = obj.u0 .* fieldValue;
             G = obj.v0 .* fieldValue;
         end
         
-        function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fphys, fext )
-            [ fm ] = fphys( mesh.eidM );
-            [ fp ] = fphys( mesh.eidP );
-            ind = ( mesh.eidtype == int8( NdgEdgeType.Clamped ) );
-            fp( ind ) = 0;
+        function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fm, fp )
             [ uNorm ] = obj.u0.* nx + obj.v0.* ny;
             sign_um = sign( uNorm );
             fluxS = ( fm.*( sign_um + 1 )*0.5 + fp.*( 1 - sign_um  )*0.5 ).*uNorm;
         end
         
-        function [ flux ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fphys )
-            [ fm ] = fphys( mesh.eidM );
+        function [ flux ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fm )
             Em = fm .* obj.u0;
             Gm = fm .* obj.v0;
             flux = Em .* nx + Gm .* ny;

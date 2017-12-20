@@ -1,11 +1,11 @@
-classdef CSBAbstractTest < SWEAbstractMBN72d
+classdef CSBAbstractTest < SWEPreBlanaced2d
     
     properties( Constant )
 %         hmin = 1e-4
 %         gra = 9.81
-        xlim = [-1, 1];
-        ylim = [-1, 1];
-        h0 = 2;
+%         xlim = [-1, 1];
+%         ylim = [-1, 1];
+%         h0 = 2;
     end
     
     properties( Abstract, Constant )
@@ -27,7 +27,7 @@ classdef CSBAbstractTest < SWEAbstractMBN72d
             fprintf('|  Field  |  Node Id  |  E  |  G  |  F  |\n');
             for fld = 1:3
                 for n = 1:cell.Np
-                    fprintf('|  fld = %d  |  %d  |  E = %f  |  G = %f  |  F = %f  |\n', fld, n, ...
+                    fprintf('|  fld = %d  |  %d  |  E = %e  |  G = %e  |  F = %e  |\n', fld, n, ...
                         E(n, k, fld), G(n, k, fld), obj.frhs{m}(n, k, fld)  );
                 end
             end
@@ -37,7 +37,7 @@ classdef CSBAbstractTest < SWEAbstractMBN72d
             fprintf('-------- topography source --------\n');
             for fld = 1:3
                 for n = 1:cell.Np
-                    fprintf('|  fld = %d  | %d | S = %f  |\n', fld, n, obj.frhs{m}(n, k, fld) );
+                    fprintf('|  fld = %d  | %d | S = %e  |\n', fld, n, obj.frhs{m}(n, k, fld) );
                 end
             end
             % rhs
@@ -45,7 +45,7 @@ classdef CSBAbstractTest < SWEAbstractMBN72d
             fprintf('-------- RHS --------\n');
             for fld = 1:3
                 for n = 1:cell.Np
-                    fprintf('|  fld = %d  | %d | rhs = %f  |\n', fld, n, obj.frhs{m}(n, k, fld) );
+                    fprintf('|  fld = %d  | %d | rhs = %e  |\n', fld, n, obj.frhs{m}(n, k, fld) );
                 end
             end
         end

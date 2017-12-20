@@ -1,4 +1,4 @@
-classdef DamBreakDryUniformMesh2d < SWEAbstractMBN72d
+classdef DamBreakDryUniformMesh2d < SWEPreBlanaced2d
     
     properties( SetAccess = protected )
         theta
@@ -18,7 +18,7 @@ classdef DamBreakDryUniformMesh2d < SWEAbstractMBN72d
     methods
         function obj = DamBreakDryUniformMesh2d(N, M, cellType, theta)
             [ mesh ] = makeUniformMesh(N, M, cellType, theta);
-            obj = obj@SWEAbstractMBN72d();
+            obj = obj@SWEPreBlanaced2d();
             obj.theta = theta;
             obj.initPhysFromOptions( mesh );
             obj.fphys = obj.matEvaluatePostFunc( obj.fphys );
@@ -65,7 +65,7 @@ classdef DamBreakDryUniformMesh2d < SWEAbstractMBN72d
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
             option('CoriolisType')=CoriolisType.None;
             option('WindType')=WindType.None;
             option('FrictionType')=FrictionType.None;
