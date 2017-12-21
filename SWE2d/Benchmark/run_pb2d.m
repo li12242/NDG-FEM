@@ -1,6 +1,6 @@
 function run_pb2d
 
-order = [1, 2, 3];
+order = [1, 2];
 ne = [20, 40, 60];
 len = 1./ne;
 type = NdgCellType.Tri;
@@ -21,9 +21,17 @@ err1 = zeros(Nmesh, Ndeg);
 
 linewidth = 1.5; 
 markersize = 8;
-color = {'b', 'r', 'g', 'm'};
+% c = 'b';
+c = 'r';
+% c = 'g';
+% c = 'c';
+% linestyle = '-';
+linestyle = ':';
+% linestyle = '-.';
+% linestyle = '--';
+
+color = {c, c, c, c};
 marker = {'o', 's', '^', '*'};
-linestyle = '--';
 for n = 1:Ndeg
     for m = 1:Nmesh
         pb = ParabolicBowl2d( order(n), ne(m), type );

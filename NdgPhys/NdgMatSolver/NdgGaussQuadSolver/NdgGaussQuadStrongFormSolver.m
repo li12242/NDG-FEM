@@ -111,7 +111,7 @@ classdef NdgGaussQuadStrongFormSolver < handle
                 obj.nx{m} = obj.FVfq{m} * nx;
                 obj.ny{m} = obj.FVfq{m} * ny;
                 obj.nz{m} = obj.FVfq{m} * nz;
-                [ obj.wJs{m} ] = obj.assembleFaceQuadratureWeight( mesh, TNfq, Js );
+                [ obj.wJs{m} ] = obj.assembleFaceQuadratureWeight( mesh, TNfq, obj.FVfq{m}*Js );
                 [ obj.rxwJ{m}, obj.rywJ{m}, obj.rzwJ{m}, ...
                     obj.sxwJ{m}, obj.sywJ{m}, obj.szwJ{m}, ...
                     obj.txwJ{m}, obj.tywJ{m}, obj.tzwJ{m} ] = obj.assembleJacobianFactor( mesh );

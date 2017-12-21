@@ -1,4 +1,4 @@
-classdef PerturbHump2d < SWEPreBlanaced2d & SDBAbstractTest & CSBAbstractTest
+classdef PerturbHump2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
     %PERTURBHUMP2D Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -26,8 +26,8 @@ classdef PerturbHump2d < SWEPreBlanaced2d & SDBAbstractTest & CSBAbstractTest
                 bot = 0.8*exp( -5*(mesh.x - 0.9).^2 - 50*(mesh.y - 0.5).^2 );
                 fphys{m}(:,:,4) = bot;
                 fphys{m}(:,:,1) = 1 - bot;
-%                 ind = ( mesh.xc >= 0.05 ) & ( mesh.xc <= 0.15 );
-%                 fphys{m}(:,ind,1) = fphys{m}(:,ind,1) + 0.01;
+                ind = ( mesh.xc >= 0.05 ) & ( mesh.xc <= 0.15 );
+                fphys{m}(:,ind,1) = fphys{m}(:,ind,1) + 0.01;
             end
         end
         

@@ -10,16 +10,15 @@ classdef NdgGaussQuadWeakFormAdvSolver2d < NdgGaussQuadWeakFormSolver & NdgAbstr
             phys = obj.phys;
             for m = 1:phys.Nmesh % calculate RHS term on each mesh
                 mesh = phys.meshUnion(m);
-                fq = zeros( mesh.cell.Nq, mesh.K, phys.Nvar );
-                for i = 1:phys.Nvar
-                    fld = phys.varFieldIndex(i);
-                    fq(:,:,i) = obj.Vq{m} * fphys{m}(:,:,fld);
+                fq = zeros( mesh.cell.Nq, mesh.K, phys.Nfield );
+                for i = 1:phys.Nfield
+                    fq(:,:,i) = obj.Vq{m} * fphys{m}(:,:,i);
                 end
                 [ E, G ] = phys.matEvaluateFlux( mesh, fq );
                 [ fm, fp ] = phys.matEvaluateSurfaceValue( mesh, fphys{m}, phys.fext{m} );
-                fmq = zeros( obj.TNfq{m}, mesh.K, phys.Nvar );
-                fpq = zeros( obj.TNfq{m}, mesh.K, phys.Nvar );
-                for i = 1:phys.Nvar
+                fmq = zeros( obj.TNfq{m}, mesh.K, phys.Nfield );
+                fpq = zeros( obj.TNfq{m}, mesh.K, phys.Nfield );
+                for i = 1:phys.Nfield
                     fmq(:,:,i) = obj.FVfq{m} * fm(:,:,i);
                     fpq(:,:,i) = obj.FVfq{m} * fp(:,:,i);
                 end

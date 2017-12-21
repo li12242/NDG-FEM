@@ -16,6 +16,14 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
     end
     
     methods( Hidden )
+        function initPhysFromOptions( obj, mesh )
+            initPhysFromOptions@NdgPhysMat( obj, mesh );
+            finalTime = obj.getOption('finalTime');
+            for m = 1:obj.Nmesh
+                obj.fext{m} = obj.getExtFunc(obj.meshUnion, finalTime);
+            end
+        end
+        
         function [ E, G ] = matEvaluateFlux( obj, mesh, fphys )
             E = fphys(:,:,2) .* fphys(:,:,1);
             G = fphys(:,:,3) .* fphys(:,:,1);

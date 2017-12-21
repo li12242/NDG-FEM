@@ -7,9 +7,9 @@ function run_conv2d
 % ne = K*4.^nk;
 % len = 0.5.^nk;
 order = [1, 2, 3];
-ne = [20, 40, 60, 80];
+ne = [20, 40, 60];
 len = 1./ne;
-type = NdgCellType.Tri;
+type = NdgCellType.Quad;
 
 Nmesh = numel(ne);
 Ndeg = numel(order);
@@ -27,21 +27,21 @@ err1 = zeros(Nmesh, Ndeg);
 
 linewidth = 1.5; 
 markersize = 8;
-% c = 'b';
+c = 'b';
 % c = 'r';
 % c = 'g';
-c = 'c';
-% linestyle = '-';
+% c = 'c';
+linestyle = '-';
 % linestyle = ':';
 % linestyle = '-.';
-linestyle = '--';
+% linestyle = '--';
 
 color = {c, c, c, c};
 marker = {'o', 's', '^', '*'};
 
 for n = 1:Ndeg
     for m = 1:Nmesh
-        adv = ConstAdvUniformMesh2d( order(n), ne(m), type );
+        adv = AdvRotationUniformMesh2d( order(n), ne(m), type );
         tic; adv.matSolve(); time(m, n) = toc;
         adv_pos = makeNdgPostProcessFromNdgPhys( adv );
         err2(m, n) = adv_pos.evaluateNormErr2(adv.fphys,adv.fext);

@@ -43,15 +43,14 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = 1.2;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
             option('obcType') = NdgBCType.None;
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
-            option('outputNetcdfCaseName') = 'AdvUniformMesh2d';
+            option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('timeInterval') = sqrt(2)/obj.M/obj.w/(2*obj.N + 1);
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('equationType') = NdgDiscreteEquationType.Weak;
+            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
             option('limiterType') = NdgLimiterType.None;
         end
                 

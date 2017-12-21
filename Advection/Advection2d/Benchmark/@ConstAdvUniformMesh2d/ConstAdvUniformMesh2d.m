@@ -48,7 +48,7 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             
-            option('equationType') = NdgDiscreteEquationType.Weak;
+            option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('limiterType') = NdgLimiterType.None;
         end
@@ -77,7 +77,7 @@ elseif(type == NdgCellType.Quad)
     mesh = makeUniformQuadMesh(N, [-1, 1], [-1, 1], ...
         M, M, bctype);
 else
-    msgID = 'AdvUniformUnion:inputCellTypeError';
+    msgID = [mfilename, ':inputCellTypeError'];
     msgtext = ['The input cell type should be NdgCellType.Tri',...
         ' or NdgCellType.Tri.'];
     ME = MException(msgID, msgtext);

@@ -1,4 +1,4 @@
-classdef WaterDrop2d < SWEAbstractDBN62d
+classdef WaterDrop2d < SWEPreBlanaced2d
     %WATERDROP2D Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -10,7 +10,7 @@ classdef WaterDrop2d < SWEAbstractDBN62d
     methods
         function obj = WaterDrop2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEAbstractDBN62d();
+            obj = obj@SWEPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
         end
     end
@@ -21,14 +21,14 @@ classdef WaterDrop2d < SWEAbstractDBN62d
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
                 fphys{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
-                fphys{m}(:,:,1) = 2.4*(1 + ...
-                    exp( -((mesh.x - 10).^2 + (mesh.y - 10).^2)/4 ));
-                
+                eta = 2.4*(1 + exp( -((mesh.x - 10).^2 + (mesh.y - 10).^2)/4 ));
+                fphys{m}(:,:,4) = exp( -0.05*(mesh.x - 10).^2 - 0.05*(mesh.y - 10).^2 );
+                fphys{m}(:,:,1) = eta - fphys{m}(:,:,4);
             end
         end
         
         function [ option ] = setOption( obj, option )
-            ftime = 1.2;
+            ftime = 12;
             outputIntervalNum = 10;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
@@ -48,10 +48,10 @@ end
 
 function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad];
+    NdgEdgeType.SlipWall, ...
+    NdgEdgeType.SlipWall, ...
+    NdgEdgeType.SlipWall, ...
+    NdgEdgeType.SlipWall];
 
 xlim = [0, 20];
 ylim = [0, 20];

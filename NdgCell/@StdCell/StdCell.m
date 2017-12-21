@@ -151,7 +151,7 @@ classdef StdCell < handle
         function obj = StdCell(N)
             [ obj.N ] = N;
             [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func( N );            
-            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( N );
+            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( 2*N );
             [ obj.V ] = obj.assembleVandMatrix( @obj.orthogonal_func );
             [ obj.Vq ] = obj.assembleQuadratureMatrix();
             [ obj.M, obj.invM ] = obj.assembleMassMatrix();

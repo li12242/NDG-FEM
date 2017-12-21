@@ -1,4 +1,4 @@
-classdef DamBreakSepUniformMesh2d < SWEPreBlanaced2d
+classdef DamBreakSepUniformMesh2d < SWEConventional2d
     %DAMBREAKSEPUNIFORMMESH2D Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -19,7 +19,7 @@ classdef DamBreakSepUniformMesh2d < SWEPreBlanaced2d
     methods
         function obj = DamBreakSepUniformMesh2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEPreBlanaced2d();
+            obj = obj@SWEConventional2d();
             obj.initPhysFromOptions( mesh );
         end
         
@@ -117,8 +117,8 @@ end
 
 function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
+    NdgEdgeType.SlipWall, ...
+    NdgEdgeType.SlipWall, ...
     NdgEdgeType.ZeroGrad, ...
     NdgEdgeType.ZeroGrad];
 
