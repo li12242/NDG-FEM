@@ -25,7 +25,7 @@ color = {'b', 'r', 'g', 'm'};
 marker = {'o', 's', '^', '*'};
 linestyle = '--';
 
-wd1 = WaterDrop2d(1, 200, NdgCellType.Quad);
+wd1 = WaterDrop2d(3, 120, NdgCellType.Quad);
 wd1.matSolve;
 wd1pos = makeNdgPostProcessFromNdgPhys( wd1 );
 for n = 1:Ndeg

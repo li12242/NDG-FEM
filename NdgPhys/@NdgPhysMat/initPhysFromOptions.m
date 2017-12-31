@@ -37,6 +37,17 @@ function [ limiter ] = setSlopeLimiter( obj )
                     @NdgVertLimiter1d, ...
                     @NdgVertLimiter2d );
                 limiter = limiterCreator( obj.meshUnion );
+            case NdgLimiterType.TVB
+                limiterCreator = choseFuncByMeshDim( obj, ...
+                    @NdgTVB1d, ...
+                    @NdgTVB2d );
+                M = obj.getOption('limiterParameter');
+                limiter = limiterCreator( obj.meshUnion, M );
+            case NdgLimiterType.BJ
+                limiterCreator = choseFuncByMeshDim( obj, ...
+                    @NdgBJ1d, ...
+                    @NdgBJ2d );
+                limiter = limiterCreator( obj.meshUnion );
         end% switch
     else
         limiter = NdgNonLimiter( obj.meshUnion );

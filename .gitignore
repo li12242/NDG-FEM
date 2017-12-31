@@ -13,5 +13,6 @@ html
 *.asv
 *.mat
 *.zip
+*.fig
 doc/html
 debug

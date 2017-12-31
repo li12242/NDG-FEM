@@ -5,7 +5,7 @@ Nbc = size(BCToV, 2);
 EToB = NdgEdgeType.Inner * ones(obj.cell.Nface, obj.K, 'int8');
 Nfp = size(BCToV, 1) - 1;
 
-bcInd = false(Nbc, 1);
+% bcInd = false(Nbc, 1);
 for k = 1:Ke
     for f = 1:Nface
         locVert = obj.cell.FToV(:, f);
@@ -17,7 +17,7 @@ for k = 1:Ke
         
             if ( sum( abs( bvert - double( sort(vert) ) ) ) < 1e-10 )
                 EToB(f, k) = NdgEdgeType( BCToV(Nfp+1, b) );
-                bcInd( b ) = true;
+%                 bcInd( b ) = true;
                 break;
             end
         end

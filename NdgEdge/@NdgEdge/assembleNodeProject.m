@@ -24,13 +24,13 @@ for n = 1:obj.M
     [ ~, vertInd1 ] = sort(vert1);
     [ ~, vertInd2 ] = sort(vert2);
     
-    if vertInd1(1) < vertInd1(2)
+    if ( vertInd1(1) ~= vertInd1(1) )
         FToN1(:, n) = mesh1.cell.Fmask(:, f1);
     else
         FToN1(:, n) = flip( mesh1.cell.Fmask(:, f1) );
     end
     
-    if vertInd2(1) < vertInd2(2)
+    if vertInd2(1) ~= vertInd2(1)
         FToN2(:, n) = mesh2.cell.Fmask(:, f2);
     else
         FToN2(:, n) = flip( mesh2.cell.Fmask(:, f2) );

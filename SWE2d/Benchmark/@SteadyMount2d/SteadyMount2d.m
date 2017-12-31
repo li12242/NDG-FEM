@@ -1,4 +1,4 @@
-classdef SteadyMount2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
+classdef SteadyMount2d < SWEPreBlanaced2d & SDBAbstractTest & CSBAbstractTest
     
     properties( Constant )
         %> wet/dry depth threshold
@@ -10,27 +10,61 @@ classdef SteadyMount2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
         y0 = 0.5
     end
     
+    properties
+        N
+    end
+    
     methods
         function obj = SteadyMount2d( N, M, cellType )
             [ mesh ] = makeUniformMesh(N, M, cellType);
             obj = obj@SWEPreBlanaced2d();
+            obj.N = N;
             obj.initPhysFromOptions( mesh );
             obj.fphys = obj.matEvaluatePostFunc( obj.fphys );
-            obj.fext = obj.setBoundaryCondition( );
         end
         
+        function drawFluxError( obj )
+            ncfile = [obj.getOption('outputNetcdfCaseName'), '.1-1.nc'];
+            time = ncread( ncfile, 'time' );
+            pos = makeNdgPostProcessFromNdgPhys( obj );
+            err = zeros( pos.Nt, 1 );
+            for t = 1:numel( time )
+                fext = obj.getExactFunction( time(t) );
+                fphys = pos.accessOutputResultAtStepNum( t );
+                temp = pos.evaluateNormErr2( fphys, fext );
+                err( t,1 ) = temp( 2 );
+                %err( t,2 ) = temp( 3 );
+            end
+            hold on;  grid on;
+            plot( time, err(:,1), 'g', 'LineWidth', 1.5 );
+            xlabel('$t$ (s)', 'FontSize', 16, 'Interpreter', 'Latex');
+            ylabel('$\left\| hu \right\|_2$', 'FontSize', 16, 'Interpreter', 'Latex');
+            legend( {['$p=', num2str(obj.N), '$']}, ...
+                'FontSize', 16, 'Interpreter', 'Latex', 'box', 'off',...
+                'Location', 'NorthEast')
+        end
         
+        function coutourFlux( obj )
+            pos = makeNdgPostProcessFromNdgPhys( obj );
+            fphys = pos.accessOutputResultAtStepNum( pos.Nt );
+            Ng = 50;
+            tol = 0;
+            xg = linspace( 0+tol, 1-tol, Ng );
+            yg = linspace( 0+tol, 1-tol, Ng );
+            [ x, y ] = meshgrid( xg, yg );
+            [ fg ] = pos.interpolatePhysFieldToGaugePoint(...
+                fphys, x(:), y(:), y(:) );
+            flux = reshape( fg(:, 2), Ng, Ng );
+            contourf( xg, yg, real(flux), 20 );
+            colorbar;
+            colormap jet;
+%             set( gca, 'CLim', [-1.5, 1.5]*1e-4 );
+            xlabel('$x$(m)', 'FontSize', 16, 'Interpreter', 'Latex');
+            ylabel('$y$(m)', 'FontSize', 16, 'Interpreter', 'Latex');
+        end
+            
     end
     methods(Access=protected)
-        function fext = setBoundaryCondition( obj )
-            fext = cell( obj.Nmesh, 1 );
-            for m = obj.Nmesh
-                mesh = obj.meshUnion(m);
-                fext{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
-                fext{m}(:, :, 1) = 0.2;
-                
-            end
-        end
         
         function fphys = setInitialField( obj )
             fphys = getExactFunction(obj, 0);
@@ -41,40 +75,25 @@ classdef SteadyMount2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
             option('obcType') = NdgBCType.None;
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
+            option('outputNetcdfCaseName') = [mfilename, '_', num2str(obj.N)];
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.None;
+            option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('CoriolisType')= CoriolisType.None;
             option('WindType') = WindType.None;
             option('FrictionType') = FrictionType.None;
-            option('WellBlancedType') = true;
         end
-        
-%         function [ fphys ] = matEvaluatePostFunc( obj, fphys )
-%             for m = 1:obj.Nmesh
-%                 hc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,1) );
-%                 qxc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,2) );
-%                 qyc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,3) );
-%                 fphys{m}(:,:,1:3) = mxEvaluatePostFunc2d( obj.hmin, fphys{m}, hc, qxc, qyc );
-%                 fphys{m}(:,:,2) = fphys{m}(:,:,2) .* 0.9;
-%                 fphys{m}(:,:,3) = fphys{m}(:,:,3) .* 0.9;
-%             end
-%             obj.matUpdateWetDryState( fphys );
-%         end
         
         function fphys = getExactFunction( obj, time )
             
             fphys = cell( obj.Nmesh, 1 );
-%             limiter = NdgVertLimiter2d( obj.meshUnion );
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                bot = 0.25 - 2.5*(mesh.x - obj.x0).^2 - 2.5*(mesh.y - obj.y0).^2;
+                bot = max( 0, 0.25 - 2.5*(mesh.x - obj.x0).^2 - 2.5*(mesh.y - obj.y0).^2 );
                 bmin = min(bot);
                 bmean = mesh.GetMeshAverageValue( bot );
                 bmean( bmean <= 0 ) = 0;
@@ -83,11 +102,11 @@ classdef SteadyMount2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
 % %                 sigma = 25*1e3/(33*33);
 % %                 temp = sigma*( (mesh.x - obj.x0).^2 + (mesh.y - obj.y0).^2 );
 % %                 bot = exp( -temp );
-%                 fphys{m}(:,:,4) = bot;
-%             end
-%             fphys = limiter.matLimit( fphys, 4 );
-%             for m = 1:obj.Nmesh
-%                 bot = fphys{m}(:,:,4);
+% %                 fphys{m}(:,:,4) = bot;
+% %             end
+% %             fphys = limiter.matLimit( fphys, 4 );
+% %             for m = 1:obj.Nmesh
+% %                 bot = fphys{m}(:,:,4);
                 eta = 0.2 * ones( mesh.cell.Np, mesh.K );
                 h = max( eta - bot, 0 );
                 ind = ( max(h) > 0 );

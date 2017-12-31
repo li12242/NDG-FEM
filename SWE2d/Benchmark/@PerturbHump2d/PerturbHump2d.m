@@ -1,6 +1,4 @@
 classdef PerturbHump2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
-    %PERTURBHUMP2D Summary of this class goes here
-    %   Detailed explanation goes here
     
     properties( Constant )
         gra = 9.81
@@ -26,8 +24,8 @@ classdef PerturbHump2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
                 bot = 0.8*exp( -5*(mesh.x - 0.9).^2 - 50*(mesh.y - 0.5).^2 );
                 fphys{m}(:,:,4) = bot;
                 fphys{m}(:,:,1) = 1 - bot;
-                ind = ( mesh.xc >= 0.05 ) & ( mesh.xc <= 0.15 );
-                fphys{m}(:,ind,1) = fphys{m}(:,ind,1) + 0.01;
+                ind = ( any(mesh.x > 0.05 ) ) & ( any(mesh.x < 0.15 ) );
+                fphys{m}(:, ind, 1) = fphys{m}(:, ind, 1) + 0.01;
             end
         end
         
@@ -56,7 +54,7 @@ function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
     NdgEdgeType.SlipWall, ...
     NdgEdgeType.SlipWall, ...
-    NdgEdgeType.ZeroGrad, ...
+    NdgEdgeType.ClampedDepth, ...
     NdgEdgeType.ZeroGrad];
 
 xlim = [0, 2]; 

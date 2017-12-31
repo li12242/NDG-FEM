@@ -1,12 +1,6 @@
-classdef AdvRotationHybridMesh2d < NdgPhysMat
+classdef AdvRotationHybridMesh2d < AdvAbstractVarFlow2d
     
     properties(Constant)
-        %> Number of physical field
-        Nfield = 3
-        %> Number of variable field
-        Nvar = 1
-        %> field index of variable field
-        varFieldIndex = 1
         %> domain central
         x0 = 0
         %> domain central
@@ -29,8 +23,8 @@ classdef AdvRotationHybridMesh2d < NdgPhysMat
     
     methods
         function obj = AdvRotationHybridMesh2d( N )
-            obj = obj@NdgPhysMat();
-            obj.gmshFile = [pwd, '/Advection/Advection2d/', ...
+            obj = obj@AdvAbstractVarFlow2d();
+            obj.gmshFile = [pwd, '/Advection/Advection2d/Benchmark/', ...
                 '@AdvRotationHybridMesh2d/HybridMesh/MixMesh.msh'];
             mesh = makeGmshFileUMeshUnion2d( N, obj.gmshFile );
             obj.N = N;
@@ -45,36 +39,36 @@ classdef AdvRotationHybridMesh2d < NdgPhysMat
             err = obj.evaluateNormErr2();
         end% func
         
-        function [E, G] = matEvaluateFlux( obj, mesh, fphys )
-            E = fphys(:,:,2) .* fphys(:,:,1);
-            G = fphys(:,:,3) .* fphys(:,:,1);
-        end
-        
-        function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fphys, fext )
-            Ntp = mesh.cell.Np * mesh.K;
-            [ fm ] = fphys(mesh.eidM);
-            [ fp ] = fphys(mesh.eidP);
-            [ fpext ] = fext(mesh.eidP);
-            ind = ( mesh.eidtype == int8(NdgEdgeType.GaussEdge) );
-            fp( ind ) = fpext( ind );
-            ind = ( mesh.eidtype == int8(NdgEdgeType.Clamped) );
-            fp( ind ) = 0;
-            [ um ] = fphys(mesh.eidM + Ntp);
-            [ vm ] = fphys(mesh.eidM + 2*Ntp);
-            [ uNorm ] = um .* nx + vm .* ny;
-            fluxS = ( fm .* ( sign( uNorm ) + 1 ) * 0.5 ...
-                + fp .* ( 1 - sign( uNorm )  ) * 0.5 ) .* uNorm;
-        end
-        
-        function [ flux ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fphys )
-            Ntp = mesh.cell.Np * mesh.K;
-            [ fm ] = fphys( mesh.eidM ); 
-            [ um ] = fphys(mesh.eidM + Ntp); 
-            [ vm ] = fphys(mesh.eidM + 2*Ntp); 
-            Em = fm .* um;
-            Gm = fm .* vm;
-            flux = Em .* nx + Gm .* ny;
-        end
+%         function [E, G] = matEvaluateFlux( obj, mesh, fphys )
+%             E = fphys(:,:,2) .* fphys(:,:,1);
+%             G = fphys(:,:,3) .* fphys(:,:,1);
+%         end
+%         
+%         function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fphys, fext )
+%             Ntp = mesh.cell.Np * mesh.K;
+%             [ fm ] = fphys(mesh.eidM);
+%             [ fp ] = fphys(mesh.eidP);
+%             [ fpext ] = fext(mesh.eidP);
+%             ind = ( mesh.eidtype == int8(NdgEdgeType.GaussEdge) );
+%             fp( ind ) = fpext( ind );
+%             ind = ( mesh.eidtype == int8(NdgEdgeType.Clamped) );
+%             fp( ind ) = 0;
+%             [ um ] = fphys(mesh.eidM + Ntp);
+%             [ vm ] = fphys(mesh.eidM + 2*Ntp);
+%             [ uNorm ] = um .* nx + vm .* ny;
+%             fluxS = ( fm .* ( sign( uNorm ) + 1 ) * 0.5 ...
+%                 + fp .* ( 1 - sign( uNorm )  ) * 0.5 ) .* uNorm;
+%         end
+%         
+%         function [ flux ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fphys )
+%             Ntp = mesh.cell.Np * mesh.K;
+%             [ fm ] = fphys( mesh.eidM ); 
+%             [ um ] = fphys(mesh.eidM + Ntp); 
+%             [ vm ] = fphys(mesh.eidM + 2*Ntp); 
+%             Em = fm .* um;
+%             Gm = fm .* vm;
+%             flux = Em .* nx + Gm .* ny;
+%         end
     end
     
     methods( Access = protected )
@@ -82,7 +76,7 @@ classdef AdvRotationHybridMesh2d < NdgPhysMat
         function [ fphys ] = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
             for m = 1:obj.Nmesh
-                fphys{m} = getExtFunc(obj, obj.meshUnion(m), 0);
+                fphys{m} = obj.getExtFunc( obj.meshUnion(m), 0 );
             end
         end% func
         
@@ -90,7 +84,6 @@ classdef AdvRotationHybridMesh2d < NdgPhysMat
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = 2.4;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
             option('obcType') = NdgBCType.None;
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
@@ -102,8 +95,8 @@ classdef AdvRotationHybridMesh2d < NdgPhysMat
                 dx = min( dx, min( obj.meshUnion(m).charLength ) );
             end
             option('timeInterval') = dx/sqrt(2)/obj.w/(2*obj.N + 1)/2;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('equationType') = NdgDiscreteEquationType.Weak;
+            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
             option('limiterType') = NdgLimiterType.None;
         end
         

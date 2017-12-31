@@ -56,7 +56,7 @@ if Nquad > 0
     data = fscanf(fid1,'%d %d %d %d %d %d %d %d %d\n',[9, Nquad]);
     EToVQuad = [data(6, :); data(7, :); data(8, :); data(9, :)];
     EToRQuad = data(4, :);
-    stdQuad = StdQuad(N+1);
+    stdQuad = StdQuad(N);
     quadMesh = NdgMesh2d(stdQuad, Nv, vx, vy, Nquad, EToVQuad, EToRQuad, BCToV);
 end
 

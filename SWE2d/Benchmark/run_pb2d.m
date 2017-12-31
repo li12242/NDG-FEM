@@ -1,6 +1,6 @@
 function run_pb2d
 
-order = [1, 2];
+order = [1];
 ne = [20, 40, 60];
 len = 1./ne;
 type = NdgCellType.Tri;

@@ -4,14 +4,14 @@ function initPhysFromOptions( obj, mesh )
 initPhysFromOptions@NdgPhysMat( obj, mesh );
 obj.matUpdateWetDryState( obj.fphys );
 
+obj.zGrad = cell( obj.Nmesh, 1 );
 for m = 1:obj.Nmesh
     mesh = obj.meshUnion(m);
-    obj.fphys{m}(:,:,5) = ...
-        mesh.rx .* (mesh.cell.Dr * obj.fphys{m}(:,:,4)) + ...
-        mesh.sx .* (mesh.cell.Ds * obj.fphys{m}(:,:,4));
-    obj.fphys{m}(:,:,6) = ...
-        mesh.ry .* (mesh.cell.Dr * obj.fphys{m}(:,:,4)) + ...
-        mesh.sy .* (mesh.cell.Ds * obj.fphys{m}(:,:,4));
+    obj.zGrad{m} = zeros( mesh.cell.Np, mesh.K, 2 );
+    zr = mesh.cell.Dr * obj.fphys{m}(:,:,4);
+    zs = mesh.cell.Ds * obj.fphys{m}(:,:,4);
+    obj.zGrad{m}(:,:,1) = mesh.rx .* zr + mesh.sx .* zs;
+    obj.zGrad{m}(:,:,2) = mesh.ry .* zr + mesh.sy .* zs;
 end
 
 %Coriolis Term

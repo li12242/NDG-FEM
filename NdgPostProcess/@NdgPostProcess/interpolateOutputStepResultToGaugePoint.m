@@ -1,6 +1,6 @@
 function [ gaugeValue ] = interpolateOutputStepResultToGaugePoint( obj, xg, yg, zg, outputStep )
 Ng = numel( xg );
-gaugeValue = zeros(Ng, obj.Nfield);
+gaugeValue = zeros(Ng, obj.Nvar);
 fresult = obj.accessOutputResultAtStepNum( outputStep ); %
 for m = 1:obj.Nmesh
     [ cellId, Vg ] = obj.meshUnion.accessGaugePointLocation( xg, yg, zg );

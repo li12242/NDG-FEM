@@ -46,11 +46,11 @@ classdef StdLine < StdCell
             obj = obj@StdCell(N);
         end
         
-        function [ nx, ny, nz, Js ] = assembleNormalVector( obj, x )
+        function [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z )
             xr = obj.Dr * x;
             
             nr = [-1, 1]';
-            nx = 1./xr( obj.Fmask(:) ) .* nr;
+            nx = 1./xr( obj.Fmask(:),: ) .* nr;
             nx = nx ./ sqrt( nx.^2 ); 
             Js = ones( size(nx) );
             
@@ -58,7 +58,7 @@ classdef StdLine < StdCell
             nz = zeros( size(nx) );
         end
         
-        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x )
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x, y, z )
             xr = obj.Dr * x;
             J = xr; rx = 1./J;
             

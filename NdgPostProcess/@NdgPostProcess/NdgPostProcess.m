@@ -72,12 +72,13 @@ classdef NdgPostProcess < handle
         [ fg ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg );
         [ fg ] = interpolatePhysFieldToGaugePoint( obj, fphys, xg, yg, zg );
         
-    end
-    
-    methods( Hidden, Access = protected )
         [ Noutput ] = accessOutputStepNumber( obj )
         [ fphys ] = accessOutputResultAtStepNum( obj, stepId )
         [ Nvar ] = accessOutputVarNumber( obj )
+    end
+    
+    methods( Hidden, Access = protected )
+        
     end
     
 end

@@ -3,8 +3,8 @@ classdef SWEConventional2d < SWEAbstract2d
     %   Detailed explanation goes here
     
     properties(Constant)
-        %> Variable field - {h, hu, hv, b, bx, by}
-        Nfield = 6
+        %> Variable field - {h, hu, hv, b}
+        Nfield = 4
         %> Variable field - {h, hu, hv}
         Nvar = 3
         %> field index of variable field
@@ -21,8 +21,8 @@ classdef SWEConventional2d < SWEAbstract2d
         function matEvaluateTopographySourceTerm( obj, fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                obj.frhs{m} = obj.frhs{m} + ...
-                    mxEvaluateSourceTopography2d( obj.gra, mesh.EToR, fphys{m} );
+                obj.frhs{m} = obj.frhs{m} + mxEvaluateSourceTopography2d...
+                    ( obj.gra, mesh.EToR, fphys{m}, obj.zGrad{m} );
             end
         end
     end

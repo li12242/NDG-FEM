@@ -12,11 +12,11 @@ classdef NdgEdge2d < NdgEdge
             obj = obj@NdgEdge( mesh1, mesh2, meshId1, meshId2 );
         end
         
-        function draw( obj )
-            vx = obj.umesh(1).vx( obj.FToV );
-            vy = obj.umesh(1).vy( obj.FToV );
-            plot(vx, vy, 'k.-');
-        end
+%         function draw( obj )
+%             vx = obj.umesh(1).vx( obj.FToV );
+%             vy = obj.umesh(1).vy( obj.FToV );
+%             plot(vx, vy, 'k.-');
+%         end
     end
     
     methods(Hidden, Access=protected)

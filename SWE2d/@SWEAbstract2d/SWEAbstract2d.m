@@ -14,6 +14,8 @@ classdef SWEAbstract2d < NdgPhysMat
     end
     
     properties
+        %> gradient of bottom elevation
+        zGrad
         %>
         coriolisSolver
         %>
@@ -29,6 +31,9 @@ classdef SWEAbstract2d < NdgPhysMat
         end
         %>
         [ ] = drawSurfaceBot( obj )
+    end
+    
+    methods( Hidden )
         
         function [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
             [ fM, fP ] = mxEvaluateSurfaceValue( obj.hmin, obj.gra, ...
@@ -36,9 +41,6 @@ classdef SWEAbstract2d < NdgPhysMat
                 fphys, fext );
         end
         
-    end
-    
-    methods
         function [ fluxM ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fm )
             [ fluxM ] = mxEvaluateSurfFlux( obj.hmin, obj.gra, nx, ny, fm);
         end
@@ -49,7 +51,7 @@ classdef SWEAbstract2d < NdgPhysMat
     end
     
     methods( Abstract, Access = protected )
-        %>
+        %> 
         matEvaluateTopographySourceTerm( obj, fphys )
     end
     

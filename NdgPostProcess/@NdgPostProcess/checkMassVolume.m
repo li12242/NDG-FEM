@@ -8,7 +8,7 @@ for t = 1:obj.Nt
         mass( t ) = mass( t ) + sum( obj.meshUnion(m).GetMeshIntegralValue( fphys{m}(:,:,varId) ) );
     end
 end
-plot( time, mass );
+plot( time, (mass - mass(1))./mass(1) );
 
 end
 

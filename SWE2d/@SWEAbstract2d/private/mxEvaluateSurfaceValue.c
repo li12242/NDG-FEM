@@ -93,17 +93,17 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   const mwSize* dims = mxGetDimensions(prhs[7]);
   const size_t Np = dims[0];
   const size_t K = dims[1];
+  const size_t Nfield = dims[2];
 
   const size_t TNfp = mxGetM(prhs[2]);
   const size_t ndimOut = 3;
-  const mwSize dimOut[3] = {TNfp, K, NVAR};
+  const mwSize dimOut[3] = {TNfp, K, Nfield};
   plhs[0] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
   plhs[1] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
 
   double* he = fext;
   double* hue = he + K * Np;
   double* hve = he + 2 * K * Np;
-  double* ze = he + 3 * K * Np;
 
   double* h = fphys;
   double* hu = h + K * Np;
@@ -129,7 +129,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
       double fm[4] = {h[im], hu[im], hv[im], z[im]};
       double fp[4] = {h[ip], hu[ip], hv[ip], z[ip]};
-      double fe[4] = {he[im], hue[im], hve[im], ze[im]};
+      double fe[3] = {he[im], hue[im], hve[im]};
 
       const double nx_ = nx[sk];
       const double ny_ = ny[sk];

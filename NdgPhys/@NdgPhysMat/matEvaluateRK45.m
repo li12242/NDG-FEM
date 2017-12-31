@@ -33,11 +33,11 @@ while( time < ftime )
         fphys = obj.matEvaluatePostFunc( fphys );
         
     end
-%     for m = 1:obj.Nmesh
-%         obj.meshUnion(m).draw( fphys{m}(:,:,2) );
-% %         obj.meshUnion(m).draw( fphys{m}(:,:,1) + fphys{m}(:,:,4) );
-%     end
-%     drawnow;
+    for m = 1:obj.Nmesh
+        obj.meshUnion(m).draw( fphys{m}(:,:,1) );
+%         obj.meshUnion(m).draw( fphys{m}(:,:,1) + fphys{m}(:,:,4) );
+    end
+    drawnow;
     
     time = time + dt;
     obj.matUpdateOutputResult( time, fphys );

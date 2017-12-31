@@ -1,10 +1,8 @@
 classdef SWEPreBlanaced2d < SWEAbstract2d
-    %SWEPREBLANACED2D Summary of this class goes here
-    %   Detailed explanation goes here
     
     properties(Constant)
-        %> Variable field - {h, hu, hv, b, bx, by}
-        Nfield = 7
+        %> Variable field - {h, hu, hv, b, eta}
+        Nfield = 5
         %> Variable field - {h, hu, hv}
         Nvar = 3
         %> field index of variable field
@@ -21,8 +19,8 @@ classdef SWEPreBlanaced2d < SWEAbstract2d
         function matEvaluateTopographySourceTerm( obj, fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                obj.frhs{m} = obj.frhs{m} + ...
-                    mxEvaluateSourceTopography2d( obj.gra, mesh.EToR, fphys{m} );
+                obj.frhs{m} = obj.frhs{m} + mxEvaluateSourceTopography2d...
+                    ( obj.gra, mesh.EToR, fphys{m}, obj.zGrad{m} );
             end
         end
         
@@ -30,11 +28,13 @@ classdef SWEPreBlanaced2d < SWEAbstract2d
             fphys = obj.limiter.matLimit( fphys, 2 );
             fphys = obj.limiter.matLimit( fphys, 3 );
             for m = 1:obj.Nmesh % update new elevation
-                fphys{m}(:,:,7) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
+                fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
             end
-            fphys = obj.limiter.matLimit( fphys, 7 ); % enforce the elevation
+            fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
             for m = 1:obj.Nmesh % update new elevation
-                fphys{m}(:,:,1) = fphys{m}(:,:,7) - fphys{m}(:,:,4);
+                mesh = obj.meshUnion(m);
+                ind = (mesh.EToR == int8( NdgRegionType.Wet ));
+                fphys{m}(:,ind,1) = fphys{m}(:,ind,5) - fphys{m}(:,ind,4);
             end
 %             for m = 1:obj.Nmesh % set the new bottom topography
 %                 mesh = obj.meshUnion(m);

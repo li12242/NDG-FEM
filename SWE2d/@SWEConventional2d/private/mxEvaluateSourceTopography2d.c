@@ -1,7 +1,7 @@
 #include "mex.h"
 #include "mxSWE2d.h"
 
-#define NRHS 3
+#define NRHS 4
 #define NLHS 1
 #define NVAR 3
 
@@ -20,6 +20,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   double gra = mxGetScalar(prhs[0]);
   signed char* regType = (signed char*)mxGetData(prhs[1]);
   double* fphys = mxGetPr(prhs[2]);
+  double* zgrad = mxGetPr(prhs[3]);
 
   const mwSize* dims = mxGetDimensions(prhs[2]);
   const size_t Np = dims[0];
@@ -31,8 +32,8 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
   double* h = fphys;
   double* z = fphys + 3 * K * Np;
-  double* bx = z + K * Np;
-  double* by = z + 2 * K * Np;
+  double* bx = zgrad;
+  double* by = zgrad + K * Np;
 
   double* sourceH = mxGetPr(plhs[0]);
   double* sourceQx = sourceH + K * Np;

@@ -1,5 +1,5 @@
 classdef AdvAbstractVarFlow2d < NdgPhysMat
-
+    
     properties(Constant)
         %> Number of physical field
         Nfield = 3
@@ -20,7 +20,7 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
             initPhysFromOptions@NdgPhysMat( obj, mesh );
             finalTime = obj.getOption('finalTime');
             for m = 1:obj.Nmesh
-                obj.fext{m} = obj.getExtFunc(obj.meshUnion, finalTime);
+                obj.fext{m} = obj.getExtFunc(obj.meshUnion(m), finalTime);
             end
         end
         
@@ -32,13 +32,16 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
         function [ fm, fp ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
             fm(:,:,1) = fphys( mesh.eidM );
             fp(:,:,1) = fphys( mesh.eidP );
+            fe(:,:,1) = fext ( mesh.eidM );
+            ind = ( mesh.eidtype == int8(NdgEdgeType.GaussEdge) );
+            fp( ind ) = fe( ind );
             ind = ( mesh.eidtype == int8(NdgEdgeType.Clamped) );
             fp(ind) = 0;
             Ntp = mesh.cell.Np * mesh.K;
-            fm(:,:,2) = fphys(mesh.eidM + Ntp); 
-            fm(:,:,3) = fphys(mesh.eidM + 2*Ntp); 
-            fp(:,:,2) = fphys(mesh.eidP + Ntp); 
-            fp(:,:,3) = fphys(mesh.eidP + 2*Ntp); 
+            fm(:,:,2) = fphys(mesh.eidM + Ntp);
+            fm(:,:,3) = fphys(mesh.eidM + 2*Ntp);
+            fp(:,:,2) = fphys(mesh.eidP + Ntp);
+            fp(:,:,3) = fphys(mesh.eidP + 2*Ntp);
         end
         
         function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fm, fp )
