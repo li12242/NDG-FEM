@@ -46,8 +46,25 @@ path = 'NdgLimiter/NdgVertLimiter/@NdgVertLimiter2d/private/';
 srcfile = {[path, 'mxVertLimit2d.c']};
 FuncHandle(path, srcfile, libfile);
 
-% SWE
-path = 'SWE2d/@SWEAbstract2d/private/';
+% SWE1d
+path = 'SWE/SWE1d/@SWEAbstract1d/private/';
+CFLAGS = [CFLAGS, ' -I', path, ' '];
+libfile = {[path, 'mxSWE1d.c']};
+srcfile = {[path, 'mxEvaluateHLLNumFlux1d.c'], ...
+    [path, 'mxEvaluatePostFunc1d.c'], ...
+    [path, 'mxEvaluateSurfaceValue1d.c'], ...
+    [path, 'mxEvaluateSurfFlux1d.c'], ...
+    [path, 'mxUpdateTimeInterval1d.c']};
+FuncHandle(path, srcfile, libfile);
+
+path = 'SWE/SWE1d/@SWEConventional1d/private/';
+libfile = {};
+srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
+    [path, 'mxEvaluateSourceTopography1d.c']};
+FuncHandle(path, srcfile, libfile);
+
+% SWE2d
+path = 'SWE/SWE2d/@SWEAbstract2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {[path, 'mxSWE2d.c']};
 srcfile = {[path, 'mxEvaluateHLLNumFlux2d.c'], ...
@@ -57,41 +74,16 @@ srcfile = {[path, 'mxEvaluateHLLNumFlux2d.c'], ...
     [path, 'mxUpdateTimeInterval2d.c']};
 FuncHandle(path, srcfile, libfile);
     
-path = 'SWE2d/@SWEConventional2d/private/';
-%CFLAGS = [CFLAGS, ' -I', path, ' '];
+path = 'SWE/SWE2d/@SWEConventional2d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE2d/@SWEPreBlanaced2d/private/';
+path = 'SWE/SWE2d/@SWEPreBlanaced2d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
-FuncHandle(path, srcfile, libfile);
-
-% path = 'SWE2d/@SWEAbstractCB2d/private/';
-% CFLAGS = [CFLAGS, ' -I', path, ' '];
-% libfile = {[path, 'mxSWE2d.c']};
-% srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
-%     [path, 'mxEvaluateSurfFlux.c'], ...
-%     [path, 'mxEvaluateSurfNumFlux.c'], ...
-%     [path, 'mxEvaluatePostFunc2d.c'], ...
-%     [path, 'mxUpdateTimeInterval2d.c'],...
-%     [path, 'mxEvaluateSourceTopography2d.c']};
-% FuncHandle(path, srcfile, libfile);
-% 
-% path = 'SWE2d/@SWEAbstractDB2d/private/';
-% CFLAGS = [CFLAGS, ' -I', path, ' '];
-% libfile = {[path, 'mxSWE2d.c']};
-% srcfile = {[path, 'mxEvaluateSurfFlux2d.c'], ...
-%     [path, 'mxEvaluateSurfNumFlux2d.c']};
-% FuncHandle(path, srcfile, libfile);
-
-path = 'SWE2d/Benchmark/@SteadyMount2d/private/';
-CFLAGS = [CFLAGS, ' -I', path, ' '];
-libfile = {[path, 'mxSWE2d.c']};
-srcfile = {[path, 'mxEvaluatePostFunc2d.c']};
 FuncHandle(path, srcfile, libfile);
 
 fprintf('\n%s:: Compiled all the mex files.\n', mfilename);
