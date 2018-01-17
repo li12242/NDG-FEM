@@ -16,13 +16,13 @@
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 %======================================================================
 function [ err ] = evaluateNormErr2( obj, fphys, fext )
-err = zeros(obj.Nvar, 1);
+err = zeros(obj.Nmesh, obj.Nvar);
 for m = 1:obj.Nmesh
     totalArea = sum( obj.meshUnion(m).LAV );
     for fld = 1:obj.Nvar
         temp = fphys{m}(:,:,fld) - fext{m}(:,:,fld);
         integralErr = sqrt( sum( obj.meshUnion(m).GetMeshIntegralValue( temp.^2 ) ) );
-        err(fld) = err(fld) + integralErr/totalArea;
+        err(m, fld) = integralErr/totalArea;
     end
 end
 end% func

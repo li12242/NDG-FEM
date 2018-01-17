@@ -17,5 +17,6 @@ classdef NdgEdgeType < int8
         ClampedDepth    (6)
         ClampedVel      (7)
         Flather         (8)
+        RefineEdge      (9)
     end
 end

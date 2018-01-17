@@ -20,6 +20,10 @@ classdef SWEAbstract1d < NdgPhysMat
         frictionSolver
     end
     
+    properties( Hidden )
+        draw_handle
+    end
+    
     methods( Hidden )
         
         function [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
@@ -47,6 +51,7 @@ classdef SWEAbstract1d < NdgPhysMat
     methods( Access = protected )
         %>
         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+            obj.matUpdateWetDryState( fphys );
             for m = 1:obj.Nmesh
                 hc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,1) );
                 qxc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,2) );
@@ -68,6 +73,7 @@ classdef SWEAbstract1d < NdgPhysMat
             for m = 1:obj.Nmesh
                 N = obj.meshUnion(m).cell.N;
                 dtm = mxUpdateTimeInterval1d( ...
+                    obj.hmin, ...
                     obj.gra, ...
                     N, ...
                     obj.meshUnion(m).LAV, ...
@@ -75,7 +81,7 @@ classdef SWEAbstract1d < NdgPhysMat
                     fphys{m} );
                 
                 if ( dtm > 0 )
-                    dt = min(dt, dtm/N);
+                    dt = min(dt, dtm*obj.cfl);
                 end
             end
         end

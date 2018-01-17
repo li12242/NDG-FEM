@@ -71,7 +71,7 @@ classdef NdgMesh < handle
         charLength
     end
     
-    properties( SetAccess = protected )
+    properties%( SetAccess = protected )
         %> the local face point index
         eidM
         %> the adjacent point index
@@ -117,11 +117,11 @@ classdef NdgMesh < handle
         [ eidM, eidP, eidtype ] = assembleEdgeNode( obj )
         [ EToB ] = assembleCellBoundary( obj, BCToV )
         
-        function [LAV, charLength] = assembleCellScale( obj )
+        function [LAV, charLength] = assembleCellScale( obj, J )
             
             % Jacobian determination on each quadrature points
             one = ones( obj.cell.Np, obj.K );
-            LAV = mxGetMeshIntegralValue( one, obj.cell.wq, obj.J, obj.cell.Vq );
+            LAV = mxGetMeshIntegralValue( one, obj.cell.wq, J, obj.cell.Vq );
             %LAV = mxGetIntegralValue(, obj.cell.wq, obj.Jq );
             switch obj.cell.type
                 case NdgCellType.Line
@@ -159,11 +159,10 @@ classdef NdgMesh < handle
                 obj.sx, obj.sy, obj.sz, ...
                 obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
 %             [ obj.J ] = assembleJacobiFactor( obj );
-            
+            [ obj.LAV, obj.charLength ] = assembleCellScale( obj, obj.J );
             [ obj.nx, obj.ny, obj.nz, obj.Js ] = assembleFacialJaobiFactor( obj );
             [ obj.eidM, obj.eidP, obj.eidtype ] = assembleEdgeNode( obj );
             
-            [ obj.LAV, obj.charLength ] = assembleCellScale( obj );
             [ obj.xc ] =  obj.GetMeshAverageValue( obj.x );
             [ obj.yc ] =  obj.GetMeshAverageValue( obj.y );
             [ obj.zc ] =  obj.GetMeshAverageValue( obj.z );

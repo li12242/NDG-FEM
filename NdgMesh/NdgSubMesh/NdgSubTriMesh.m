@@ -1,6 +1,4 @@
 classdef NdgSubTriMesh < NdgMesh2d
-    %NDGSUBTRIMESH Summary of this class goes here
-    %   Detailed explanation goes here
     
     properties
         locNx, locNy, locNz

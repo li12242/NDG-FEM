@@ -10,8 +10,8 @@ classdef SWEPreBlanaced1d < SWEAbstract1d
     end
     
     methods
-        function [ E, G ] = matEvaluateFlux( obj, mesh, fphys )
-            [ E, G ] = mxEvaluateFlux1d( obj.hmin, obj.gra, mesh.EToR, fphys );
+        function [ E ] = matEvaluateFlux( obj, mesh, fphys )
+            [ E ] = mxEvaluateFlux1d( obj.hmin, obj.gra, mesh.EToR, fphys );
         end
     end
     

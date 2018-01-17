@@ -38,6 +38,8 @@ classdef NdgPhys < handle
         meshUnion
         %> number of mesh
         Nmesh
+        %> CFL number
+        cfl
     end
     
     properties( SetAccess = protected )

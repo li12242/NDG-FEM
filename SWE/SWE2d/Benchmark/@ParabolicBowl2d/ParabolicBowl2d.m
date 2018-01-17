@@ -9,7 +9,7 @@
 %> International Journal for Numerical Methods in Fluids 2008;58:1–25.
 %> doi:10.1002/fld.1674.
 %>
-classdef ParabolicBowl2d < SWEConventional2d
+classdef ParabolicBowl2d < SWEWD2d & SWEConventional2d
     
     properties( Constant )
         hmin = 1e-4
@@ -102,6 +102,7 @@ classdef ParabolicBowl2d < SWEConventional2d
             outputIntervalNum = 200;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
+            option('cfl') = 1/obj.meshUnion(1).cell.N;
             option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
             option('obcType') = NdgBCType.None;
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;

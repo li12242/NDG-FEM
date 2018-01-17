@@ -21,14 +21,15 @@ classdef NdgBJ1d < NdgBJAbstract
                 if(any(ids))
                     a = ones(size( temp ));
                     f_dive = 1./bsxfun(@minus, temp, cmean{m});
-                    ind1 = bsxfun(@gt, temp, cmean{m}); % correction for f_Q > cmean
-                    ind2 = bsxfun(@lt, temp, cmean{m}); % correction for f_Q < cmean
+                    ind1 = bsxfun(@gt, temp, cmax{m}); % correction for f_Q > cmean
+                    ind2 = bsxfun(@lt, temp, cmin{m}); % correction for f_Q < cmean
                     tmp1 = min(1, bsxfun(@times, cmax{m}-cmean{m}, f_dive));
                     tmp2 = min(1, bsxfun(@times, cmin{m}-cmean{m}, f_dive));
                     a(ind1) = tmp1(ind1);
                     a(ind2) = tmp2(ind2);
+                    a = min( a );
                     % apply slope limiter to selected elements
-                    temp = bsxfun(@plus, cmean{m}, a./f_dive);
+                    temp = bsxfun(@plus, cmean{m}, bsxfun(@times, a, 1./f_dive));
                     fphys{m}(:,ids, fldId) = temp(:, ids);
                 end
             end

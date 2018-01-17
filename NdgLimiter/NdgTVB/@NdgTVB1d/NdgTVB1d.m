@@ -12,7 +12,7 @@ classdef NdgTVB1d < NdgTVBAbstract
             
             obj.h2 = cell( obj.Nmesh, 1 );
             for m = 1:obj.Nmesh
-                obj.h2{m} = obj.meshUnion(m).LAV.^2;
+                obj.h2{m} = obj.meshUnion(m).LAV.^2 .* M;
             end
             
         end
@@ -23,10 +23,10 @@ classdef NdgTVB1d < NdgTVBAbstract
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
                 
-                dh = fphys{m}( mesh.cell.Fmask(1), :, fldId ) ...
-                    - fphys{m}( mesh.cell.Fmask(2), :, fldId );
-                dhl = hca{m}(1, :) - hc{m};
-                dhr = hc{m} - hca{m}(2, :);
+                dh = fphys{m}( end, :, fldId ) ...
+                    - fphys{m}( 1, :, fldId );
+                dhl =   ( hc{m} - hca{m}(1, :) );
+                dhr = - ( hc{m} - hca{m}(2, :) );
                 ids = ( abs( dh ) > obj.h2{m} );
                 
                 if ( any( ids ) )

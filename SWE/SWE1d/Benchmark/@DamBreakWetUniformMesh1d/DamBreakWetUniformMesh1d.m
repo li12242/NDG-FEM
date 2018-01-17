@@ -1,6 +1,4 @@
 classdef DamBreakWetUniformMesh1d < SWEConventional1d
-    %DAMBREAKWETUNIFORMMESH1D Summary of this class goes here
-    %   Detailed explanation goes here
     
     properties( Constant )
         hmin = 1e-4
@@ -44,7 +42,7 @@ classdef DamBreakWetUniformMesh1d < SWEConventional1d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.BJ;
-            option('limiterParameter') = 10;
+            option('limiterParameter') = 0;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
         end

@@ -22,6 +22,13 @@ function initPhysFromOptions( obj, mesh )
 
     %> set the final time
     obj.ftime = obj.getOption('finalTime');
+    if obj.option.isKey('CFL')
+        obj.cfl = obj.getOption('CFL');
+    elseif obj.option.isKey('cfl')
+        obj.cfl = obj.getOption('cfl');
+    else
+        obj.cfl = 1;
+    end
     %> choose the limiter
     [ obj.limiter ] = setSlopeLimiter( obj );
 end% func

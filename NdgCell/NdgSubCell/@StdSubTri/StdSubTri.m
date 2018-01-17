@@ -7,7 +7,7 @@ classdef StdSubTri < StdTri
         EToV
         %> No. of control volume, equal to Np
         NCV
-        %> ratio of length/area/volume of each control volume
+        %> length/area/volume of each control volume
         LAVToCV
         %> No. of inside edges, equal to NFV*3
         Nedge
@@ -37,31 +37,52 @@ classdef StdSubTri < StdTri
             [ obj.SLIFT ] = assembleSLIFT( obj );
         end
         
+        function [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z )
+            [ nx, ny, nz, Js ] = assembleNormalVector@StdTri( obj, x, y, z );
+            Js = zeros( size(Js) );
+            
+            for i1 = 1:(obj.TNfp-1)
+                i2 = i1+1;
+                v1 = obj.Fmask(i1);
+                v2 = obj.Fmask(i2);
+                d2 = sqrt( (x(v1, :) - x(v2, :)).^2 ...
+                    + (y(v1, :) - y(v2, :)).^2 )/2;
+                Js(i1, :) = Js(i1, :) + d2;
+                Js(i2, :) = Js(i2, :) + d2;
+            end
+        end
+        
         function [nxf, nyf, nzf, flen] = ...
                 matEvaluateInnerControlEdgeInfo( obj, x, y, z )
             K = size(x, 2);
-            obj.Nedge = obj.NFV*obj.Nface;
             nxf = zeros( obj.Nedge, K );
             nyf = zeros( obj.Nedge, K );
             nzf = zeros( obj.Nedge, K );
             flen = zeros( obj.Nedge, K );
             
+            xc = zeros( obj.Nedge, K );
+            yc = zeros( obj.Nedge, K );
             for k = 1:K
-                for n = 1:obj.NFV % loop over FVs
-                    vertId = obj.EToV(:, n);
-                    xc = mean( x(vertId, k) );
-                    yc = mean( y(vertId, k) );
-                    
-                    x1 = x( obj.n1, k ); y1 = y( obj.n1, k );
-                    x2 = x( obj.n2, k ); y2 = y( obj.n2, k );
-                    xf = 0.5*( x1 + x2 ); yf = 0.5*( y1 + y2 );
-                    nxt = yc - yf; 
-                    nyt = xf - xc;
-                    ds = sqrt( nxt.^2 + nyt.^2 );
-                    nxf( :, k ) = nxt/ds;
-                    nyf( :, k ) = nyt/ds;
-                    flen( :, k ) = ds;
-                end
+                temp = x(:, k);
+                temp1 = repmat( mean( temp(obj.EToV) ), obj.Nface, 1 );
+                xc(:,k) = temp1(:);
+                temp = y(:, k);
+                temp1 = repmat( mean( temp(obj.EToV) ), obj.Nface, 1 );
+                yc(:,k) = temp1(:);
+            end
+            for k = 1:K
+                x1 = x( obj.n1, k ); 
+                y1 = y( obj.n1, k );
+                x2 = x( obj.n2, k ); 
+                y2 = y( obj.n2, k );
+                xf = 0.5*( x1 + x2 ); 
+                yf = 0.5*( y1 + y2 );
+                nxt = yc - yf; 
+                nyt = xf - xc;
+                ds = sqrt( nxt.^2 + nyt.^2 );
+                nxf( :, k ) = nxt./ds;
+                nyf( :, k ) = nyt./ds;
+                flen( :, k ) = ds;
             end
         end% func
         
@@ -99,13 +120,13 @@ classdef StdSubTri < StdTri
         end
         
         %> Get the total number of CV and the length/area/volume of each CV
-        function [ NCV, LAV ] = assembleLocalControlVolume( obj )
+        function [ NCV, LAVToCV ] = assembleLocalControlVolume( obj )
             NCV = obj.Np;
-            LAV = zeros(NCV, 1);
+            LAVToCV = zeros(NCV, 1);
             for k = 1:obj.NFV
                 vert = obj.EToV(:, k); % get the node index in each FV
                 area = TriArea( obj.r(vert), obj.s(vert) );
-                LAV(vert) = LAV(vert) + area/3;
+                LAVToCV(vert) = LAVToCV(vert) + area/3;
             end
         end% func
         
@@ -136,10 +157,10 @@ classdef StdSubTri < StdTri
         
         function [ VLIFT ] = assembleVLIFT( obj )
             VLIFT = zeros( obj.Np, obj.Nedge );
-            for e = 1:obj.Nedge
-                VLIFT(obj.n1, e) = -1;
-                VLIFT(obj.n2, e) =  1;
-            end
+            ind = sub2ind( [obj.Np, obj.Nedge], obj.n1', 1:obj.Nedge );
+            VLIFT( ind ) = -1;
+            ind = sub2ind( [obj.Np, obj.Nedge], obj.n2', 1:obj.Nedge );
+            VLIFT( ind ) = 1;
         end
         
         function [ SLIFT ] = assembleSLIFT(obj)

@@ -31,7 +31,7 @@ classdef ShockUniformFlow1d < AdvAbstractConstFlow1d
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK22;
             
             dt = nan;
             for m = 1:obj.Nmesh
@@ -41,8 +41,8 @@ classdef ShockUniformFlow1d < AdvAbstractConstFlow1d
             option('timeInterval') = dt;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('limiterType') = NdgLimiterType.BJ;
-            option('limiterParameter') = 1e2;
+            option('limiterType') = NdgLimiterType.TVB;
+            option('limiterParameter') = 5e2;
         end
         
         function [ fext ] = getExtFunc( obj, mesh, time )

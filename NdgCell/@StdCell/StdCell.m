@@ -89,7 +89,7 @@ classdef StdCell < handle
         %> \f$ [Dt]_{ij} = \left.\frac{\partial l_j}{\partial t}\right|_{r_i} \f$
         Dt
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
-        %LIFT
+        LIFT
         % derivative matrix, 
         %> \f$ [Drq]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_{q,i}} \f$
         %Drq
@@ -151,7 +151,7 @@ classdef StdCell < handle
         function obj = StdCell(N)
             [ obj.N ] = N;
             [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func( N );            
-            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( 2*N );
+            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( N );
             [ obj.V ] = obj.assembleVandMatrix( @obj.orthogonal_func );
             [ obj.Vq ] = obj.assembleQuadratureMatrix();
             [ obj.M, obj.invM ] = obj.assembleMassMatrix();
@@ -171,7 +171,7 @@ classdef StdCell < handle
             end
             [ obj.TNfp ] = sum(obj.Nfp);
             [ obj.Fmask ] = obj.assembleFacialNodeIndex();
-            %[ obj.LIFT ] = obj.assembleLiftMatrix();
+            [ obj.LIFT ] = obj.assembleLiftMatrix();
         end
         
         %> @brief Evaluate all the nodal basis function values at points
@@ -255,32 +255,6 @@ classdef StdCell < handle
             invM = obj.V * obj.V';
         end% func
         
-%         function [Dr, Ds, Dt] = assembleDerivativeMatrix( obj )
-%             Vr = zeros(obj.Np, obj.Np);
-%             Vs = zeros(obj.Np, obj.Np);
-%             Vt = zeros(obj.Np, obj.Np);
-%             for n = 1:obj.Np
-%                 [Vr(:, n), Vs(:, n), Vt(:, n)] = obj.derivative_orthogonal_func...
-%                     (obj.N, n, obj.r, obj.s, obj.t);
-%             end
-%             Dr = Vr/obj.V; 
-%             Ds = Vs/obj.V; 
-%             Dt = Vt/obj.V;
-%         end% func
-        
-%         function [Drq, Dsq, Dtq] = assembleQuadratureDerivativeMatrix(obj, deri_orthogonal_func)
-%             Vrq = zeros(obj.Nq, obj.Np);
-%             Vsq = zeros(obj.Nq, obj.Np);
-%             Vtq = zeros(obj.Nq, obj.Np);
-%             for n = 1:obj.Np
-%                 [Vrq(:, n), Vsq(:, n), Vtq(:, n)] = deri_orthogonal_func...
-%                     (obj.N, n, obj.rq, obj.sq, obj.tq);
-%             end
-%             Drq = Vrq/obj.V; 
-%             Dsq = Vsq/obj.V; 
-%             Dtq = Vtq/obj.V;
-%         end% func
-        
         function Fmask = assembleFacialNodeIndex(obj)
             maxnfp = max(obj.Nfp);
             Fmask = zeros(maxnfp, obj.Nface);
@@ -307,19 +281,19 @@ classdef StdCell < handle
             end
         end% func
         
-%         function LIFT = assembleLiftMatrix(obj)
-%             Mes = zeros(obj.Np, obj.TNfp);
-%             sk = 1;
-%             for f = 1:obj.Nface
-%                 fcell = getStdCell(obj.N, obj.faceType(f));
-%                 row = obj.Fmask(:, f);
-%                 row = row(row ~= 0);
-%                 for n = 1:fcell.Np
-%                     Mes(row, sk) = fcell.M(:, n);
-%                     sk = sk + 1;
-%                 end
-%             end
-%             LIFT = obj.invM * Mes;
-%         end
+        function LIFT = assembleLiftMatrix(obj)
+            Mes = zeros(obj.Np, obj.TNfp);
+            sk = 1;
+            for f = 1:obj.Nface
+                fcell = getStdCell(obj.N, obj.faceType(f));
+                row = obj.Fmask(:, f);
+                row = row(row ~= 0);
+                for n = 1:fcell.Np
+                    Mes(row, sk) = fcell.M(:, n);
+                    sk = sk + 1;
+                end
+            end
+            LIFT = obj.invM * Mes;
+        end
     end% methods
 end

@@ -22,7 +22,7 @@ classdef StdLine < StdCell
     methods(Access=protected)
         function [Np,r,s,t] = node_coor_func(obj, N)
             Np = N+1;
-            [r,~] = zwglj(Np);
+            [ r,~ ] = zwglj(Np);
             s = zeros(Np, 1);
             t = zeros(Np, 1);
         end
@@ -35,10 +35,16 @@ classdef StdLine < StdCell
 
         function [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
             Nq = N+1;
-            [ rq, wq ] = zwgl( Nq );
+            [ rq, wq ] = zwglj( Nq );
             sq = zeros(Nq, 1);
             tq = zeros(Nq, 1);
         end
+        
+        function [ M, invM ] = assembleMassMatrix( obj )
+            [Nq, rq, sq, tq, w] = obj.quad_coor_func( obj.N );
+            M = diag(w);
+            invM = diag(1./w);
+        end% func
     end
     
     methods

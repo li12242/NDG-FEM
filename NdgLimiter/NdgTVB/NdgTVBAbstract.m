@@ -35,14 +35,15 @@ classdef NdgTVBAbstract < NdgAbstractLimiter
                         k1 = edge.FToE(1, n);
                         k2 = edge.FToE(2, n);
                         f1 = edge.FToF(1, n);
-                        f2 = edge.FToF(1, n);
+                        %f2 = edge.FToF(1, n);
                         
-                        hca{m}(f1, k1) = hc{m2}(f2, k2);
+                        hca{m}(f1, k1) = hc{m2}(k2);
                     end
                 end
             end
         end% func
     end
+    
     methods( Access = protected, Static )
         function [ m ] = minmod( v )
             num = size(v,1);

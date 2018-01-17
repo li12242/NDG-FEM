@@ -11,7 +11,7 @@ for k = 1:obj.NFV
     rc = mean( r(vertId) );
     sc = mean( s(vertId) );
     
-    fvArea = TriArea( r(vertId), s(vertId) );
+    
     for f1 = 1:Nface
         vind1 = f1;
         vind2 = mod(vind1, obj.Nv)+1;
@@ -23,18 +23,19 @@ for k = 1:obj.NFV
         
         rq1 = obj.project_vert2quad([rf, rc, r1]');
         sq1 = obj.project_vert2quad([sf, sc, s1]');
-        
+        fvArea = TriArea( [rf, rc, r1]', [sf, sc, s1]' );
         for i = 1:obj.Np
             Pt(:,i) = obj.orthogonal_func(obj.N, i, rq1, sq1);
         end
-        P(v1, :) = P(v1, :) + (fvArea/6/2 .*obj.wq')*Pt;
+        P(v1, :) = P(v1, :) + (fvArea./obj.LAV .*obj.wq')*Pt;
         
         rq2 = obj.project_vert2quad([rf, r2, rc]');
         sq2 = obj.project_vert2quad([sf, s2, sc]');
+        fvArea = TriArea( [rf, r2, rc]', [sf, s2, sc]' );
         for i = 1:obj.Np
             Pt(:,i) = obj.orthogonal_func(obj.N, i, rq2, sq2);
         end
-        P(v2, :) = P(v2, :) + (fvArea/6/2 .*obj.wq')*Pt;
+        P(v2, :) = P(v2, :) + (fvArea./obj.LAV .*obj.wq')*Pt;
     end
 end
 P = P/obj.V;

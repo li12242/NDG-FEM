@@ -46,7 +46,7 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = 2/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK22;
             
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;

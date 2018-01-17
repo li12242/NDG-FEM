@@ -11,9 +11,9 @@ for n = 1:obj.Nmesh
 end
 fphys = obj.fphys;
 % init limiter and output file
-hwait = waitbar(0,'Runing MatSolver....');
+%hwait = waitbar(0,'Runing MatSolver....');
 while( time < ftime )
-    dt = obj.matUpdateTimeInterval( fphys ) * 0.5;
+    dt = obj.matUpdateTimeInterval( fphys );
     if( time + dt > ftime )
         dt = ftime - time;
     end
@@ -31,30 +31,30 @@ while( time < ftime )
             fphys{n}(:,:, obj.varFieldIndex) ...
                 = rk0(intRK)*fphys0{n}(:,:, obj.varFieldIndex)...
                 + rk1(intRK)*fphys{n}(:,:, obj.varFieldIndex) ...
-                + rk2(intRK)*obj.frhs{n};
+                + rk2(intRK)*dt*obj.frhs{n};
         end
         
         fphys = obj.matEvaluateLimiter( fphys );
         fphys = obj.matEvaluatePostFunc( fphys );
         
     end
-    for m = 1:obj.Nmesh
-        obj.meshUnion(m).draw( fphys{m}(:,:,1) );
-    end
+%     fprintf('processing %f...\n', time/ftime);
+    obj.draw( fphys );
+    %obj.meshUnion(1).draw( fphys{1}(:,:,1) );
     drawnow;
     
     time = time + dt;
     obj.matUpdateOutputResult( time, fphys );
-    waitbar( time/ftime, hwait, 'Runing MatSolver....');
+    %waitbar( time/ftime, hwait, 'Runing MatSolver....');
 end
-hwait.delete();
+%hwait.delete();
 obj.matUpdateFinalResult( time, fphys );
 obj.fphys = fphys;
 end
 
 function [rk0, rk1, rk2, rkt] = GetRKParamter()
-rk0 = [ 1.0, 3/4, 1/3 ];
-rk1 = [ 0.0, 1/4, 2/3 ];
+rk0 = [ 0.0, 3/4, 1/3 ];
+rk1 = [ 1.0, 1/4, 2/3 ];
 rk2 = [ 1.0, 1/4, 2/3 ];
 rkt = [ 0.0, 1.0, 1.0];
 end

@@ -26,11 +26,11 @@ classdef NdgMesh1d < NdgMesh
         end
         
         function [nx, ny, nz, Js] = assembleFacialJaobiFactor( obj )
-            xb = obj.x(obj.cell.Fmask, :);
-            nx = ones(obj.cell.TNfp, obj.K);
             % Define outward normals
-            [~, ind] = min(xb);
-            nx(ind, :) = -1;
+            xb = obj.x(obj.cell.Fmask, :);
+            xc = obj.GetMeshAverageValue( obj.x );
+            nx = sign( xb - xc );
+            
             Js = ones(size(nx));
             ny = zeros(obj.cell.Nface, obj.K);
             nz = zeros(obj.cell.Nface, obj.K);
@@ -47,7 +47,7 @@ classdef NdgMesh1d < NdgMesh
     methods
         obj = refine(obj, refine_level);
         
-        function obj = NdgMesh1d(cell, Nv, vx, K, EToV, EToR, BCToV)
+        function obj = NdgMesh1d( cell, Nv, vx, K, EToV, EToR, BCToV )
             vy = zeros(size(vx)); % vy is all zeros
             vz = zeros(size(vx)); % vz is all zeros            
             obj = obj@NdgMesh(cell, Nv, vx, vy, vz, K, EToV, EToR, BCToV);
@@ -74,7 +74,7 @@ classdef NdgMesh1d < NdgMesh
                 obj.figureHandle = plot(g, ...
                     'XData', obj.x(:), 'YData', zvar(:), ...
                     'LineWidth', 1, ...
-                    'Marker', '.', ...
+                    'Marker', 'o', ...
                     'NodeColor','k', ...
                     'EdgeColor', 'k', ...
                     'MarkerSize', 2, ...

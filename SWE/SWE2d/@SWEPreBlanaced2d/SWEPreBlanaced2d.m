@@ -24,29 +24,20 @@ classdef SWEPreBlanaced2d < SWEAbstract2d
             end
         end
         
-        function fphys = matEvaluateLimiter( obj, fphys )
-            fphys = obj.limiter.matLimit( fphys, 2 );
-            fphys = obj.limiter.matLimit( fphys, 3 );
-            for m = 1:obj.Nmesh % update new elevation
-                fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
-            end
-            fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
-            for m = 1:obj.Nmesh % update new elevation
-                mesh = obj.meshUnion(m);
-                ind = (mesh.EToR == int8( NdgRegionType.Wet ));
-                fphys{m}(:,ind,1) = fphys{m}(:,ind,5) - fphys{m}(:,ind,4);
-%                 fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
-            end
-%             for m = 1:obj.Nmesh % set the new bottom topography
-%                 mesh = obj.meshUnion(m);
-%                 ind = (mesh.EToR == int8( NdgRegionType.Wet ));
-%                 fphys{m}(:,ind,4) = fphys{m}(:,ind,7) - fphys{m}(:,ind,1);
-%                 br = mesh.cell.Dr * obj.fphys{m}(:,ind,4);
-%                 bs = mesh.cell.Ds * obj.fphys{m}(:,ind,4);
-%                 fphys{m}(:,ind,5) = mesh.rx(:, ind) .* br + mesh.sx(:, ind) .* bs;
-%                 fphys{m}(:,ind,6) = mesh.ry(:, ind) .* br + mesh.sy(:, ind) .* bs;
+%         function fphys = matEvaluateLimiter( obj, fphys )
+%             fphys = obj.limiter.matLimit( fphys, 2 );
+%             fphys = obj.limiter.matLimit( fphys, 3 );
+%             for m = 1:obj.Nmesh % update new elevation
+%                 fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
 %             end
-        end
+%             fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
+%             for m = 1:obj.Nmesh % update new elevation
+% %                 mesh = obj.meshUnion(m);
+% %                 ind = (mesh.EToR == int8( NdgRegionType.Wet ));
+% %                 fphys{m}(:,ind,1) = fphys{m}(:,ind,5) - fphys{m}(:,ind,4);
+%                 fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
+%             end
+%         end
     end
     
 end
