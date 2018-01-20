@@ -33,14 +33,14 @@ while( time < ftime )
         fphys = obj.matEvaluatePostFunc( fphys );
         
     end
-    for m = 1:obj.Nmesh
-        obj.meshUnion(m).draw( fphys{m}(:,:,1) );
-    end
-    drawnow;
-    
+%     for m = 1:obj.Nmesh
+%         obj.meshUnion(m).draw( fphys{m}(:,:,1) );
+%     end
+%     drawnow;
+    fprintf('processing %f ...\n', time/ftime);
     time = time + dt;
     obj.matUpdateOutputResult( time, fphys );
-    waitbar( time/ftime, hwait, 'Runing MatSolver....');
+    %waitbar( time/ftime, hwait, 'Runing MatSolver....');
 end
 hwait.delete();
 obj.matUpdateFinalResult( time, fphys );

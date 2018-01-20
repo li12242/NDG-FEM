@@ -4,7 +4,7 @@ for m = 1:obj.Nmesh
     mesh = obj.meshUnion(m);
     drawBottom( mesh, obj.fphys{m}(:,:,4) );
     eta = obj.fphys{m}(:,:,4) + obj.fphys{m}(:,:,1);
-    %     eta( obj.fphys{m}(:,:,1) < obj.hmin ) = nan;
+    eta( obj.fphys{m}(:,:,1) < obj.hmin ) = nan;
     drawSurface( mesh, eta );
     %mesh.draw( eta );
     %set( mesh.figureHandle, 'FaceAlpha', 0.8 );
@@ -35,7 +35,7 @@ function handle = drawBottom( mesh, bot )
 isFigureExit = ~isempty( mesh.figureHandle ) && isvalid( mesh.figureHandle ) ;
 if ~isFigureExit
     figure;
-    handle = drawNew3dBottom( mesh, bot(:), [.8, .8, .8] );
+    handle = drawNew3dBottom( mesh, bot(:), [.67, .67, .67] );
 end
 
 end% func
@@ -47,6 +47,7 @@ handle = patch(...
     'Vertices', [mesh.x(:), mesh.y(:), zvar(:)], ...
     'Faces', EToV, ...
     'FaceColor', 'interp', ...
+    'EdgeColor', 'none', ...
     'FaceVertexCData', zvar(:));
 box on;
 grid on;
@@ -59,6 +60,7 @@ handle = patch(...
     'Vertices', [mesh.x(:), mesh.y(:), zvar(:)], ...
     'Faces', EToV, ...
     'FaceColor', color, ...
+    'EdgeColor', [0.0588, 0.0196, 0.4], ...
     'FaceVertexCData', zvar(:));
 box on;
 grid on;

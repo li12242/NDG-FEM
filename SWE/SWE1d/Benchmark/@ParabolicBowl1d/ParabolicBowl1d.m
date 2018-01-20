@@ -74,7 +74,7 @@ classdef ParabolicBowl1d < SWEWD1d & SWEPreBlanaced1d
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK33;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.TVB;
             option('limiterParameter') = 1e-5;
             option('equationType') = NdgDiscreteEquationType.Strong;

@@ -110,8 +110,8 @@ classdef ParabolicBowl2d < SWEWD2d & SWEConventional2d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Weak;
-            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
+            option('equationType') = NdgDiscreteEquationType.Strong;
+            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
         end
         
         function fphys = getExactFunction( obj, time )

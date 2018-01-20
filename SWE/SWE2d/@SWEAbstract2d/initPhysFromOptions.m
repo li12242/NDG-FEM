@@ -36,6 +36,9 @@ if obj.option.isKey('FrictionType') % the option exist
         case FrictionType.Linear
             t = obj.getOption('FrictionCoefficient_r');
             obj.frictionSolver = LinearFrictionTermSolver(t);
+        case FrictionType.Manning
+            n = obj.getOption('FrictionCoefficient_n');
+            obj.frictionSolver = ManningFrictionSolver( n );
     end
 else % the option does not exist
     obj.frictionSolver = NonFrictionTermSolver();

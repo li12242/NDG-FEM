@@ -11,7 +11,7 @@ for n = 1:obj.Nmesh
 end
 fphys = obj.fphys;
 % init limiter and output file
-%hwait = waitbar(0,'Runing MatSolver....');
+hwait = waitbar(0,'Runing MatSolver....');
 while( time < ftime )
     dt = obj.matUpdateTimeInterval( fphys );
     if( time + dt > ftime )
@@ -38,10 +38,9 @@ while( time < ftime )
     
     time = time + dt;
     obj.matUpdateOutputResult( time, fphys );
-    fprintf('processing %f...\n', time/ftime);
-    %waitbar( time/ftime, hwait, 'Runing MatSolver....');
+    waitbar( time/ftime, hwait, 'Runing MatSolver....');
 end
-%hwait.delete();
+hwait.delete();
 obj.matUpdateFinalResult( time, fphys );
 obj.fphys = fphys;
 end
