@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		04730CD22013589100FDB9B4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04730CD12013589100FDB9B4 /* main.cpp */; };
+		04730CDA201360FB00FDB9B4 /* NdgReferElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04730CD8201360FB00FDB9B4 /* NdgReferElement.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		04730CCE2013589100FDB9B4 /* NdgMex */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgMex; sourceTree = BUILT_PRODUCTS_DIR; };
 		04730CD12013589100FDB9B4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		04730CD8201360FB00FDB9B4 /* NdgReferElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NdgReferElement.cpp; sourceTree = "<group>"; };
+		04730CD9201360FB00FDB9B4 /* NdgReferElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgReferElement.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				04730CD12013589100FDB9B4 /* main.cpp */,
+				04730CD8201360FB00FDB9B4 /* NdgReferElement.cpp */,
+				04730CD9201360FB00FDB9B4 /* NdgReferElement.h */,
 			);
 			path = NdgMex;
 			sourceTree = "<group>";
@@ -119,6 +124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04730CD22013589100FDB9B4 /* main.cpp in Sources */,
+				04730CDA201360FB00FDB9B4 /* NdgReferElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,7 +134,7 @@
 		04730CD32013589100FDB9B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -150,8 +156,9 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
+					"MX_COMPAT_32_MATLAB=901",
+					MATLAB_MEX_FILE,
+					DEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -160,9 +167,24 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Applications/MATLAB_R2016b.app.extern/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Applications/MATLAB_R2016b.app.extern/bin/maci64,
+					/Applications/MATLAB_R2016b.app.extern/sys/os/maci64,
+				);
+				MACH_O_TYPE = mh_bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lmat",
+					"-lmex",
+					"-lmx",
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -170,7 +192,7 @@
 		04730CD42013589100FDB9B4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -190,14 +212,34 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MX_COMPAT_32_MATLAB=901",
+					MATLAB_MEX_FILE,
+					NDGBUG,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Applications/MATLAB_R2016b.app.extern/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Applications/MATLAB_R2016b.app.extern/bin/maci64,
+					/Applications/MATLAB_R2016b.app.extern/sys/os/maci64,
+				);
+				MACH_O_TYPE = mh_bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lmat",
+					"-lmex",
+					"-lmx",
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;

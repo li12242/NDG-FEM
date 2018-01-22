@@ -90,15 +90,6 @@ classdef StdCell < handle
         Dt
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
         LIFT
-        % derivative matrix, 
-        %> \f$ [Drq]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_{q,i}} \f$
-        %Drq
-        % derivative matrix, 
-        %> \f$ [Dsq]_{ij} = \left.\frac{\partial l_j}{\partial s}\right|_{r_{q,i}} \f$
-        %Dsq
-        % derivative matrix, 
-        %> \f$ [Dtq]_{ij} = \left.\frac{\partial l_j}{\partial t}\right|_{r_{q,i}} \f$
-        %Dtq
     end
 
     properties( SetAccess = protected )
@@ -137,7 +128,8 @@ classdef StdCell < handle
         %> @param[in] vert_val the vertice values, the first dimension of
         %> this variable should be equal to the Nv of the object.
         [ node_val ] = project_vert2node(obj, vert_val);
-        %> @brief 
+        %> @brief Calculate the 
+        %> @param[in]
         assembleJacobianMatrix( obj, x, y, z );
         %> @brief Assemble the outword normal vectors.
         %> @param[in]
@@ -207,16 +199,16 @@ classdef StdCell < handle
             fDt = Vt/obj.V;
         end
 
-        %> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
-        %> @param[in] obj The StdCell class
-        %> @param[in] node_val The values on these interpolation nodes
+%> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
+%> @param[in] obj The StdCell class
+%> @param[in] node_val The values on these interpolation nodes
         function quad_val = project_node2quad(obj, node_val)
             quad_val = obj.Vq * node_val;
         end% func
 
-        %> @brief Project the scalar field from the vertices to the Gauss quadrature nodes
-        %> @param[in] obj The StdCell class
-        %> @param[in] vert_val The values on these vertices
+%> @brief Project the scalar field from the vertices to the Gauss quadrature nodes
+%> @param[in] obj The StdCell class
+%> @param[in] vert_val The values on these vertices
         function quad_val = project_vert2quad(obj, vert_val)
             node_val = obj.project_vert2node(vert_val);
             quad_val = obj.project_node2quad(node_val);
