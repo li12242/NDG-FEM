@@ -146,7 +146,7 @@ if( size(EToV, 1) ~= cell.Nv )
     throw(ME);
 end
 
-if( size(BCToV, 1) ~= 3 )
+if( size(BCToV, 1) ~= 3 ) && ( size(BCToV, 1) > 0 )
     msgID = [mfilename, ':InputBCToVError'];
     msgtext = 'The rows of input BCToV should be 3 ( [v1, v2, bcType] ).';
     ME = MException(msgID, msgtext);

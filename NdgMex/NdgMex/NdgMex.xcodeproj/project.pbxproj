@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		04730CD22013589100FDB9B4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04730CD12013589100FDB9B4 /* main.cpp */; };
-		04730CDA201360FB00FDB9B4 /* NdgReferElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04730CD8201360FB00FDB9B4 /* NdgReferElement.cpp */; };
+		04730CDA201360FB00FDB9B4 /* NdgReferCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04730CD8201360FB00FDB9B4 /* NdgReferCell.cpp */; };
+		04EEE0952016D6440029D4B4 /* NdgMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EEE0932016D6440029D4B4 /* NdgMath.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +27,10 @@
 /* Begin PBXFileReference section */
 		04730CCE2013589100FDB9B4 /* NdgMex */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NdgMex; sourceTree = BUILT_PRODUCTS_DIR; };
 		04730CD12013589100FDB9B4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		04730CD8201360FB00FDB9B4 /* NdgReferElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NdgReferElement.cpp; sourceTree = "<group>"; };
-		04730CD9201360FB00FDB9B4 /* NdgReferElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgReferElement.h; sourceTree = "<group>"; };
+		04730CD8201360FB00FDB9B4 /* NdgReferCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NdgReferCell.cpp; sourceTree = "<group>"; };
+		04730CD9201360FB00FDB9B4 /* NdgReferCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgReferCell.h; sourceTree = "<group>"; };
+		04EEE0932016D6440029D4B4 /* NdgMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NdgMath.cpp; sourceTree = "<group>"; };
+		04EEE0942016D6440029D4B4 /* NdgMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NdgMath.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,8 +64,10 @@
 			isa = PBXGroup;
 			children = (
 				04730CD12013589100FDB9B4 /* main.cpp */,
-				04730CD8201360FB00FDB9B4 /* NdgReferElement.cpp */,
-				04730CD9201360FB00FDB9B4 /* NdgReferElement.h */,
+				04730CD8201360FB00FDB9B4 /* NdgReferCell.cpp */,
+				04730CD9201360FB00FDB9B4 /* NdgReferCell.h */,
+				04EEE0932016D6440029D4B4 /* NdgMath.cpp */,
+				04EEE0942016D6440029D4B4 /* NdgMath.h */,
 			);
 			path = NdgMex;
 			sourceTree = "<group>";
@@ -124,7 +129,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				04730CD22013589100FDB9B4 /* main.cpp in Sources */,
-				04730CDA201360FB00FDB9B4 /* NdgReferElement.cpp in Sources */,
+				04EEE0952016D6440029D4B4 /* NdgMath.cpp in Sources */,
+				04730CDA201360FB00FDB9B4 /* NdgReferCell.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,11 +176,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/Applications/MATLAB_R2016b.app.extern/include,
+					/Applications/MATLAB_R2016b.app/extern/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/Applications/MATLAB_R2016b.app.extern/bin/maci64,
-					/Applications/MATLAB_R2016b.app.extern/sys/os/maci64,
+					/Applications/MATLAB_R2016b.app/bin/maci64,
+					/Applications/MATLAB_R2016b.app/sys/os/maci64,
 				);
 				MACH_O_TYPE = mh_bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -226,11 +232,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/Applications/MATLAB_R2016b.app.extern/include,
+					/Applications/MATLAB_R2016b.app/extern/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/Applications/MATLAB_R2016b.app.extern/bin/maci64,
-					/Applications/MATLAB_R2016b.app.extern/sys/os/maci64,
+					/Applications/MATLAB_R2016b.app/bin/maci64,
+					/Applications/MATLAB_R2016b.app/sys/os/maci64,
 				);
 				MACH_O_TYPE = mh_bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -277,6 +283,7 @@
 				04730CD72013589100FDB9B4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

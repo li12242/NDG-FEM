@@ -32,8 +32,8 @@ while( time < ftime )
         fphys = obj.matEvaluatePostFunc( fphys );
         
     end
-    %obj.draw( fphys );
-%     obj.meshUnion(1).draw( fphys{1}(:,:,1) + fphys{1}(:,:,4) );
+%     obj.draw( fphys );
+%     obj.meshUnion(1).draw( fphys{1}(:,:,1) + fphys{1}(:,:,3) );
 %     drawnow;
     
     time = time + dt;

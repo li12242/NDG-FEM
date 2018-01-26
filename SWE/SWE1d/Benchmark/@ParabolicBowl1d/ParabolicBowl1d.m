@@ -1,7 +1,7 @@
 %>
 %> Khan AA, Lai W. Modeling shallow water flows using the discontinuous
 %> Galerkin method. CRC Press; 2014.
-classdef ParabolicBowl1d < SWEWD1d & SWEPreBlanaced1d
+classdef ParabolicBowl1d < SWEWD1d
     
     properties(Constant)
         hmin = 1e-3
@@ -76,7 +76,7 @@ classdef ParabolicBowl1d < SWEWD1d & SWEPreBlanaced1d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.TVB;
-            option('limiterParameter') = 1e-5;
+            option('limiterParameter') = 1e-6;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
         end
@@ -104,10 +104,10 @@ end
 
 function drawFluxSection( x, fphys, fext )
 figure('Color', 'w'); hold on;
-ind = fphys( :, :, 1 ) < 1e-3;
+ind = fphys( :, :, 1 ) < 1e-2;
 u = fphys( :, :, 2 )./fphys(:, :, 1); u( ind ) = 0;
 ue = fext( :, :, 2 )./fext(:, :, 1);  ue( ind ) = 0;
-p1 = plot( x(:), u(:), 'bo-', 'LineWidth', 2, 'MarkerSize', 4 );
+p1 = plot( x(:), u(:), 'b.-', 'LineWidth', 2, 'MarkerSize', 4 );
 p2 = plot( x(:), ue(:), 'r--', 'LineWidth', 2, 'MarkerSize', 4  );
 % p1 = plot( x, fphys(:, 2), 'b', 'LineWidth', 1.5 );
 % p2 = plot( x, fext(:, 2), 'r--', 'LineWidth', 1.5 );
@@ -125,7 +125,7 @@ figure('Color', 'w'); hold on;
 plot( x, bot, 'k' );
 temp1 = fphys(:, :, 1) + bot;
 temp2 = fext(:, :, 1) + bot;
-p1 = plot( x(:), temp1(:), 'bo-', 'LineWidth', 2, 'MarkerSize', 4  );
+p1 = plot( x(:), temp1(:), 'b.-', 'LineWidth', 2, 'MarkerSize', 4  );
 p2 = plot( x(:), temp2(:), 'r--', 'LineWidth', 2, 'MarkerSize', 4  );
 grid on;
 box on;

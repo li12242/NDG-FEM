@@ -41,12 +41,12 @@ classdef NdgMesh < handle
         vz
         %> edge objects
         edgeUnion
+        %> boundary types for each cell (column)
+        EToB
     end
     
     % elemental volume infomation
     properties( SetAccess=protected )
-        %> boundary types for each cell (column)
-        EToB
         %> mesh id of adjacent cell
         EToM
         %> adjacent cell index for each cell

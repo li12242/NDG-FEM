@@ -13,10 +13,14 @@ classdef SWEWD2d < SWEAbstract2d
                 mesh = obj.meshUnion(m);
                 flg = (mesh.EToR == int8( NdgRegionType.PartialWet ) );
                 
-                for fld = 1:obj.Nvar % reconstruct the WD cell values
+                tempWD = mesh.cell.V \ fphys{m}(:, flg, 1);
+                ind = tempWD(1, :) < 0;
+                tempWD(1, ind) = 0;
+                tempWD(4:end, :) = 0;
+                fphys{m}(:, flg, 1) = mesh.cell.V * tempWD;
+                
+                for fld = 2:obj.Nvar % reconstruct the WD cell values
                     tempWD = mesh.cell.V \ fphys{m}(:, flg, fld);
-                    ind = tempWD(1, :) < 0;
-                    tempWD(1, ind) = 0;
                     tempWD(4:end, :) = 0;
                     fphys{m}(:, flg, fld) = mesh.cell.V * tempWD;
                 end

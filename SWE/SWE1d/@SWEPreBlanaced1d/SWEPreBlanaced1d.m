@@ -16,6 +16,17 @@ classdef SWEPreBlanaced1d < SWEAbstract1d
     end
     
     methods( Access = protected )
+        function fphys = matEvaluateLimiter( obj, fphys )
+            fphys = obj.limiter.matLimit( fphys, 2 );
+            for m = 1:obj.Nmesh % update new elevation
+                fphys{m}(:,:,4) = fphys{m}(:,:,1) + fphys{m}(:,:,3);
+            end
+            fphys = obj.limiter.matLimit( fphys, 4 ); % enforce the elevation
+            for m = 1:obj.Nmesh % update new elevation
+                fphys{m}(:,:,1) = fphys{m}(:,:,4) - fphys{m}(:,:,3);
+            end
+        end
+
         function matEvaluateTopographySourceTerm( obj, fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);

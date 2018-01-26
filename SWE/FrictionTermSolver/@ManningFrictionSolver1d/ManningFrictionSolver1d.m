@@ -1,4 +1,4 @@
-classdef ManningFrictionSolver < AbstractFrictionTermSolver
+classdef ManningFrictionSolver1d < AbstractFrictionTermSolver
     %MANNINGFRICTIONSOLVER Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -7,7 +7,7 @@ classdef ManningFrictionSolver < AbstractFrictionTermSolver
     end
     
     methods
-        function obj = ManningFrictionSolver( n )
+        function obj = ManningFrictionSolver2d( n )
             obj.n = n;
         end% func
         
@@ -17,15 +17,10 @@ classdef ManningFrictionSolver < AbstractFrictionTermSolver
                 mesh = physObj.meshUnion(m);
                 ind = (mesh.EToR == int8(NdgRegionType.Wet));
                 
-                qn  = sqrt( fphys{m}(:,ind,2).^2 + fphys{m}(:,ind,3).^2 );
+                qn  = abs( fphys{m}(:,ind,2) );
                 % frhs = frhs - rhu   
                 physObj.frhs{m}(:,ind,2) = physObj.frhs{m}(:,ind,2)...
                     - obj.n .* physObj.gra * fphys{m}(:,ind,2) .* qn ...
-                    ./( fphys{m}(:,ind,1).^(7/3) ) ;
-                
-                % frhs = frhs - rhv 
-                physObj.frhs{m}(:,ind,3) = physObj.frhs{m}(:,ind,3)...
-                    - obj.n .* physObj.gra * fphys{m}(:,ind,3) .* qn ...
                     ./( fphys{m}(:,ind,1).^(7/3) ) ;
             end
         end% func

@@ -26,8 +26,8 @@ classdef swe2d_Malpasset_dambreak < swe2d
     end
     
     methods(Access=protected)
-        [ rhs ] = rhs_term(obj, f_Q ) % ¼ÆËãÓÒ¶ËÏî
-        [ sf ] = fric_sour_term( obj, f_Q ) % ¼ÆËãÄ¦×èÔ´Ïî
+        [ rhs ] = rhs_term(obj, f_Q ) % ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½
+        [ sf ] = fric_sour_term( obj, f_Q ) % ï¿½ï¿½ï¿½ï¿½Ä¦ï¿½ï¿½Ô´ï¿½ï¿½
     end
     methods
         result(obj)
@@ -64,20 +64,20 @@ classdef swe2d_Malpasset_dambreak < swe2d
         end% func
         
         function obj = update_ext(obj, stime)
-            % ¸ù¾Ý¿ª±ß½çÎÄ¼þ½á¹û¸üÐÂÍâ²¿Êý¾Ý,obc_fileÎªdoubleÀà
+            % ï¿½ï¿½Ý¿ï¿½ï¿½ß½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½,obc_fileÎªdoubleï¿½ï¿½
             vert_extQ = obj.obc_file.get_extQ(stime);
             vertlist = obj.obc_file.vert;
             if (stime < obj.obc_file.time(end))
                 vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 1); % »ñÈ¡Ë®Î»Íâ²¿Öµ
+                vert_Q( vertlist ) = vert_extQ(:, 1); % ï¿½ï¿½È¡Ë®Î»ï¿½â²¿Öµ
                 obj.f_extQ(:,:,1) = obj.mesh.proj_vert2node(vert_Q) - obj.bot;
 
                 vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 2); % »ñÈ¡Á÷Á¿Íâ²¿Öµ
+                vert_Q( vertlist ) = vert_extQ(:, 2); % ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½â²¿Öµ
                 obj.f_extQ(:,:,2) = obj.mesh.proj_vert2node(vert_Q);
 
                 vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 3); % »ñÈ¡Á÷Á¿Íâ²¿Öµ
+                vert_Q( vertlist ) = vert_extQ(:, 3); % ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½â²¿Öµ
                 obj.f_extQ(:,:,3) = obj.mesh.proj_vert2node(vert_Q);
             else
                 obj.f_extQ = obj.f_Q;
@@ -89,7 +89,7 @@ classdef swe2d_Malpasset_dambreak < swe2d
             f_Q = zeros(obj.mesh.cell.Np, obj.mesh.K, obj.Nfield);
             h = zeros(obj.mesh.cell.Np, obj.mesh.K);
             
-            Coor_dam_x = [4701.18,4656.5];Coor_dam_y = [4143.41,4392.1];
+            Coor_dam_x = [4701.18,4656.5]; Coor_dam_y = [4143.41,4392.1];
             slope = (Coor_dam_y(2)-Coor_dam_y(1))/(Coor_dam_x(2)-Coor_dam_x(1));
             
             flag = obj.mesh.y - Coor_dam_y(1) - slope*(obj.mesh.x - Coor_dam_x(1));

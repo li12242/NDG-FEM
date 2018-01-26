@@ -1,11 +1,11 @@
-classdef LinearFrictionTermSolver < AbstractFrictionTermSolver
+classdef LinearFrictionTermSolver2d < AbstractFrictionTermSolver
     properties
         %> bottom friction coefficient
         r
     end
     
     methods
-        function obj = LinearFrictionTermSolver(t)%¹¹Ôìº¯Êý
+        function obj = LinearFrictionTermSolver2d(t)%ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
             obj.r = t;
         end
         
