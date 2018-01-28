@@ -64,7 +64,7 @@ void evaluateHydrostaticReconstructValue(double hmin, double* fm, double* fp) {
   return;
 }
 
-#define NRHS 9
+#define NRHS 11
 #define NLHS 2
 #define NVAR 3
 
@@ -89,6 +89,8 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   signed char* eidtype = (signed char*)mxGetData(prhs[6]);
   double* fphys = mxGetPr(prhs[7]);
   double* fext = mxGetPr(prhs[8]);
+  double* etoe = mxGetPr(prhs[9]);
+  signed char* regType = (signed char*)mxGetData(prhs[10]);
 
   const mwSize* dims = mxGetDimensions(prhs[7]);
   const size_t Np = dims[0];
@@ -100,6 +102,8 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   const mwSize dimOut[3] = {TNfp, K, Nfield};
   plhs[0] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
   plhs[1] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
+  const size_t Nface = mxGetM(prhs[9]);
+  const size_t Nfp = TNfp/Nface;
 
   double* he = fext;
   double* hue = he + K * Np;
@@ -118,30 +122,40 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   double* hvp = hp + 2 * K * TNfp;
 
   for (int k = 0; k < K; k++) {
-    for (int n = 0; n < TNfp; n++) {
-      const size_t sk = k * TNfp + n;
-      NdgEdgeType type = (NdgEdgeType)eidtype[sk];
-      if (type == NdgEdgeGaussEdge) {
-        continue;
-      }
-      const int im = (int)eidM[sk] - 1;
-      const int ip = (int)eidP[sk] - 1;
+    for(int f = 0; f < Nface; f++){
+        const int ind = k*Nface + f;
+        const int eid = (int)etoe[ind] - 1;
+        NdgEdgeType localCellType = (NdgRegionType)regType[k];
+        NdgEdgeType adjcentCellType = (NdgRegionType)regType[eid];
+        
+        if (( localCellType == NdgRegionDry ) & ( adjcentCellType == NdgRegionDry ))
+            continue;
+        
+        for (int n = 0; n < Nfp; n++) {
+          const size_t sk = k * TNfp + f * Nfp + n;
+          NdgEdgeType type = (NdgEdgeType)eidtype[sk];
+          if (type == NdgEdgeGaussEdge) {
+            continue;
+          }
+          const int im = (int)eidM[sk] - 1;
+          const int ip = (int)eidP[sk] - 1;
 
-      double fm[4] = {h[im], hu[im], hv[im], z[im]};
-      double fp[4] = {h[ip], hu[ip], hv[ip], z[ip]};
-      double fe[3] = {he[im], hue[im], hve[im]};
+          double fm[4] = {h[im], hu[im], hv[im], z[im]};
+          double fp[4] = {h[ip], hu[ip], hv[ip], z[ip]};
+          double fe[3] = {he[im], hue[im], hve[im]};
 
-      const double nx_ = nx[sk];
-      const double ny_ = ny[sk];
-      evaluateExactAdjacentNodeValue(type, nx_, ny_, fm, fp, fe);
-      evaluateHydrostaticReconstructValue(hcrit, fm, fp);
+          const double nx_ = nx[sk];
+          const double ny_ = ny[sk];
+          evaluateExactAdjacentNodeValue(type, nx_, ny_, fm, fp, fe);
+          evaluateHydrostaticReconstructValue(hcrit, fm, fp);
 
-      hm[sk] = fm[0];
-      hp[sk] = fp[0];
-      hum[sk] = fm[1];
-      hup[sk] = fp[1];
-      hvm[sk] = fm[2];
-      hvp[sk] = fp[2];
+          hm[sk] = fm[0];
+          hp[sk] = fp[0];
+          hum[sk] = fm[1];
+          hup[sk] = fp[1];
+          hvm[sk] = fm[2];
+          hvp[sk] = fp[2];
+        }
     }
   }
   return;

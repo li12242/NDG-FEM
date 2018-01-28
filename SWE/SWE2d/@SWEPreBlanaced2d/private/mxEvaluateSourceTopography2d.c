@@ -41,13 +41,12 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
   for (int k = 0; k < K; k++) {
     NdgRegionType type = (NdgRegionType)regType[k];
-    if (type == NdgRegionDry)
-      continue;
-
-    for (int n = 0; n < Np; n++) {
-      int sk = k * Np + n;
-      sourceQx[sk] = -gra * (h[sk] + z[sk]) * bx[sk];
-      sourceQy[sk] = -gra * (h[sk] + z[sk]) * by[sk];
+    if (type == NdgRegionWet){
+        for (int n = 0; n < Np; n++) {
+          int sk = k * Np + n;
+          sourceQx[sk] = -gra * (h[sk] + z[sk]) * bx[sk];
+          sourceQy[sk] = -gra * (h[sk] + z[sk]) * by[sk];
+        }
     }
   }
 

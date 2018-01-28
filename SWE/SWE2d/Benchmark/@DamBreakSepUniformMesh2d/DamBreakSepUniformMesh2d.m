@@ -1,4 +1,4 @@
-classdef DamBreakSepUniformMesh2d < SWEConventional2d
+classdef DamBreakSepUniformMesh2d < SWEPreBlanaced2d
     %DAMBREAKSEPUNIFORMMESH2D Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -19,7 +19,7 @@ classdef DamBreakSepUniformMesh2d < SWEConventional2d
     methods
         function obj = DamBreakSepUniformMesh2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEConventional2d();
+            obj = obj@SWEPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
         end
         

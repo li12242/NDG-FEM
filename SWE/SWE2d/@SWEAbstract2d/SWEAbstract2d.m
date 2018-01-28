@@ -27,10 +27,7 @@ classdef SWEAbstract2d < NdgPhysMat
     end
     
     methods
-        function obj = SWEAbstract2d
-        end
-        %>
-        [ ] = drawSurfaceBot( obj )
+        draw( obj, varargin )
     end
     
     methods( Hidden )
@@ -38,7 +35,7 @@ classdef SWEAbstract2d < NdgPhysMat
         function [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
             [ fM, fP ] = mxEvaluateSurfaceValue( obj.hmin, obj.gra, ...
                 mesh.eidM, mesh.eidP, mesh.nx, mesh.ny, mesh.eidtype, ...
-                fphys, fext );
+                fphys, fext, mesh.EToE, mesh.EToR );
         end
         
         function [ fluxM ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fm )

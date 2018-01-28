@@ -1,18 +1,5 @@
 classdef CSBAbstractTest < SWEPreBlanaced2d
     
-    properties( Constant )
-%         hmin = 1e-4
-%         gra = 9.81
-%         xlim = [-1, 1];
-%         ylim = [-1, 1];
-%         h0 = 2;
-    end
-    
-    properties( Abstract, Constant )
-%         bx
-%         by
-    end
-    
     methods
         function obj = CSBAbstractTest()
         end
@@ -52,17 +39,7 @@ classdef CSBAbstractTest < SWEPreBlanaced2d
     end
     
     methods( Access = protected )
-        
-        function fphys = setInitialField( obj )
-            fphys = cell(1, 1);
-            for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
-                fphys{1} = zeros( obj.meshUnion.cell.Np, obj.meshUnion.K, obj.Nfield );
-                fphys{1}(:,:,4) = obj.bx * mesh.x + obj.by * mesh.y;
-                fphys{1}(:,:,1) = obj.h0 - fphys{1}(:,:,4);
-            end
-        end
-        
+                
         function [ option ] = setOption( obj, option )
             ftime = 0.2;
             outputIntervalNum = 2;
@@ -77,6 +54,7 @@ classdef CSBAbstractTest < SWEPreBlanaced2d
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('WellBlancedType') = true;
+            option('limiterType') = NdgLimiterType.Vert;
         end
     end
 end

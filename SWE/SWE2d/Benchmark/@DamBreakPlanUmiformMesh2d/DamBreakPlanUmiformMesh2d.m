@@ -13,11 +13,11 @@
 %> This class is part of the NDGOM software. 
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef DamBreakPlanUmiformMesh2d < SWEConventional2d
+classdef DamBreakPlanUmiformMesh2d < SWEPreBlanaced2d
     
     properties(Constant)
         %> wet/dry depth threshold
-        hmin = 5e-4
+        hmin = 1e-6
         %> gravity acceleration
         gra = 9.8
         %> Dam position
@@ -29,15 +29,23 @@ classdef DamBreakPlanUmiformMesh2d < SWEConventional2d
     methods
         function obj = DamBreakPlanUmiformMesh2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEConventional2d();
+            obj = obj@SWEPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
-        end
-        
-        
+        end        
     end
     methods(Access=protected)
         function fphys = setInitialField( obj )
-            fphys = getExactFunction(obj, 0);
+            fphys = cell( obj.Nmesh, 1 );
+            for m = 1:obj.Nmesh
+                mesh = obj.meshUnion(m);
+                fphys{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
+                bot = mesh.x * tan( obj.alpha );
+                fphys{m}(:,:,4) = bot;
+                ind = ( mesh.x < 0 );
+                temp = zeros( mesh.cell.Np, mesh.K );
+                temp( ind ) = 1 - bot( ind );
+                fphys{m}(:,:,1) = temp;
+            end
         end
         
         function [ option ] = setOption( obj, option )
@@ -52,26 +60,11 @@ classdef DamBreakPlanUmiformMesh2d < SWEConventional2d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Weak;
-            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
+            option('equationType') = NdgDiscreteEquationType.Strong;
+            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('CoriolisType') = CoriolisType.None;
             option('WindType') = WindType.None;
             option('FrictionType') = FrictionType.None;
-        end
-        
-        function fphys = getExactFunction( obj, time )
-            
-            fphys = cell( obj.Nmesh, 1 );
-            for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
-                fphys{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
-                bot = mesh.x * tan( obj.alpha );
-                fphys{m}(:,:,4) = bot;
-                ind = ( mesh.x < 0 );
-                temp = zeros( mesh.cell.Np, mesh.K );
-                temp( ind ) = 1 - bot( ind );
-                fphys{m}(:,:,1) = temp;
-            end
         end
     end
     

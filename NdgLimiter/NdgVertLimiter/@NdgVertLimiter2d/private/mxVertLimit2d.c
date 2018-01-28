@@ -30,10 +30,14 @@ void evaluateWenoLocalGrad(size_t Nsub,
         frac += w;
         *gfx += w * subGfx[i];
         *gfy += w * subGfy[i];
+        // if(k==29 | k==149)
+        //     mexPrintf("k=%d, w[%d]=%f\n", k, i, w);
     }
     *gfx /= frac;
     *gfy /= frac;
-    return;
+    // if(k==29 | k==149)
+    //     mexPrintf("k=%d, gx=%f, gy=%f\n", k, *gfx, *gfy);
+    // return;
 }
 
 /**
@@ -60,10 +64,40 @@ void MatrixSolver2(double* a, double* f, double* x)
 {
 
     double det = a[0] * a[3] - a[1] * a[2];
-    x[0] = (f[0] * a[3] - f[1] * a[1]) / det;
+    x[0] = ( f[0] * a[3] - f[1] * a[1]) / det;
     x[1] = (-f[0] * a[2] + f[1] * a[0]) / det;
     return;
 }
+
+// void evaluateVertexAverageGradient(size_t Nsub,
+//     double* cellvx,
+//     double* cellvy,
+//     double* cellfv,
+//     double xc,
+//     double yc,
+//     double fc,
+//     double* gfx,
+//     double* gfy){
+
+//     double a[4], x[2], f[2];
+    
+//     /* coefficient matrix and rhs */
+//     a[0] = cellvx[0] - cellvx[1]; 
+//     a[1] = cellvy[0] - cellvy[1];
+//     a[2] = cellvx[0] - cellvx[2];
+//     a[3] = cellvy[0] - cellvy[2];
+//     f[0] = cellfv[0] - cellfv[1];
+//     f[1] = cellfv[0] - cellfv[2];
+
+//     /* get local gradient x=(dhdx, dhdy) of ith subdomain */
+//     MatrixSolver2(a, f, x);
+//     *gfx = x[0];
+//     *gfy = x[1];
+
+//     // if (k==29 | k==149){
+//     //     mexPrintf("k=%d, a=[%f, %f, %f, %f], f=[%f, %f], x=[%f, %f]\n", k, a[0], a[1], a[2], a[3], f[0], f[1], x[0], x[1]);
+//     // }
+// }
 
 void evaluateVertexWeightedGradient(size_t Nsub,
     double* cellvx,
@@ -73,33 +107,54 @@ void evaluateVertexWeightedGradient(size_t Nsub,
     double yc,
     double fc,
     double* gfx,
-    double* gfy,
-    void (*WeiGrad)(size_t Nsub, double* subGfx, double* subGfy, double* subGraDet, double* gfx, double* gfy))
+    double* gfy)
 {
-    double subGfx[Nsub];
-    double subGfy[Nsub];
-    double subGraDet[Nsub];
-    double a[4], x[2], f[2];
-    // double frac = Nsub*eps;
-    for (int n = 0; n < Nsub; n++) {
-        /* vertex index */
-        int l1 = n;
-        int l2 = (n + 1) % Nsub;
-        /* coefficient matrix and rhs */
-        a[0] = cellvx[l1] - xc;
-        a[1] = cellvy[l1] - yc;
-        a[2] = cellvx[l2] - xc;
-        a[3] = cellvy[l2] - yc;
-        f[0] = cellfv[l1] - fc;
-        f[1] = cellfv[l2] - fc;
+    // if (Nsub != 3){
+        double subGfx[Nsub];
+        double subGfy[Nsub];
+        double subGraDet[Nsub];
+        double a[4], x[2], f[2];
+        // double frac = Nsub*eps;
+        for (int n = 0; n < Nsub; n++) {
+            /* vertex index */
+            int l1 = n;
+            int l2 = (n + 1) % Nsub;
+            /* coefficient matrix and rhs */
+            a[0] = cellvx[l1] - xc;
+            a[1] = cellvy[l1] - yc;
+            a[2] = cellvx[l2] - xc;
+            a[3] = cellvy[l2] - yc;
+            f[0] = cellfv[l1] - fc;
+            f[1] = cellfv[l2] - fc;
 
-        /* get local gradient x=(dhdx, dhdy) of ith subdomain */
-        MatrixSolver2(a, f, x);
-        subGfx[n] = x[0];
-        subGfy[n] = x[1];
-        subGraDet[n] = x[0] * x[0] + x[1] * x[1];
-    }
-    evaluateWenoLocalGrad(Nsub, subGfx, subGfy, subGraDet, gfx, gfy);
+            /* get local gradient x=(dhdx, dhdy) of ith subdomain */
+            MatrixSolver2(a, f, x);
+            subGfx[n] = x[0];
+            subGfy[n] = x[1];
+            subGraDet[n] = x[0] * x[0] + x[1] * x[1];
+        }
+        evaluateWenoLocalGrad(Nsub, subGfx, subGfy, subGraDet, gfx, gfy);
+        // if (k==29 | k==149){
+        //    for( int n = 0; n < Nsub; n++){
+        //         mexPrintf("k=%d, subGfx[%d]=%f, subGfy[%d]=%f\n", k, n, subGfx[n], n, subGfy[n]);
+        //     }
+        // }
+    // }else{        
+    //     double a[4], x[2], f[2];
+    //     /* coefficient matrix and rhs */
+    //     a[0] = cellvx[0] - cellvx[1]; 
+    //     a[1] = cellvy[0] - cellvy[1];
+    //     a[2] = cellvx[0] - cellvx[2];
+    //     a[3] = cellvy[0] - cellvy[2];
+    //     f[0] = cellfv[0] - cellfv[1];
+    //     f[1] = cellfv[0] - cellfv[2];
+
+    //     /* get local gradient x=(dhdx, dhdy) of ith subdomain */
+    //     MatrixSolver2(a, f, x);
+    //     *gfx = x[0];
+    //     *gfy = x[1];
+    // }
+    
     return;
 }
 
@@ -198,12 +253,14 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
         if (troubleCellFlag) {
             double gfx, gfy;
             evaluateVertexWeightedGradient(
-                Nv, cellvx, cellvy, cellvf, xm, ym, fm,
-                &gfx, &gfy, evaluateWenoLocalGrad);
+                Nv, cellvx, cellvy, cellvf, xm, ym, fm, &gfx, &gfy);
             projectGradToNodeValue(
                 Np, fm, xm, ym,
                 x + k * Np, y + k * Np,
                 gfx, gfy, flimit + k * Np);
+            // if( k==29 | k==149 )
+            //     mexPrintf("k=%d, fm=%f, gfx=%f, gfy=%f\n", k, fm, gfx, gfy);
+
         } else {
             for (int n = 0; n < Np; n++) {
                 flimit[k * Np + n] = fvar[k * Np + n];

@@ -1,4 +1,4 @@
-classdef Malpasset2d < SWEWD2d & SWEPreBlanaced2d
+classdef Malpasset2d < SWEPreBlanaced2d
     
     properties( Constant )
         hmin = 1e-1
@@ -61,24 +61,24 @@ classdef Malpasset2d < SWEWD2d & SWEPreBlanaced2d
             option('FrictionCoefficient_n') = obj.n;
         end
         
-        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-            [ fphys ] = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
-            obj.matUpdateWetDryState( fphys );
-        end% func
-        
-        function fphys = matEvaluateLimiter( obj, fphys )            
-            obj.matUpdateWetDryState( fphys )
-            
-            fphys = obj.limiter.matLimit( fphys, 2 );
-            fphys = obj.limiter.matLimit( fphys, 3 );
-            for m = 1:obj.Nmesh % update new elevation
-                fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
-            end
-            fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
-            for m = 1:obj.Nmesh % update new elevation
-                fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
-            end
-        end% func
+%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+%             [ fphys ] = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
+%             obj.matUpdateWetDryState( fphys );
+%         end% func
+%         
+%         function fphys = matEvaluateLimiter( obj, fphys )            
+%             obj.matUpdateWetDryState( fphys )
+%             
+%             fphys = obj.limiter.matLimit( fphys, 2 );
+%             fphys = obj.limiter.matLimit( fphys, 3 );
+%             for m = 1:obj.Nmesh % update new elevation
+%                 fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
+%             end
+%             fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
+%             for m = 1:obj.Nmesh % update new elevation
+%                 fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
+%             end
+%         end% func
         
         function fphys = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );

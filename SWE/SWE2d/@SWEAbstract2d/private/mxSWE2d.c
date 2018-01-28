@@ -35,6 +35,10 @@ void evaluateFlowRateByDeptheThreshold(const double hcrit,
                                        double* u,
                                        double* v) {
   if (h > hcrit) {
+//     const double sqrt2 = 1.414213562373095;
+//     double h4 = pow(h, 4);
+//     *u = sqrt2 * h * hu / sqrt( h4 + max( hcrit, h4 ) );
+//     *v = sqrt2 * h * hv / sqrt( h4 + max( hcrit, h4 ) );
     *u = hu / h;
     *v = hv / h;
   } else {

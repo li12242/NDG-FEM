@@ -2,7 +2,7 @@ classdef SWEPreBlanaced2d < SWEAbstract2d
     
     properties(Constant)
         %> Variable field - {h, hu, hv, b, eta}
-        Nfield = 5
+        Nfield = 6
         %> Variable field - {h, hu, hv}
         Nvar = 3
         %> field index of variable field
@@ -25,18 +25,33 @@ classdef SWEPreBlanaced2d < SWEAbstract2d
         end
         
         function fphys = matEvaluateLimiter( obj, fphys )
+%             for m = 1:obj.Nmesh % update new elevation
+%                 fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
+%             end
+%             fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
+%             for m = 1:obj.Nmesh % update new elevation
+% %                 mesh = obj.meshUnion(m);
+% %                 ind = (mesh.EToR == int8( NdgRegionType.Wet ));
+% %                 fphys{m}(:,ind,1) = fphys{m}(:,ind,5) - fphys{m}(:,ind,4);
+%                 fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
+%             end
+            fphys = obj.limiter.matLimit( fphys, 1 );
             fphys = obj.limiter.matLimit( fphys, 2 );
             fphys = obj.limiter.matLimit( fphys, 3 );
-            for m = 1:obj.Nmesh % update new elevation
-                fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
-            end
-            fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
-            for m = 1:obj.Nmesh % update new elevation
+%             for m = 1:obj.Nmesh % update new elevation
 %                 mesh = obj.meshUnion(m);
-%                 ind = (mesh.EToR == int8( NdgRegionType.Wet ));
-%                 fphys{m}(:,ind,1) = fphys{m}(:,ind,5) - fphys{m}(:,ind,4);
-                fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
-            end
+%                 ind = (mesh.EToR ~= int8( NdgRegionType.Dry ));
+%                 fphys{m}(:,:,5) = 0;
+%                 fphys{m}(:,ind,5) = fphys{m}(:,ind,2) ./ fphys{m}(:,ind,1);
+%                 fphys{m}(:,:,6) = 0;
+%                 fphys{m}(:,ind,6) = fphys{m}(:,ind,3) ./ fphys{m}(:,ind,1);
+%             end
+%             fphys = obj.limiter.matLimit( fphys, 5 );
+%             fphys = obj.limiter.matLimit( fphys, 6 );
+%             for m = 1:obj.Nmesh % update new elevation
+%                 fphys{m}(:,:,2) = fphys{m}(:,:,5) .* fphys{m}(:,:,1);
+%                 fphys{m}(:,:,3) = fphys{m}(:,:,6) .* fphys{m}(:,:,1);
+%             end
         end
     end
     

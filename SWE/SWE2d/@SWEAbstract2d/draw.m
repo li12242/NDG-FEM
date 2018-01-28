@@ -1,18 +1,23 @@
-function drawSurfaceBot( obj )
+function draw( obj, varargin )
+
+switch nargin
+    case 1
+        fphys = obj.fphys;
+    case 2
+        fphys = varargin{1};
+end
 
 for m = 1:obj.Nmesh
     mesh = obj.meshUnion(m);
-    drawBottom( mesh, obj.fphys{m}(:,:,4) );
-    eta = obj.fphys{m}(:,:,4) + obj.fphys{m}(:,:,1);
-    eta( obj.fphys{m}(:,:,1) < obj.hmin ) = nan;
+    drawBottom( mesh, fphys{m}(:,:,4) );
+    eta = fphys{m}(:,:,4) + fphys{m}(:,:,1);
+%     eta( fphys{m}(:,:,1) < obj.hmin ) = nan;
     drawSurface( mesh, eta );
-    %mesh.draw( eta );
-    %set( mesh.figureHandle, 'FaceAlpha', 0.8 );
 end
 grid on;
 view([20, 40])
 % zlim([0, 6]);
-colormap jet;
+colormap winter;
 set( gca, 'CLim', [2.4, 5] );
 xlabel('$x$ (m)', 'FontSize', 16, 'Interpreter', 'Latex');
 ylabel('$y$ (m)', 'FontSize', 16, 'Interpreter', 'Latex');
@@ -47,7 +52,7 @@ handle = patch(...
     'Vertices', [mesh.x(:), mesh.y(:), zvar(:)], ...
     'Faces', EToV, ...
     'FaceColor', 'interp', ...
-    'EdgeColor', 'none', ...
+    'EdgeColor', 'k', ...
     'FaceVertexCData', zvar(:));
 box on;
 grid on;

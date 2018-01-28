@@ -1,4 +1,4 @@
-classdef DamBreakWetUniformMesh2d < SWEConventional2d
+classdef DamBreakWetUniformMesh2d < SWEPreBlanaced2d
     
     properties( SetAccess = protected )
         theta
@@ -20,7 +20,7 @@ classdef DamBreakWetUniformMesh2d < SWEConventional2d
     methods
         function obj = DamBreakWetUniformMesh2d(N, M, cellType, theta)
             [ mesh ] = makeUniformMesh(N, M, cellType, theta);
-            obj = obj@SWEConventional2d();
+            obj = obj@SWEPreBlanaced2d();
             obj.theta = theta;
             obj.initPhysFromOptions( mesh );
         end
@@ -63,7 +63,7 @@ classdef DamBreakWetUniformMesh2d < SWEConventional2d
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK33;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;

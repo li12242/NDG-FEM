@@ -1,11 +1,12 @@
-classdef SWEWD2d < SWEAbstract2d
+classdef SWEWD2d < SWEPreBlanaced2d
     %SWEWD2D Summary of this class goes here
     %   Detailed explanation goes here
     
     methods( Access = protected )
-        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-            obj.matUpdateWetDryState( fphys );
-        end% func
+%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+%             fphys = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
+%             obj.matUpdateWetDryState( fphys );
+%         end% func
         
         function fphys = matEvaluateLimiter( obj, fphys )
             obj.matUpdateWetDryState( fphys )
@@ -24,6 +25,7 @@ classdef SWEWD2d < SWEAbstract2d
                     tempWD(4:end, :) = 0;
                     fphys{m}(:, flg, fld) = mesh.cell.V * tempWD;
                 end
+                
             end
             
             fphys = matEvaluateLimiter@SWEAbstract2d( obj, fphys );
@@ -34,7 +36,7 @@ classdef SWEWD2d < SWEAbstract2d
                 
                 mesh = obj.meshUnion(m);
                 % wet part
-                wetflg = all( fphys{m}(:,:,1) > obj.hmin );
+                wetflg = all( fphys{m}(:,:,1) >= obj.hmin );
                 mesh.EToR( wetflg ) = int8( NdgRegionType.Wet );
                 % dry part
                 dryflag = all( fphys{m}(:,:,1) < obj.hmin );
