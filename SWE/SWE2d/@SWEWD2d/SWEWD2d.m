@@ -9,7 +9,7 @@ classdef SWEWD2d < SWEPreBlanaced2d
 %         end% func
         
         function fphys = matEvaluateLimiter( obj, fphys )
-            obj.matUpdateWetDryState( fphys )
+            obj.matUpdateWDWetDryState( fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
                 flg = (mesh.EToR == int8( NdgRegionType.PartialWet ) );
@@ -25,13 +25,12 @@ classdef SWEWD2d < SWEPreBlanaced2d
                     tempWD(4:end, :) = 0;
                     fphys{m}(:, flg, fld) = mesh.cell.V * tempWD;
                 end
-                
             end
             
-            fphys = matEvaluateLimiter@SWEAbstract2d( obj, fphys );
+            fphys = matEvaluateLimiter@SWEPreBlanaced2d( obj, fphys );
         end% func
         
-        function matUpdateWetDryState(obj, fphys)
+        function matUpdateWDWetDryState(obj, fphys)
             for m = 1:obj.Nmesh
                 
                 mesh = obj.meshUnion(m);

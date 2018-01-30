@@ -37,16 +37,18 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
         
         function [ option ] = setOption( obj, option )
             outputIntervalNum = 50;
+            finalTime = 2.0;
             option('startTime') = 0.0;
-            option('finalTime') = 2.0;
+            option('finalTime') = finalTime;
             option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
+            %option('CFL') = 0.2;
             option('timeInterval') ...
                 = 2/obj.M/sqrt(obj.u0 ^ 2 + obj.v0 ^2)/(2*obj.N + 1);
             option('obcType') = NdgBCType.None;
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
-            option('outputTimeInterval') = 2/outputIntervalNum;
+            option('outputTimeInterval') = finalTime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK22;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;

@@ -5,7 +5,7 @@ classdef NdgVertLimiter < NdgAbstractLimiter
         Nv
         %> number of cells connecting at each vertex
         Nvc
-        %> maximum number of cells connecting at each vertex
+        %> maximum number of cells connecting at one vertex
         Nvcmax
         %> cell index containing each vertex
         VToK

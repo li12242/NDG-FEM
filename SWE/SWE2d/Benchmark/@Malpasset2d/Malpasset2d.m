@@ -8,6 +8,18 @@ classdef Malpasset2d < SWEPreBlanaced2d
         trianglefile = 'mesh/triMeshLai/mesh';
     end
     
+    properties
+        %
+        Ng
+        % gauge points location
+        xg, yg
+        % 
+        cellId
+        %
+        Vg
+        %
+        gaugeMaxDepthResult
+    end
     
     methods(Access=protected, Hidden)
         function fphys = matInterpolateTopography( obj, fphys ) 
@@ -34,13 +46,27 @@ classdef Malpasset2d < SWEPreBlanaced2d
             mesh = readTriMeshFile( N, obj.trianglefile );
             %mesh = makeGmshFileUMeshUnion2d( N, obj.gmshfile );
             obj.initPhysFromOptions( mesh );
-        end
-        
-        function assessMexGaugeDepth( obj )
+            
+            [ obj.Ng, obj.xg, obj.yg ] = setGaugePoint();
+            [ obj.cellId, obj.Vg ] = accessGaugePointMatrix( obj );
+            obj.gaugeMaxDepthResult = zeros( obj.Ng, 1 );
         end
     end
     
     methods(Access=protected)
+        function [ cellId, Vg ] = accessGaugePointMatrix( obj )
+            cellId = cell( obj.Nmesh, 1 );
+            Vg = cell( obj.Nmesh, 1 );
+            
+            for m = 1:obj.Nmesh
+                mesh = obj.meshUnion(m);
+                [ cellId{m}, Vg{m} ] = mesh.accessGaugePointLocation( ...
+                    obj.xg, ...
+                    obj.yg, ...
+                    obj.xg );
+            end
+        end
+        
         function [ option ] = setOption( obj, option )
             ftime = 2000;
             
@@ -61,24 +87,17 @@ classdef Malpasset2d < SWEPreBlanaced2d
             option('FrictionCoefficient_n') = obj.n;
         end
         
-%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-%             [ fphys ] = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
-%             obj.matUpdateWetDryState( fphys );
-%         end% func
-%         
-%         function fphys = matEvaluateLimiter( obj, fphys )            
-%             obj.matUpdateWetDryState( fphys )
-%             
-%             fphys = obj.limiter.matLimit( fphys, 2 );
-%             fphys = obj.limiter.matLimit( fphys, 3 );
-%             for m = 1:obj.Nmesh % update new elevation
-%                 fphys{m}(:,:,5) = fphys{m}(:,:,1) + fphys{m}(:,:,4);
-%             end
-%             fphys = obj.limiter.matLimit( fphys, 5 ); % enforce the elevation
-%             for m = 1:obj.Nmesh % update new elevation
-%                 fphys{m}(:,:,1) = fphys{m}(:,:,5) - fphys{m}(:,:,4);
-%             end
-%         end% func
+        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+            [ fphys ] = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
+            for m = 1:obj.Nmesh
+                for i = 1:obj.Ng
+                    depth = obj.Vg(i, :) * fphys{m}(:, obj.cellId(i), 1);
+                    obj.gaugeMaxDepthResult(i) = max( ...
+                        obj.gaugeMaxDepthResult(i), ...
+                        depth );
+                end
+            end
+        end% func
         
         function fphys = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
@@ -142,6 +161,29 @@ EToR = ones( Ne, 1 );
 tri = StdTri(N);
 mesh = NdgMesh2d(tri, Nv, vx, vy, Ne, EToV, EToR, []);
 
-temp = (mesh.EToE == repmat( 1:mesh.K, mesh.cell.Nface, 1 ) );
-mesh.EToB( temp ) = int8(NdgEdgeType.SlipWall);
+temp = find(mesh.EToE == repmat( 1:mesh.K, mesh.cell.Nface, 1 ) );
+[f, k] = ind2sub(...
+    [mesh.cell.Nface, mesh.K], ...
+    temp );
+mesh.EToB( temp ) = NdgEdgeType.SlipWall;
+for i = 1:numel(temp)
+    finalNfp = sum( mesh.cell.Nfp(1:f(i)) );
+    startNfp = finalNfp - mesh.cell.Nfp(f(i)) + 1;
+    mesh.eidtype( startNfp:finalNfp, k(i) ) = int8( NdgEdgeType.SlipWall );
+end
+
+end% func
+
+function [Ng, xg, yg] = setGaugePoint( )
+xg = [5550, 11900, 13000, 4947.46, 5717.30, 6775.14,...
+    7128.20, 8585.3, 9674.97, 10939.15, 11724.37, 12723.70...
+    4913.11 5159.75 5790.63 5886.54 6763.05 6929.97 7326.02 7441.01...
+    8735.94 8628.6 9761.13 9800 10957 11156.99 11689.05 11626.05 12333.72];
+
+yg = [4400, 3250, 2700, 4289.71, 4407.61, 3869.23,...
+    3162.00, 3443.08, 3085.89, 3044.78, 2810.41, 2485.08...
+    4244.01 4369.62 4177.76 4503.97 3429.6 3591.87 2948.78 3232.12 3264.61...
+    3604.63 3480.36 2414.79 2651.94 3800.72 2592.36 3406.8 2269.74];
+
+Ng = numel(xg);
 end

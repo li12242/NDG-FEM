@@ -49,8 +49,8 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('timeInterval') = sqrt(2)/obj.M/obj.w/(2*obj.N + 1);
-            option('equationType') = NdgDiscreteEquationType.Weak;
-            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
+            option('equationType') = NdgDiscreteEquationType.Strong;
+            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('limiterType') = NdgLimiterType.None;
         end
                 
@@ -76,8 +76,11 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
 end% class
 
 function mesh = makeUniformMesh(N, M, type)
-bctype = [NdgEdgeType.Clamped, NdgEdgeType.Clamped, ...
-    NdgEdgeType.Clamped, NdgEdgeType.Clamped];
+bctype = [...
+    NdgEdgeType.Clamped, ...
+    NdgEdgeType.Clamped, ...
+    NdgEdgeType.Clamped, ...
+    NdgEdgeType.Clamped];
 
 if (type == NdgCellType.Tri)
     mesh = makeUniformTriMesh(N, [-1, 1], [-1, 1], M, M, bctype);

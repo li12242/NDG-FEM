@@ -18,7 +18,7 @@ classdef AdvRotationShockUniformMesh2d < AdvRotationUniformMesh2d
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = 2.4;
-            option('LimiterType') = NdgLimiterType.VertexLimiter;
+            option('LimiterType') = NdgLimiterType.Vert;
             option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
             option('obcType') = NdgBCType.None;
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
@@ -27,6 +27,8 @@ classdef AdvRotationShockUniformMesh2d < AdvRotationUniformMesh2d
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('timeInterval') ...
                 = sqrt(2)/obj.M/obj.w/(2*obj.N + 1);
+            option('equationType') = NdgDiscreteEquationType.Weak;
+            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
         end
         
         

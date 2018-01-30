@@ -40,6 +40,54 @@ void evaluateWenoLocalGrad(size_t Nsub,
     // return;
 }
 
+/* the weights of van Albada limiter */
+void evaluateVALocalGrad(
+	int Nsub, 
+	double *gra_x, 
+	double *gra_y, 
+	double *gra_det,
+    double *dhdx, 
+    double *dhdy)
+{
+    double frac=Nsub*EPSILON;;
+    int i,j;
+
+    for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
+        double w = 1.0;
+        for(j=0;j<Nsub;j++){
+            if(i==j) continue;
+            w = w*gra_det[j];
+        }
+        w += EPSILON;
+        frac += w;
+        *dhdx += w*gra_x[i];
+        *dhdy += w*gra_y[i];
+    }
+    *dhdx /= frac;
+    *dhdy /= frac;
+}
+
+/* weights of Hermite WENO limiter */
+void evaluateJKLocalGrad(int Nsub, double *gra_x, double *gra_y, double *gra_det,
+    double *dhdx, double *dhdy){
+    double frac=Nsub*EPSILON;
+    int i,j;
+    for(i=0;i<Nsub;i++){ frac += (pow(gra_det[i], (Nsub-1.0)) + EPSILON ); }
+
+    for(*dhdx=0.0,*dhdy=0.0,i=0;i<Nsub;i++){
+        double w = 1.0;
+        for(j=0;j<Nsub;j++){
+            if(i==j) continue;
+            w = w*gra_det[j];
+        }
+        w += EPSILON;
+        *dhdx += w*gra_x[i];
+        *dhdy += w*gra_y[i];
+    }
+    *dhdx /= frac;
+    *dhdy /= frac;
+}
+
 /**
  * @brief 
  * Solve for equations with 2 unknows.
@@ -69,36 +117,6 @@ void MatrixSolver2(double* a, double* f, double* x)
     return;
 }
 
-// void evaluateVertexAverageGradient(size_t Nsub,
-//     double* cellvx,
-//     double* cellvy,
-//     double* cellfv,
-//     double xc,
-//     double yc,
-//     double fc,
-//     double* gfx,
-//     double* gfy){
-
-//     double a[4], x[2], f[2];
-    
-//     /* coefficient matrix and rhs */
-//     a[0] = cellvx[0] - cellvx[1]; 
-//     a[1] = cellvy[0] - cellvy[1];
-//     a[2] = cellvx[0] - cellvx[2];
-//     a[3] = cellvy[0] - cellvy[2];
-//     f[0] = cellfv[0] - cellfv[1];
-//     f[1] = cellfv[0] - cellfv[2];
-
-//     /* get local gradient x=(dhdx, dhdy) of ith subdomain */
-//     MatrixSolver2(a, f, x);
-//     *gfx = x[0];
-//     *gfy = x[1];
-
-//     // if (k==29 | k==149){
-//     //     mexPrintf("k=%d, a=[%f, %f, %f, %f], f=[%f, %f], x=[%f, %f]\n", k, a[0], a[1], a[2], a[3], f[0], f[1], x[0], x[1]);
-//     // }
-// }
-
 void evaluateVertexWeightedGradient(size_t Nsub,
     double* cellvx,
     double* cellvy,
@@ -109,52 +127,35 @@ void evaluateVertexWeightedGradient(size_t Nsub,
     double* gfx,
     double* gfy)
 {
-    // if (Nsub != 3){
-        double subGfx[Nsub];
-        double subGfy[Nsub];
-        double subGraDet[Nsub];
-        double a[4], x[2], f[2];
-        // double frac = Nsub*eps;
-        for (int n = 0; n < Nsub; n++) {
-            /* vertex index */
-            int l1 = n;
-            int l2 = (n + 1) % Nsub;
-            /* coefficient matrix and rhs */
-            a[0] = cellvx[l1] - xc;
-            a[1] = cellvy[l1] - yc;
-            a[2] = cellvx[l2] - xc;
-            a[3] = cellvy[l2] - yc;
-            f[0] = cellfv[l1] - fc;
-            f[1] = cellfv[l2] - fc;
+    double subGfx[Nsub];
+    double subGfy[Nsub];
+    double subGraDet[Nsub];
+    double a[4], x[2], f[2];
+    // double frac = Nsub*eps;
+    for (int n = 0; n < Nsub; n++) {
+        /* vertex index */
+        int l1 = n;
+        int l2 = (n + 1) % Nsub;
+        /* coefficient matrix and rhs */
+        a[0] = cellvx[l1] - xc;
+        a[1] = cellvy[l1] - yc;
+        a[2] = cellvx[l2] - xc;
+        a[3] = cellvy[l2] - yc;
+        f[0] = cellfv[l1] - fc;
+        f[1] = cellfv[l2] - fc;
 
-            /* get local gradient x=(dhdx, dhdy) of ith subdomain */
-            MatrixSolver2(a, f, x);
-            subGfx[n] = x[0];
-            subGfy[n] = x[1];
-            subGraDet[n] = x[0] * x[0] + x[1] * x[1];
-        }
-        evaluateWenoLocalGrad(Nsub, subGfx, subGfy, subGraDet, gfx, gfy);
+        /* get local gradient x=(dhdx, dhdy) of ith subdomain */
+        MatrixSolver2(a, f, x);
+        subGfx[n] = x[0];
+        subGfy[n] = x[1];
+        subGraDet[n] = x[0] * x[0] + x[1] * x[1];
+    }
+    evaluateWenoLocalGrad(Nsub, subGfx, subGfy, subGraDet, gfx, gfy);
         // if (k==29 | k==149){
         //    for( int n = 0; n < Nsub; n++){
         //         mexPrintf("k=%d, subGfx[%d]=%f, subGfy[%d]=%f\n", k, n, subGfx[n], n, subGfy[n]);
         //     }
         // }
-    // }else{        
-    //     double a[4], x[2], f[2];
-    //     /* coefficient matrix and rhs */
-    //     a[0] = cellvx[0] - cellvx[1]; 
-    //     a[1] = cellvy[0] - cellvy[1];
-    //     a[2] = cellvx[0] - cellvx[2];
-    //     a[3] = cellvy[0] - cellvy[2];
-    //     f[0] = cellfv[0] - cellfv[1];
-    //     f[1] = cellfv[0] - cellfv[2];
-
-    //     /* get local gradient x=(dhdx, dhdy) of ith subdomain */
-    //     MatrixSolver2(a, f, x);
-    //     *gfx = x[0];
-    //     *gfy = x[1];
-    // }
-    
     return;
 }
 
@@ -192,7 +193,9 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 
     /* check input & output */
     if (nrhs != 13) {
-        mexErrMsgIdAndTxt("Matlab:mxVertLimit:InvalidNumberInput", "8 inputs required.");
+        mexErrMsgIdAndTxt(
+                "Matlab:mxVertLimit:InvalidNumberInput", 
+                "8 inputs required.");
     }
 
     /* get inputs */

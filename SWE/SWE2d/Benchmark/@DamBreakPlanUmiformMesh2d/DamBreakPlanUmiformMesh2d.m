@@ -74,15 +74,15 @@ function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
     NdgEdgeType.ZeroGrad, ...
     NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.ZeroGrad];
+    NdgEdgeType.ClampedVel, ...
+    NdgEdgeType.ClampedVel];
 
 xlim = [-15, 15];
 ylim = [-2, 2];
 if (type == NdgCellType.Tri)
-    mesh = makeUniformTriMesh(N, xlim, ylim, M, ceil(M/30), bctype);
+    mesh = makeUniformTriMesh(N, xlim, ylim, M, 2, bctype);
 elseif(type == NdgCellType.Quad)
-    mesh = makeUniformQuadMesh(N, xlim, ylim, M, ceil(M/30), bctype);
+    mesh = makeUniformQuadMesh(N, xlim, ylim, M, 2, bctype);
 else
     msgID = [mfilename, ':inputCellTypeError'];
     msgtext = 'The input cell type should be NdgCellType.Tri or NdgCellType.Quad.';

@@ -38,6 +38,14 @@ srcfile = {[path, 'mxGetMeshIntegralValue.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 % Limiter
+path = 'NdgLimiter/NdgBJ/@NdgBJAbstract/private/';
+srcfile = {[path, 'mxEvaluateVertAverage.c']};
+FuncHandle(path, srcfile, libfile);
+
+path = 'NdgLimiter/NdgBJ/@NdgBJ2d/private/';
+srcfile = {[path, 'mxBJ2d.c']};
+FuncHandle(path, srcfile, libfile);
+
 path = 'NdgLimiter/NdgVertLimiter/@NdgVertLimiter/private/';
 srcfile = {[path, 'mxEvaluateVertAverage.c']};
 FuncHandle(path, srcfile, libfile);
