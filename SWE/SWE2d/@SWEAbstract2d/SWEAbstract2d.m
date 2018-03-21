@@ -1,3 +1,16 @@
+%> \brief 2-D Non-linear Shallow Water Equation
+
+%> \details
+%> This class descripe the conservation equations of the mass and 
+%> monuments, written as
+%> \f$ \frac{\partial \mathbf{U}}{\partial t} + \nabla \cdot 
+%> \mathbf{F}(\mathbf{U}) = \mathbf{S}(\mathbf{U}), \f$  
+%> where \f$ \mathbf{U} = (h, hu, hv) \f$ are the conservative variables, 
+%> \f$ \mathbf{F}(\mathbf{U}) \f$ and \f$ \mathbf{S}(\mathbf{U}) \f$ 
+%> are the flux terms and source term, respectively. 
+%> For the SWE model, the wet/dry (WD) probelm is addressed with the 
+%> methods fron Li (2018), which requires to determine the WD states of 
+%> each elements. The numerical flux 
 classdef SWEAbstract2d < NdgPhysMat
     
     properties(Abstract, Constant)

@@ -91,7 +91,7 @@ classdef Malpasset2d < SWEPreBlanaced2d
             [ fphys ] = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
             for m = 1:obj.Nmesh
                 for i = 1:obj.Ng
-                    depth = obj.Vg(i, :) * fphys{m}(:, obj.cellId(i), 1);
+                    depth = obj.Vg{m}(i, :) * fphys{m}(:, obj.cellId{m}(i), 1);
                     obj.gaugeMaxDepthResult(i) = max( ...
                         obj.gaugeMaxDepthResult(i), ...
                         depth );

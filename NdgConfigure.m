@@ -77,9 +77,10 @@ srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
     [path, 'mxEvaluateSourceTopography1d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWE1d/@SWEWDMesh1d/private/';
-libfile = {[path, 'mxSWE1d.c']};
-srcfile = {[path, 'mxEvaluateSurfaceValue1d.c']};
+path = 'SWE/SWE1d/@SWEWD1d/private/';
+libfile = {};
+srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
+    [path, 'mxEvaluateSourceTopography1d.c']};
 FuncHandle(path, srcfile, libfile);
 
 % SWE2d

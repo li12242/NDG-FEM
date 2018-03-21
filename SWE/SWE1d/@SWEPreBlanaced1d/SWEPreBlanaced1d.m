@@ -21,10 +21,13 @@ classdef SWEPreBlanaced1d < SWEAbstract1d
             for m = 1:obj.Nmesh % update new elevation
                 fphys{m}(:,:,4) = fphys{m}(:,:,1) + fphys{m}(:,:,3);
             end
+%             vol1 = sum( obj.meshUnion.GetMeshIntegralValue( fphys{1}(:, :, 1) ) );
             fphys = obj.limiter.matLimit( fphys, 4 ); % enforce the elevation
             for m = 1:obj.Nmesh % update new elevation
                 fphys{m}(:,:,1) = fphys{m}(:,:,4) - fphys{m}(:,:,3);
             end
+%             vol2 = sum( obj.meshUnion.GetMeshIntegralValue( fphys{1}(:, :, 1) ) );
+%             fprintf('vol1 = %e\n', vol2 - vol1)
         end
 
         function matEvaluateTopographySourceTerm( obj, fphys )

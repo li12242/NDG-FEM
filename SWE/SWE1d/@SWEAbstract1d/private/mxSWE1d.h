@@ -17,6 +17,9 @@ typedef enum {
   NdgRegionSponge = 3,
   NdgRegionWet = 4,
   NdgRegionDry = 5,
+  NdgRegionPartialWet = 6,
+  NdgRegionPartialWetFlood = 7,
+  NdgRegionPartialWetDamBreak = 8,
 } NdgRegionType;
 
 typedef enum {

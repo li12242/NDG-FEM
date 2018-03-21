@@ -1,12 +1,10 @@
 classdef SWEWD2d < SWEPreBlanaced2d
-    %SWEWD2D Summary of this class goes here
-    %   Detailed explanation goes here
     
     methods( Access = protected )
-%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-%             fphys = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
-%             obj.matUpdateWetDryState( fphys );
-%         end% func
+        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+            fphys = matEvaluatePostFunc@SWEAbstract2d( obj, fphys );
+            obj.matUpdateWetDryState( fphys );
+        end% func
         
         function fphys = matEvaluateLimiter( obj, fphys )
             obj.matUpdateWDWetDryState( fphys )

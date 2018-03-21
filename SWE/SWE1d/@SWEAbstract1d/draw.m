@@ -17,7 +17,7 @@ if isFigureExit
         set( obj.draw_handle{m, 1}, 'YData', temp(:) );
         temp = fphys{m}(:,:,2);
         set( obj.draw_handle{m, 2}, 'YData', temp(:) );
-        set( obj.draw_handle{m, 3}, 'YData', mesh.EToR(:) );
+        %set( obj.draw_handle{m, 3}, 'YData', mesh.EToR(:) );
     end
 else
     for m = 1:obj.Nmesh
@@ -50,8 +50,8 @@ else
             'NodeLabel', {});
         box on;
         grid on;
-        obj.draw_handle{m, 3} = plot( ...
-            mesh.xc, mesh.EToR, 'ro');
+%         obj.draw_handle{m, 3} = plot( ...
+%             mesh.xc, mesh.EToR, 'ro');
         
         subplot( 2, 1, 2 ); hold on;
         temp = fphys{m}(:,:,2);

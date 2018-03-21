@@ -22,6 +22,8 @@ classdef NdgTVB1d < NdgTVBAbstract
             
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
+%                 vol1 = sum( hc{m}.*mesh.LAV );
+%                 vol2 = sum( mesh.GetMeshIntegralValue( fphys{m}(:,:,fldId) ) );
                 
                 dh = fphys{m}( end, :, fldId ) ...
                     - fphys{m}( 1, :, fldId );
@@ -32,11 +34,17 @@ classdef NdgTVB1d < NdgTVBAbstract
                 if ( any( ids ) )
                     tmp = obj.minmod([dh; dhl; dhr]);
                     slope = tmp./mesh.LAV;
-                    t_Q = bsxfun(@plus, hc{m}, ... % reconstruct limited node values
-                        bsxfun(@times, slope, ...
-                        bsxfun(@minus, mesh.x, mesh.xc)));
+%                     t_Q = bsxfun(@plus, hc{m}, ... % reconstruct limited node values
+%                         bsxfun(@times, slope, ...
+%                         bsxfun(@minus, mesh.x, mesh.xc)));
+                    t_Q = hc{m} + slope .* ( mesh.x - mesh.xc );
+                    deltaAve = hc{m} - mesh.GetMeshAverageValue( t_Q );
+                    t_Q = t_Q + deltaAve;
                     fphys{m}(:, ids, fldId) = t_Q(:, ids);
                 end
+                
+%                 vol3 = sum( mesh.GetMeshIntegralValue( fphys{m}(:,:,fldId) ) );
+%                 fprintf('vol1 = %e, vol2 = %e\n', vol2 - vol1, vol3 - vol1);
             end
         end
     end

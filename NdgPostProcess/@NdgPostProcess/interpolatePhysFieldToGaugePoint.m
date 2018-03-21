@@ -1,5 +1,6 @@
 function [ gaugeValue ] = interpolatePhysFieldToGaugePoint( obj, fphys, xg, yg, zg )
 Ng = numel( xg );
+[ Nfiled ] = size( fphys{1}, 3 );
 gaugeValue = zeros(Ng, obj.Nvar);
 
 for m = 1:obj.Nmesh
@@ -10,7 +11,7 @@ for m = 1:obj.Nmesh
             continue;
         end
         
-        for fld = 1:obj.Nvar
+        for fld = 1:Nfiled
             gaugeValue(n, fld) = Vg(n, :) * fphys{m}(:, cellId(n), fld);
         end
     end
