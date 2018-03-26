@@ -1,4 +1,4 @@
-classdef CoriolisType < int8
+classdef SWECoriolisType < int8
     
     enumeration
         None        (0)

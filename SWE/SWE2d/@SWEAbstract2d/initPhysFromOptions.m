@@ -63,7 +63,23 @@ else % the option does not exist
     obj.windSolver = NonWindTermSolver();
 end
 
+if obj.option.isKey('NumFluxType')
+    if obj.getOption('NumFluxType') == SWENumFluxType.HLL
+        obj.numfluxSolver = SWEHLLNumFluxSolver2d( );
+    end
+else
+    obj.numfluxSolver = SWEHLLNumFluxSolver2d( );
+end
 
+if obj.option.isKey('SWELimiterType')
+    if obj.getOption('SWELimiterType') == SWELimiterType.OnDepth
+        obj.limiterSolver = SWEDepthLimiter();
+    elseif obj.getOption('SWELimiterType') == SWELimiterType.OnElevation
+        obj.limiterSolver = SWEElevationLimiter();
+    end
+else
+    obj.limiterSolver = SWEDepthLimiter();
+end
 end% func
 
 

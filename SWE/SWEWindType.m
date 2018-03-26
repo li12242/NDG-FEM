@@ -1,4 +1,4 @@
-classdef WindType < int8
+classdef SWEWindType < int8
     
     enumeration
         None   (1)

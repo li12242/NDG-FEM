@@ -1,4 +1,4 @@
-classdef DamBreakWetUniformMesh2d < SWEPreBlanaced2d
+classdef DamBreakWetUniformMesh2d < SWEConventional2d
     
     properties( SetAccess = protected )
         theta
@@ -20,7 +20,7 @@ classdef DamBreakWetUniformMesh2d < SWEPreBlanaced2d
     methods
         function obj = DamBreakWetUniformMesh2d(N, M, cellType, theta)
             [ mesh ] = makeUniformMesh(N, M, cellType, theta);
-            obj = obj@SWEPreBlanaced2d();
+            obj = obj@SWEConventional2d();
             obj.theta = theta;
             obj.initPhysFromOptions( mesh );
         end
@@ -67,9 +67,10 @@ classdef DamBreakWetUniformMesh2d < SWEPreBlanaced2d
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')=CoriolisType.None;
-            option('WindType')=WindType.None;
-            option('FrictionType')=FrictionType.None;
+            option('CoriolisType')=SWECoriolisType.None;
+            option('WindType')=SWEWindType.None;
+            option('FrictionType')=SWEFrictionType.None;
+            option('NumFluxType') = SWENumFluxType.HLL;
         end
         
         fphys = getExactFunction( obj, time )

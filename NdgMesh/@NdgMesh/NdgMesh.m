@@ -32,7 +32,7 @@ classdef NdgMesh < handle
         %> vertex index in each cell (column)
         EToV
         %> region types for each cell
-        EToR int8
+        EToR @int8
         %> coordinate of vertex
         vx
         %> coordinate of vertex
@@ -77,7 +77,7 @@ classdef NdgMesh < handle
         %> the adjacent point index
         eidP
         %> edge type of each facial points
-        eidtype int8
+        eidtype @int8
     end
     
     properties( SetAccess = protected )

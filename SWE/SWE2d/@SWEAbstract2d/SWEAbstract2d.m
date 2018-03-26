@@ -1,16 +1,16 @@
 %> \brief 2-D Non-linear Shallow Water Equation
 
 %> \details
-%> This class descripe the conservation equations of the mass and 
+%> This class descripe the conservation equations of the mass and
 %> monuments, written as
-%> \f$ \frac{\partial \mathbf{U}}{\partial t} + \nabla \cdot 
-%> \mathbf{F}(\mathbf{U}) = \mathbf{S}(\mathbf{U}), \f$  
-%> where \f$ \mathbf{U} = (h, hu, hv) \f$ are the conservative variables, 
-%> \f$ \mathbf{F}(\mathbf{U}) \f$ and \f$ \mathbf{S}(\mathbf{U}) \f$ 
-%> are the flux terms and source term, respectively. 
-%> For the SWE model, the wet/dry (WD) probelm is addressed with the 
-%> methods fron Li (2018), which requires to determine the WD states of 
-%> each elements. The numerical flux 
+%> \f$ \frac{\partial \mathbf{U}}{\partial t} + \nabla \cdot
+%> \mathbf{F}(\mathbf{U}) = \mathbf{S}(\mathbf{U}), \f$
+%> where \f$ \mathbf{U} = (h, hu, hv) \f$ are the conservative variables,
+%> \f$ \mathbf{F}(\mathbf{U}) \f$ and \f$ \mathbf{S}(\mathbf{U}) \f$
+%> are the flux terms and source term, respectively.
+%> For the SWE model, the wet/dry (WD) probelm is addressed with the
+%> methods fron Li (2018), which requires to determine the WD states of
+%> each elements. The numerical flux
 classdef SWEAbstract2d < NdgPhysMat
     
     properties(Abstract, Constant)
@@ -18,113 +18,73 @@ classdef SWEAbstract2d < NdgPhysMat
         hmin
         %> gravity acceleration
         gra
-        %> number of physical field
-        Nfield
-        %> number of variable field
-        Nvar
-        %> index of variable in physical field
-        varFieldIndex
     end
     
-    properties
+    properties( Constant )
+        %> number of physical field
+        Nfield = 5
+        %> number of variable field
+        Nvar = 3
+        %> index of variable in physical field
+        varFieldIndex = [ 1, 2, 3 ]
+    end
+    
+    properties( SetAccess = private )
         %> gradient of bottom elevation
         zGrad
-        %>
+        %> solver for coriolis source term
         coriolisSolver
-        %>
+        %> solver for friction source term
         frictionSolver
-        %>
+        %> solver for wind source term
         windSolver
-        %>
-        wind
+        %> solver for unmerical flux
+        numfluxSolver
+        %> limiter type
+        limiterSolver
     end
     
     methods
         draw( obj, varargin )
     end
     
-    methods( Hidden )
+    methods( Hidden, Abstract )
+        [ E, G ] = matEvaluateFlux( obj, mesh, fphys );
+    end
+    
+    methods( Hidden, Sealed )
+        %> impose boundary condition and evaluate cell boundary values
+        [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext );
         
-        function [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
-            [ fM, fP ] = mxEvaluateSurfaceValue( obj.hmin, obj.gra, ...
-                mesh.eidM, mesh.eidP, mesh.nx, mesh.ny, mesh.eidtype, ...
-                fphys, fext, mesh.EToE, mesh.EToR );
-        end
-        
+        %> evaluate local boundary flux
         function [ fluxM ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fm )
             [ fluxM ] = mxEvaluateSurfFlux( obj.hmin, obj.gra, nx, ny, fm);
-        end
+        end% func
         
+        %> evaluate boundary numerical flux
         function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fm, fp )
-            [ fluxS ] = matEvaluateHLLNumFlux2d( obj, nx, ny, fm, fp );
-        end
+            [ fluxS ] = obj.numfluxSolver.evaluate( obj.hmin, obj.gra, nx, ny, fm, fp );
+        end% func
     end
     
     methods( Abstract, Access = protected )
-        %> 
-        matEvaluateTopographySourceTerm( obj, fphys )
+        matUpdateWetDryState(obj, fphys)
+        
+        %> evaluate topography source term
+        [ ] = matEvaluateTopographySourceTerm( obj, fphys )
+        
+        %> evaluate post function
+        [ fphys ] = matEvaluatePostFunc(obj, fphys)
     end
     
-    methods( Access = protected )
-        %>
-        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-            for m = 1:obj.Nmesh
-                hc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,1) );
-                qxc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,2) );
-                qyc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,3) );
-                fphys{m}(:,:,1:3) = mxEvaluatePostFunc2d( obj.hmin, fphys{m}, hc, qxc, qyc );
-            end
-            obj.matUpdateWetDryState( fphys );
-        end
+    methods( Access = protected, Sealed )
+        [ fphys ] = matEvaluateLimiter( obj, fphys )
         
-        function matUpdateWetDryState(obj, fphys)
-            for m = 1:obj.Nmesh
-                wetflag = all( fphys{m}(:,:,1) > obj.hmin );
-                obj.meshUnion(m).EToR( ~wetflag ) = int8( NdgRegionType.Dry );
-                obj.meshUnion(m).EToR(  wetflag ) = int8( NdgRegionType.Wet );
-            end
-        end
+        %> determine time interval
+        [ dt ] = matUpdateTimeInterval( obj, fphys )
         
-        function [ dt ] = matUpdateTimeInterval( obj, fphys )
-            dt = nan;
-            for m = 1:obj.Nmesh
-                dx = sqrt( obj.meshUnion(m).LAV );
-                N = obj.meshUnion(m).cell.N;
-                dtm = mxUpdateTimeInterval2d( ...
-                    obj.hmin, ...
-                    obj.gra, ...
-                    N, ...
-                    dx, ...
-                    obj.meshUnion(m).EToR, ...
-                    fphys{m} );
-                
-                if ( dtm > 0 )
-                    dt = min(dt, dtm * obj.cfl);
-                end
-            end
-        end
-        
-        function matEvaluateSourceTerm( obj, fphys )
-            % frhs = frhs + BottomTerm
-            obj.matEvaluateTopographySourceTerm( fphys );
-            
-            % frhs = frhs + CoriolisTerm
-            obj.coriolisSolver.evaluateCoriolisTermRHS(obj, fphys);
-            
-            % frhs = frhs + FrictionTerm
-            obj.frictionSolver.evaluateFrictionTermRHS(obj, fphys);
-            
-            % frhs = frhs + WindTerm
-            obj.windSolver.evaluateWindTermRHS(obj, fphys);
-        end
-        
-        function [ fluxS ] = matEvaluateHLLNumFlux2d( obj, nx, ny, fm, fp )
-            [ fluxS ] = mxEvaluateHLLNumFlux2d( obj.hmin, obj.gra, nx, ny, fm, fp );
-        end
-        
-        function [ fluxS ] = matEvaluateLFNumFlux2d( obj, mesh, nx, ny, fm, fp )
-            
-        end
+        %> evaluate source term
+        [ ] = matEvaluateSourceTerm( obj, fphys )
     end
     
 end

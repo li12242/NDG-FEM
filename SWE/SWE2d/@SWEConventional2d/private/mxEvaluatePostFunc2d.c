@@ -7,11 +7,8 @@
 
 #define NRHS 5
 #define NLHS 1
+#define NVAR 3
 
-/*
- * Usages:
- *		[ fvar ] = ppreserve(hcrit, fphys, hc, qxc, qyc);
- */
 void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   /* check input & output */
   if (nrhs != NRHS) {

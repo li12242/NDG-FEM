@@ -1,4 +1,4 @@
-classdef DamBreakDryUniformMesh2d < SWEConventional2d
+classdef DamBreakDryUniformMesh2d < SWEPreBlanaced2d
     
     properties( SetAccess = protected )
         theta
@@ -18,7 +18,7 @@ classdef DamBreakDryUniformMesh2d < SWEConventional2d
     methods
         function obj = DamBreakDryUniformMesh2d(N, M, cellType, theta)
             [ mesh ] = makeUniformMesh(N, M, cellType, theta);
-            obj = obj@SWEConventional2d();
+            obj = obj@SWEPreBlanaced2d();
             obj.theta = theta;
             obj.initPhysFromOptions( mesh );
             obj.fphys = obj.matEvaluatePostFunc( obj.fphys );

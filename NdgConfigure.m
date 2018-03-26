@@ -87,8 +87,7 @@ FuncHandle(path, srcfile, libfile);
 path = 'SWE/SWE2d/@SWEAbstract2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {[path, 'mxSWE2d.c']};
-srcfile = {[path, 'mxEvaluateHLLNumFlux2d.c'], ...
-    [path, 'mxEvaluatePostFunc2d.c'], ...
+srcfile = { ...
     [path, 'mxEvaluateSurfaceValue.c'], ...
     [path, 'mxEvaluateSurfFlux.c'], ...
     [path, 'mxUpdateTimeInterval2d.c']};
@@ -97,6 +96,7 @@ FuncHandle(path, srcfile, libfile);
 path = 'SWE/SWE2d/@SWEConventional2d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
+    [path, 'mxEvaluatePostFunc2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
 
@@ -104,6 +104,13 @@ path = 'SWE/SWE2d/@SWEPreBlanaced2d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
+FuncHandle(path, srcfile, libfile);
+
+% SWE numerical flux
+path = 'SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver2d/private/';
+CFLAGS = [CFLAGS, ' -I', path, ' '];
+path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver2d/private/';
+srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
 
 fprintf('\n%s:: Compiled all the mex files.\n', mfilename);
