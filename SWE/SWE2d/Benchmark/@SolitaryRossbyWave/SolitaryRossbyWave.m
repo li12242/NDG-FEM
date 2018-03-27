@@ -42,11 +42,11 @@ classdef SolitaryRossbyWave < SWEConventional2d
             option('limiterType') = NdgLimiterType.None;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')=CoriolisType.Beta;
+            option('CoriolisType')=SWECoriolisType.Beta;
             option('CoriolisParameter_f0')=0;
             option('CoriolisParameter_beta')=1;
-            option('WindType')=WindType.None;
-            option('FrictionType')=FrictionType.None;
+            option('WindType')=SWEWindType.None;
+            option('FrictionType')=SWEFrictionType.None;
         end
         
     end%methods

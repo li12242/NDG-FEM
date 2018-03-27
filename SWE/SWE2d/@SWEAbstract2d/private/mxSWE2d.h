@@ -28,9 +28,9 @@ typedef enum {
 } NdgEdgeType;
 
 typedef struct {
-  size_t K;
-  size_t Np;
-  size_t Nfield;
+  size_t Np;      ///< length of 1st dimension
+  size_t K;       ///< length of 2nd dimension
+  size_t Nfield;  ///< length of 3rd dimension
   double* h;
   double* hu;
   double* hv;
@@ -55,23 +55,27 @@ inline PhysField convertMexToPhysField(const mxArray* mxfield) {
 }
 
 /** Evaluate the flow rate depending on the depth threshold */
-void evaluateFlowRateByDeptheThreshold(const double hcrit, const double h,
-                                       const double hu, const double hv,
-                                       double* u, double* v);
-/**
- Evaluate the flow rate depending on the cell states
- */
-void evaluateFlowRateByCellState(const NdgRegionType type, const double h,
-                                 const double hu, const double hv, double* u,
-                                 double* v);
+inline void evaluateFlowRateByDeptheThreshold(
+    const double hcrit,  ///< depth threshold
+    const double h,      ///< depth
+    const double hu,     ///< water flux
+    const double hv,     ///< water flux
+    double* u,           ///< result velocity
+    double* v            ///< velocity
+) {
+  if (h > hcrit) {
+    //     const double sqrt2 = 1.414213562373095;
+    //     double h4 = pow(h, 4);
+    //     *u = sqrt2 * h * hu / sqrt( h4 + max( hcrit, h4 ) );
+    //     *v = sqrt2 * h * hv / sqrt( h4 + max( hcrit, h4 ) );
+    *u = hu / h;
+    *v = hv / h;
+  } else {
+    *u = 0.0;
+    *v = 0.0;
+  }
 
-void evaluateSlipWallAdjacentNodeValue(const double nx, const double ny,
-                                       double* fm, double* fp);
-
-void evaluateNonSlipWallAdjacentNodeValue(const double nx, const double ny,
-                                          double* fm, double* fp);
-
-void evaluateFlatherAdjacentNodeValue(double nx, double ny, double* fm,
-                                      double* fe);
+  return;
+}
 
 #endif  //__mxSWE_H__

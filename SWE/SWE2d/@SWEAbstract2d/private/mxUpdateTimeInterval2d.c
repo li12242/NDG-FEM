@@ -6,6 +6,24 @@
 #include <omp.h>
 #endif
 
+inline void evaluateFlowRateByCellState(
+    const NdgRegionType type,  ///< cell types
+    const double h,            ///< water depth
+    const double hu,           ///< flux
+    const double hv,           ///< flux
+    double* u,                 ///< velocity result
+    double* v                  ///< velocity result
+) {
+  if (type == NdgRegionWet) {
+    *u = hu / h;
+    *v = hv / h;
+  } else {
+    *u = 0;
+    *v = 0;
+  }
+  return;
+}
+
 #define NRHS 6
 #define NLHS 1
 
@@ -29,15 +47,10 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   // double* fphys = mxGetPr(prhs[5]);
   PhysField fphys = convertMexToPhysField(prhs[5]);
 
-  // const mwSize* dims = mxGetDimensions(prhs[5]);
   const size_t Np = fphys.Np;
   const size_t K = fphys.K;
 
   plhs[0] = mxCreateDoubleScalar(0);
-
-  //   double* h = fphys;
-  //   double* hu = fphys + K * Np;
-  //   double* hv = fphys + 2 * K * Np;
 
   double dt = 1e6;
   for (int k = 0; k < K; k++) {
