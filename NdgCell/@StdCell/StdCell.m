@@ -109,7 +109,7 @@ classdef StdCell < handle
         %> get the total number and coordinate of interpolation points
         [ Np,r,s,t ] = node_coor_func(obj, N)
         %> get the total number and coordinate of gauss quadrature points
-        [ Nq,rq,sq,tq ] = quad_coor_func(obj, N)
+        [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
         %> get the derivative of orthogonal function at each interpolation points
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
     end
@@ -242,6 +242,15 @@ classdef StdCell < handle
         %> @brief Assemble the mass matrix
         %> 
         function [ M, invM ] = assembleMassMatrix( obj )
+%             [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, 2*obj.N );
+%             [ fq ] = nodal_func( obj, rq, sq, tq );
+%             M = zeros( obj.Np, obj.Np );
+%             for n = 1:obj.Np
+%                 for m = 1:obj.Np
+%                     M(n, m) = sum( wq(:) .* fq(:, m) .* fq(:, n) );
+%                 end
+%             end
+%             invM = inv(M);
             invV = inv(obj.V);
             M = (invV')*invV;
             invM = obj.V * obj.V';

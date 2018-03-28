@@ -33,10 +33,10 @@ classdef StdQuad < StdCell
         function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x, y, z )
             xr = obj.Dr * x; xs = obj.Ds * x;
             yr = obj.Dr * y; ys = obj.Ds * y;
-            J = -xs.*yr + xr.*ys;
+            J = -xs .* yr + xr .* ys;
             
-            rx = ys./J; sx =-yr./J;
-            ry =-xs./J; sy = xr./J;
+            rx =   ys ./ J; sx = - yr ./ J;
+            ry = - xs ./ J; sy =   xr ./ J;
             
             rz = ones( size(x) );
             sz = ones( size(x) );
