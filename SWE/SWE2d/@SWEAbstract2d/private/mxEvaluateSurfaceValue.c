@@ -70,8 +70,7 @@ void imposeBoundaryCondition(const double gra,        ///< gravity acceleration
     double qy_ext = fext->hv[idM];
     double qn_ext = qx_ext * nx + qy_ext * ny;   // outward normal flux
     double qv_ext = -qx_ext * ny + qy_ext * nx;  // tangential flux
-
-    double qn = qn_ext - sqrt(gra * hM) * (fext->h[idM] - hM);
+    double qn = qn_ext - sqrt(-gra * surf->zM) * (fext->h[idM] - hM);
     double qv = qv_ext;
     surf->hP = hM;
     surf->huP = qn * nx - qv * ny;

@@ -17,7 +17,7 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
         %> size of the initial Gauss mount
         r0 = 0.25
         %> angle velocity
-        w = 5*pi/6; 
+        w = 5*pi/6;
     end
     
     methods

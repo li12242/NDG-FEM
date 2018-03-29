@@ -1,6 +1,4 @@
 classdef WW3 < CSBAbstractTest
-    %WW3 Summary of this class goes here
-    %   Detailed explanation goes here
     
     properties( Constant )
         h0 = 0.5;
@@ -58,7 +56,7 @@ bctype = [...
     NdgEdgeType.ZeroGrad, ...
     NdgEdgeType.ZeroGrad];
 
-mesh = makeUniformTriMesh(1, test.xlim, test.ylim, 1, 10, bctype);
+mesh = makeUniformTriMesh(1, test.xlim, test.ylim, 2, 2, bctype);
 end% func
 
 

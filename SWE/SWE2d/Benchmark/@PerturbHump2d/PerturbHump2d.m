@@ -1,4 +1,4 @@
-classdef PerturbHump2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
+classdef PerturbHump2d < SWEPreBlanaced2d
     
     properties( Constant )
         gra = 9.81
@@ -31,7 +31,7 @@ classdef PerturbHump2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
         
         function [ option ] = setOption( obj, option )
             ftime = 0.6;
-            outputIntervalNum = 50;
+            outputIntervalNum = 200;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
             option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
@@ -43,9 +43,10 @@ classdef PerturbHump2d < SWEPreBlanaced2d %& SDBAbstractTest & CSBAbstractTest
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')=CoriolisType.None;
-            option('WindType')=WindType.None;
-            option('FrictionType')=FrictionType.None;
+            option('CoriolisType') = SWECoriolisType.None;
+            option('WindType') = SWEWindType.None;
+            option('FrictionType') = SWEFrictionType.None;
+            option('SWELimiterType') = SWELimiterType.OnElevation;
         end
     end
 end
@@ -55,7 +56,7 @@ bctype = [...
     NdgEdgeType.SlipWall, ...
     NdgEdgeType.SlipWall, ...
     NdgEdgeType.ClampedDepth, ...
-    NdgEdgeType.ZeroGrad];
+    NdgEdgeType.ClampedDepth];
 
 xlim = [0, 2]; 
 ylim = [0, 1];
@@ -65,7 +66,8 @@ elseif(type == NdgCellType.Quad)
     mesh = makeUniformQuadMesh(N, xlim, ylim, M, ceil(M/2), bctype);
 else
     msgID = [mfile, ':inputCellTypeError'];
-    msgtext = 'The input cell type should be NdgCellType.Tri or NdgCellType.Quad.';
+    msgtext = [ 'The input cell type should be ', ...
+        'NdgCellType.Tri or NdgCellType.Quad.' ];
     ME = MException(msgID, msgtext);
     throw(ME);
 end

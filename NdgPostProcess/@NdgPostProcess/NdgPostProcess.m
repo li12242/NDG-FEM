@@ -11,6 +11,8 @@ classdef NdgPostProcess < handle
         Nvar
         %> number of output step
         Nt
+        %> output time 
+        time 
     end
     
     methods
@@ -29,7 +31,7 @@ classdef NdgPostProcess < handle
         end
         
         %======================================================================
-        %> @brief Brief description of the function
+        %> \brief Brief description of the function
         %>
         %> More detailed description.
         %>
@@ -42,21 +44,12 @@ classdef NdgPostProcess < handle
         %> This function is part of the NDGOM software.
         %> @author li12242, Tianjin University, li12242@tju.edu.cn
         %======================================================================
-        function drawResult( obj, varargin )
-            varId = 1;
-            stepInterval = 1;
-            if nargin == 2
-                varId = varargin{1};
-            elseif nargin == 3
-                varId = varargin{1};
-                stepInterval = varargin{2};
-            end
-            
-            for t = 1:stepInterval:obj.Nt
+        function drawResult( obj, fieldId, fphysField )
+            varId = fieldId;
+            for t = 1:obj.Nt
                 field = obj.accessOutputResultAtStepNum( t );
-                
                 for m = 1:obj.Nmesh
-                    obj.meshUnion(m).draw( field{m}(:,:,varId) );
+                    obj.meshUnion(m).draw( field{m}(:,:,varId) + fphysField );
                 end
                 drawnow;
             end
@@ -75,10 +68,6 @@ classdef NdgPostProcess < handle
         [ Noutput ] = accessOutputStepNumber( obj )
         [ fphys ] = accessOutputResultAtStepNum( obj, stepId )
         [ Nvar ] = accessOutputVarNumber( obj )
-    end
-    
-    methods( Hidden, Access = protected )
-        
     end
     
 end

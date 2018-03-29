@@ -7,33 +7,27 @@
 #endif
 
 /** */
-void evaluateNodalFlux(double hcrit,
-                       double gra,
-                       double h,
-                       double qx,
-                       double qy,
-                       double z,
-                       double* Eh,
-                       double* Eqx,
-                       double* Eqy,
-                       double* Gh,
-                       double* Gqx,
-                       double* Gqy) {
+void evaluateNodalFlux(double hcrit,  ///< water depth threshold
+                       double gra,    ///< gravity accerelation
+                       double h,      ///< water depth
+                       double qx,     ///< flux
+                       double qy,     ///< flux
+                       double z,      ///< bottom elevation
+                       double* Eh,    ///< flux term
+                       double* Eqx,   ///< flux term
+                       double* Eqy,   ///< flux term
+                       double* Gh,    ///< flux term
+                       double* Gqx,   ///< flux term
+                       double* Gqy    ///< flux term
+) {
   if (h > hcrit) {
     double h2 = 0.5 * gra * (h * h - z * z);
     double huv = qx * qy / h;
-//     const double sqrt2 = 1.414213562373095;
-//     double h4 = pow(h, 4);
-//     double u = sqrt2 * h * qx / sqrt( h4 + max( hcrit, h4 ) );
-//     double v = sqrt2 * h * qy / sqrt( h4 + max( hcrit, h4 ) );
-//     double huv = h * u * v;
     *Eh = qx;
     *Gh = qy;
-//     *Eqx = ( h*u*u + h2 );
     *Eqx = (qx * qx / h + h2);
     *Gqx = huv;
     *Eqy = huv;
-//     *Gqy = ( h*v*v + h2 );
     *Gqy = (qy * qy / h + h2);
   } else {  // for dry nodes
     *Eh = 0;

@@ -18,7 +18,7 @@ classdef StdCellTest < matlab.unittest.TestCase
             NdgCellType.Quad
             }
         %> test cell orders
-        order = {3,4,5}
+        order = { 3,4,5 }
     end
     
     properties(Constant)

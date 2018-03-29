@@ -9,7 +9,7 @@ classdef SWEPreBlanaced2d < SWEConventional2d
     methods( Access = protected )
         function matUpdateWetDryState(obj, fphys)
             for m = 1:obj.Nmesh
-                wetflag = all( fphys{m}(:,:,1) > obj.hmin );
+                wetflag = any( fphys{m}(:,:,1) > obj.hmin );
                 obj.meshUnion(m).EToR( ~wetflag ) = int8( NdgRegionType.Dry );
                 obj.meshUnion(m).EToR(  wetflag ) = int8( NdgRegionType.Wet );
             end

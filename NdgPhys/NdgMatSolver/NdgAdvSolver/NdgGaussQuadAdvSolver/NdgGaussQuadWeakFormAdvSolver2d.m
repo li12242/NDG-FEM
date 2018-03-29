@@ -18,7 +18,7 @@ classdef NdgGaussQuadWeakFormAdvSolver2d < NdgGaussQuadWeakFormSolver & NdgAbstr
                 [ fm, fp ] = phys.matEvaluateSurfaceValue( mesh, fphys{m}, phys.fext{m} );
                 fmq = zeros( obj.TNfq{m}, mesh.K, phys.Nfield );
                 fpq = zeros( obj.TNfq{m}, mesh.K, phys.Nfield );
-                for i = 1:phys.Nfield
+                for i = 1:phys.Nvar
                     fmq(:,:,i) = obj.FVfq{m} * fm(:,:,i);
                     fpq(:,:,i) = obj.FVfq{m} * fp(:,:,i);
                 end
