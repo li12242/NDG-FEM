@@ -151,6 +151,9 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   PhysField fM = convertMexToPhysField(plhs[0]);
   PhysField fP = convertMexToPhysField(plhs[1]);
 
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(DG_THREADS)
+#endif
   for (int k = 0; k < K; k++) {
     SurfNodeField surf;
     for (int f = 0; f < Nface; f++) {

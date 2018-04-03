@@ -19,15 +19,17 @@ classdef swe2d_tsuami < swe2d
             fgetl(fp);
             data = fscanf(fp, '%e %e %e', [3, inf]);
             fclose(fp);
-            interp = scatteredInterpolant(data(1,:)',data(2,:)',...
+            interp = scatteredInterpolant( ...
+                data(1,:)', ...
+                data(2,:)', ...
                 -data(3,:)','linear');
             bot = interp(obj.mesh.x, obj.mesh.y);
         end
     end
     
     methods(Access=protected)
-        [ rhs ] = rhs_term(obj, f_Q ) % ¼ÆËãÓÒ¶ËÏî
-        [ sf ] = fric_sour_term( obj, f_Q ) % ¼ÆËãÄ¦×èÔ´Ïî
+        [ rhs ] = rhs_term(obj, f_Q ) % ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½
+        [ sf ] = fric_sour_term( obj, f_Q ) % ï¿½ï¿½ï¿½ï¿½Ä¦ï¿½ï¿½Ô´ï¿½ï¿½
     end
     methods
         result(obj)
@@ -48,20 +50,20 @@ classdef swe2d_tsuami < swe2d
         end% func
         
         function obj = update_ext(obj, stime)
-            % ¸ù¾Ý¿ª±ß½çÎÄ¼þ½á¹û¸üÐÂÍâ²¿Êý¾Ý
+            % ï¿½ï¿½Ý¿ï¿½ï¿½ß½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½
             vert_extQ = obj.obc_file.get_extQ(stime);
             vertlist = obj.obc_file.vert;
             if (stime < obj.obc_file.time(end))
                 vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 1); % »ñÈ¡Ë®Î»Íâ²¿Öµ
+                vert_Q( vertlist ) = vert_extQ(:, 1); % ï¿½ï¿½È¡Ë®Î»ï¿½â²¿Öµ
                 obj.f_extQ(:,:,1) = obj.mesh.proj_vert2node(vert_Q) - obj.bot;
 
                 vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 2); % »ñÈ¡Á÷Á¿Íâ²¿Öµ
+                vert_Q( vertlist ) = vert_extQ(:, 2); % ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½â²¿Öµ
                 obj.f_extQ(:,:,2) = obj.mesh.proj_vert2node(vert_Q);
 
                 vert_Q = zeros(obj.mesh.Nv, 1);
-                vert_Q( vertlist ) = vert_extQ(:, 3); % »ñÈ¡Á÷Á¿Íâ²¿Öµ
+                vert_Q( vertlist ) = vert_extQ(:, 3); % ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½â²¿Öµ
                 obj.f_extQ(:,:,3) = obj.mesh.proj_vert2node(vert_Q);
             else
                 obj.f_extQ = obj.f_Q;

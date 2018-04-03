@@ -116,6 +116,7 @@ classdef NdgPhysMat < NdgPhys
         
         %> An instantiation of the temporal-discrete function with the SSP-RK45 method
         matEvaluateRK45( obj );
+        matEvaluateRK33( obj );
         matEvaluateRK22( obj );
         %> An instantiation of the temporal-discrete with the Euler method
         matEvaluateEuler( obj );

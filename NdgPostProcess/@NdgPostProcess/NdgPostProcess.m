@@ -11,8 +11,8 @@ classdef NdgPostProcess < handle
         Nvar
         %> number of output step
         Nt
-        %> output time 
-        time 
+        %> output time
+        time
     end
     
     methods
@@ -28,35 +28,31 @@ classdef NdgPostProcess < handle
             
             [ obj.Nt ] = accessOutputStepNumber( obj );
             [ obj.Nvar ] = accessOutputVarNumber( obj );
+            [ obj.time ] = cell( obj.Nmesh, 1 );
+            for m = 1:obj.Nmesh
+                obj.time{m} = obj.assessOutputVar( m, 'time' );
+            end
         end
         
         %======================================================================
-        %> \brief Brief description of the function
+        %> \brief draw output physical field
         %>
         %> More detailed description.
         %>
-        %> @param arg1 First argument
-        %> @param arg2 Second argument
-        %>
-        %> @retval out1 return value for the first output variable
-        %> @retval out2 return value for the second output variable
+        %> \param physField external field
         %======================================================================
-        %> This function is part of the NDGOM software.
-        %> @author li12242, Tianjin University, li12242@tju.edu.cn
-        %======================================================================
-        function drawResult( obj, fieldId, fphysField )
+        function drawResult( obj, fieldId, physField )
             varId = fieldId;
             for t = 1:obj.Nt
                 field = obj.accessOutputResultAtStepNum( t );
                 for m = 1:obj.Nmesh
-                    obj.meshUnion(m).draw( field{m}(:,:,varId) + fphysField );
+                    obj.meshUnion(m).draw( field{m}(:,:,varId) + physField );
                 end
                 drawnow;
             end
         end
         
         [ mass ] = checkMassVolume( obj, varId )
-        
         [ err ] = evaluateNormErr1( obj, fphys, fext );
         [ err ] = evaluateNormErr2( obj, fphys, fext );
         [ err ] = evaluateNormErrInf( obj, fphys, fext );
@@ -68,6 +64,10 @@ classdef NdgPostProcess < handle
         [ Noutput ] = accessOutputStepNumber( obj )
         [ fphys ] = accessOutputResultAtStepNum( obj, stepId )
         [ Nvar ] = accessOutputVarNumber( obj )
+        
+        function [ var ] = assessOutputVar( obj, meshId, varName )
+            var = ncread(obj.outputFile{meshId}, varName);
+        end
     end
     
 end

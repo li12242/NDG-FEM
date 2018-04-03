@@ -5,14 +5,14 @@ classdef OpenChannel2d_TransposeBC < OpenChannel2d
         end
         
         function drawGaugePoints( obj )
-            xg = linspace( 0, obj.ChLength, Ng );
+            xg = linspace( 0, obj.ChLength, 5 );
             drawGaugePoints@OpenChannel2d( obj, xg );
         end
     end
     
     methods( Access = protected, Static )
         function obtype = setOpenBoundaryCondition( )
-            obtype = [ NdgEdgeType.Flather, NdgEdgeType.SlipWall ];
+            obtype = [ NdgEdgeType.ClampedDepth, NdgEdgeType.ClampedDepth ];
         end
     end
 end

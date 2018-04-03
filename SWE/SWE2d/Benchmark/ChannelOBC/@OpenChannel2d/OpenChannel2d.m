@@ -11,7 +11,7 @@ classdef OpenChannel2d < SWEConventional2d
         T = 500;
         
         %> domain length
-        ChLength = 200e3;
+        ChLength = 280e3;
         %> domain width
         ChWidth = 500;
         %> mesh rotation angle
@@ -33,12 +33,16 @@ classdef OpenChannel2d < SWEConventional2d
         drawGaugePoints( obj, xg );
         
         function showParameter( obj )
+            w = 2 * pi / obj.T;
+            c = sqrt( obj.gra * obj.H );
+            k = w/c;
             waveLen = obj.T * sqrt(obj.gra * obj.H);
             fprintf('\nWave parameter:\n');
             fprintf('\tWave amplitude (m): %f\n', obj.eta);
             fprintf('\tWave period (s): %f\n', obj.T);
             fprintf('\tWave speed (m/s): %f\n', sqrt(obj.gra * obj.H ));
             fprintf('\tWave length (m): %f\n', waveLen);
+            fprintf('\tWave k/H: %e\n', k/obj.H);
             
             fprintf('\nChannel parameter\n');
             fprintf('\tChannel depth (m): %f\n', obj.H);
@@ -54,6 +58,7 @@ classdef OpenChannel2d < SWEConventional2d
             fprintf('\tSimulate time (h) = %f\n', obj.getOption('finalTime')/3600 );
             fprintf('\tNumber of waves pass through the channel: %f\n', ...
                 obj.getOption('finalTime')/( obj.ChLength/sqrt(obj.gra * obj.H ) ) );
+            fprintf('\tNumber of wave periods: %f\n', obj.getOption('finalTime')/obj.T);
             fprintf('\tOutput interval: %d\n', obj.getOption('outputTimeInterval'));
         end
     end
@@ -71,10 +76,10 @@ classdef OpenChannel2d < SWEConventional2d
             
             if (type == NdgCellType.Tri)
                 mesh = makeUniformTriMesh(N, [0, obj.ChLength], [0, obj.ChWidth], ...
-                    M, 2, bctype);
+                    M, 1, bctype);
             elseif(type == NdgCellType.Quad)
                 mesh = makeUniformQuadMesh(N, [0, obj.ChLength], [0, obj.ChWidth], ...
-                    M, 2, bctype);
+                    M, 1, bctype);
             else
                 msgID = [mfilename, ':inputCellTypeError'];
                 msgtext = ['The input cell type should be NdgCellType.Tri',...
@@ -85,7 +90,7 @@ classdef OpenChannel2d < SWEConventional2d
         end
         
         function [ option ] = setOption( obj, option )
-            ftime = 7200 * 2;
+            ftime = 7200;
             outputIntervalNum = 2000;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
@@ -109,17 +114,20 @@ classdef OpenChannel2d < SWEConventional2d
                 mesh = obj.meshUnion(m);
                 fphys{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
                 [ fphys{m}(:,:,1), fphys{m}(:,:,2) ] = obj.setExactSolution( mesh.x, 0.0 );
-                fphys{m}(:, :, 4) = - obj.H;
+%                 fphys{m}(:, :, 1) = + obj.H;
+%                 fphys{m}(:, :, 4) = - obj.H;
             end
         end
         
         function matUpdateExternalField( obj, time, fphys )
             for m = 1:obj.Nmesh
+%                 a = 1 - 1./exp( time/4000 );
+                %a = 1.0;
                 mesh = obj.meshUnion(m);
                 [ obj.fext{m}(:,:,1), obj.fext{m}(:,:,2) ] ...
                     = obj.setExactSolution( mesh.x, time );
-                fphys{m}(1, end, 1) = obj.H;
-                fphys{m}(1, end, 2) = 0;
+                obj.fext{m}(:, :, 1) = a.* ( obj.fext{m}(:, :, 1) - obj.H ) + obj.H;
+                obj.fext{m}(:, :, 2) = a.* obj.fext{m}(:, :, 2);
             end
         end
         

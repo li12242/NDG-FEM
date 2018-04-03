@@ -112,6 +112,9 @@ CFLAGS = [CFLAGS, ' -I', path, ' '];
 path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver2d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
+path = 'SWE/SWENumFluxSolver/SWELFNumFluxSolver2d/private/';
+srcfile = {[path, 'mxEvaluate.c']};
+FuncHandle(path, srcfile, libfile);
 
 fprintf('\n%s:: Compiled all the mex files.\n', mfilename);
 end

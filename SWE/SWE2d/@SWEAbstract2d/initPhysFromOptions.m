@@ -66,6 +66,8 @@ end
 if obj.option.isKey('NumFluxType')
     if obj.getOption('NumFluxType') == SWENumFluxType.HLL
         obj.numfluxSolver = SWEHLLNumFluxSolver2d( );
+    elseif( obj.getOption('NumFluxType') == SWENumFluxType.LF )
+        obj.numfluxSolver = SWELFNumFluxSolver2d(  );
     end
 else
     obj.numfluxSolver = SWEHLLNumFluxSolver2d( );

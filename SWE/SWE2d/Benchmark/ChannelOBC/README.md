@@ -1,6 +1,12 @@
 ## 0.1. Implementation of Boundary Condition
 
+In coastal circulation modeling, it requires different resolutions to simulate . Therefore, it is efficient to employ a regional computational domain, which can reduce the computation cost and increase the mesh resolution of our intreasted areas.
+
+For regional modeling, the numerical scheme should have the capability to 
+
 In RKDG scheme, the most efficient method to apply the boundary condition is to treate the external boundary values as the ghost edge.
+
+
 
 | Boundary Condition | Type | Description |
 | :--- | :--- | :--- |

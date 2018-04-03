@@ -1,17 +1,17 @@
 #include "../../SWEAbstractNumFluxSolver2d/private/SWENumFlux2d.h"
 
 /** Evaluate HLL numerical flux function */
-void evaluateHLLFunc(const double hmin,  ///< water threshold
-                     const double gra,   ///< gravity acceleration
-                     const double hM,    ///< local water depth
-                     const double qnM,   ///< local flux variable
-                     const double qvM,   ///< local flux variable
-                     const double hP,    ///< adjacent water depth
-                     const double qnP,   ///< adjacent flux
-                     const double qvP,   ///< adjacent flux
-                     double* Fhn,        ///< numerical flux term
-                     double* Fqxn,       ///< numerical flux term
-                     double* Fqyn        ///< numerical flux term
+void evaluateHLLFunc(const double hmin, ///< water threshold
+                     const double gra,  ///< gravity acceleration
+                     const double hM,   ///< local water depth
+                     const double qnM,  ///< local flux variable
+                     const double qvM,  ///< local flux variable
+                     const double hP,   ///< adjacent water depth
+                     const double qnP,  ///< adjacent flux
+                     const double qvP,  ///< adjacent flux
+                     double *Fhn,       ///< numerical flux term
+                     double *Fqxn,      ///< numerical flux term
+                     double *Fqyn       ///< numerical flux term
 ) {
   double Em[3], Ep[3];
   double Gm[3], Gp[3];
@@ -25,12 +25,13 @@ void evaluateHLLFunc(const double hmin,  ///< water threshold
             qnP, qvP, Em[0], Em[1], Em[2], Gm[0], Gm[1], Gm[2]);
 #endif
 
-  double sM, sP, us, cs, unM, unP;
+  double sM, sP, unM, unP;
   if ((hM > hmin) & (hP > hmin)) {
     unM = qnM / hM;
     unP = qnP / hP;
-    us = (double)(0.5 * (unM + unP) + sqrt(gra * hM) - sqrt(gra * hP));
-    cs = (double)(0.5 * (sqrt(gra * hM) + sqrt(gra * hP)) + 0.25 * (unM - unP));
+    double us = (double)(0.5 * (unM + unP) + sqrt(gra * hM) - sqrt(gra * hP));
+    double cs =
+        (double)(0.5 * (sqrt(gra * hM) + sqrt(gra * hP)) + 0.25 * (unM - unP));
 
     sM = (double)min(unM - sqrt(gra * hM), us - cs);
     sP = (double)max(unP + sqrt(gra * hP), us + cs);
@@ -71,16 +72,16 @@ void evaluateHLLFunc(const double hmin,  ///< water threshold
   return;
 }
 
-void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   FluxSolver solver = ConvertInputMexVariable(nlhs, nrhs, plhs, prhs);
 
   const size_t NdimOut = 3;
   const mwSize dimOut[3] = {solver.TNfp, solver.K, 3};
   plhs[0] = mxCreateNumericArray(NdimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
 
-  double* Fh = mxGetPr(plhs[0]);
-  double* Fqx = Fh + solver.TNfp * solver.K;
-  double* Fqy = Fh + 2 * solver.TNfp * solver.K;
+  double *Fh = mxGetPr(plhs[0]);
+  double *Fqx = Fh + solver.TNfp * solver.K;
+  double *Fqy = Fh + 2 * solver.TNfp * solver.K;
 
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(DG_THREADS)
@@ -95,7 +96,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
       double qnM, qnP, qvM, qvP;
       RotateFluxToNormal(solver.huM[sk], solver.hvM[sk], nx, ny, &qnM, &qvM);
       RotateFluxToNormal(solver.huP[sk], solver.hvP[sk], nx, ny, &qnP, &qvP);
-      double Fhs, Fqns, Fqvs;
+      double Fqns, Fqvs;
       evaluateHLLFunc(solver.hmin, solver.gra, solver.hM[sk], qnM, qvM,
                       solver.hP[sk], qnP, qvP, Fh + sk, &Fqns, &Fqvs);
 

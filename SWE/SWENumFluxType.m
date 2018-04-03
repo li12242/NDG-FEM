@@ -10,6 +10,7 @@ classdef SWENumFluxType < int8
         HLL     (1)
         HLLC    (2)
         ROE     (3)
+        LF      (4)
     end
 end
 
