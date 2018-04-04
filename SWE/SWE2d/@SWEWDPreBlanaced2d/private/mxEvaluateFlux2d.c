@@ -1,5 +1,5 @@
+#include "../../@SWEAbstract2d/private/mxSWE2d.h"
 #include "mex.h"
-#include "mxSWE2d.h"
 #include <math.h>
 
 #ifdef _OPENMP
@@ -97,8 +97,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     for (int n = 0; n < Np; n++) {
       size_t sk = k * Np + n;
-      evaluateNodalFlux(hcrit, gra, h[sk], hu[sk], hv[sk], z[sk], Eh + sk,
-                        Ehu + sk, Ehv + sk, Gh + sk, Ghu + sk, Ghv + sk);
+      if (type == NdgRegionPartialWetFlood) {
+        evaluateNodalFlux(hcrit, 0.0, h[sk], hu[sk], hv[sk], z[sk], Eh + sk,
+                          Ehu + sk, Ehv + sk, Gh + sk, Ghu + sk, Ghv + sk);
+      } else {
+        evaluateNodalFlux(hcrit, gra, h[sk], hu[sk], hv[sk], z[sk], Eh + sk,
+                          Ehu + sk, Ehv + sk, Gh + sk, Ghu + sk, Ghv + sk);
+      }
     }
   }
 

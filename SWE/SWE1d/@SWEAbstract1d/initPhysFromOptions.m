@@ -28,6 +28,28 @@ else % the option does not exist
     obj.frictionSolver = NonFrictionTermSolver();
 end
 
+% Numerical flux
+if obj.option.isKey('NumFluxType')
+    if obj.getOption('NumFluxType') == SWENumFluxType.HLL
+        obj.numfluxSolver = SWEHLLNumFluxSolver1d( );
+    elseif( obj.getOption('NumFluxType') == SWENumFluxType.LF )
+        obj.numfluxSolver = SWELFNumFluxSolver1d(  );
+    end
+else
+    obj.numfluxSolver = SWEHLLNumFluxSolver1d( );
+end
+
+if obj.option.isKey('SWELimiterType')
+    switch obj.getOption('SWELimiterType')
+        case SWELimiterType.OnDepth
+            obj.limiterSolver = SWEDepthLimiter1d();
+        case SWELimiterType.OnElevation
+            obj.limiterSolver = SWEElevationLimiter1d();
+    end
+else
+    obj.limiterSolver = SWEDepthLimiter1d();
+end
+
 end% func
 
 

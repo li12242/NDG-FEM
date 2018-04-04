@@ -75,12 +75,12 @@ end
 
 if obj.option.isKey('SWELimiterType')
     if obj.getOption('SWELimiterType') == SWELimiterType.OnDepth
-        obj.limiterSolver = SWEDepthLimiter();
+        obj.limiterSolver = SWEDepthLimiter2d();
     elseif obj.getOption('SWELimiterType') == SWELimiterType.OnElevation
-        obj.limiterSolver = SWEElevationLimiter();
+        obj.limiterSolver = SWEElevationLimiter2d();
     end
 else
-    obj.limiterSolver = SWEDepthLimiter();
+    obj.limiterSolver = SWEDepthLimiter2d();
 end
 end% func
 

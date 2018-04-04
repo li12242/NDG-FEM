@@ -57,9 +57,8 @@ FuncHandle(path, srcfile, libfile);
 % SWE1d
 path = 'SWE/SWE1d/@SWEAbstract1d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
-libfile = {[path, 'mxSWE1d.c']};
-srcfile = {[path, 'mxEvaluateHLLNumFlux1d.c'], ...
-    [path, 'mxEvaluatePostFunc1d.c'], ...
+libfile = {};
+srcfile = { ...
     [path, 'mxEvaluateSurfaceValue1d.c'], ...
     [path, 'mxEvaluateSurfFlux1d.c'], ...
     [path, 'mxUpdateTimeInterval1d.c']};
@@ -68,7 +67,8 @@ FuncHandle(path, srcfile, libfile);
 path = 'SWE/SWE1d/@SWEConventional1d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
-    [path, 'mxEvaluateSourceTopography1d.c']};
+    [path, 'mxEvaluateSourceTopography1d.c'], ...
+    [path, 'mxEvaluatePostFunc1d.c']};
 FuncHandle(path, srcfile, libfile);
 
 path = 'SWE/SWE1d/@SWEPreBlanaced1d/private/';
@@ -77,11 +77,11 @@ srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
     [path, 'mxEvaluateSourceTopography1d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWE1d/@SWEWD1d/private/';
-libfile = {};
-srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
-    [path, 'mxEvaluateSourceTopography1d.c']};
-FuncHandle(path, srcfile, libfile);
+% path = 'SWE/SWE1d/@SWEWD1d/private/';
+% libfile = {};
+% srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
+%     [path, 'mxEvaluateSourceTopography1d.c']};
+% FuncHandle(path, srcfile, libfile);
 
 % SWE2d
 path = 'SWE/SWE2d/@SWEAbstract2d/private/';
@@ -106,7 +106,20 @@ srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
 
+path = 'SWE/SWE2d/@SWEWDPreBlanaced2d/private/';
+libfile = {};
+srcfile = {[path, 'mxUpdateWDWetDryState.c'], ...
+    [path, 'mxEvaluateSourceTopography2d.c'], ...
+    [path, 'mxEvaluateFlux2d.c']};
+FuncHandle(path, srcfile, libfile);
+
 % SWE numerical flux
+path = 'SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver1d/private/';
+CFLAGS = [CFLAGS, ' -I', path, ' '];
+path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver1d/private/';
+srcfile = {[path, 'mxEvaluate.c']};
+FuncHandle(path, srcfile, libfile);
+
 path = 'SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver2d/private/';

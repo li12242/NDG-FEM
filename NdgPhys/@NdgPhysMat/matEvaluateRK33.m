@@ -39,8 +39,8 @@ while( time < ftime )
         
     end
 %     fprintf('processing %f...\n', time/ftime);
-%     obj.draw( fphys );
-    obj.meshUnion(1).draw( fphys{1}(:,:,1) );
+    obj.draw( fphys );
+%     obj.meshUnion(1).draw( fphys{1}(:,:,1) );
     drawnow;
     fprintf('processing %f ...\n', time/ftime);
     

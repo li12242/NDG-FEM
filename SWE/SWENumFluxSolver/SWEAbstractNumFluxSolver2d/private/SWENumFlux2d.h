@@ -1,8 +1,8 @@
 #ifndef SWENUMFLUX2D_H
 #define SWENUMFLUX2D_H
 
-#include <math.h>
 #include "mex.h"
+#include <math.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -18,24 +18,24 @@ typedef struct {
 
   double hmin;
   double gra;
-  double* nx;
-  double* ny;
-  double* hM;
-  double* hP;
-  double* huM;
-  double* huP;
-  double* hvM;
-  double* hvP;
+  double *nx;
+  double *ny;
+  double *hM;
+  double *hP;
+  double *huM;
+  double *huP;
+  double *hvM;
+  double *hvP;
 } FluxSolver;
 
 #define NRHS 6
 #define NLHS 1
 
 /** Put input variable into FluxSolver  */
-FluxSolver ConvertInputMexVariable(const int Nlhs,         ///< number of LHS
-                                   const int Nrhs,         ///< number of RHS
-                                   const mxArray* plhs[],  ///< LHS pointer
-                                   const mxArray* prhs[]   ///< RHS pointer
+FluxSolver ConvertInputMexVariable2d(const int Nlhs,        ///< number of LHS
+                                     const int Nrhs,        ///< number of RHS
+                                     const mxArray *plhs[], ///< LHS pointer
+                                     const mxArray *prhs[]  ///< RHS pointer
 ) {
   /* check input & output */
   if (Nrhs != NRHS) {
@@ -56,7 +56,7 @@ FluxSolver ConvertInputMexVariable(const int Nlhs,         ///< number of LHS
   solver.hM = mxGetPr(prhs[4]);
   solver.hP = mxGetPr(prhs[5]);
 
-  const mwSize* dims = mxGetDimensions(prhs[4]);
+  const mwSize *dims = mxGetDimensions(prhs[4]);
   const size_t TNfp = dims[0];
   const size_t K = dims[1];
   const size_t NFP = K * TNfp;
@@ -71,13 +71,13 @@ FluxSolver ConvertInputMexVariable(const int Nlhs,         ///< number of LHS
 }
 
 /** Evaluate flux term in surface integration */
-void EvaluateFluxTerm(const double hmin,  ///< water threshold
-                      const double gra,   ///< gravity acceleration
-                      const double h,     ///< water depth
-                      const double hu,    ///< flux variable
-                      const double hv,    ///< flux variable
-                      double* E,          ///< surface integral flux term
-                      double* G           ///< surface integral flux term
+void evaluateFluxTerm2d(const double hmin, ///< water threshold
+                        const double gra,  ///< gravity acceleration
+                        const double h,    ///< water depth
+                        const double hu,   ///< flux variable
+                        const double hv,   ///< flux variable
+                        double *E,         ///< surface integral flux term
+                        double *G          ///< surface integral flux term
 ) {
   double u, v;
   if (h > hmin) {
@@ -99,12 +99,12 @@ void EvaluateFluxTerm(const double hmin,  ///< water threshold
 }
 
 /** Rotate flux to outward normal direction */
-void RotateFluxToNormal(const double hu,  ///< flux at x component
-                        const double hv,  ///< flux at y component
-                        const double nx,  ///< outward normal vector
-                        const double ny,  ///< outward normal vector
-                        double* qn,       ///< normal flux
-                        double* qv        ///< tangent flux
+void RotateFluxToNormal2d(const double hu, ///< flux at x component
+                          const double hv, ///< flux at y component
+                          const double nx, ///< outward normal vector
+                          const double ny, ///< outward normal vector
+                          double *qn,      ///< normal flux
+                          double *qv       ///< tangent flux
 ) {
   *qn = +hu * nx + hv * ny;
   *qv = -hu * ny + hv * nx;
@@ -112,16 +112,16 @@ void RotateFluxToNormal(const double hu,  ///< flux at x component
 }
 
 /** Rotate normal flux to coordinate direction */
-void RotateNormalFluxToCoordinate(const double Fqn,  ///< normal flux
-                                  const double Fqv,  ///< tangent flux
-                                  const double nx,   ///< outward normal vector
-                                  const double ny,   ///< outward normal vector
-                                  double* Fqx,       ///< flux at x component
-                                  double* Fqy        ///< flux at y component
+void RotateNormalFluxToCoordinate2d(const double Fqn, ///< normal flux
+                                    const double Fqv, ///< tangent flux
+                                    const double nx,  ///< outward normal vector
+                                    const double ny,  ///< outward normal vector
+                                    double *Fqx,      ///< flux at x component
+                                    double *Fqy       ///< flux at y component
 ) {
   *Fqx = (Fqn * nx - Fqv * ny);
   *Fqy = (Fqn * ny + Fqv * nx);
   return;
 }
 
-#endif  // SWENUMFLUX2D_H
+#endif // SWENUMFLUX2D_H

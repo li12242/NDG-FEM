@@ -1,4 +1,4 @@
-classdef SWEElevationLimiter
+classdef SWEElevationLimiter2d
     
     methods
         

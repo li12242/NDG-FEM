@@ -1,7 +1,7 @@
 %> Khan AA, Lai W. Modeling shallow water flows using the discontinuous
 %> Galerkin method. CRC Press; 2014.
 %> 
-classdef ParabolicBowl1d < SWEWD1d
+classdef ParabolicBowl1d < SWEConventional1d
     
     properties(Constant)
         hmin = 1e-3
@@ -13,7 +13,7 @@ classdef ParabolicBowl1d < SWEWD1d
     
     methods
         function obj = ParabolicBowl1d(N, M)
-            obj = obj@SWEWD1d();
+            obj = obj@SWEConventional1d();
             [ mesh ] = makeUniformMesh( N, M );
             obj.initPhysFromOptions( mesh );
             obj.fext = obj.evaluateExactFunc( obj.getOption('finalTime') );
@@ -129,9 +129,10 @@ classdef ParabolicBowl1d < SWEWD1d
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK33;
             option('limiterType') = NdgLimiterType.TVB;
             option('limiterParameter') = 1e-6;
+            option('SWELimiterType') = SWELimiterType.OnDepth;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
         end

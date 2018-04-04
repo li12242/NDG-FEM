@@ -48,11 +48,23 @@ classdef SWEAbstract2d < NdgPhysMat
         draw( obj, varargin )
     end
     
-    methods( Hidden, Abstract )
-        [ E, G ] = matEvaluateFlux( obj, mesh, fphys );
+    methods( Hidden, Abstract ) % Abstract function, hidden
+        %> evaluate volume flux term
+        [ E, G ] = matEvaluateFlux( obj, mesh, fphys );        
     end
     
-    methods( Hidden, Sealed )
+    methods( Abstract, Access = protected )
+        matUpdateWetDryState(obj, fphys)
+        
+        %> evaluate topography source term
+        [ ] = matEvaluateTopographySourceTerm( obj, fphys )
+        
+        %> evaluate post function
+        [ fphys ] = matEvaluatePostFunc(obj, fphys)
+    end
+    
+    methods( Hidden, Sealed ) % public function, not allow to inherit
+        
         %> impose boundary condition and evaluate cell boundary values
         [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext );
         
@@ -66,17 +78,7 @@ classdef SWEAbstract2d < NdgPhysMat
             [ fluxS ] = obj.numfluxSolver.evaluate( obj.hmin, obj.gra, nx, ny, fm, fp );
         end% func
     end
-    
-    methods( Abstract, Access = protected )
-        matUpdateWetDryState(obj, fphys)
         
-        %> evaluate topography source term
-        [ ] = matEvaluateTopographySourceTerm( obj, fphys )
-        
-        %> evaluate post function
-        [ fphys ] = matEvaluatePostFunc(obj, fphys)
-    end
-    
     methods( Access = protected, Sealed )
         [ fphys ] = matEvaluateLimiter( obj, fphys )
         

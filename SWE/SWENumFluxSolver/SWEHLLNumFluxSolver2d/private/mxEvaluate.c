@@ -15,8 +15,8 @@ void evaluateHLLFunc(const double hmin, ///< water threshold
 ) {
   double Em[3], Ep[3];
   double Gm[3], Gp[3];
-  EvaluateFluxTerm(hmin, gra, hM, qnM, qvM, Em, Gm);
-  EvaluateFluxTerm(hmin, gra, hP, qnP, qvP, Ep, Gp);
+  evaluateFluxTerm2d(hmin, gra, hM, qnM, qvM, Em, Gm);
+  evaluateFluxTerm2d(hmin, gra, hP, qnP, qvP, Ep, Gp);
 
 #if 0
   mexPrintf("hm=%f, qnM=%f, qvM=%f, Em=[%f, %f, %f], Gm=[%f, %f, %f]\n", hM,
@@ -73,7 +73,7 @@ void evaluateHLLFunc(const double hmin, ///< water threshold
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  FluxSolver solver = ConvertInputMexVariable(nlhs, nrhs, plhs, prhs);
+  FluxSolver solver = ConvertInputMexVariable2d(nlhs, nrhs, plhs, prhs);
 
   const size_t NdimOut = 3;
   const mwSize dimOut[3] = {solver.TNfp, solver.K, 3};
@@ -94,13 +94,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       const double ny = solver.ny[sk];
 
       double qnM, qnP, qvM, qvP;
-      RotateFluxToNormal(solver.huM[sk], solver.hvM[sk], nx, ny, &qnM, &qvM);
-      RotateFluxToNormal(solver.huP[sk], solver.hvP[sk], nx, ny, &qnP, &qvP);
+      RotateFluxToNormal2d(solver.huM[sk], solver.hvM[sk], nx, ny, &qnM, &qvM);
+      RotateFluxToNormal2d(solver.huP[sk], solver.hvP[sk], nx, ny, &qnP, &qvP);
       double Fqns, Fqvs;
       evaluateHLLFunc(solver.hmin, solver.gra, solver.hM[sk], qnM, qvM,
                       solver.hP[sk], qnP, qvP, Fh + sk, &Fqns, &Fqvs);
 
-      RotateNormalFluxToCoordinate(Fqns, Fqvs, nx, ny, Fqx + sk, Fqy + sk);
+      RotateNormalFluxToCoordinate2d(Fqns, Fqvs, nx, ny, Fqx + sk, Fqy + sk);
     }
   }
   return;

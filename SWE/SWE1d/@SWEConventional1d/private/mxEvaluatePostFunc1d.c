@@ -1,5 +1,5 @@
+#include "../../@SWEAbstract1d/private/mxSWE1d.h"
 #include "mex.h"
-#include "mxSWE1d.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -8,7 +8,7 @@
 #define NRHS 4
 #define NLHS 1
 
-void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* check input & output */
   if (nrhs != NRHS) {
     mexPrintf("Matlab:%s:InvalidNumberInput,\n", __FILE__);
@@ -22,12 +22,12 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
   /* get inputs */
   double hcrit = mxGetScalar(prhs[0]);
-  double* fphys = mxGetPr(prhs[1]);
-  double* hc = mxGetPr(prhs[2]);
-  double* qxc = mxGetPr(prhs[3]);
+  double *fphys = mxGetPr(prhs[1]);
+  double *hc = mxGetPr(prhs[2]);
+  double *qxc = mxGetPr(prhs[3]);
 
   /* get dimensions */
-  const mwSize* dims = mxGetDimensions(prhs[1]);
+  const mwSize *dims = mxGetDimensions(prhs[1]);
   const size_t Np = dims[0];
   const size_t K = dims[1];
 
@@ -35,11 +35,11 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   const mwSize dimOut[3] = {Np, K, NVAR};
   plhs[0] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
 
-  double* h = fphys;
-  double* qx = fphys + K * Np;
+  double *h = fphys;
+  double *qx = fphys + K * Np;
 
-  double* h_pos = mxGetPr(plhs[0]);
-  double* qx_pos = h_pos + K * Np;
+  double *h_pos = mxGetPr(plhs[0]);
+  double *qx_pos = h_pos + K * Np;
 
   const double ksi = 0.0;
   // cell area and scalar averages
@@ -76,7 +76,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
       h_pos[sk] = theta * (h[sk] - hmean) + hmean;
       qx_pos[sk] = theta * (qx[sk] - qxmean) + qxmean;
 
-      if (h_pos[sk] < hcrit) {  // dry nodes
+      if (h_pos[sk] < hcrit) { // dry nodes
         qx_pos[sk] = 0.0;
       }
     }

@@ -1,6 +1,7 @@
 #ifndef MXSWE1D_H
 #define MXSWE1D_H
 
+#include "mex.h"
 #include <math.h>
 
 #define TAU 1e-6
@@ -19,7 +20,7 @@ typedef enum {
   NdgRegionDry = 5,
   NdgRegionPartialWet = 6,
   NdgRegionPartialWetFlood = 7,
-  NdgRegionPartialWetDamBreak = 8,
+  NdgRegionPartialWetDamBreak = 8
 } NdgRegionType;
 
 typedef enum {
@@ -31,31 +32,51 @@ typedef enum {
   NdgEdgeClamped = 5,
   NdgEdgeClampedDepth = 6,
   NdgEdgeClampedVel = 7,
-  NdgEdgeFlather = 8,
+  NdgEdgeFlather = 8
 } NdgEdgeType;
 
-void evaluateFlowRateByDeptheThreshold(double hcrit,
-                                       double h,
-                                       double hu,
-                                       double* u);
+typedef struct {
+  size_t Np;     ///< length of 1st dimension
+  size_t K;      ///< length of 2nd dimension
+  size_t Nfield; ///< length of 3rd dimension
+  double *h;
+  double *hu;
+  double *z;
+} PhysField1d;
 
-void evaluateFlowRateByCellState(const NdgRegionType type,
-                                 const double h,
-                                 const double hu,
-                                 double* u);
+/** convert mex variable to PhysVolField structure */
+inline PhysField1d convertMexToPhysField(const mxArray *mxfield) {
+  const mwSize *dims = mxGetDimensions(mxfield);
+  PhysField1d field;
+  field.Np = dims[0];
+  field.K = dims[1];
+  field.Nfield = dims[2];
+  const size_t Ntmp = field.Np * field.K;
 
-void evaluateSurfFluxTerm(double hmin,
-                          double gra,
-                          double h,
-                          double hu,
-                          double* E);
+  field.h = mxGetPr(mxfield);
+  field.hu = field.h + Ntmp;
+  field.z = field.hu + Ntmp;
+  return field;
+}
 
-void evaluateSlipWallAdjacentNodeValue(const double nx, double* fm, double* fp);
+/** Evaluate the flow rate depending on the depth threshold */
+inline void
+evaluateFlowRateByDeptheThreshold(const double hcrit, ///< depth threshold
+                                  const double h,     ///< depth
+                                  const double hu,    ///< water flux
+                                  double *u           ///< result velocity
+) {
+  if (h > hcrit) {
+    //     const double sqrt2 = 1.414213562373095;
+    //     double h4 = pow(h, 4);
+    //     *u = sqrt2 * h * hu / sqrt( h4 + max( hcrit, h4 ) );
+    //     *v = sqrt2 * h * hv / sqrt( h4 + max( hcrit, h4 ) );
+    *u = hu / h;
+  } else {
+    *u = 0.0;
+  }
 
-void evaluateNonSlipWallAdjacentNodeValue(const double nx,
-                                          double* fm,
-                                          double* fp);
+  return;
+}
 
-void evaluateFlatherAdjacentNodeValue(double nx, double* fm, double* fe);
-
-#endif  // MXSWE1D_H
+#endif // MXSWE1D_H

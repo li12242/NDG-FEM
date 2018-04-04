@@ -21,10 +21,7 @@ classdef SWEWD1d < SWEPreBlanaced1d
         end% func
         
         function fphys = matEvaluateLimiter( obj, fphys )
-%             vol1 = sum( obj.meshUnion.GetMeshIntegralValue( fphys{1}(:, :, 1) ) );
             fphys = matEvaluateLimiter@SWEAbstract1d( obj, fphys );
-%             vol2 = sum( obj.meshUnion.GetMeshIntegralValue( fphys{1}(:, :, 1) ) );
-                        
             obj.matUpdateWetDryState( fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
@@ -44,7 +41,8 @@ classdef SWEWD1d < SWEPreBlanaced1d
                 fphys{m}(:, ind1, 1) = fphys{m}(:, ind1, 1)*( 1 + neg/pos );
                 fphys{m}(:, ~ind1, 1) = 0.0;
                 
-                flg = (mesh.EToR == int8( NdgRegionType.PartialWet ) );
+                flg = (mesh.EToR == int8( NdgRegionType.PartialWetDamBreak ) ) ...
+                    | (mesh.EToR == int8( NdgRegionType.PartialWetFlood ));
                 temp = mesh.cell.V \ fphys{m}(:, flg, 1);
                 temp(3:end, :) = 0;
                 fphys{m}(:, flg, 1) = mesh.cell.V * temp;
@@ -57,8 +55,6 @@ classdef SWEWD1d < SWEPreBlanaced1d
 %                     fphys{m}(:, flg, fld) = mesh.cell.V * tempWD;
 %                 end
             end    
-%             vol3 = sum( obj.meshUnion.GetMeshIntegralValue( fphys{1}(:, :, 1) ) );
-%             fprintf('vol1 = %e, vol2 = %e, vol3 = %12.10e\n', vol1, vol2 - vol1, vol3 - vol1)
         end% func
                 
         function matUpdateWetDryState(obj, fphys)

@@ -1,9 +1,9 @@
+#include "../../@SWEAbstract2d/private/mxSWE2d.h"
 #include "mex.h"
-#include "mxSWE1d.h"
 
 #define NRHS 4
 #define NLHS 1
-#define NVAR 2
+#define NVAR 3
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* check input & output */
@@ -19,32 +19,46 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
   double gra = mxGetScalar(prhs[0]);
   signed char *regType = (signed char *)mxGetData(prhs[1]);
-  double *fphys = mxGetPr(prhs[2]);
+  // double* fphys = mxGetPr(prhs[2]);
   double *zgrad = mxGetPr(prhs[3]);
 
-  const mwSize *dims = mxGetDimensions(prhs[2]);
-  const size_t Np = dims[0];
-  const size_t K = dims[1];
+  PhysField fphys = convertMexToPhysField(prhs[2]);
+  const size_t Np = fphys.Np;
+  const size_t K = fphys.K;
+  // const mwSize* dims = mxGetDimensions(prhs[2]);
+  // const size_t Np = dims[0];
+  // const size_t K = dims[1];
+  const size_t Ntmp = Np * K;
 
   const size_t NdimOut = 3;
   const mwSize dimOut[3] = {Np, K, NVAR};
   plhs[0] = mxCreateNumericArray(NdimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
 
-  double *h = fphys;
-  double *z = fphys + 3 * K * Np;
+  // double* h = fphys;
+  // double* z = fphys + 3 * Ntmp;
   double *bx = zgrad;
+  double *by = zgrad + Ntmp;
 
-  double *sourceH = mxGetPr(plhs[0]);
-  double *sourceQx = sourceH + K * Np;
+  PhysField source = convertMexToPhysField(plhs[0]);
+  // double* sourceH = mxGetPr(plhs[0]);
+  // double* sourceQx = sourceH + Ntmp;
+  // double* sourceQy = sourceQx + Ntmp;
 
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(DG_THREADS)
+#endif
   for (int k = 0; k < K; k++) {
     NdgRegionType type = (NdgRegionType)regType[k];
     if (type == NdgRegionDry)
       continue;
+    if (type == NdgRegionPartialWetFlood)
+      continue;
 
     for (int n = 0; n < Np; n++) {
       int sk = k * Np + n;
-      sourceQx[sk] = -gra * h[sk] * bx[sk];
+      const double eta_ = fphys.h[sk] + fphys.z[sk];
+      source.hu[sk] = -gra * eta_ * bx[sk];
+      source.hv[sk] = -gra * eta_ * by[sk];
     }
   }
 

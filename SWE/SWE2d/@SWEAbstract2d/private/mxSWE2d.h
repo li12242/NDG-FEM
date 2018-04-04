@@ -13,6 +13,9 @@ typedef enum {
   NdgRegionSponge = 3,
   NdgRegionWet = 4,
   NdgRegionDry = 5,
+  NdgRegionPartialWet = 6,
+  NdgRegionPartialWetFlood = 7,
+  NdgRegionPartialWetDamBreak = 8
 } NdgRegionType;
 
 typedef enum {
@@ -28,18 +31,18 @@ typedef enum {
 } NdgEdgeType;
 
 typedef struct {
-  size_t Np;      ///< length of 1st dimension
-  size_t K;       ///< length of 2nd dimension
-  size_t Nfield;  ///< length of 3rd dimension
-  double* h;
-  double* hu;
-  double* hv;
-  double* z;
+  size_t Np;     ///< length of 1st dimension
+  size_t K;      ///< length of 2nd dimension
+  size_t Nfield; ///< length of 3rd dimension
+  double *h;
+  double *hu;
+  double *hv;
+  double *z;
 } PhysField;
 
 /** convert mex variable to PhysVolField structure */
-inline PhysField convertMexToPhysField(const mxArray* mxfield) {
-  const mwSize* dims = mxGetDimensions(mxfield);
+inline PhysField convertMexToPhysField(const mxArray *mxfield) {
+  const mwSize *dims = mxGetDimensions(mxfield);
   PhysField field;
   field.Np = dims[0];
   field.K = dims[1];
@@ -50,18 +53,17 @@ inline PhysField convertMexToPhysField(const mxArray* mxfield) {
   field.hu = field.h + Ntmp;
   field.hv = field.hu + Ntmp;
   field.z = field.hv + Ntmp;
-
   return field;
 }
 
 /** Evaluate the flow rate depending on the depth threshold */
-inline void evaluateFlowRateByDeptheThreshold(
-    const double hcrit,  ///< depth threshold
-    const double h,      ///< depth
-    const double hu,     ///< water flux
-    const double hv,     ///< water flux
-    double* u,           ///< result velocity
-    double* v            ///< velocity
+inline void
+evaluateFlowRateByDeptheThreshold(const double hcrit, ///< depth threshold
+                                  const double h,     ///< depth
+                                  const double hu,    ///< water flux
+                                  const double hv,    ///< water flux
+                                  double *u,          ///< result velocity
+                                  double *v           ///< velocity
 ) {
   if (h > hcrit) {
     //     const double sqrt2 = 1.414213562373095;
@@ -78,4 +80,4 @@ inline void evaluateFlowRateByDeptheThreshold(
   return;
 }
 
-#endif  //__mxSWE_H__
+#endif //__mxSWE_H__

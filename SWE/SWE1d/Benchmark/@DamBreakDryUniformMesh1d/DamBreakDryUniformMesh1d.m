@@ -1,4 +1,4 @@
-classdef DamBreakDryUniformMesh1d < SWEWDMesh1d
+classdef DamBreakDryUniformMesh1d < SWEConventional1d
     
     properties( Constant )
         hmin = 1e-4
@@ -10,7 +10,7 @@ classdef DamBreakDryUniformMesh1d < SWEWDMesh1d
     
     methods
         function obj = DamBreakDryUniformMesh1d( N, M )
-            obj = obj@SWEWDMesh1d();
+            obj = obj@SWEConventional1d();
             [ mesh ] = makeUniformMesh( N, M );
             obj.initPhysFromOptions( mesh );
         end
@@ -33,7 +33,7 @@ classdef DamBreakDryUniformMesh1d < SWEWDMesh1d
         end
     end
     
-    methods( Access = protected )
+    methods( Access = protected, Sealed )
         function fphys = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
             for m = 1:obj.Nmesh
@@ -54,7 +54,7 @@ classdef DamBreakDryUniformMesh1d < SWEWDMesh1d
             option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK33;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.TVB;
             option('limiterParameter') = 1e-4;
             option('equationType') = NdgDiscreteEquationType.Strong;
