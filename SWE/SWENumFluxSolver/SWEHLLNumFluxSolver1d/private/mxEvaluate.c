@@ -61,12 +61,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   FluxSolver solver = ConvertInputMexVariable1d(nlhs, nrhs, prhs);
 
   const size_t NdimOut = 3;
-  const mwSize dimOut[3] = {solver.TNfp, solver.K, 3};
+  const mwSize dimOut[3] = {solver.TNfp, solver.K, 2};
   plhs[0] = mxCreateNumericArray(NdimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
 
   double *Fh = mxGetPr(plhs[0]);
   double *Fqx = Fh + solver.TNfp * solver.K;
-  double *Fqy = Fh + 2 * solver.TNfp * solver.K;
 
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(DG_THREADS)

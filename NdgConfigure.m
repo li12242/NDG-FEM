@@ -119,6 +119,9 @@ CFLAGS = [CFLAGS, ' -I', path, ' '];
 path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver1d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
+path = 'SWE/SWENumFluxSolver/SWERoeNumFluxSolver1d/private/';
+srcfile = {[path, 'mxEvaluate.c']};
+FuncHandle(path, srcfile, libfile);
 
 path = 'SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
@@ -126,6 +129,9 @@ path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver2d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
 path = 'SWE/SWENumFluxSolver/SWELFNumFluxSolver2d/private/';
+srcfile = {[path, 'mxEvaluate.c']};
+FuncHandle(path, srcfile, libfile);
+path = 'SWE/SWENumFluxSolver/SWERoeNumFluxSolver2d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
 

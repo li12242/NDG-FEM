@@ -70,7 +70,7 @@ classdef DamBreakWetUniformMesh2d < SWEConventional2d
             option('CoriolisType')=SWECoriolisType.None;
             option('WindType')=SWEWindType.None;
             option('FrictionType')=SWEFrictionType.None;
-            option('NumFluxType') = SWENumFluxType.HLL;
+            option('NumFluxType') = SWENumFluxType.ROE;
         end
         
         fphys = getExactFunction( obj, time )

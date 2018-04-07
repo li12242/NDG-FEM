@@ -41,10 +41,11 @@ classdef DamBreakWetUniformMesh1d < SWEConventional1d
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.BJ;
-            option('limiterParameter') = 0;
+            option('limiterType') = NdgLimiterType.TVB;
+            option('limiterParameter') = 1e-4;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('NumFluxType') = SWENumFluxType.ROE;
         end
         
         function [ fext ] = getExactFunction( obj, time )

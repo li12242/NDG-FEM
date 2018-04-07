@@ -66,7 +66,7 @@ classdef DamBreakDryUniformMesh2d < SWEPreBlanaced2d
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('NumFluxType') = SWENumFluxType.LF;
+            option('NumFluxType') = SWENumFluxType.ROE;
         end
         
         fphys = getExactFunction( obj, time )

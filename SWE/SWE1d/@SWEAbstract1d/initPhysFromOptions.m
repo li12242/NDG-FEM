@@ -15,12 +15,12 @@ end
 %Friction Term
 if obj.option.isKey('FrictionType') % the option exist
     switch obj.getOption('FrictionType')
-        case FrictionType.None
+        case SWEFrictionType.None
             obj.frictionSolver = NonFrictionTermSolver();
-        case FrictionType.Linear
+        case SWEFrictionType.Linear
             t = obj.getOption('FrictionCoefficient_r');
             obj.frictionSolver = LinearFrictionTermSolver1d(t);
-        case FrictionType.Manning
+        case SWEFrictionType.Manning
             n = obj.getOption('FrictionCoefficient_n');
             obj.frictionSolver = ManningFrictionSolver1d(n);
     end
@@ -33,7 +33,9 @@ if obj.option.isKey('NumFluxType')
     if obj.getOption('NumFluxType') == SWENumFluxType.HLL
         obj.numfluxSolver = SWEHLLNumFluxSolver1d( );
     elseif( obj.getOption('NumFluxType') == SWENumFluxType.LF )
-        obj.numfluxSolver = SWELFNumFluxSolver1d(  );
+        obj.numfluxSolver = SWELFNumFluxSolver1d( );
+    elseif( obj.getOption('NumFluxType') == SWENumFluxType.ROE )
+        obj.numfluxSolver = SWERoeNumFluxSolver1d( );
     end
 else
     obj.numfluxSolver = SWEHLLNumFluxSolver1d( );

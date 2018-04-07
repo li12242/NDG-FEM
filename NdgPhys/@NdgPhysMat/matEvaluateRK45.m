@@ -31,7 +31,7 @@ while( time < ftime )
         fphys = obj.matEvaluateLimiter( fphys );
         fphys = obj.matEvaluatePostFunc( fphys );
         
-%         obj.meshUnion(1).draw( fphys{1}(:,:,1) + fphys{1}(:,:,4) );
+        obj.meshUnion(1).draw( fphys{1}(:,:,1) + fphys{1}(:,:,4) );
     end
 %     obj.draw( fphys );
 %     for m = 1:obj.Nmesh
