@@ -1,7 +1,18 @@
+%> \brief Return interpolation of numerical result at input gauge points.
+%> \details Function `interpolateOutputResultToGaugePoint` interpolate the
+%> numerical results at gauge points with three steps:
+%> 1. The localtion of cell index and local coordinate [r, s] are
+%> deternmined;
+%> 2. The interpolation matrix Vg is calculated with its entries given by
+%> \f$ [V_{g}]_{i,j} = \varphi_j(r_i, s_i), \; i = 1, \cdots, N_g \f$,
+%> where \f$ N_g \f$ is the total number of gauge points.
+%> 3. The interpolated results at gauge point \f$(x_i, y_i)\f$ are obtained 
+%> with \f$ \sum_{j = 1}^{N_p} [V_{g}]_{i,j} \mathbf{U}(j, k_i) \f$, where
+%> \f$ k_i \f$ is the cell index.
 function [ gaugeValue ] = interpolateOutputResultToGaugePoint( obj, xg, yg, zg )
 Ntime = obj.Nt;
 Ng = numel( xg );
-gaugeValue = zeros(Ng, obj.Nvar, Ntime);
+gaugeValue = zeros(Ntime, obj.Nvar, Ng);
 for m = 1:obj.Nmesh
     [ cellId, Vg ] = obj.meshUnion.accessGaugePointLocation( xg, yg, zg );
     % get the output file name
@@ -17,7 +28,7 @@ for m = 1:obj.Nmesh
                 continue;
             end
             for fld = 1:obj.Nvar
-                gaugeValue(n, fld, t) = Vg(n, :) * fresult(:, cellId(n), fld);
+                gaugeValue(t, fld, n) = Vg(n, :) * fresult(:, cellId(n), fld);
             end
         end
     end

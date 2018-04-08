@@ -11,17 +11,18 @@ for m = 1:obj.Nmesh
     mesh = obj.meshUnion(m);
     drawBottom( mesh, fphys{m}(:,:,4) );
     eta = fphys{m}(:,:,4) + fphys{m}(:,:,1);
-%     eta( fphys{m}(:,:,1) < obj.hmin ) = nan;
+    eta( fphys{m}(:,:,1) < obj.hmin ) = nan;
     drawSurface( mesh, eta );
 end
 grid on;
 view([20, 40])
 % zlim([0, 6]);
 colormap winter;
-set( gca, 'CLim', [2.4, 5] );
-xlabel('$x$ (m)', 'FontSize', 16, 'Interpreter', 'Latex');
-ylabel('$y$ (m)', 'FontSize', 16, 'Interpreter', 'Latex');
-zlabel('$\eta$ (m)', 'FontSize', 16, 'Interpreter', 'Latex');
+% set( gca, 'CLim', [2.4, 5] );
+fontSize = 12;
+xlabel('$x$ (m)', 'FontSize', fontSize, 'Interpreter', 'Latex');
+ylabel('$y$ (m)', 'FontSize', fontSize, 'Interpreter', 'Latex');
+zlabel('$\eta$ (m)', 'FontSize', fontSize, 'Interpreter', 'Latex');
 end
 
 function handle = drawSurface( mesh, eta )

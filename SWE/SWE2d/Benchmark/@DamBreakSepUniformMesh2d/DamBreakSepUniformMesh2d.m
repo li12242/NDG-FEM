@@ -65,9 +65,9 @@ classdef DamBreakSepUniformMesh2d < SWEPreBlanaced2d
             option('limiterType') = NdgLimiterType.Vert;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')=CoriolisType.None;
-            option('WindType')=WindType.None;
-            option('FrictionType')=FrictionType.None;
+            option('CoriolisType') = SWECoriolisType.None;
+            option('WindType') = SWEWindType.None;
+            option('FrictionType') = SWEFrictionType.None;
         end
         
         function fphys = getExactFunction( obj, time )
