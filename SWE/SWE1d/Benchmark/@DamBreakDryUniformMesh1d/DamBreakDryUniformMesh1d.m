@@ -59,6 +59,7 @@ classdef DamBreakDryUniformMesh1d < SWEConventional1d
             option('limiterParameter') = 1e-4;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('NumFluxType') = SWENumFluxType.ROE;
         end
         
         function [ fext ] = getExactFunction( obj, time )

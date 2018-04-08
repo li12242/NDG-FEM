@@ -43,8 +43,12 @@ inline void evaluateRoeAverage(const double gra,   ///< gravity acceleration
   double hsqrtM = sqrt(hM);
   double hsqrtP = sqrt(hP);
   roe->h = hsqrtM * hsqrtP;
-  roe->u = (huM / hsqrtM + huP / hsqrtP) / (hsqrtM + hsqrtP);
-  roe->v = (hvM / hsqrtM + hvP / hsqrtP) / (hsqrtM + hsqrtP);
+  double uM, uP;
+  double vM, vP;
+  evaluateVelocity(hcrit, hM, huM, hvM, &uM, &vM);
+  evaluateVelocity(hcrit, hP, huP, hvP, &uP, &vP);
+  roe->u = (uM * hsqrtM + uP * hsqrtP) / (hsqrtM + hsqrtP);
+  roe->v = (vM * hsqrtM + vP * hsqrtP) / (hsqrtM + hsqrtP);
   roe->c = sqrt(gra * (hM + hP) * 0.5);
 #ifdef DEBUG
   mexPrintf("Roe averaged states\n");
@@ -176,7 +180,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       mexPrintf("h = [%f, %f]\nhu = [%f, %f]\nhv = [%f, %f]\n", hM, hP, huM,
                 huP, hvM, hvP);
 #endif
-      if ((hM > solver.hmin) && (hP > solver.hmin)) {
+      if ((hM > solver.hmin) || (hP > solver.hmin)) {
         const double nx = solver.nx[sk];
         const double ny = solver.ny[sk];
         RoeState roe;

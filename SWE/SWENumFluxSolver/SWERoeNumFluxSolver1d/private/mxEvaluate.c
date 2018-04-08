@@ -1,5 +1,7 @@
 #include "../../SWEAbstractNumFluxSolver1d/private/SWENumFlux1d.h"
 
+// #define DEBUG
+
 typedef struct {
   double h;
   double u;
@@ -29,12 +31,15 @@ inline void evaluateRoeAverage(const double gra,   ///< gravity acceleration
 ) {
   double hsqrtM = sqrt(hM);
   double hsqrtP = sqrt(hP);
+  double uM, uP;
+  evaluateVelocity(hcrit, hM, huM, &uM);
+  evaluateVelocity(hcrit, hP, huP, &uP);
   roe->h = hsqrtM * hsqrtP;
-  roe->u = (huM / hsqrtM + huP / hsqrtP) / (hsqrtM + hsqrtP);
+  roe->u = (uM * hsqrtM + uP * hsqrtP) / (hsqrtM + hsqrtP);
   roe->c = sqrt(gra * (hM + hP) * 0.5);
 #ifdef DEBUG
   mexPrintf("Roe averaged states\n");
-  mexPrintf("h = %f\nu = %f\nv = %f\nc = %f\n", roe->h, roe->u, roe->v, roe->c);
+  mexPrintf("h = %f\nu = %f\nc = %f\n", roe->h, roe->u, roe->c);
 #endif
   return;
 }
@@ -58,9 +63,9 @@ evaluateRoeWaveStrength(const double hcrit,  ///< water depth threshold
   alpha[1] = 0.5 * (hP - hM + roe->h / roe->c * (unP - unM));
 #ifdef DEBUG
   mexPrintf("Wave strength\n");
-  mexPrintf("local velocity [%f, %f]\n", uM, vM);
-  mexPrintf("neigh velocity [%f, %f]\n", uP, vP);
-  mexPrintf("alpha = [%f, %f, %f]\n", alpha[0], alpha[1], alpha[2]);
+  mexPrintf("local velocity %f\n", unM);
+  mexPrintf("neigh velocity %f\n", unP);
+  mexPrintf("alpha = [%f, %f]\n", alpha[0], alpha[1]);
 #endif
   return;
 }
@@ -91,7 +96,7 @@ void evaluateRoeSolver(const double hmin,   ///< water depth threshold
   const double lambda3 = fabs(unroe + roe->c);
 
 #ifdef DEBUG
-  mexPrintf("eigenvalue lambda = [%f, %f, %f]\n", lambda1, lambda2, lambda3);
+  mexPrintf("eigenvalue lambda = [%f, %f]\n", lambda1, lambda3);
 #endif
   Fh[0] -= lambda1 * alpha[0];
   Fhu[0] -= lambda1 * alpha[0] * (roe->u - roe->c * nx);
@@ -103,7 +108,7 @@ void evaluateRoeSolver(const double hmin,   ///< water depth threshold
   Fhu[0] *= 0.5;
 
 #ifdef DEBUG
-  mexPrintf("Roe flux = [%f, %f, %f]\n", Fh[0], Fhu[0], Fhv[0]);
+  mexPrintf("Roe flux = [%f, %f]\n", Fh[0], Fhu[0]);
 #endif
   return;
 }
@@ -120,8 +125,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double *Fh = mxGetPr(plhs[0]);
   double *Fqx = Fh + solver.TNfp * solver.K;
 
+#ifndef DEBUG
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(DG_THREADS)
+#endif
 #endif
   for (int k = 0; k < K; k++) {
     for (int n = 0; n < TNfp; n++) {
@@ -132,10 +139,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       const double huP = solver.huP[sk];
 #ifdef DEBUG
       mexPrintf("k = %d, sk = %d\n", k, n);
-      mexPrintf("h = [%f, %f]\nhu = [%f, %f]\nhv = [%f, %f]\n", hM, hP, huM,
-                huP, hvM, hvP);
+      mexPrintf("h = [%f, %f]\nhu = [%f, %f]\n", hM, hP, huM, huP);
 #endif
-      if ((hM > solver.hmin) && (hP > solver.hmin)) {
+      if ((hM > solver.hmin) || (hP > solver.hmin)) {
         const double nx = solver.nx[sk];
         RoeState roe;
         evaluateRoeAverage(solver.gra, solver.hmin, hM, huM, hP, huP, &roe);
@@ -144,4 +150,5 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       }
     }
   }
+  return;
 }
