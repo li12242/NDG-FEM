@@ -1,5 +1,4 @@
 %> \brief 2-D Non-linear Shallow Water Equation
-
 %> \details
 %> This class descripe the conservation equations of the mass and
 %> monuments, written as
@@ -44,7 +43,7 @@ classdef SWEAbstract2d < NdgPhysMat
         limiterSolver
     end
     
-    methods
+    methods( Access = public )
         draw( obj, varargin )
     end
     
@@ -63,7 +62,7 @@ classdef SWEAbstract2d < NdgPhysMat
         [ fphys ] = matEvaluatePostFunc(obj, fphys)
     end
     
-    methods( Hidden, Sealed ) % public function, not allow to inherit
+    methods( Hidden, Sealed, Access = public ) % public function, not allow to inherit
         
         %> impose boundary condition and evaluate cell boundary values
         [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext );
@@ -79,7 +78,7 @@ classdef SWEAbstract2d < NdgPhysMat
         end% func
     end
         
-    methods( Access = protected, Sealed )
+    methods( Sealed, Access = protected )
         [ fphys ] = matEvaluateLimiter( obj, fphys )
         
         %> determine time interval

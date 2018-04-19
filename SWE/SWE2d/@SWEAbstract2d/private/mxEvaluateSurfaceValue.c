@@ -1,28 +1,43 @@
 #include "mex.h"
-#include <math.h>
 #include "mxSWE2d.h"
+#include <math.h>
+
+typedef enum {
+  NdgEdgeInner = 0,
+  NdgEdgeGaussEdge = 1,
+  NdgEdgeSlipWall = 2,
+  NdgEdgeNonSlipWall = 3,
+  NdgEdgeZeroGrad = 4,
+  NdgEdgeClamped = 5,
+  NdgEdgeClampedDepth = 6,
+  NdgEdgeClampedVel = 7,
+  NdgEdgeFlather = 8,
+  NdgEdgeNonLinearFlather = 9,
+  NdgEdgeNonLinearFlatherFlow = 10,
+  NdgEdgeNonReflectingFlux = 11
+} NdgEdgeType;
 
 typedef struct {
-  double hM;   ///< water depth at local node
-  double hP;   ///< water depth at next node
-  double huM;  ///< flux at local node
-  double huP;  ///< flux at next node
-  double hvM;  ///< flux at local node
-  double hvP;  ///< flux at next node
-  double zM;   ///< bottom elevation
-  double zP;   ///< bottom elevation
+  double hM;  ///< water depth at local node
+  double hP;  ///< water depth at next node
+  double huM; ///< flux at local node
+  double huP; ///< flux at next node
+  double hvM; ///< flux at local node
+  double hvP; ///< flux at next node
+  double zM;  ///< bottom elevation
+  double zP;  ///< bottom elevation
 } SurfNodeField;
 
 /** \brief Impose boundary condition to the next node */
-void imposeBoundaryCondition(const double gra,        ///< gravity acceleration
-                             NdgEdgeType type,        ///< boundary node type
-                             const double nx,         ///< outward normal vector
-                             const double ny,         ///< outward normal vector
-                             const int idM,           ///< local node index
-                             const int idP,           ///< next node index
-                             const PhysField* fphys,  ///< physical field
-                             const PhysField* fext,   ///< external field
-                             SurfNodeField* surf) {
+void imposeBoundaryCondition(const double gra,       ///< gravity acceleration
+                             NdgEdgeType type,       ///< boundary node type
+                             const double nx,        ///< outward normal vector
+                             const double ny,        ///< outward normal vector
+                             const int idM,          ///< local node index
+                             const int idP,          ///< next node index
+                             const PhysField *fphys, ///< physical field
+                             const PhysField *fext,  ///< external field
+                             SurfNodeField *surf) {
   // assign the local node values
   surf->hM = fphys->h[idM];
   surf->huM = fphys->hu[idM];
@@ -54,8 +69,8 @@ void imposeBoundaryCondition(const double gra,        ///< gravity acceleration
   } else if (type == NdgEdgeSlipWall) {
     const double qxM = fphys->hu[idM];
     const double qyM = fphys->hv[idM];
-    double qnM = qxM * nx + qyM * ny;   // outward normal flux
-    double qvM = -qxM * ny + qyM * nx;  // outward tangential flux
+    double qnM = qxM * nx + qyM * ny;  // outward normal flux
+    double qvM = -qxM * ny + qyM * nx; // outward tangential flux
     // adjacent value
     surf->hP = fphys->h[idM];
     surf->huP = (-qnM) * nx - qvM * ny;
@@ -65,16 +80,49 @@ void imposeBoundaryCondition(const double gra,        ///< gravity acceleration
     surf->huP = -fphys->hu[idM];
     surf->hvP = -fphys->hv[idM];
   } else if (type == NdgEdgeFlather) {
-    double hM = fphys->h[idM];
-    double qx_ext = fext->hu[idM];
-    double qy_ext = fext->hv[idM];
-    double qn_ext = qx_ext * nx + qy_ext * ny;   // outward normal flux
-    double qv_ext = -qx_ext * ny + qy_ext * nx;  // tangential flux
-    double qn = qn_ext - sqrt(-gra * surf->zM) * (fext->h[idM] - hM);
-    double qv = qv_ext;
-    surf->hP = hM;
-    surf->huP = qn * nx - qv * ny;
-    surf->hvP = qn * ny + qv * nx;
+    const double hE = fext->h[idM];
+    const double uE = fext->hu[idM] / hE;
+    const double vE = fext->hv[idM] / hE;
+    const double unE = uE * nx + vE * ny;  // outward normal flux
+    const double uvE = -uE * ny + vE * nx; // tangential flux
+    const double un = unE - sqrt(-gra / surf->zM) * (hE - surf->hM);
+    const double uv = uvE;
+    surf->hP = surf->hM;
+    surf->huP = (un * nx - uv * ny) * surf->hM;
+    surf->hvP = (un * ny + uv * nx) * surf->hM;
+  } else if (type == NdgEdgeNonLinearFlather) {
+    const double hE = fext->h[idM];
+    const double uE = fext->hu[idM] / hE;
+    const double vE = fext->hv[idM] / hE;
+    const double unE = uE * nx + vE * ny; // outward normal flux
+    const double un = surf->huM / surf->hM * nx + surf->hvM / surf->hM * ny;
+    const double temp = 0.5 * (un - unE) + sqrt(gra * hE);
+    surf->hP = temp * temp / gra;
+    surf->huP = fext->hu[idM];
+    surf->hvP = fext->hv[idM];
+  } else if (type == NdgEdgeNonLinearFlatherFlow) {
+    const double hE = fext->h[idM];
+    const double uE = fext->hu[idM] / hE;
+    const double vE = fext->hv[idM] / hE;
+    const double unE = uE * nx + vE * ny;  // outward normal flux
+    const double uvE = -uE * ny + vE * nx; // tangential flux
+    const double un = unE - 2 * sqrt(gra * hE) + 2 * sqrt(gra * surf->hM);
+    const double uv = uvE;
+    surf->hP = surf->hM;
+    surf->huP = (un * nx - uv * ny) * surf->hM;
+    surf->hvP = (un * ny + uv * nx) * surf->hM;
+  } else if (type == NdgEdgeNonReflectingFlux) {
+    const double unM = surf->huM / surf->hM * nx + surf->hvM / surf->hM * ny;
+    const double RLP = unM + 2 * sqrt(gra * surf->hM);
+    const double hs = fext->h[idM];
+    surf->hP = hs;
+    const double RRM = RLP - 4 * sqrt(gra * hs);
+    const double un = 0.5 * (RRM + RLP);
+    const double uvM = -surf->huM / surf->hM * ny + surf->hvM / surf->hM * nx;
+    surf->huP = (un * nx - uvM * ny) * surf->hM;
+    surf->hvP = (un * ny + uvM * nx) * surf->hM;
+  } else {
+    mexPrintf("Matlab:%s:Unknown boundary type: %d\n", __FILE__, type);
   }
   return;
 }
@@ -84,8 +132,8 @@ void imposeBoundaryCondition(const double gra,        ///< gravity acceleration
  * \details Details about the HR method can be found in Hou et. al. (2013)
  */
 void evaluateHydrostaticReconstructValue(
-    const double hmin,   ///< water depth threshold
-    SurfNodeField* surf  ///< surface node values
+    const double hmin,  ///< water depth threshold
+    SurfNodeField *surf ///< surface node values
 ) {
   double zstar = max(surf->zM, surf->zP);
   double um, vm, up, vp;
@@ -95,7 +143,7 @@ void evaluateHydrostaticReconstructValue(
                                     &vp);
   const double etaM = surf->hM + surf->zM;
   const double etaP = surf->hP + surf->zP;
-  zstar = min(etaM, zstar);  // z* = min( \eta^-, z* )
+  zstar = min(etaM, zstar); // z* = min( \eta^-, z* )
   surf->hM = etaM - zstar;
   surf->hP = max(0, etaP - zstar) - max(0, surf->zP - zstar);
   surf->huM = surf->hM * um;
@@ -109,7 +157,7 @@ void evaluateHydrostaticReconstructValue(
 #define NLHS 2
 #define NVAR 3
 
-void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* check input & output */
   if (nrhs != NRHS) {
     mexPrintf("Matlab:%s:InvalidNumberInput,\n", __FILE__);
@@ -123,15 +171,15 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
   double hcrit = mxGetScalar(prhs[0]);
   double gra = mxGetScalar(prhs[1]);
-  double* eidM = mxGetPr(prhs[2]);
-  double* eidP = mxGetPr(prhs[3]);
-  double* nx = mxGetPr(prhs[4]);
-  double* ny = mxGetPr(prhs[5]);
-  signed char* eidtype = (signed char*)mxGetData(prhs[6]);
+  double *eidM = mxGetPr(prhs[2]);
+  double *eidP = mxGetPr(prhs[3]);
+  double *nx = mxGetPr(prhs[4]);
+  double *ny = mxGetPr(prhs[5]);
+  signed char *eidtype = (signed char *)mxGetData(prhs[6]);
   // double* fphys = mxGetPr(prhs[7]);
   // double* fext = mxGetPr(prhs[8]);
-  double* etoe = mxGetPr(prhs[9]);
-  signed char* regType = (signed char*)mxGetData(prhs[10]);
+  double *etoe = mxGetPr(prhs[9]);
+  signed char *regType = (signed char *)mxGetData(prhs[10]);
 
   PhysField fphys = convertMexToPhysField(prhs[7]);
   PhysField fext = convertMexToPhysField(prhs[8]);

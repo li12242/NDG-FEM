@@ -39,6 +39,9 @@ if obj.option.isKey('FrictionType') % the option exist
         case SWEFrictionType.Manning
             n = obj.getOption('FrictionCoefficient_n');
             obj.frictionSolver = ManningFrictionSolver2d( n );
+        case SWEFrictionType.Quadric
+            n = obj.getOption('FrictionCoefficient_r');
+            obj.frictionSolver = QuadricFrictionTermSolver2d( n );
     end
 else % the option does not exist
     obj.frictionSolver = NonFrictionTermSolver();

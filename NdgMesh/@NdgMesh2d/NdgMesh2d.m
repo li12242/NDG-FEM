@@ -88,42 +88,6 @@ classdef NdgMesh2d < NdgMesh
             vz = zeros( size(vx) ); % vz is all zeros
             obj = obj@NdgMesh(cell, Nv, vx, vy, vz, K, EToV, EToR, BCToV);
         end% func
-        
-        %         function obj = add_sponge(obj, vertlist)
-        %             % Calculate the distance from the boundary for each nodes
-        %             obj. spg_delta = zeros(obj.cell.Np, obj.K);
-        %             xb = obj.vx(vertlist);
-        %             yb = obj.vy(vertlist);
-        %             for k = 1:obj.K
-        %                 if obj.EToR(k) ~= ndg_lib.mesh_type.Sponge
-        %                     continue;
-        %                 end
-        %
-        %                 for n = 1:obj.cell.Np
-        %                     xi = obj.x(n, k);
-        %                     yi = obj.y(n, k);
-        %                     obj.spg_delta(n, k) = ...
-        %                         min( sqrt( (xi - xb).^2 + (yi - yb).^2 ) );
-        %                 end
-        %             end
-        %         end
-        
-        %         function spg_sigma = cal_sponge_strength(obj, spg_len, max_sigma)
-        %             % ���㺣������ɳ�ϵ��?sigma
-        %             spg_sigma = zeros(obj.cell.Np, obj.K);
-        %             p = 3;
-        %             if isempty(obj.spg_delta)
-        %                 return;
-        %             end
-        %             for k = 1:obj.K
-        %                 if obj.EToR(k) ~= ndg_lib.mesh_type.Sponge
-        %                     continue;
-        %                 end
-        %
-        %                 spg_sigma(:, k) = ...
-        %                     max_sigma*(1 - obj.spg_delta(:, k)/spg_len).^p;
-        %             end
-        %         end
     end% methods
     
 end

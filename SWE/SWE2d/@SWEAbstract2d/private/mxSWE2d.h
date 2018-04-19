@@ -18,18 +18,6 @@ typedef enum {
   NdgRegionPartialWetDamBreak = 8
 } NdgRegionType;
 
-typedef enum {
-  NdgEdgeInner = 0,
-  NdgEdgeGaussEdge = 1,
-  NdgEdgeSlipWall = 2,
-  NdgEdgeNonSlipWall = 3,
-  NdgEdgeZeroGrad = 4,
-  NdgEdgeClamped = 5,
-  NdgEdgeClampedDepth = 6,
-  NdgEdgeClampedVel = 7,
-  NdgEdgeFlather = 8
-} NdgEdgeType;
-
 typedef struct {
   size_t Np;     ///< length of 1st dimension
   size_t K;      ///< length of 2nd dimension

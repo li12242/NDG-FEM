@@ -1,44 +1,37 @@
-classdef OpenChannel2d < SWEConventional2d
+classdef TidalRiverChannel2d < SWEConventional2d
     
     properties(Constant)
         %> water depth threshold
         hmin = 1e-4; 
         %> gravity acceleration
         gra = 9.8; 
+        
         %> channel depth
         H = 320;
-        %> delta = amplitude / depth
-        delta = 0.04;
         %> wave period
         T = 500;
+        %> delta = amplitude / H
+        delta = 0.01
         
-        %> domain length = wave length * lambda
-        ChLength = 28e3 * 0.8;
         %> domain width
         ChWidth = 500;
-        %> mesh rotation angle
-        theta = 0;
-        %> mesh center
-        xc = 0;
-        %> mesh center
-        yc = 0;
+        %> river discharge rate
+        dischargeRate = - 320 * sqrt( 9.8/320 );
     end
     
-    methods
-        function obj = OpenChannel2d( N, M )
+    properties( Abstract, Constant )
+        %> left position of channel
+        ChLeft
+        %> right position of channel
+        ChRight
+    end
+    
+    methods( Access = public )
+        function obj = TidalRiverChannel2d( N, M )
             obj = obj@SWEConventional2d();
             mesh = obj.makeUniformMesh( N, M );
             obj.initPhysFromOptions( mesh );
         end
-        
-        %> draw the numerical results at gauge points
-        drawGaugePoints( obj, xg );
-
-        %> show the paramters for determing the test problem
-        showParameter( obj )
-        
-        %> check mechanical energy, excess mass, energy flux
-        checkResult( obj )
     end
     
     methods( Access = protected, Static  )
@@ -46,30 +39,22 @@ classdef OpenChannel2d < SWEConventional2d
         obtype = setOpenBoundaryCondition( )
     end
     
-    methods( Abstract, Access = protected )
-        [h, hu] = setExactSolution( obj, x, time );
-    end
-    
-    methods( Access = private, Sealed )
+    methods( Access = private )
         function mesh = makeUniformMesh( obj, N, M )
             obtype = obj.setOpenBoundaryCondition();
-            bctype = [NdgEdgeType.SlipWall, NdgEdgeType.SlipWall, ...
-                obtype(1), obtype(2)];
-            
+            bctype = [ NdgEdgeType.SlipWall, NdgEdgeType.SlipWall, ...
+                obtype(1), obtype(2) ];
             mesh = makeUniformQuadMesh(N, ...
-                [-obj.ChLength, 0], [0, obj.ChWidth], M, 1, bctype);
+                [ obj.ChLeft, obj.ChRight ], [0, obj.ChWidth], M, 1, bctype);
         end
     end
     
     methods( Access = protected )
-                
         function fphys = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
                 fphys{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
-%                 [ fphys{m}(:,:,1), fphys{m}(:,:,2) ] ...
-%                     = obj.setExactSolution( mesh.x, 0.0 );
                 fphys{m}(:, :, 1) = + obj.H;
                 fphys{m}(:, :, 4) = - obj.H;
             end
@@ -77,11 +62,11 @@ classdef OpenChannel2d < SWEConventional2d
         
         function matUpdateExternalField( obj, time, fphys )
             for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
                 a = 1 - 1./exp( time/obj.T/2 );
+                mesh = obj.meshUnion(m);
                 [ obj.fext{m}(:,:,1), obj.fext{m}(:,:,2) ] ...
                     = obj.setOBC( mesh.x, time );
-
+                
                 if time < obj.T/2
                     obj.fext{m}(:, :, 1) = a.* ( obj.fext{m}(:, :, 1) - obj.H ) + obj.H;
                     obj.fext{m}(:, :, 2) = a.* obj.fext{m}(:, :, 2);
@@ -91,18 +76,21 @@ classdef OpenChannel2d < SWEConventional2d
         
         %> Set open boundary condition
         function [h, hu] = setOBC( obj, x, time )
+            h = zeros( size(x) );
+            hu = zeros( size(x) );
+            
             w = 2 * pi / obj.T;
             c = sqrt( obj.gra * obj.H );
             k = w/c;
             
-            temp = cos( k .* x - w * time );
+            temp = cos( k .* x(:, 1) - w * time );
             eta = obj.delta * obj.H;
-            h = eta * temp + obj.H;
+            h(:, 1) = eta * temp + obj.H;
             u = eta * sqrt( obj.gra/obj.H ) * temp;
-            hu = h .* u;
+            hu(:, 1) = h(:, 1) .* u;
+            
+            hu(:, end) = obj.dischargeRate;
         end
-                
-    end% methods
-    
+    end
 end
 

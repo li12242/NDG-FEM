@@ -11,7 +11,7 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
     end
 
     methods (Access = public)
-        function obj = TsuamiRunup2d( N )
+        function obj = TsunamiRunup2d( N )
             [ path, ~, ~ ] = fileparts( mfilename('fullpath') );
             meshfile = [ path, '/mesh/quad.msh' ];
             mesh = makeGmshFileUMeshUnion2d( N, meshfile );

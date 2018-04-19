@@ -30,7 +30,7 @@ classdef NdgPhysMat < NdgPhys
         ftime
     end
     
-    methods
+    methods( Access = public )
         %> Construction function
         function obj = NdgPhysMat()
             obj = obj@NdgPhys();
@@ -40,7 +40,8 @@ classdef NdgPhysMat < NdgPhys
         function matSolve( obj )
             obj.matEvaluateTemporalDiscrete();
         end
-        %> Initialize the solvers from options
+
+        %> Initialize the solvers from input options and mesh
         initPhysFromOptions( obj, mesh );
     end
     

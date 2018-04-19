@@ -1,7 +1,7 @@
 function drawGaugePoints( obj, xg )
 
 isDrawExact = 1; % draw exact surface line
-Ng = 5;
+Ng = numel(xg);
 %xg = linspace( 0, obj.ChLength, Ng );
 yg = ones( size( xg ) ) * obj.ChWidth / 2;
 
@@ -10,16 +10,15 @@ pos = makeNdgPostProcessFromNdgPhys( obj );
 [ time ] = pos.time{1};
 
 for n = 1:Ng
-    subplot(Ng, 1, n)
+    subplot(Ng, 1, n); 
+    hold on; grid on; box on;
     if isDrawExact
         [ hext, ~ ] = obj.setExactSolution( xg(n), time );
         plot( time, hext(:) - obj.H, 'r:', 'LineWidth', 2 );
     end
-    temp = gaugeValue(n, 1, :);
-    temp = temp(:);
-    hold on; grid on; box on;
+    temp = gaugeValue(:, 1, n);
     plot( time, temp(:) - obj.H, 'b-', 'LineWidth', 1.5 );
-    ylim([-.25, .25]);
+    %ylim([-.25, .25]);
 %     xlim([time(end) - 2000, time(end)]);
     [ pxx, f ] = plomb( temp(1:end-1), time(1:end-1), [], 10, 'power' );
     [ pk, f0 ] = findpeaks( pxx, f, 'MinPeakHeight', 0.01);

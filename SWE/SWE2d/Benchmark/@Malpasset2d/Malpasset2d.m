@@ -9,25 +9,24 @@ classdef Malpasset2d < SWEPreBlanaced2d
     end
     
     properties
-        %
+        %> num of gauge points
         Ng
-        % gauge points location
+        %> location of gauge points
         xg, yg
-        % 
+        %> index of element containing gauge points
         cellId
-        %
+        %> interpolation matrix for gauge points
         Vg
-        %
+        %> max values of gauge results
         gaugeMaxDepthResult
     end
     
     methods(Access=protected, Hidden)
         function fphys = matInterpolateTopography( obj, fphys ) 
+            [ path, ~, ~ ] = fileparts( mfilename('fullpath') );
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                
-                tpfile = ...
-                     'SWE/SWE2d/Benchmark/@Malpasset2d/mesh/bathmetry1.txt';
+                tpfile = [path, '/mesh/bathmetry1.txt'];
                 fp = fopen(tpfile);
                 fgets(fp);
                 data = fscanf(fp, '%e %e %e', [3, inf]);
@@ -38,7 +37,7 @@ classdef Malpasset2d < SWEPreBlanaced2d
                 fphys{m}(:,:,4) = interp(mesh.x, mesh.y);
             end
         end% func
-    end
+    end% methods
     
     methods
         function obj = Malpasset2d( N )
@@ -60,10 +59,7 @@ classdef Malpasset2d < SWEPreBlanaced2d
             
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                [ cellId{m}, Vg{m} ] = mesh.accessGaugePointLocation( ...
-                    obj.xg, ...
-                    obj.yg, ...
-                    obj.xg );
+                [ cellId{m}, Vg{m} ] = mesh.accessGaugePointLocation( obj.xg, obj.yg, obj.xg );
             end
         end
         
@@ -92,9 +88,7 @@ classdef Malpasset2d < SWEPreBlanaced2d
             for m = 1:obj.Nmesh
                 for i = 1:obj.Ng
                     depth = obj.Vg{m}(i, :) * fphys{m}(:, obj.cellId{m}(i), 1);
-                    obj.gaugeMaxDepthResult(i) = max( ...
-                        obj.gaugeMaxDepthResult(i), ...
-                        depth );
+                    obj.gaugeMaxDepthResult(i) = max( obj.gaugeMaxDepthResult(i), depth );
                 end
             end
         end% func

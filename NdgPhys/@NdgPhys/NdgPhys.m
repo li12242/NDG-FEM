@@ -47,7 +47,7 @@ classdef NdgPhys < handle
         option = containers.Map();
     end
     
-    methods
+    methods( Access = public )
         function obj = NdgPhys()
         end
         
@@ -98,6 +98,7 @@ classdef NdgPhys < handle
     methods( Abstract, Access = protected )
         %> Set the solver options
         [ option ] = setOption( obj, option );
+        
         %> Set the initial field
         [ fphys ] = setInitialField( obj );
     end

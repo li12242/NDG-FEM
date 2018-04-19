@@ -17,6 +17,8 @@ classdef NdgEdgeType < int8
         ClampedDepth    (6)
         ClampedVel      (7)
         Flather         (8)
-        RefineEdge      (9)
+        NonLinearFlatherDepth    (9)
+        NonLinearFlatherFlow (10)
+        NonReflectFlux  (11)
     end
 end
