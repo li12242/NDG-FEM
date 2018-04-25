@@ -5,10 +5,10 @@ rmpath( genpath( 'NdgCell' ) );
 rmpath( genpath( 'NdgMesh') );
 rmpath( genpath( 'NdgEdge') );
 rmpath( genpath( 'NdgPhys') );
-rmpath( genpath( 'NdgUtils') );
+rmpath( genpath( 'Utilities') );
 rmpath( genpath( 'NdgNetCDF') );
 rmpath( genpath( 'NdgLimiter') );
-rmpath( genpath( 'NdgPostProcess') );
+rmpath( genpath( 'PostProcess') );
 rmpath( genpath( 'Advection') );
 rmpath( genpath( 'SWE') );
 fprintf('\n----------------------------------------------------------\n')
