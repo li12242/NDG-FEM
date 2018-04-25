@@ -9,6 +9,7 @@ pos = makeNdgPostProcessFromNdgPhys( obj );
 [ gaugeValue ] = pos.interpolateOutputResultToGaugePoint( xg, yg, yg );
 [ time ] = pos.time{1};
 
+figure;
 for n = 1:Ng
     subplot(Ng, 1, n); 
     hold on; grid on; box on;

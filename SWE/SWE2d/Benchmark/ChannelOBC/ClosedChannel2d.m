@@ -14,7 +14,7 @@ classdef ClosedChannel2d < OpenChannel2d
     
     methods( Access = protected, Static )
         function obtype = setOpenBoundaryCondition(  )
-            obtype = [ NdgEdgeType.ClampedDepth, NdgEdgeType.SlipWall ];
+            obtype = [ NdgEdgeType.Flather, NdgEdgeType.SlipWall ];
         end
     end
     

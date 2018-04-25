@@ -17,7 +17,7 @@ classdef TidalRiverChannelRegion2d < TidalRiverChannel2d
     methods( Access = protected, Static  )
         %> set open boundary condition
         function obtype = setOpenBoundaryCondition( )
-            obtype = [ NdgEdgeType.ClampedDepth, NdgEdgeType.ClampedVel ];
+            obtype = [ NdgEdgeType.Flather, NdgEdgeType.NonLinearFlatherDepth ];
         end
     end
     
@@ -47,6 +47,13 @@ classdef TidalRiverChannelRegion2d < TidalRiverChannel2d
                     plot( obj.largeTime, gaugeLargeResult(:, fld, n), 'r.-', ...
                         'LineWidth', 2 );
                     grid on; hold on; box on;
+                    xlabel('Time (s)', 'Interpreter', 'latex','FontSize', 16);
+                    if fld == 1
+                        ylabel('Depth (m)', 'Interpreter', 'latex','FontSize', 16);
+                    else
+                        ylabel('Flux ($\mathrm{m}^2/\mathrm{s}$)', ...
+                            'Interpreter', 'latex','FontSize', 16);
+                    end
                 end
 
                 pos = makeNdgPostProcessFromNdgPhys( obj );
@@ -56,6 +63,10 @@ classdef TidalRiverChannelRegion2d < TidalRiverChannel2d
                     plot( pos.time{1}, gaugeResult(:, fld, n), 'b.-', ...
                         'LineWidth', 1 );
                 end
+                legend({'Large', 'Regional'}, 'box', 'off', ...
+                    'Location', 'NorthWest', ...
+                    'FontSize', 16, ...
+                    'Interpreter', 'latex');
             end
         end
     end
