@@ -36,6 +36,11 @@ classdef NdgPhys < handle
     properties( SetAccess = protected )
         %> mesh objects
         meshUnion
+        %> edge objects
+        innerEdgeUnion
+        %> num of halo edge object
+        NhaloEdge
+        haloEdgeUnion
         %> number of mesh
         Nmesh
         %> CFL number

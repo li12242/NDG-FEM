@@ -21,19 +21,14 @@ for n = 1:obj.M
     vert1 = mesh1.EToV( cell1.FToV(:, f1), k1);
     vert2 = mesh2.EToV( cell2.FToV(:, f2), k2);
     
-    [ ~, vertInd1 ] = sort(vert1);
-    [ ~, vertInd2 ] = sort(vert2);
-    
-    if ( vertInd1(1) ~= vertInd1(1) )
-        FToN1(:, n) = mesh1.cell.Fmask(:, f1);
-    else
-        FToN1(:, n) = flip( mesh1.cell.Fmask(:, f1) );
-    end
-    
-    if vertInd2(1) ~= vertInd2(1)
+    % set local node index
+    FToN1(:, n) = mesh1.cell.Fmask(:, f1);
+    % set adjacent node index
+    if vert2(1) == vert1(1)
         FToN2(:, n) = mesh2.cell.Fmask(:, f2);
     else
         FToN2(:, n) = flip( mesh2.cell.Fmask(:, f2) );
     end
-end% for
 end
+
+end% func

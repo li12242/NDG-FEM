@@ -16,6 +16,7 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
     end
     
     methods( Hidden )
+
         function initPhysFromOptions( obj, mesh )
             initPhysFromOptions@NdgPhysMat( obj, mesh );
             finalTime = obj.getOption('finalTime');

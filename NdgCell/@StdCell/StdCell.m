@@ -1,6 +1,6 @@
 %> @brief Abstract class of the standard cells.
 %>
-%> The basic properties of the StdCell object include its geometry 
+%> The basic properties of the StdCell object include its geometry
 %> information and the matrix coefficients.
 %>
 %> All StdCell use the nodal interpolation polynomial as the basis
@@ -10,7 +10,7 @@
 %> @code
 %>  tri = StdTri(2); % the maximum degree of the basis polynomial is 2.
 %> @endcode
-%> 
+%>
 % ======================================================================
 %> The public interface of StdCell includes:
 %> @code
@@ -22,7 +22,7 @@
 %>   [ quad_val ] = project_vert2quad(obj, vert_val); // evaluate the quadrature node values from the vertice values
 %> @endcode
 % ======================================================================
-%> This class is part of the NDGOM software. 
+%> This class is part of the NDGOM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
 classdef StdCell < handle
@@ -79,19 +79,19 @@ classdef StdCell < handle
         M
         %> inverse of mass matrix
         invM
-        %> derivative matrix, 
+        %> derivative matrix,
         %> \f$ [Dr]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_i} \f$
         Dr
-        %> derivative matrix, 
+        %> derivative matrix,
         %> \f$ [Ds]_{ij} = \left.\frac{\partial l_j}{\partial s}\right|_{r_i} \f$
         Ds
-        %> derivative matrix, 
+        %> derivative matrix,
         %> \f$ [Dt]_{ij} = \left.\frac{\partial l_j}{\partial t}\right|_{r_i} \f$
         Dt
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
         LIFT
     end
-
+    
     properties( SetAccess = protected )
         %> number of gauss quadrature points
         Nq
@@ -128,7 +128,7 @@ classdef StdCell < handle
         %> @param[in] vert_val the vertice values, the first dimension of
         %> this variable should be equal to the Nv of the object.
         [ node_val ] = project_vert2node(obj, vert_val);
-        %> @brief Calculate the 
+        %> @brief Calculate the
         %> @param[in]
         assembleJacobianMatrix( obj, x, y, z );
         %> @brief Assemble the outword normal vectors.
@@ -142,7 +142,7 @@ classdef StdCell < handle
         %> @param[in] N The maximum degree of the basis functions
         function obj = StdCell(N)
             [ obj.N ] = N;
-            [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func( N );            
+            [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func( N );
             [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( N );
             [ obj.V ] = obj.assembleVandMatrix( @obj.orthogonal_func );
             [ obj.Vq ] = obj.assembleQuadratureMatrix();
@@ -194,31 +194,31 @@ classdef StdCell < handle
                 [Vr(:, n), Vs(:, n), Vt(:, n)] = ...
                     obj.derivative_orthogonal_func(obj.N, n, r, s, t);
             end
-            fDr = Vr/obj.V; 
-            fDs = Vs/obj.V; 
+            fDr = Vr/obj.V;
+            fDs = Vs/obj.V;
             fDt = Vt/obj.V;
         end
-
-%> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
-%> @param[in] obj The StdCell class
-%> @param[in] node_val The values on these interpolation nodes
+        
+        %> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
+        %> @param[in] obj The StdCell class
+        %> @param[in] node_val The values on these interpolation nodes
         function quad_val = project_node2quad(obj, node_val)
             quad_val = obj.Vq * node_val;
         end% func
-
-%> @brief Project the scalar field from the vertices to the Gauss quadrature nodes
-%> @param[in] obj The StdCell class
-%> @param[in] vert_val The values on these vertices
+        
+        %> @brief Project the scalar field from the vertices to the Gauss quadrature nodes
+        %> @param[in] obj The StdCell class
+        %> @param[in] vert_val The values on these vertices
         function quad_val = project_vert2quad(obj, vert_val)
             node_val = obj.project_vert2node(vert_val);
             quad_val = obj.project_node2quad(node_val);
         end
     end% methods
-   
+    
     methods(Hidden, Access = protected)
         %> @brief Assemble the interpolation matrix of Gauss quadrature nodes
         %>
-        %> The elements of the quadratuer interpolation matrix is 
+        %> The elements of the quadratuer interpolation matrix is
         %> \f$ [V_q]_{i,j} = l_j(\xi_i) \f$
         %> where \f$ \xi_i \f$ is the ith Gauss quadrature nodes.
         function [ Vq ] = assembleQuadratureMatrix( obj )
@@ -226,9 +226,8 @@ classdef StdCell < handle
         end
         
         %> @brief Assemble the Vandermonde matrix
-        %> 
-        %> The Vandermonde matrix interpolate the orthgonal basis functions
-        %> to the nodal basis functions, with 
+        %> @details The Vandermonde matrix interpolate the orthgonal basis functions
+        %> to the nodal basis functions, with
         %> \f$ [V]_{i,j} = P_j(r_i) \f$
         %> where \f$ r_i \f$ is the ith interpolation nodes and \f$ P_j \f$
         %> is the jth orthgonal function.
@@ -240,17 +239,7 @@ classdef StdCell < handle
         end% func
         
         %> @brief Assemble the mass matrix
-        %> 
         function [ M, invM ] = assembleMassMatrix( obj )
-%             [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, 2*obj.N );
-%             [ fq ] = nodal_func( obj, rq, sq, tq );
-%             M = zeros( obj.Np, obj.Np );
-%             for n = 1:obj.Np
-%                 for m = 1:obj.Np
-%                     M(n, m) = sum( wq(:) .* fq(:, m) .* fq(:, n) );
-%                 end
-%             end
-%             invM = inv(M);
             invV = inv(obj.V);
             M = (invV')*invV;
             invM = obj.V * obj.V';

@@ -191,7 +191,7 @@ classdef NdgMesh < handle
                         obj.EToM(f, k) = mid1;
                         obj.EToE(f, k) = k1;
                         obj.EToF(f, k) = f1;
-                        obj.setEToB(k, f, NdgEdgeType.GaussEdge)
+                        obj.setEToB(k, f, NdgEdgeType.GaussEdge);
                         break;
                     end
                 end

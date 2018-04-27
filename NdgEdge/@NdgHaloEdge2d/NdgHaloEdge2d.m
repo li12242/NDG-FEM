@@ -5,11 +5,11 @@
 %> This class is part of the NDGOM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef NdgEdge2d < NdgEdge
+classdef NdgHaloEdge2d < NdgHaloEdge
     
     methods
-        function obj = NdgEdge2d( mesh1, mesh2, meshId1, meshId2 )
-            obj = obj@NdgEdge( mesh1, mesh2, meshId1, meshId2 );
+        function obj = NdgHaloEdge2d( mesh1, mesh2, meshId1, meshId2 )
+            obj = obj@NdgHaloEdge( mesh1, mesh2, meshId1, meshId2 );
         end
         
 %         function draw( obj )

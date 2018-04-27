@@ -2,6 +2,7 @@
 function initPhysFromOptions( obj, mesh )
     % call the superclass methods
     initPhysFromOptions@NdgPhys( obj, mesh );
+    
     % set the physical field for the NdgPhysMat solver
     for m = 1:obj.Nmesh
         Np = obj.meshUnion(m).cell.Np;

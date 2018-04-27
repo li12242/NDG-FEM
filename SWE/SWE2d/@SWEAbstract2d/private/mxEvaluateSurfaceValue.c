@@ -2,6 +2,10 @@
 #include "mxSWE2d.h"
 #include <math.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 typedef enum {
   NdgEdgeInner = 0,
   NdgEdgeGaussEdge = 1,

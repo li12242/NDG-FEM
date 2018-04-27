@@ -37,6 +37,12 @@ path = 'NdgMesh/@NdgMesh/private/';
 srcfile = {[path, 'mxGetMeshIntegralValue.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
+% NdgEdge
+path = 'NdgEdge/@NdgInnerEdge/private/';
+srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+
 % Limiter
 path = 'NdgLimiter/NdgBJ/@NdgBJAbstract/private/';
 srcfile = {[path, 'mxEvaluateVertAverage.c']};

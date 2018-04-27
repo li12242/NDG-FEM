@@ -1,8 +1,8 @@
-classdef NdgEdge1d < NdgEdge
+classdef NdgHaloEdge1d < NdgHaloEdge
     
     methods
-        function obj = NdgEdge1d( mesh1, mesh2, meshId1, meshId2 )
-            obj = obj@NdgEdge( mesh1, mesh2, meshId1, meshId2 );
+        function obj = NdgHaloEdge1d( mesh1, mesh2, meshId1, meshId2 )
+            obj = obj@NdgHaloEdge( mesh1, mesh2, meshId1, meshId2 );
         end
         
 %         function draw( obj )

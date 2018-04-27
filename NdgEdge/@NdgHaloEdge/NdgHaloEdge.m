@@ -5,14 +5,14 @@
 %> This class is part of the NDG-FEM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef NdgEdge < handle
+classdef NdgHaloEdge < handle
     
     properties(SetAccess=protected)
         %> edge std cell for mesh1
         bcell1
         %> edge std cell for mesh2
         bcell2
-        %> number of edges
+        %> num of edges
         M
         %> vertex index on each edge
         FToV
@@ -20,12 +20,12 @@ classdef NdgEdge < handle
         FToE
         %> local face index of local and adjacent cell
         FToF
-        %> adjacent mesh index
+        %> mesh index
         FToM
         
-        %> element node index of the 1st mesh on each edge
+        %> interp node index of 1st ele on each edge
         FToN1
-        %> element node index of the 2nd mesh on each edge
+        %> interp node index of 2nd ele on each edge
         FToN2
         
         
