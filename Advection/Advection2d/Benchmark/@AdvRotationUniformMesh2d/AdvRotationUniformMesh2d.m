@@ -56,35 +56,6 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
 %             sign_um = sign( uNorm );
 %             fluxS = ( fm(:,:,1).*( sign_um + 1 )*0.5 + fp(:,:,1).*( 1 - sign_um  )*0.5 ).*uNorm;
 %         end
-        
-%         function [ frhs ] = matEvaluateEdgeRHS( obj, edge, fluxM, fluxP, fluxS )
-%             frhs = zeros( edge.mesh.cell.Np, edge.mesh.K, obj.Nvar );
-%             for fld = 1:obj.Nvar
-%                 for k = 1:edge.Ne
-%                     e1 = edge.FToE(1, k);
-%                     e2 = edge.FToE(2, k);
-%                     n1 = edge.FToN1(:, k);
-%                     n2 = edge.FToN2(:, k);
-%                     
-%                     deltaFlux1 = fluxM(:,k,fld) - fluxS(:,k,fld);
-%                     frhs(n1, e1, fld) = frhs(n1, e1, fld) + ...
-%                         edge.bcell.M * ( edge.Js(:, k) .* deltaFlux1 );
-%                     %                     frhs(:, e1, fld) = ...
-%                     %                         frhs(:, e1, fld) + edge.mesh.cell.invM(:, n1) * ...
-%                     %                         ( edge.bcell.M * ( edge.Js(:, k) .* deltaFlux1 ) ) ...
-%                     %                         ./ edge.mesh.J( :, e1 );
-%                     
-%                     deltaFlux2 = fluxP(:,k,fld) - fluxS(:,k,fld);
-%                     frhs(n2, e2, fld) = frhs(n2, e2, fld) - ...
-%                         edge.bcell.M * ( edge.Js(:, k) .* deltaFlux2 );
-%                     %                     frhs(:, e2, fld) = ...
-%                     %                         frhs(:, e2, fld) - edge.mesh.cell.invM(:, n2) * ...
-%                     %                         ( edge.bcell.M * ( edge.Js(:, k) .* deltaFlux2 ) ) ...
-%                     %                         ./ edge.mesh.J( :, e2 );
-%                 end
-%                 frhs(:, :, fld) = edge.mesh.cell.invM * frhs(:, :, fld) ./ edge.mesh.J;
-%             end            
-%         end
     end
     
     methods( Access = protected )

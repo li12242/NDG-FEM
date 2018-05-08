@@ -78,16 +78,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       for (int n = 0; n < Nfp; n++) {
         const int sk = n + k * Nfp;
 
-        const int n1 = (int)FToN1[sk] + e1 * Np - 1;
-        const int n2 = (int)FToN2[sk] + e2 * Np - 1;
+        // const int n1 = (int)FToN1[sk] + e1 * Np - 1;
+        // const int n2 = (int)FToN2[sk] + e2 * Np - 1;
         double dfM = fluxM_[sk] - fluxS_[sk];
         double dfP = fluxP_[sk] - fluxS_[sk];
         double j = Js[sk];
 
         double *mb = Mb + n * Nfp;
         for (int m = 0; m < Nfp; m++) {
-          rhs[n1] += mb[m] * j * dfM;
-          rhs[n2] -= mb[m] * j * dfP;
+          const int sp = m + k * Nfp;
+          const int m1 = (int)FToN1[sp] + e1 * Np - 1;
+          const int m2 = (int)FToN2[sp] + e2 * Np - 1;
+          rhs[m1] += mb[m] * j * dfM;
+          rhs[m2] -= mb[m] * j * dfP;
         }
       }
     }

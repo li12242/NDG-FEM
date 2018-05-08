@@ -24,11 +24,14 @@ classdef NdgInnerEdge < handle
         FToF
         %> face to mesh index
         FToM
-        
         %> interp node index of 1st ele on each edge
         FToN1
         %> interp node index of 2nd ele on each edge
         FToN2
+        %> face node index of local element
+        FToFN1
+        %> face node index of adjacent element
+        FToFN2
         %> outward normal vector
         nx
         %> outward normal vector
@@ -37,6 +40,8 @@ classdef NdgInnerEdge < handle
         nz
         %> determination of edge Jacabian
         Js
+        %> lift matrix
+        LIFT
     end
     
     methods( Access = public )
@@ -45,13 +50,15 @@ classdef NdgInnerEdge < handle
             obj.FToM = meshId; % set mesh id
             obj.eCell = obj.setEdgeReferCell( obj.mesh ); % set reference cell
             obj.Nfp = obj.eCell.Np; % set face node num
+            obj.LIFT = obj.mesh.cell.LIFT;
             
             % connect edge to elements
             [ obj.Ne, obj.FToE, obj.FToF, obj.FToV ] ...
                 = obj.assembleEdgeConnect( obj.mesh );
             
             % connect node
-            [ obj.FToN1, obj.FToN2, obj.nx, obj.ny, obj.nz, obj.Js ] ...
+            [ obj.FToN1, obj.FToN2, obj.FToFN1, obj.FToFN2, ...
+                obj.nx, obj.ny, obj.nz, obj.Js ] ...
                 = assembleNodeProject( obj, obj.mesh );
         end
         
@@ -68,7 +75,7 @@ classdef NdgInnerEdge < handle
     methods( Abstract, Access = protected )
         %> connect edge to elements
         [ Nedge, FToE, FToF, FToV ] = assembleEdgeConnect( obj, mesh )
-        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+        [ FToN1, FToN2, FToFN1, FToFN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
     end
     
 end

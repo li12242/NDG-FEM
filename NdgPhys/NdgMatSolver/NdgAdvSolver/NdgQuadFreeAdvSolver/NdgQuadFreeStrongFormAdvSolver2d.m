@@ -12,12 +12,12 @@ classdef NdgQuadFreeStrongFormAdvSolver2d < NdgQuadFreeStrongFormSolver & ...
             
             % evaluate inner edge
             for m = 1:phys.Nmesh
-                % edge = phys.meshUnion(m).InnerEdge;
-                % [ fm, fp ] = edge.matEvaluateSurfValue( fphys );
-                % [ fluxM ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, fm );
-                % [ fluxP ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, fp );
-                % [ fluxS ] = phys.matEvaluateSurfNumFlux( edge, edge.nx, edge.ny, fm, fp );
-                % [ phys.frhs{m} ] = edge.matEvaluateStrongFromEdgeRHS( fluxM, fluxP, fluxS );
+                edge = phys.meshUnion(m).InnerEdge;
+                [ fm, fp ] = edge.matEvaluateSurfValue( fphys );
+                [ fluxM ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, fm );
+                [ fluxP ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, fp );
+                [ fluxS ] = phys.matEvaluateSurfNumFlux( edge, edge.nx, edge.ny, fm, fp );
+                [ phys.frhs{m} ] = edge.matEvaluateStrongFromEdgeRHS( fluxM, fluxP, fluxS );
 
                 % edge = phys.meshUnion(m).BoundaryEdge;
                 % [ fm, fp ] = edge.matEvaluateSurfValue( edge, fphys );
@@ -31,9 +31,9 @@ classdef NdgQuadFreeStrongFormAdvSolver2d < NdgQuadFreeStrongFormSolver & ...
             for m = 1:phys.Nmesh % calculate RHS term on each mesh
                 mesh = phys.meshUnion(m);
                 [ E, G ] = phys.matEvaluateFlux( mesh, fphys{m} );
-                [ fm, fp ] = phys.matEvaluateSurfaceValue( mesh, fphys{m}, phys.fext{m} );
-                [ fluxS ] = phys.matEvaluateSurfNumFlux( mesh, obj.nx{m}, obj.ny{m}, fm, fp );
-                [ flux ] = phys.matEvaluateSurfFlux( mesh, obj.nx{m}, obj.ny{m}, fm );
+%                 [ fm, fp ] = phys.matEvaluateSurfaceValue( mesh, fphys{m}, phys.fext{m} );
+%                 [ fluxS ] = phys.matEvaluateSurfNumFlux( mesh, obj.nx{m}, obj.ny{m}, fm, fp );
+%                 [ flux ] = phys.matEvaluateSurfFlux( mesh, obj.nx{m}, obj.ny{m}, fm );
                 
                 for i = 1:phys.Nvar
                     phys.frhs{m}(:,:,i) = ...
@@ -42,7 +42,7 @@ classdef NdgQuadFreeStrongFormAdvSolver2d < NdgQuadFreeStrongFormSolver & ...
                         - obj.sx{m}.*( obj.Ds{m} * E(:,:,i) ) ...
                         - obj.ry{m}.*( obj.Dr{m} * G(:,:,i) ) ...
                         - obj.sy{m}.*( obj.Ds{m} * G(:,:,i) ); ...
-                        + ( obj.LIFT{m} * ( obj.Js{m} .* ( flux(:,:,i) - fluxS(:,:,i) ) ))./ obj.J{m};
+%                         + ( obj.LIFT{m} * ( obj.Js{m} .* ( flux(:,:,i) - fluxS(:,:,i) ) ))./ obj.J{m};
                 end
             end
         end

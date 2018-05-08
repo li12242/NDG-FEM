@@ -1,9 +1,11 @@
-function [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+function [ FToN1, FToN2, FToFN1, FToFN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
 
 cell = mesh.cell;
 eNfp = obj.eCell.Np;
 FToN1 = zeros( eNfp, obj.Ne );
 FToN2 = zeros( eNfp, obj.Ne );
+FToFN1 = zeros( eNfp, obj.Ne );
+FToFN2 = zeros( eNfp, obj.Ne );
 nx = zeros( eNfp, obj.Ne );
 ny = zeros( eNfp, obj.Ne );
 nz = zeros( eNfp, obj.Ne );
@@ -18,11 +20,14 @@ for n = 1:obj.Ne
     vert2 = mesh.EToV( cell.FToV(:, f2), k2);
     
     % set local node index
-    FToN1(:, n) = mesh.cell.Fmask(:, f1);
+    FToN1(:, n) = cell.Fmask(:, f1);
+    FToFN1(:, n) = sub2ind([eNfp, cell.Nface], 1:eNfp, ones(1, eNfp)*f1);
     if vert2(1) == vert1(1)
         FToN2(:, n) = mesh.cell.Fmask(:, f2);
+        FToFN2(:, n) = sub2ind([eNfp, cell.Nface], 1:eNfp, ones(1, eNfp)*f2);
     else
         FToN2(:, n) = flip( mesh.cell.Fmask(:, f2) );
+        FToFN2(:, n) = sub2ind([eNfp, cell.Nface], eNfp:-1:1, ones(1, eNfp)*f2);
     end
     
     % set outward normal vector
@@ -32,6 +37,8 @@ for n = 1:obj.Ne
     ny(:, n) = mesh.ny(fid, k1);
     nz(:, n) = mesh.nz(fid, k1);
     Js(:, n) = mesh.Js(fid, k1);
+    
+    
 end
 
 end
