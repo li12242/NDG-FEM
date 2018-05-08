@@ -8,57 +8,30 @@
 classdef NdgHaloEdge2d < NdgHaloEdge
     
     methods
-        function obj = NdgHaloEdge2d( mesh1, mesh2, meshId1, meshId2 )
-            obj = obj@NdgHaloEdge( mesh1, mesh2, meshId1, meshId2 );
+        function obj = NdgHaloEdge2d( meshUnion, locMeshId )
+            obj = obj@NdgHaloEdge( meshUnion, locMeshId );
         end
         
-%         function draw( obj )
-%             vx = obj.umesh(1).vx( obj.FToV );
-%             vy = obj.umesh(1).vy( obj.FToV );
-%             plot(vx, vy, 'k.-');
-%         end
+        function draw(obj, varargin)
+            xv = obj.mesh.x( obj.FToN1, obj.FToE(1, :) );
+            yv = obj.mesh.y( obj.FToN2, obj.FToE(1, :) );
+            if nargin == 1
+                plot( xv, yv, 'k.-', 'LineWidth', 2 );
+            elseif nargin == 2
+                plot3( xv, yv, varargin{1}, 'k.-', 'LineWidth', 2 );
+            end
+        end
     end
     
-    methods(Hidden, Access=protected)
-        function [ line1, line2 ] = setStdEdgeCell( obj, mesh1, mesh2 )
-            N1 = mesh1.cell.N;
-            N2 = mesh2.cell.N;
-            line1 = StdLine( N1 );
-            line2 = StdLine( N2 );
-        end% func
-        
-%         function [ nxq, nyq, nzq, Jq ] = assembleQuadPointScale( obj, meshArray )
-%             mesh = meshArray( obj.FToM(1) );
-%             Nq = obj.bcell.Nq;
-%             nxq = zeros(Nq, obj.M);
-%             nyq = zeros(Nq, obj.M);
-%             nzq = zeros(Nq, obj.M);
-%             Jq = zeros(Nq, obj.M);
-%             
-%             for n = 1:obj.M
-%                 vert = obj.FToV(:, n);
-%                 vx = mesh.vx( vert );
-%                 vy = mesh.vy( vert );
-%                 nx =  ( vy(2) - vy(1) );
-%                 ny = -( vx(2) - vx(1) );
-%                 
-%                 xc = mesh.xc( obj.FToE(1, n) );
-%                 yc = mesh.yc( obj.FToE(1, n) );
-%                 xfc = mean(vx);
-%                 yfc = mean(vy);
-%                 dx = xfc - xc(1);
-%                 dy = yfc - yc(1);
-%                 if( dx*nx + dy*ny ) < 0
-%                     nx = -nx;
-%                     ny = -ny;
-%                 end
-%                 
-%                 J = sqrt(nx.*nx + ny.*ny);
-%                 nxq(:, n) = nx./J;
-%                 nyq(:, n) = ny./J;
-%                 Jq(:, n) = J.*0.5;
-%             end
-%         end% func
+    methods(Hidden = true, Access = protected)
+        function [ eCell ] = setEdgeReferCell( obj, mesh )
+            eCell = StdLine( mesh.cell.N );
+        end
+    end
+    
+    methods( Access = protected )
+        [ Nedge, FToE, FToF, FToV, FToM, ftype ] = assembleEdgeConnect( obj, mesh, meshId );
+        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, meshUnion )
     end
     
 end

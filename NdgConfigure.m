@@ -39,7 +39,8 @@ libfile = {};
 FuncHandle(path, srcfile, libfile);
 % NdgEdge
 path = 'NdgEdge/@NdgInnerEdge/private/';
-srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c']};
+srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c'], ...
+    [path, 'mxEvaluateSurfValue.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 

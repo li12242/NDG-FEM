@@ -20,14 +20,14 @@ for m = 1:Nmesh
     end
 end
 
-for m = 1:Nmesh
-    mesh = meshUnion(m);
-    for m1 = 1:Nmesh
-        if( m == m1 ) continue; end
-        mesh1 = meshUnion(m1);
-        mesh.assembleNdgEdgeConnection(mesh1, m, m1);
-    end
-end
+% for m = 1:Nmesh
+%     mesh = meshUnion(m);
+%     for m1 = 1:Nmesh
+%         if( m == m1 ) continue; end
+%         mesh1 = meshUnion(m1);
+%         mesh.assembleNdgEdgeConnection(mesh1, m, m1);
+%     end
+% end
 
 end
 

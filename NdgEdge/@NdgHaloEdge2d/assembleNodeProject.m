@@ -1,27 +1,30 @@
-function [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+function [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, meshUnion )
 
+mesh = obj.mesh;
 cell = mesh.cell;
-FToN1 = zeros( obj.bcell.Np, obj.Ne );
-FToN2 = zeros( obj.bcell.Np, obj.Ne );
-nx = zeros( obj.bcell.Np, obj.Ne );
-ny = zeros( obj.bcell.Np, obj.Ne );
-nz = zeros( obj.bcell.Np, obj.Ne );
-Js = zeros( obj.bcell.Np, obj.Ne );
+eNfp = obj.eCell.Np;
+FToN1 = zeros( eNfp, obj.Ne );
+FToN2 = zeros( eNfp, obj.Ne );
+nx = zeros( eNfp, obj.Ne );
+ny = zeros( eNfp, obj.Ne );
+nz = zeros( eNfp, obj.Ne );
+Js = zeros( eNfp, obj.Ne );
 
 for n = 1:obj.Ne
+    m2 = obj.FToM(2, n);
     k1 = obj.FToE(1, n);
     k2 = obj.FToE(2, n);
     f1 = obj.FToF(1, n);
     f2 = obj.FToF(2, n);
     vert1 = mesh.EToV( cell.FToV(:, f1), k1);
-    vert2 = mesh.EToV( cell.FToV(:, f2), k2);
+    vert2 = meshUnion(m2).EToV( meshUnion(m2).cell.FToV(:, f2), k2);
     
     % set local node index
     FToN1(:, n) = mesh.cell.Fmask(:, f1);
     if vert2(1) == vert1(1)
-        FToN2(:, n) = mesh.cell.Fmask(:, f2);
+        FToN2(:, n) = meshUnion(m2).cell.Fmask(:, f2);
     else
-        FToN2(:, n) = flip( mesh.cell.Fmask(:, f2) );
+        FToN2(:, n) = flip( meshUnion(m2).cell.Fmask(:, f2) );
     end
     
     % set outward normal vector

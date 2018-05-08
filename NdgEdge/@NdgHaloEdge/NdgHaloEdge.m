@@ -8,60 +8,68 @@
 classdef NdgHaloEdge < handle
     
     properties(SetAccess=protected)
-        %> edge std cell for mesh1
-        bcell1
-        %> edge std cell for mesh2
-        bcell2
+        %> mesh obj
+        mesh
+        %> edge std cell obj
+        eCell
         %> num of edges
-        M
+        Ne
+        %> num of face nodes
+        Nfp
         %> vertex index on each edge
         FToV
         %> local and adjacent cell index
         FToE
         %> local face index of local and adjacent cell
         FToF
-        %> mesh index
+        %> face to mesh index
         FToM
         
         %> interp node index of 1st ele on each edge
         FToN1
         %> interp node index of 2nd ele on each edge
         FToN2
-        
-        
-        %> project matrix from the 2nd mesh edge nodes to the 1st mesh edge nodes
-        IntM
-%         %> project the boundary nodal values to the quadrature points for adjacent cell
-%         NToQ2
-%         
-%         %> determination of Jacobian matrixs
-%         Jq
-%         %> x component of the outward normal vector
-%         nxq
-%         %> y component of the outward normal vector
-%         nyq
-%         %> z component of the outward normal vector
-%         nzq
+        %> outward normal vector
+        nx
+        %> outward normal vector
+        ny
+        %> outward normal vector
+        nz
+        %> determination of edge Jacabian
+        Js
+        %> face type of each edge
+        ftype
     end
     
     methods(Abstract, Hidden=true, Access=protected)
-        [ bcell1, bcell2 ] = setStdEdgeCell( obj, mesh1, mesh2, meshId1, meshId2 );
-%         [ nxq, nyq, nzq, Jq ] = assembleQuadPointScale( obj, meshArray );
+        [ eCell ] = setEdgeReferCell( obj, mesh );
     end
     
     methods
-        function obj = NdgEdge( mesh1, mesh2, mid1, mid2 )
-            [ obj.FToM ] = mid2;
-            [ obj.bcell1, obj.bcell2 ] = setStdEdgeCell( obj, mesh1, mesh2 );
-            [ obj.M, obj.FToE, obj.FToF, obj.FToV ] = assembleEdgeConnect( obj, mesh1, mesh2, mid1, mid2 );
-            [ obj.IntM, obj.FToN1, obj.FToN2 ] = assembleNodeProject( obj, mesh1, mesh2 );
-%             [ obj.nxq, obj.nyq, obj.nzq, obj.Jq ] = assembleQuadPointScale( obj, mesh1 );
+        %> \brief constructor for Halo edge
+        %> \param[in] meshUnion input mesh vector
+        %> \param[in] locMeshId local mesh indices
+        function obj = NdgHaloEdge( meshUnion, locMeshId )
+            obj.mesh = meshUnion( locMeshId );
+            
+            % set reference element
+            obj.eCell = obj.setEdgeReferCell( obj.mesh );
+            
+            % set face node num
+            obj.Nfp = obj.eCell.Np;
+            
+            % connect edge to elements
+            [ obj.Ne, obj.FToE, obj.FToF, obj.FToV, obj.FToM, obj.ftype ] ...
+                = obj.assembleEdgeConnect( obj.mesh, locMeshId );
+            
+            [ obj.FToN1, obj.FToN2, obj.nx, obj.ny, obj.nz, obj.Js ] ...
+                = assembleNodeProject( obj, meshUnion );
         end
     end
     
-    methods(Hidden, Access=protected)
-        [ Nedge, FToE, FToF, FToV ]  = assembleEdgeConnect( obj, mesh1, mesh2, meshId1, meshId2 );
-        [ intM, FToN1, FToN2 ] = assembleNodeProject( obj, mesh1, mesh2 )
+    methods( Abstract, Access = protected )
+        [ Nedge, FToE, FToF, FToV, FToM, ftype ] = assembleEdgeConnect( obj, mesh, meshId );
+        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, meshUnion )
     end
 end
 

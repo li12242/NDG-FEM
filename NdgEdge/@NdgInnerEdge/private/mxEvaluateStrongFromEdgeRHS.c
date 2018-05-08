@@ -8,6 +8,7 @@
 // #if !defined(_WIN32)
 // #define dgemm dgemm_
 // #endif
+
 #define DEBUG 0
 
 #define NRHS 10
@@ -36,19 +37,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double *fluxP = mxGetPr(prhs[8]);
   double *fluxS = mxGetPr(prhs[9]);
 
-  const mwSize *dims = mxGetDimensions(prhs[6]);
-  const int Np = dims[0];  // num of interp nodes
-  const int K = dims[1];   // num of elements
-  dims = mxGetDimensions(prhs[7]);
-  mwSize number_of_dimensions = mxGetNumberOfDimensions(prhs[7]);
+  // dims = mxGetDimensions(prhs[6]);
+  const int Np = mxGetM(prhs[6]);  // num of interp nodes
+  const int K = mxGetN(prhs[6]);   // num of elements
+  const mwSize *dims = mxGetDimensions(prhs[7]);
   const int Nfp = dims[0];
   const int Ne = dims[1];  // num of edges
   int Nfield;
 
-  if (number_of_dimensions == 3) {
+  if (mxGetNumberOfDimensions(prhs[7]) > 2) {
     Nfield = dims[2];
   } else {
-    Nfield = 1;
+    Nfield = 1;  // fluxM is a 2D matrix
   }
 
   const size_t ndimOut = 3;
@@ -72,22 +72,22 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     double *fluxS_ = fluxS + Nfp * Ne * fld;
 
     for (int k = 0; k < Ne; k++) {  // evaluate rhs on each edge
-      int e1 = (int)FToE[2 * k] - 1;
-      int e2 = (int)FToE[2 * k + 1] - 1;
+      const int e1 = (int)FToE[2 * k] - 1;
+      const int e2 = (int)FToE[2 * k + 1] - 1;
 
       for (int n = 0; n < Nfp; n++) {
         const int sk = n + k * Nfp;
 
-        int n1 = (int)FToN1[sk] - 1;
-        int n2 = (int)FToN2[sk] - 1;
+        const int n1 = (int)FToN1[sk] + e1 * Np - 1;
+        const int n2 = (int)FToN2[sk] + e2 * Np - 1;
         double dfM = fluxM_[sk] - fluxS_[sk];
         double dfP = fluxP_[sk] - fluxS_[sk];
         double j = Js[sk];
 
         double *mb = Mb + n * Nfp;
         for (int m = 0; m < Nfp; m++) {
-          rhs[n1 + e1 * Np] += mb[m] * j * dfM;
-          rhs[n2 + e2 * Np] -= mb[m] * j * dfP;
+          rhs[n1] += mb[m] * j * dfM;
+          rhs[n2] -= mb[m] * j * dfP;
         }
       }
     }

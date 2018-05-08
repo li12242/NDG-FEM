@@ -30,20 +30,20 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
             G = fphys(:,:,3) .* fphys(:,:,1);
         end
         
-        function [ fm, fp ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
-            fm(:,:,1) = fphys( mesh.eidM );
-            fp(:,:,1) = fphys( mesh.eidP );
-            fe(:,:,1) = fext ( mesh.eidM );
-            ind = ( mesh.eidtype == int8(NdgEdgeType.GaussEdge) );
-            fp( ind ) = fe( ind );
-            ind = ( mesh.eidtype == int8(NdgEdgeType.Clamped) );
-            fp(ind) = 0;
-            Ntp = mesh.cell.Np * mesh.K;
-            fm(:,:,2) = fphys(mesh.eidM + Ntp);
-            fm(:,:,3) = fphys(mesh.eidM + 2*Ntp);
-            fp(:,:,2) = fphys(mesh.eidP + Ntp);
-            fp(:,:,3) = fphys(mesh.eidP + 2*Ntp);
-        end
+%         function [ fm, fp ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext )
+%             fm(:,:,1) = fphys( mesh.eidM );
+%             fp(:,:,1) = fphys( mesh.eidP );
+%             fe(:,:,1) = fext ( mesh.eidM );
+%             ind = ( mesh.eidtype == int8(NdgEdgeType.GaussEdge) );
+%             fp( ind ) = fe( ind );
+%             ind = ( mesh.eidtype == int8(NdgEdgeType.Clamped) );
+%             fp(ind) = 0;
+%             Ntp = mesh.cell.Np * mesh.K;
+%             fm(:,:,2) = fphys(mesh.eidM + Ntp);
+%             fm(:,:,3) = fphys(mesh.eidM + 2*Ntp);
+%             fp(:,:,2) = fphys(mesh.eidP + Ntp);
+%             fp(:,:,3) = fphys(mesh.eidP + 2*Ntp);
+%         end
         
         function [ fluxS ] = matEvaluateSurfNumFlux( obj, mesh, nx, ny, fm, fp )
             [ uNorm ] = fm(:,:,2) .* nx + fm(:,:,3) .* ny;

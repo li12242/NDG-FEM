@@ -41,7 +41,7 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
             option('startTime') = 0.0;
             option('finalTime') = finalTime;
             option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
-            %option('CFL') = 0.2;
+%             option('CFL') = 0.2;
             option('timeInterval') ...
                 = 2/obj.M/sqrt(obj.u0 ^ 2 + obj.v0 ^2)/(2*obj.N + 1);
             option('obcType') = NdgBCType.None;

@@ -40,7 +40,8 @@ classdef NdgMesh < handle
         %> coordinate of vertex
         vz
         %> edge objects
-        edgeUnion
+        InnerEdge
+        BoundaryEdge
         %> boundary types for each cell (column)
         EToB
     end
