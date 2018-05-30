@@ -24,6 +24,10 @@
 #include <math.h>
 #include "blas.h"
 
+#if !defined(_WIN32)
+#define dgemm dgemm_
+#endif
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif

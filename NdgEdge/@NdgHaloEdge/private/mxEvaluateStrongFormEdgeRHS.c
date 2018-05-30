@@ -5,6 +5,10 @@
 #include "mex.h"
 #include "blas.h"
 
+#if !defined(_WIN32)
+#define dgemm dgemm_
+#endif
+
 #define DEBUG 0
 
 #define NRHS 8
