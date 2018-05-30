@@ -1,4 +1,4 @@
-c = 0.08;
+c = 0.03;
 xmin = -1; xmax = 1; xmean = 0;
 ymin = -1; ymax = 1; ymean = 0;
 

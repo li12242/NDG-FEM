@@ -1,6 +1,6 @@
 # NDG-FEM
 
-NDG-FEM (Nodal Discontinuous Galerkin Finite Element Methods) 是采用Matlab语言建立的节点间断伽辽金有限元函数库，其采用 NDG 方法对微分方程进行离散，具有高阶精度、可利用非结构化网格计算等特点。此外，由于格式具有紧致性，其优点同时包括易于并行化，适用hp自适应加密等优势。
+NDG-FEM (Nodal Discontinuous Galerkin Finite Element Methods) 是采用Matlab语言建立的节点间断有限元函数库，其采用 NDG 方法对微分方程进行离散，具有高阶精度、可利用非结构化网格计算等特点。此外，由于格式具有紧致性，其优点同时包括易于并行化，适用hp自适应加密等优势。
 
 Matlab作为广泛应用于科学计算商业软件，其不仅包含高效矩阵计算函数库，同时还有丰富的可视化工具。根据Matlab语言特性，模型采用无积分方法将方程化为矩阵-向量计算形式，在计算一些无法向量化过程时则采用 mex 混合编程方法加速，并调用 OpenMP 并行模式进一步提高计算效率。
 

@@ -63,9 +63,12 @@ if (Ntri > 0) && (Nquad > 0)
     mesh = makeMeshUnion(2, triMesh, quadMesh);
 elseif (Ntri > 0) && (Nquad == 0)
     mesh = triMesh;
+    mesh.InnerEdge = NdgInnerEdge2d( mesh, 1 );
 elseif (Nquad > 0) && (Ntri == 0)
     mesh = quadMesh;
+    mesh.InnerEdge = NdgInnerEdge2d( mesh, 1 );
 end
+
 
 end
 

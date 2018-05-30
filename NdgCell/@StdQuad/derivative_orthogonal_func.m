@@ -15,7 +15,8 @@
 function [ fdr, fds, fdt ] = derivative_orthogonal_func(obj, N, ind, r, s, t)
 
 % transform the index to two indexes.
-[i,j] = trans_ind(N,ind);
+i = mod( ind - 1, N + 1 );
+j = floor( (ind - 1) / (N + 1) );
 % calculate the derivative basis function values.
 fdr = GradJacobiP(r(:), 0, 0, i).*JacobiP(s(:), 0, 0, j);
 fds = JacobiP(r(:), 0, 0, i).*GradJacobiP(s(:), 0, 0, j);

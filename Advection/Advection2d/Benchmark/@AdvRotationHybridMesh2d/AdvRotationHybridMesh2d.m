@@ -24,8 +24,7 @@ classdef AdvRotationHybridMesh2d < AdvAbstractVarFlow2d
     methods
         function obj = AdvRotationHybridMesh2d( N )
             obj = obj@AdvAbstractVarFlow2d();
-            [ path, ~, ~ ] = fileparts( mfilename('fullpath') );
-            obj.gmshFile = [path, '/HybridMesh/MixMesh.msh'];
+            obj.gmshFile = [fileparts( mfilename('fullpath') ), '/HybridMesh/MixMesh.msh'];
             mesh = makeGmshFileUMeshUnion2d( N, obj.gmshFile );
             obj.N = N;
             obj.initPhysFromOptions( mesh );

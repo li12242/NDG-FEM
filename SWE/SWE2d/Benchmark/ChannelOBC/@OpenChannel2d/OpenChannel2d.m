@@ -78,9 +78,13 @@ classdef OpenChannel2d < SWEConventional2d
         function matUpdateExternalField( obj, time, fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
+                edge = mesh.BoundaryEdge;
+                ind = sub2ind( [mesh.cell.Np, mesh.K], edge.FToN1, ...
+                    repmat(edge.FToE(1, :), edge.Nfp, 1) );
+                xb = mesh.x( ind );
                 a = 1 - 1./exp( time/obj.T/2 );
                 [ obj.fext{m}(:,:,1), obj.fext{m}(:,:,2) ] ...
-                    = obj.setOBC( mesh.x, time );
+                    = obj.setOBC( xb, time );
 
                 if time < obj.T/2
                     obj.fext{m}(:, :, 1) = a.* ( obj.fext{m}(:, :, 1) - obj.H ) + obj.H;

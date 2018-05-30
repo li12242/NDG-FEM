@@ -4,7 +4,7 @@
 %> and allocate multiple choices to create the object. The input
 %> methods include
 classdef NdgMesh2d < NdgMesh
-    properties(Constant)
+    properties( Constant )
         type = NdgMeshType.TwoDim
     end
     
@@ -12,14 +12,13 @@ classdef NdgMesh2d < NdgMesh
         point_h
     end
     
-    methods(Hidden, Access=protected)
-        function [ edge ] = makeConnectNdgEdge( obj, mesh1, mid0, mid1 )
-            edge = NdgEdge2d( obj, mesh1, mid0, mid1 );
-        end
+    methods( Hidden, Access = protected )
         
         function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor(obj)
-            xr = obj.cell.Dr*obj.x; xs = obj.cell.Ds*obj.x;
-            yr = obj.cell.Dr*obj.y; ys = obj.cell.Ds*obj.y;
+            xr = obj.cell.Dr*obj.x; 
+            xs = obj.cell.Ds*obj.x;
+            yr = obj.cell.Dr*obj.y; 
+            ys = obj.cell.Ds*obj.y;
             J = -xs.*yr + xr.*ys;
             
             rx = ys./J; sx =-yr./J;
@@ -32,7 +31,7 @@ classdef NdgMesh2d < NdgMesh
             tz = zeros(size(rx));
         end
         
-        function [nx, ny, nz, Js] = assembleFacialJaobiFactor( obj )
+        function [ nx, ny, nz, Js ] = assembleFacialJaobiFactor( obj )
             Nface = obj.cell.Nface;
             TNfp = obj.cell.TNfp;
             nx = zeros(TNfp, obj.K);

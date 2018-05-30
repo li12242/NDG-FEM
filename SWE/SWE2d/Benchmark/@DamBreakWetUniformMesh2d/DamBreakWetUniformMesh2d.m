@@ -34,13 +34,13 @@ classdef DamBreakWetUniformMesh2d < SWEConventional2d
             fext = obj.getExactFunction( obj.getOption('finalTime') );
             fextInterp = pos.interpolatePhysFieldToGaugePoint( fext, xg, yg, yg );
             figure('Color', 'w');
-            subplot( 2, 2, [1,3] ); hold on; grid on; box on;
+            subplot( 3, 1, 1 ); hold on; grid on; box on;
             plot( xg, fphyInterp(:,1), 'b.-' );
             plot( xg, fextInterp(:,1), 'r.-' );
-            subplot( 2, 2, 2 ); hold on; grid on; box on;
+            subplot( 3, 1, 2 ); hold on; grid on; box on;
             plot( xg, fphyInterp(:,2), 'b.-' );
             plot( xg, fextInterp(:,2), 'r.-' );
-            subplot( 2, 2, 4 ); hold on; grid on; box on;
+            subplot( 3, 1, 3 ); hold on; grid on; box on;
             uphyInterp = fphyInterp(:,2)./fphyInterp(:,1);
             uextInterp = fextInterp(:,2)./fextInterp(:,1);
             plot( xg, uphyInterp, 'b.-' );
@@ -68,9 +68,9 @@ classdef DamBreakWetUniformMesh2d < SWEConventional2d
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('CoriolisType')=SWECoriolisType.None;
-            option('WindType')=SWEWindType.None;
-            option('FrictionType')=SWEFrictionType.None;
-            option('NumFluxType') = SWENumFluxType.ROE;
+            option('WindType') = SWEWindType.None;
+            option('FrictionType') = SWEFrictionType.None;
+            option('NumFluxType') = SWENumFluxType.HLL;
         end
         
         fphys = getExactFunction( obj, time )

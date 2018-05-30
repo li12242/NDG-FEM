@@ -39,18 +39,6 @@ classdef StdLine < StdCell
             sq = zeros(Nq, 1);
             tq = zeros(Nq, 1);
         end
-        
-%         function [ M, invM ] = assembleMassMatrix( obj )
-%             [ ~, rq, sq, tq, wq ] = obj.quad_coor_func( 2*obj.N );
-%             [ fq ] = nodal_func( obj, rq, sq, tq );
-%             M = zeros( obj.Np, obj.Np );
-%             for n = 1:obj.Np
-%                 for m = 1:obj.Np
-%                     M(n, m) = sum( wq(:) .* fq(:, m) .* fq(:, n) );
-%                 end
-%             end
-%             invM = inv(M);
-%         end% func
     end
     
     methods

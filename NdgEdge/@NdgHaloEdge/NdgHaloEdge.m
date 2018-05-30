@@ -65,6 +65,8 @@ classdef NdgHaloEdge < handle
             [ obj.FToN1, obj.FToN2, obj.nx, obj.ny, obj.nz, obj.Js ] ...
                 = assembleNodeProject( obj, meshUnion );
         end
+        
+        
     end
     
     methods( Abstract, Access = protected )

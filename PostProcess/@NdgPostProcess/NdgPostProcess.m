@@ -41,9 +41,9 @@ classdef NdgPostProcess < handle
         %>
         %> \param physField external field
         %======================================================================
-        function drawResult( obj, fieldId, physField )
+        function drawResult( obj, delta, fieldId, physField )
             varId = fieldId;
-            for t = 1:obj.Nt
+            for t = 1:delta:obj.Nt
                 field = obj.accessOutputResultAtStepNum( t );
                 for m = 1:obj.Nmesh
                     obj.meshUnion(m).draw( field{m}(:,:,varId) + physField );

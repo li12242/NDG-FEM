@@ -29,7 +29,7 @@ classdef ClosedChannel2d < OpenChannel2d
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = ...
                 [mfilename, '.', num2str(obj.meshUnion.cell.N)];
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK22;
+            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             option('limiterType') = NdgLimiterType.None;
             option('equationType') = NdgDiscreteEquationType.Strong;
             option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;

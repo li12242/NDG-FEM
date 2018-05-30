@@ -27,24 +27,20 @@
 % ======================================================================
 classdef StdCell < handle
     properties
-        %> order of basis function
+        %> maximum order of basis function
         N
     end
     
-    properties(Constant, Abstract)
-        %> standard cell type
+    properties ( Constant, Abstract )
+        %> reference cell type
         type
-        %> number of vertex
+        %> num of vertice
         Nv
-        %> vertex coordinate
-        vr
-        %> vertex coordinate
-        vs
-        %> vertex coordinate
-        vt
+        %> vertice coordinate
+        vr, vs, vt
         %> length/area/volume of standard cell
         LAV
-        %> number of vertex on each face
+        %> num of vertice on each face
         Nfv
         %> veretx list on each face
         FToV
@@ -54,15 +50,11 @@ classdef StdCell < handle
         faceType
     end
     
-    properties(SetAccess = protected)
+    properties ( SetAccess = protected )
         %> number of interpolation points (IP)
         Np
         %> coordinates of interpolation points
-        r
-        %> coordinates of interpolation points
-        s
-        %> coordinates of interpolation points
-        t
+        r, s, t
         %> node index of facial points
         Fmask
         %> number of facial interpolation points
@@ -70,7 +62,7 @@ classdef StdCell < handle
         %> total number of face points
         TNfp
     end
-    properties( SetAccess = protected)
+    properties ( SetAccess = protected)
         %> Vandermonde matrix
         V
         %> project matrx from interpolation points to quadrature points
@@ -79,28 +71,18 @@ classdef StdCell < handle
         M
         %> inverse of mass matrix
         invM
-        %> derivative matrix,
+        %> derivative matrix with
         %> \f$ [Dr]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_i} \f$
-        Dr
-        %> derivative matrix,
-        %> \f$ [Ds]_{ij} = \left.\frac{\partial l_j}{\partial s}\right|_{r_i} \f$
-        Ds
-        %> derivative matrix,
-        %> \f$ [Dt]_{ij} = \left.\frac{\partial l_j}{\partial t}\right|_{r_i} \f$
-        Dt
+        Dr, Ds, Dt
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
         LIFT
     end
     
-    properties( SetAccess = protected )
+    properties ( SetAccess = protected )
         %> number of gauss quadrature points
         Nq
         %> coordinate of quadrature points
-        rq
-        %> coordinate of quadrature points
-        sq
-        %> coordinate of quadrature points
-        tq
+        rq, sq, tq
         %> integral weights for each quadrature points
         wq
     end
@@ -217,7 +199,6 @@ classdef StdCell < handle
     
     methods(Hidden, Access = protected)
         %> @brief Assemble the interpolation matrix of Gauss quadrature nodes
-        %>
         %> The elements of the quadratuer interpolation matrix is
         %> \f$ [V_q]_{i,j} = l_j(\xi_i) \f$
         %> where \f$ \xi_i \f$ is the ith Gauss quadrature nodes.

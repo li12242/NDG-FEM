@@ -1,11 +1,9 @@
-function [ FToN1, FToN2, FToFN1, FToFN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+function [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
 
 cell = mesh.cell;
 eNfp = obj.eCell.Np;
 FToN1 = zeros( eNfp, obj.Ne );
 FToN2 = zeros( eNfp, obj.Ne );
-FToFN1 = zeros( eNfp, obj.Ne );
-FToFN2 = zeros( eNfp, obj.Ne );
 nx = zeros( eNfp, obj.Ne );
 ny = zeros( eNfp, obj.Ne );
 nz = zeros( eNfp, obj.Ne );
@@ -21,25 +19,72 @@ for n = 1:obj.Ne
     
     % set local node index
     FToN1(:, n) = cell.Fmask(:, f1);
-    FToFN1(:, n) = sub2ind([eNfp, cell.Nface], 1:eNfp, ones(1, eNfp)*f1);
     if vert2(1) == vert1(1)
         FToN2(:, n) = mesh.cell.Fmask(:, f2);
-        FToFN2(:, n) = sub2ind([eNfp, cell.Nface], 1:eNfp, ones(1, eNfp)*f2);
     else
         FToN2(:, n) = flip( mesh.cell.Fmask(:, f2) );
-        FToFN2(:, n) = sub2ind([eNfp, cell.Nface], eNfp:-1:1, ones(1, eNfp)*f2);
     end
     
+    if mesh.cell.type == NdgCellType.Tri
+        [ nx(:, n), ny(:, n), Js(:, n) ] = TriJacobian2d( mesh, f1, k1, FToN1(:, n) );
+    elseif mesh.cell.type == NdgCellType.Quad
+        [ nx(:, n), ny(:, n), Js(:, n) ] = QuadJacobian2d( mesh, f1, k1, FToN1(:, n) );
+    end
     % set outward normal vector
-    tmp = sum( cell.Nfp(1:f1) );
-    fid = (tmp - cell.Nfp(f1) + 1):tmp;
-    nx(:, n) = mesh.nx(fid, k1);
-    ny(:, n) = mesh.ny(fid, k1);
-    nz(:, n) = mesh.nz(fid, k1);
-    Js(:, n) = mesh.Js(fid, k1);
-    
-    
+    % tmp = sum( cell.Nfp(1:f1) );
+    % fid = (tmp - cell.Nfp(f1) + 1):tmp;
+    % nx(:, n) = mesh.nx(fid, k1);
+    % ny(:, n) = mesh.ny(fid, k1);
+    % nz(:, n) = mesh.nz(fid, k1);
+    % Js(:, n) = mesh.Js(fid, k1);
 end
+
+end
+
+function [ nx, ny, Js ] = QuadJacobian2d( mesh, f1, e1, nodeId )
+rx = mesh.rx( nodeId, e1 ); ry = mesh.ry( nodeId, e1 );
+sx = mesh.sx( nodeId, e1 ); sy = mesh.sy( nodeId, e1 );
+
+if f1 == 1
+    nx = - sx;
+    ny = - sy;
+elseif f1 == 2
+    nx = rx;
+    ny = ry;
+elseif f1 == 3
+    nx = sx;
+    ny = sy;
+elseif f1 == 4
+    nx = - rx;
+    ny = - ry;
+end
+
+Js = sqrt( nx .* nx + ny .* ny );
+nx = nx ./ Js;
+ny = ny ./ Js;
+Js = Js .* mesh.J( nodeId, e1 );
+
+end
+
+function [ nx, ny, Js ] = TriJacobian2d( mesh, f1, e1, nodeId )
+rx = mesh.rx( nodeId, e1 ); ry = mesh.ry( nodeId, e1 );
+sx = mesh.sx( nodeId, e1 ); sy = mesh.sy( nodeId, e1 );
+
+if f1 == 1
+    nx = - sx;
+    ny = - sy;
+elseif f1 == 2
+    nx = rx + sx;
+    ny = ry + sy;
+elseif f1 == 3
+    nx = - rx;
+    ny = - ry;
+end
+
+Js = sqrt( nx .* nx + ny .* ny );
+nx = nx ./ Js;
+ny = ny ./ Js;
+Js = Js .* mesh.J( nodeId, e1 );
 
 end
 

@@ -58,6 +58,9 @@ end% for
 [ BCToV ] = makeUniformMeshBC( Mx, My, bcType );
 [ vx, vy ] = rotateNodeCoordinate2d( vx, vy, xc, yc, theta );
 mesh = NdgMesh2d( quad, Nv, vx, vy, K, EToV, EToR, BCToV );
+mesh.ind = 1;
+mesh.InnerEdge = NdgInnerEdge2d( mesh, mesh.ind );
+mesh.BoundaryEdge = NdgHaloEdge2d( mesh, mesh.ind );
 end
 
 function checkInput(xlim, ylim, Mx, My, bcType)

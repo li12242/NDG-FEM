@@ -8,16 +8,21 @@ end
 
 meshUnion = [];
 for m = 1:Nmesh
-    meshUnion = [ meshUnion, varargin{m} ];
+    mesh = varargin{m};
+    mesh.ind = m;
+    meshUnion = [ meshUnion, mesh ];
 end
 
 for m = 1:Nmesh
-    mesh = meshUnion(m);
+    mesh = meshUnion(m);    
     for m1 = 1:Nmesh
         if( m == m1 ) continue; end
         mesh1 = meshUnion(m1);
-        mesh.assembleMeshConnection(mesh1, m, m1);
+        mesh.assembleMeshConnection(mesh1);
     end
+    
+    mesh.InnerEdge = NdgInnerEdge2d( meshUnion, m );
+    mesh.BoundaryEdge = NdgHaloEdge2d( meshUnion, m );
 end
 
 % for m = 1:Nmesh

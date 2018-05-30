@@ -18,8 +18,7 @@ classdef ConstAdvGmshMesh2d < AdvAbstractConstFlow2d
         function obj = ConstAdvGmshMesh2d( N )
             obj = obj@AdvAbstractConstFlow2d();
             obj.N = N;
-            obj.gmshFile = [pwd, '/Advection/Advection2d/'...
-                'Benchmark/@ConstAdvGmshMesh2d/mesh/QuadMesh.msh'];
+            obj.gmshFile = [fileparts( mfilename('fullpath') ), '/mesh/TriMesh.msh'];
             mesh = makeGmshFileUMeshUnion2d( N, obj.gmshFile );
             obj.initPhysFromOptions( mesh );            
         end
@@ -52,7 +51,7 @@ classdef ConstAdvGmshMesh2d < AdvAbstractConstFlow2d
             option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
             
             option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
+            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
             option('limiterType') = NdgLimiterType.None;
         end
                

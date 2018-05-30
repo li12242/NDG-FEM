@@ -1,7 +1,7 @@
-%> \brief 2-D Non-linear Shallow Water Equation
+%> \brief 2-dimensional non-linear shallow water equations
 %> \details
 %> This class descripe the conservation equations of the mass and
-%> monuments, written as
+%> monuments of shallow water equations, written as
 %> \f$ \frac{\partial \mathbf{U}}{\partial t} + \nabla \cdot
 %> \mathbf{F}(\mathbf{U}) = \mathbf{S}(\mathbf{U}), \f$
 %> where \f$ \mathbf{U} = (h, hu, hv) \f$ are the conservative variables,
@@ -47,12 +47,17 @@ classdef SWEAbstract2d < NdgPhysMat
         draw( obj, varargin )
     end
     
+    % ======================================================================
     methods( Hidden, Abstract ) % Abstract function, hidden
-        %> evaluate volume flux term
+        %> abstract function to evaluate volume flux term
         [ E, G ] = matEvaluateFlux( obj, mesh, fphys );        
     end
+    % ======================================================================
+
     
+    % ======================================================================
     methods( Abstract, Access = protected )
+        %> determine wetting and drying status
         matUpdateWetDryState(obj, fphys)
         
         %> evaluate topography source term
@@ -61,10 +66,13 @@ classdef SWEAbstract2d < NdgPhysMat
         %> evaluate post function
         [ fphys ] = matEvaluatePostFunc(obj, fphys)
     end
+    % ======================================================================
+
     
     methods( Hidden, Sealed, Access = public ) % public function, not allow to inherit
         
         %> impose boundary condition and evaluate cell boundary values
+        [ fM, fP ] = matImposeBoundaryCondition( obj, edge, nx, ny, fM, fP, fext );
         [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext );
         
         %> evaluate local boundary flux

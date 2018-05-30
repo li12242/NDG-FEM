@@ -44,6 +44,12 @@ srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c'], ...
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 
+path = 'NdgEdge/@NdgHaloEdge/private/';
+srcfile = {[path, 'mxEvaluateStrongFormEdgeRHS.c'], ...
+    [path, 'mxEvaluateSrufValue.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+
 % Limiter
 path = 'NdgLimiter/NdgBJ/@NdgBJAbstract/private/';
 srcfile = {[path, 'mxEvaluateVertAverage.c']};
@@ -84,18 +90,13 @@ srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
     [path, 'mxEvaluateSourceTopography1d.c']};
 FuncHandle(path, srcfile, libfile);
 
-% path = 'SWE/SWE1d/@SWEWD1d/private/';
-% libfile = {};
-% srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
-%     [path, 'mxEvaluateSourceTopography1d.c']};
-% FuncHandle(path, srcfile, libfile);
-
 % SWE2d
 path = 'SWE/SWE2d/@SWEAbstract2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {};
 srcfile = { ...
-    [path, 'mxEvaluateSurfaceValue.c'], ...
+    [path, 'mxImposeBoundaryCondition.c'], ...
+    [path, 'mxHydrostaticReconstruction.c'], ...
     [path, 'mxEvaluateSurfFlux.c'], ...
     [path, 'mxUpdateTimeInterval2d.c']};
 FuncHandle(path, srcfile, libfile);

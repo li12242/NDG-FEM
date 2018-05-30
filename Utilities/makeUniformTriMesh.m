@@ -47,7 +47,9 @@ end
 
 [ BCToV ] = makeUniformMeshBC( Mx, My, bcType );
 mesh = NdgMesh2d( tri, Nv, vx, vy, K, EToV, EToR, BCToV );
-
+mesh.ind = 1;
+mesh.InnerEdge = NdgInnerEdge2d( mesh, mesh.ind );
+mesh.BoundaryEdge = NdgHaloEdge2d( mesh, mesh.ind );
 end
 
 function checkInput(xlim, ylim, Mx, My, bcType)

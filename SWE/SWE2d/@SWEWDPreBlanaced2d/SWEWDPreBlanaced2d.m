@@ -30,12 +30,10 @@ classdef SWEWDPreBlanaced2d < SWEPreBlanaced2d
             obj.matUpdateWetDryState( fphys );
         end% func
         
-        function fphys = matEvaluateLimiter( obj, fphys )
-            obj.matUpdateWDWetDryState( fphys )
-            
-            
-            fphys = matEvaluateLimiter@SWEPreBlanaced2d( obj, fphys );
-        end% func
+%         function fphys = matEvaluateLimiter( obj, fphys )
+%             obj.matUpdateWDWetDryState( fphys )
+%             fphys = matEvaluateLimiter@SWEPreBlanaced2d( obj, fphys );
+%         end% func
     end
     
 end

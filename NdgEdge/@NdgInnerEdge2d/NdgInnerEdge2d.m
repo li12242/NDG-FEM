@@ -11,14 +11,14 @@ classdef NdgInnerEdge2d < NdgInnerEdge
             mesh = obj.mesh;
             for i = 1:obj.Ne
                 k1 = obj.FToE(1, i);                
-                fp1 = obj.FToFN1(:, i);
-                xfM(:, i) = mesh.x( mesh.cell.Fmask( fp1 ), k1 );
-                yfM(:, i) = mesh.y( mesh.cell.Fmask( fp1 ), k1 );
+                fp1 = obj.FToN1(:, i);
+                xfM(:, i) = mesh.x( fp1, k1 );
+                yfM(:, i) = mesh.y( fp1, k1 );
             end
             if (nargin == 2)
                 plot3( xfM, yfM, varargin{1}, 'k.-', 'LineWidth', 2 );
             elseif (nargin == 1)
-                plot( xfM, yM, 'k.-', 'LineWidth', 2 );
+                plot( xfM, yfM, 'k.-', 'LineWidth', 2 );
             end
         end
     end
@@ -33,7 +33,7 @@ classdef NdgInnerEdge2d < NdgInnerEdge
     methods( Access = protected )
         %> connect edge to elements
         [ Nedge, FToE, FToF, FToV ] = assembleEdgeConnect( obj, mesh )
-        [ FToN1, FToN2, FToFN1, FToFN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
     end
     
 end

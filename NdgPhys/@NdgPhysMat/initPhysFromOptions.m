@@ -8,7 +8,9 @@ function initPhysFromOptions( obj, mesh )
         Np = obj.meshUnion(m).cell.Np;
         K = obj.meshUnion(m).K;
         obj.frhs{m} = zeros( Np, K, obj.Nvar );
-        obj.fext{m} = zeros( Np, K, obj.Nfield );
+        Nfp = mesh(m).BoundaryEdge.Nfp;
+        Ne = mesh(m).BoundaryEdge.Ne;
+        obj.fext{m} = zeros( Nfp, Ne, obj.Nfield );
     end
 
     % Setup the output NetCDF file object

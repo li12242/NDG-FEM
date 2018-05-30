@@ -57,6 +57,11 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
             flux = Em .* nx + Gm .* ny;
         end
         
+        function [ fm, fp ] = matImposeBoundaryCondition( obj, edge, nx, ny, fm, fp, fext )
+            ind = ( edge.ftype == 5 );
+            fp(:, ind) = 0;
+        end
+        
     end% methods
     
     methods( Abstract, Access = protected )

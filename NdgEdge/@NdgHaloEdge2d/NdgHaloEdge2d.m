@@ -13,8 +13,10 @@ classdef NdgHaloEdge2d < NdgHaloEdge
         end
         
         function draw(obj, varargin)
-            xv = obj.mesh.x( obj.FToN1, obj.FToE(1, :) );
-            yv = obj.mesh.y( obj.FToN2, obj.FToE(1, :) );
+            indK = repmat( obj.FToE(1, :), obj.Nfp, 1 );
+            indM = sub2ind( [obj.mesh.cell.Np, obj.mesh.K], obj.FToN1, indK );
+            xv = obj.mesh.x( indM );
+            yv = obj.mesh.y( indM );
             if nargin == 1
                 plot( xv, yv, 'k.-', 'LineWidth', 2 );
             elseif nargin == 2
