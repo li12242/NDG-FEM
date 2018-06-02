@@ -23,17 +23,12 @@ classdef NdgInnerEdge2d < NdgInnerEdge
         end
     end
     
-    methods( Static, Access = protected )
-        %> set reference standard cell
-        function [ eCell ] = setEdgeReferCell( mesh )
-            eCell = StdLine( mesh.cell.N );
-        end
-    end
-    
     methods( Access = protected )
+        
+        [ Nfp, M ] = assembleMassMatrix( obj );
         %> connect edge to elements
-        [ Nedge, FToE, FToF, FToV ] = assembleEdgeConnect( obj, mesh )
-        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+        obj = assembleEdgeConnect( obj, mesh )
+        obj = assembleNodeProject( obj, mesh )
     end
     
 end

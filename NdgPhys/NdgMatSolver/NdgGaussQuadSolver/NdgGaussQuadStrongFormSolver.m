@@ -7,58 +7,26 @@ classdef NdgGaussQuadStrongFormSolver < handle
         invM
         %> values of derivative basis function at quadrature points
         %> \f$$ [\mathcal{D}_r]_{i,j} = \left. \frac{\partial \varphi_j}{\partial r} \right|_{\mathbf{r}_i}  \f$$
-        Dr
-        %> values of derivative basis function at quadrature points
-        %> \f$$ [\mathcal{D}_s]_{i,j} = \left. \frac{\partial \varphi_j}{\partial s} \right|_{\mathbf{r}_i}  \f$$
-        Ds
-        %> values of derivative basis function at quadrature points
-        %> \f$$ [\mathcal{D}_t]_{i,j} = \left. \frac{\partial \varphi_j}{\partial t} \right|_{\mathbf{r}_i}  \f$$
-        Dt
+        Dr, Ds, Dt
+        
         %> the element in the vector equals to
         %> \f$ \left. \frac{\partial r}{\partial x} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
         %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
         %> at each quadrature points
-        rxwJ
-        %> the element in the vector equals to
-        %> \f$ \left. \frac{\partial r}{\partial y} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
-        %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
-        %> at each quadrature points
-        rywJ
-        %> the element in the vector equals to
-        %> \f$ \left. \frac{\partial r}{\partial z} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
-        %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
-        %> at each quadrature points
-        rzwJ
+        rxwJ, rywJ, rzwJ
+
         %> the element in the vector equals to
         %> \f$ \left. \frac{\partial s}{\partial x} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
         %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
         %> at each quadrature points
-        sxwJ
-        %> the element in the vector equals to
-        %> \f$ \left. \frac{\partial s}{\partial y} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
-        %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
-        %> at each quadrature points
-        sywJ
-        %> the element in the vector equals to
-        %> \f$ \left. \frac{\partial s}{\partial z} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
-        %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
-        %> at each quadrature points
-        szwJ
+        sxwJ, sywJ, szwJ
+        
         %> the element in the vector equals to
         %> \f$ \left. \frac{\partial t}{\partial x} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
         %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
         %> at each quadrature points
-        txwJ
-        %> the element in the vector equals to
-        %> \f$ \left. \frac{\partial t}{\partial y} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
-        %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
-        %> at each quadrature points
-        tywJ
-        %> the element in the vector equals to
-        %> \f$ \left. \frac{\partial t}{\partial z} \right|_{\mathbf{x}_i} \cdot w_i \cdot J_i \f$
-        %> where \f$ w_i \f$ and \f$ J_i \f$ are the volume integral weights and Jacobian 
-        %> at each quadrature points
-        tzwJ
+        txwJ, tywJ, tzwJ
+        
         %> values of basis functions at each quadrature points, where
         %> \f$ [ \mathcal{V}_q ]_{i,j} = \varphi_{ \mathbf{r}_j } \f$
         Vq
@@ -69,11 +37,8 @@ classdef NdgGaussQuadStrongFormSolver < handle
         %> where \f$ \mathbf{r}_{ej} \f$ is the location of quadrature points on edges.
         LIFT
         %> outward normal vector at the surface integral quadrature points
-        nx
-        %> outward normal vector at the surface integral quadrature points
-        ny
-        %> outward normal vector at the surface integral quadrature points
-        nz
+        nx, ny, nz
+        
         %> the element in the vector equals to
         %> \f$ w_{ei} \cdot Js_{ei} \f$
         %> where \f$ w_{ei} \f$ and \f$ Js_{ei} \f$ are the surface integral weights and Jacobian 

@@ -1,4 +1,4 @@
-function obj = ProjectSideEdgeNode3d( obj, Nh, mesh )
+function obj = assembleNodeProject( obj, mesh )
 
 % reference element
 cell = mesh.cell;
@@ -35,9 +35,6 @@ for n = 1 : Ne
         FToN2(m, n) = Fmask(t, f2);
     end
 
-%     eid = floor( (n - 1) / Nz ) + 1;
-%     nx( :, n ) = edge2d.nx( 1, eid);
-%     ny( :, n ) = edge2d.ny( 1, eid);
     if mesh.cell.type == NdgCellType.PrismTri
         [ nx( :, n ), ny( :, n ), nz( :, n ), Js( :, n ) ] ...
             = PrismTriJacobian3d( mesh, f1, e1, cell.Fmask(1:cell.Nfp(f1), f1));

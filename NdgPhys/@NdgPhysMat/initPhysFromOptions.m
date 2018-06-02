@@ -8,9 +8,9 @@ function initPhysFromOptions( obj, mesh )
         Np = obj.meshUnion(m).cell.Np;
         K = obj.meshUnion(m).K;
         obj.frhs{m} = zeros( Np, K, obj.Nvar );
-        Nfp = mesh(m).BoundaryEdge.Nfp;
-        Ne = mesh(m).BoundaryEdge.Ne;
-        obj.fext{m} = zeros( Nfp, Ne, obj.Nfield );
+%         Nfp = mesh(m).BoundaryEdge.Nfp;
+%         Ne = mesh(m).BoundaryEdge.Ne;
+%         obj.fext{m} = zeros( Nfp, Ne, obj.Nfield );
     end
 
     % Setup the output NetCDF file object
@@ -29,6 +29,8 @@ function initPhysFromOptions( obj, mesh )
         obj.cfl = obj.getOption('CFL');
     elseif obj.option.isKey('cfl')
         obj.cfl = obj.getOption('cfl');
+    elseif obj.option.isKey('Cfl')
+        obj.cfl = obj.getOption('Cfl');
     else
         obj.cfl = 1;
     end
@@ -87,7 +89,8 @@ function [ advectionSolver ] = setAdvectionSolver( obj )
                 case NdgDiscreteEquationType.Strong
                     advectionCreator = choseFuncByMeshDim( obj, ...
                         @NdgQuadFreeStrongFormAdvSolver1d, ...
-                        @NdgQuadFreeStrongFormAdvSolver2d);
+                        @NdgQuadFreeStrongFormAdvSolver2d, ...
+                        @NdgQuadFreeStrongFormAdvSolver3d);
                 case NdgDiscreteEquationType.Weak
                     advectionCreator = choseFuncByMeshDim( obj, ...
                         @NdgQuadFreeWeakFormAdvSolver1d, ...
@@ -117,12 +120,14 @@ function [ advectionSolver ] = setAdvectionSolver( obj )
     advectionSolver = advectionCreator( obj );
 end% func
 
-function [ func ] = choseFuncByMeshDim( phys, func1d, func2d )
+function [ func ] = choseFuncByMeshDim( phys, func1d, func2d, func3d )
     switch phys.meshUnion(1).type
         case NdgMeshType.OneDim
             func = func1d;
         case NdgMeshType.TwoDim
             func = func2d;
+        case NdgMeshType.ThreeDim
+            func = func3d;
     end
 end% func
 

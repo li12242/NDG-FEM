@@ -32,6 +32,9 @@ while( time < ftime )
         fphys = obj.matEvaluatePostFunc( fphys );
         
     end
+    
+%     obj.meshUnion.drawHorizonSlice( fphys{1}(:,:,1) )
+%     drawnow;
 %     obj.draw( fphys );
 %     for m = 1:obj.Nmesh
 %         obj.meshUnion(m).draw( fphys{m}(:,:,1) );

@@ -1,5 +1,5 @@
 %>
-function [ Nedge, FToE, FToF, FToV ] = assembleEdgeConnect( obj, mesh )
+function obj = assembleEdgeConnect( obj, mesh )
 
 K = mesh.K;
 Nface = mesh.cell.Nface;
@@ -17,7 +17,7 @@ for k = 1:K
     end
 end
 ind = ind';
-[ ind ] = sortrows( ind );
+ind = sortrows( ind );
 ind = ind';
 
 Nedge = 0;
@@ -44,6 +44,11 @@ for i = 1:K*Nface
         sk = sk + 1;
     end
 end
+
+obj.Ne = Nedge;
+obj.FToE = FToE;
+obj.FToF = FToF;
+obj.FToV = FToV;
 
 end% func
 

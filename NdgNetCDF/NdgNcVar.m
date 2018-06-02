@@ -1,8 +1,8 @@
 classdef NdgNcVar < handle
 
     properties(SetAccess=private)
-        %> NdgNetcdfDim object
-        dims        
+        %> NdgNcDim object
+        dims
         %> variable name
         name        
         %> variable ID

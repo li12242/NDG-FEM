@@ -145,7 +145,7 @@ classdef StdCell < handle
             end
             [ obj.TNfp ] = sum(obj.Nfp);
             [ obj.Fmask ] = obj.assembleFacialNodeIndex();
-            [ obj.LIFT ] = obj.assembleLiftMatrix();
+            %[ obj.LIFT ] = obj.assembleLiftMatrix();
         end
         
         %> @brief Evaluate all the nodal basis function values at points
@@ -252,19 +252,19 @@ classdef StdCell < handle
             end
         end% func
         
-        function LIFT = assembleLiftMatrix(obj)
-            Mes = zeros(obj.Np, obj.TNfp);
-            sk = 1;
-            for f = 1:obj.Nface
-                fcell = getStdCell(obj.N, obj.faceType(f));
-                row = obj.Fmask(:, f);
-                row = row(row ~= 0);
-                for n = 1:fcell.Np
-                    Mes(row, sk) = fcell.M(:, n);
-                    sk = sk + 1;
-                end
-            end
-            LIFT = obj.invM * Mes;
-        end
+%         function LIFT = assembleLiftMatrix(obj)
+%             Mes = zeros(obj.Np, obj.TNfp);
+%             sk = 1;
+%             for f = 1:obj.Nface
+%                 fcell = getStdCell(obj.N, obj.faceType(f));
+%                 row = obj.Fmask(:, f);
+%                 row = row(row ~= 0);
+%                 for n = 1:fcell.Np
+%                     Mes(row, sk) = fcell.M(:, n);
+%                     sk = sk + 1;
+%                 end
+%             end
+%             LIFT = obj.invM * Mes;
+%         end
     end% methods
 end

@@ -22,7 +22,7 @@ Line Loop(2) = {5, 6, 7, -2};
 Plane Surface(1) = {1};
 Plane Surface(2) = {2};
 
-Recombine Surface{1};
+//Recombine Surface{1};
 //Recombine Surface{2};
 Mesh.Smoothing = 8;
 

@@ -1,13 +1,14 @@
-function [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+function obj = assembleNodeProject( obj, mesh )
 
 cell = mesh.cell;
-eNfp = obj.eCell.Np;
-FToN1 = zeros( eNfp, obj.Ne );
-FToN2 = zeros( eNfp, obj.Ne );
-nx = zeros( eNfp, obj.Ne );
-ny = zeros( eNfp, obj.Ne );
-nz = zeros( eNfp, obj.Ne );
-Js = zeros( eNfp, obj.Ne );
+Nfp = obj.Nfp;
+Ne = obj.Ne;
+FToN1 = zeros( Nfp, Ne );
+FToN2 = zeros( Nfp, Ne );
+nx = zeros( Nfp, Ne );
+ny = zeros( Nfp, Ne );
+nz = zeros( Nfp, Ne );
+Js = zeros( Nfp, Ne );
 
 for n = 1:obj.Ne
     k1 = obj.FToE(1, n);
@@ -30,14 +31,15 @@ for n = 1:obj.Ne
     elseif mesh.cell.type == NdgCellType.Quad
         [ nx(:, n), ny(:, n), Js(:, n) ] = QuadJacobian2d( mesh, f1, k1, FToN1(:, n) );
     end
-    % set outward normal vector
-    % tmp = sum( cell.Nfp(1:f1) );
-    % fid = (tmp - cell.Nfp(f1) + 1):tmp;
-    % nx(:, n) = mesh.nx(fid, k1);
-    % ny(:, n) = mesh.ny(fid, k1);
-    % nz(:, n) = mesh.nz(fid, k1);
-    % Js(:, n) = mesh.Js(fid, k1);
+
 end
+
+obj.FToN1 = FToN1;
+obj.FToN2 = FToN2;
+obj.nx = nx;
+obj.ny = ny;
+obj.nz = nz;
+obj.Js = Js;
 
 end
 

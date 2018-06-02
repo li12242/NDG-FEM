@@ -17,7 +17,11 @@ for n = 1:obj.Ne
     f1 = obj.FToF(1, n);
     f2 = obj.FToF(2, n);
     vert1 = mesh.EToV( cell.FToV(:, f1), k1);
-    vert2 = meshUnion(m2).EToV( meshUnion(m2).cell.FToV(:, f2), k2);
+    try
+        vert2 = meshUnion(m2).EToV( meshUnion(m2).cell.FToV(:, f2), k2);
+    catch
+        keyboard
+    end
     
     % set local node index
     FToN1(:, n) = mesh.cell.Fmask(:, f1);

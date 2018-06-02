@@ -10,6 +10,8 @@ classdef NdgInnerEdge < handle
     properties ( SetAccess = protected )
         %> mesh obj
         mesh
+        %> mass matrix
+        M
         %> edge std cell obj
         eCell
         %> num of edges
@@ -29,11 +31,7 @@ classdef NdgInnerEdge < handle
         %> interp node index of 2nd ele on each edge
         FToN2
         %> outward normal vector
-        nx
-        %> outward normal vector
-        ny
-        %> outward normal vector
-        nz
+        nx, ny, nz
         %> determination of edge Jacabian
         Js
     end
@@ -42,16 +40,14 @@ classdef NdgInnerEdge < handle
         function obj = NdgInnerEdge( meshUnion, meshId )
             obj.mesh = meshUnion(meshId); % set mesh object
             obj.FToM = meshId; % set mesh id
-            obj.eCell = obj.setEdgeReferCell( obj.mesh ); % set reference cell
-            obj.Nfp = obj.eCell.Np; % set face node num
+            [ obj.Nfp, obj.M ] = assembleMassMatrix( obj );
+            % obj.eCell = obj.setEdgeReferCell( obj.mesh ); % set reference cell
             
             % connect edge to elements
-            [ obj.Ne, obj.FToE, obj.FToF, obj.FToV ] ...
-                = obj.assembleEdgeConnect( obj.mesh );
+            obj = obj.assembleEdgeConnect( obj.mesh );
             
             % connect node
-            [ obj.FToN1, obj.FToN2, obj.nx, obj.ny, obj.nz, obj.Js ] ...
-                = assembleNodeProject( obj, obj.mesh );
+            obj = assembleNodeProject( obj, obj.mesh );
         end
         
         %> evaluate R.H.S. for surface integral term
@@ -60,14 +56,11 @@ classdef NdgInnerEdge < handle
         [ fM, fP ] = matEvaluateSurfValue( obj, fphys );
     end
     
-    methods ( Abstract, Static, Access = protected )
-        %> set reference boundary element
-        [ bcell ] = setEdgeReferCell( mesh );
-    end
     methods ( Abstract, Access = protected )
         %> connect edge to elements
-        [ Nedge, FToE, FToF, FToV ] = assembleEdgeConnect( obj, mesh )
-        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, mesh )
+        [ Nfp, M ] = assembleMassMatrix( obj );
+        obj = assembleEdgeConnect( obj, mesh )
+        obj = assembleNodeProject( obj, mesh )
     end
     
 end

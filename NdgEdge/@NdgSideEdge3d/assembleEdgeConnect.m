@@ -1,4 +1,4 @@
-function obj = ConnectSideEdgeElement3d( obj, mesh, edge2d )
+function obj = assembleEdgeConnect( obj, mesh, edge2d )
     
     Nz = mesh.Nz;
     Ne = edge2d.Ne * Nz;

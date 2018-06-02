@@ -1,4 +1,7 @@
-classdef NdgSideEdge3d < handle
+classdef NdgBottomEdge3d < handle
+    %NDGHORIZONEDGE3D Summary of this class goes here
+    %   Detailed explanation goes here
+    
     properties ( SetAccess = protected )
         %> mesh obj
         mesh
@@ -24,15 +27,17 @@ classdef NdgSideEdge3d < handle
         nx, ny, nz
         %> determination of edge Jacabian
         Js
+        %> edge type
+        type
     end
-
-    methods ( Access = public )
-        function obj = NdgSideEdge3d( meshUnion3d, meshId )
+    
+    methods (Access = public)
+        function obj = NdgBottomEdge3d( meshUnion3d, meshId )
             mesh = meshUnion3d( meshId );
 
-            [ obj.Nfp, obj.M ] = assembleMassMatrix( obj, mesh.cell.N, mesh.cell.Nz );
             obj.mesh = mesh;
-            obj = assembleEdgeConnect( obj, mesh, mesh.mesh2d.InnerEdge );
+            [ obj.Nfp, obj.M ] = assembleMassMatrix( obj, mesh.cell.N, mesh.cell.Nz );
+            obj = assembleEdgeConnect( obj, mesh, mesh.mesh2d );
             obj = assembleNodeProject( obj, mesh );
         end
 
@@ -41,10 +46,11 @@ classdef NdgSideEdge3d < handle
         %> evaluate strong-form surface term rhs
         [ frhs ] = matEvaluateStrongFromEdgeRHS( obj, fluxM, fluxP, fluxS )
     end
-
+    
     methods ( Access = private )
-        obj = assembleEdgeConnect( obj, mesh, edge );
+        obj = assembleEdgeConnect( obj, mesh, mesh2d );
         obj = assembleNodeProject( obj, mesh );
         [ Nfp, M ] = assembleMassMatrix( obj, N, Nz );
     end
 end
+

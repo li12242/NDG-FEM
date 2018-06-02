@@ -1,6 +1,14 @@
 %> @brief three-dimensional vertical extended mesh
 classdef NdgExtendMesh3d < handle
     
+    properties( Constant )
+        type = NdgMeshType.ThreeDim
+    end
+    
+    properties( SetAccess = private )
+        figure_handle
+    end
+    
     properties ( SetAccess = public )
         %> std cell object
         cell
@@ -19,8 +27,8 @@ classdef NdgExtendMesh3d < handle
         %> coordinate of vertex
         vx, vy, vz
         %> edge objects
-        TopBottomEdge % surface/bottom faces
-        InnerEdge % inner edge
+        BottomEdge % surface/bottom faces
+        InnerSideEdge % inner edge
         BoundaryEdge % halo edge
         %> mesh index
         ind
@@ -83,9 +91,6 @@ classdef NdgExtendMesh3d < handle
             [ obj.rx, obj.sx, obj.tx, obj.ry, obj.sy, obj.ty, ...
                 obj.rz, obj.sz, obj.tz, obj.J] = Jacobian3d(obj, cell);
             
-%             [ obj.xc ] =  obj.GetMeshAverageValue( obj.x );
-%             [ obj.yc ] =  obj.GetMeshAverageValue( obj.y );
-%             [ obj.zc ] =  obj.GetMeshAverageValue( obj.z );
         end% func
         
         function nodeQ = proj_vert2node(obj, vertQ)
@@ -93,6 +98,8 @@ classdef NdgExtendMesh3d < handle
             ele_vQ = vertQ(obj.EToV);
             nodeQ = obj.cell.project_vert2node(ele_vQ);
         end
+        
+        drawHorizonSlice( obj, varargin )
     end
     
     methods ( Access = protected )

@@ -5,6 +5,9 @@
 #include "mex.h"
 #include "blas.h"
 
+#if !defined(_WIN32)
+#define dgemm dgemm_
+#endif
 // #if !defined(_WIN32)
 // #define dgemm dgemm_
 // #endif

@@ -6,7 +6,7 @@ function obj = ExtendMesh3d( obj, cell, mesh2d, Nz )
     obj.EToV = [];
     for n = 1 : Nz
         obj.EToV = [ obj.EToV; 
-            mesh2d.EToV + mesh2d.Nv * n; 
+            mesh2d.EToV + mesh2d.Nv * n;
             mesh2d.EToV + mesh2d.Nv * (n - 1) ];
     end
     obj.EToV = reshape( obj.EToV, cell.Nv, Kloc );

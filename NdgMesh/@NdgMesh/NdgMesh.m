@@ -146,7 +146,7 @@ classdef NdgMesh < handle
                 obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
             [ obj.LAV, obj.charLength ] = assembleCellScale( obj, obj.J );
             [ obj.nx, obj.ny, obj.nz, obj.Js ] = assembleFacialJaobiFactor( obj );
-            [ obj.eidM, obj.eidP, obj.eidtype ] = assembleEdgeNode( obj );
+            %[ obj.eidM, obj.eidP, obj.eidtype ] = assembleEdgeNode( obj );
             
             [ obj.xc ] =  obj.GetMeshAverageValue( obj.x );
             [ obj.yc ] =  obj.GetMeshAverageValue( obj.y );

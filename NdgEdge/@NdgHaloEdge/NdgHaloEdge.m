@@ -7,7 +7,7 @@
 % ======================================================================
 classdef NdgHaloEdge < handle
     
-    properties(SetAccess=protected)
+    properties ( SetAccess = protected )
         %> mesh obj
         mesh
         %> edge std cell obj
@@ -18,11 +18,9 @@ classdef NdgHaloEdge < handle
         Nfp
         %> vertex index on each edge
         FToV
-        %> local and adjacent cell index
-        FToE
-        %> local face index of local and adjacent cell
-        FToF
-        %> face to mesh index
+        %> local and adjacent element and face index
+        FToE, FToF
+        %> mesh index of local and adjacent element
         FToM
         
         %> interp node index of 1st ele on each edge
@@ -30,11 +28,7 @@ classdef NdgHaloEdge < handle
         %> interp node index of 2nd ele on each edge
         FToN2
         %> outward normal vector
-        nx
-        %> outward normal vector
-        ny
-        %> outward normal vector
-        nz
+        nx, ny, nz
         %> determination of edge Jacabian
         Js
         %> face type of each edge

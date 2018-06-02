@@ -34,9 +34,11 @@ libfile = { [path, 'polylib.c'] };
 FuncHandle(outPath, srcfile, libfile);
 % NdgMesh
 path = 'NdgMesh/@NdgMesh/private/';
-srcfile = {[path, 'mxGetMeshIntegralValue.c']};
+srcfile = {[path, 'mxGetMeshIntegralValue.c'], ...
+    [path, 'mxAssembleMeshConnection.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
+
 % NdgEdge
 path = 'NdgEdge/@NdgInnerEdge/private/';
 srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c'], ...
@@ -46,7 +48,19 @@ FuncHandle(path, srcfile, libfile);
 
 path = 'NdgEdge/@NdgHaloEdge/private/';
 srcfile = {[path, 'mxEvaluateStrongFormEdgeRHS.c'], ...
-    [path, 'mxEvaluateSrufValue.c']};
+    [path, 'mxEvaluateSurfValue.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+
+path = 'NdgEdge/@NdgSideEdge3d/private/';
+srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c'], ...
+    [path, 'mxEvaluateSurfValue.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+
+path = 'NdgEdge/@NdgBottomEdge3d/private/';
+srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c'], ...
+    [path, 'mxEvaluateSurfValue.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 

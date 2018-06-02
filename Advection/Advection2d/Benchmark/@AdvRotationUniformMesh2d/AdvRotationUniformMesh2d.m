@@ -28,34 +28,6 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
             obj.M = M;
             obj.initPhysFromOptions( mesh );
         end
-        
-%         function [ fm, fp ] = matEvaluateEdgeValue( obj, edge, fphys, fext )
-%             fm = zeros( edge.Nfp, edge.Ne, obj.Nfield );
-%             fp = zeros( edge.Nfp, edge.Ne, obj.Nfield );
-%             
-%             for k = 1:edge.Ne
-%                 for fld = 1:obj.Nfield
-%                     fm(:, k, fld) = fphys(edge.FToN1(:, k), edge.FToE(1, k), fld);
-%                     fp(:, k, fld) = fphys(edge.FToN2(:, k), edge.FToE(2, k), fld);
-%                 end
-%             end
-%         end
-%         
-%         function [ fluxM, fluxP ] = matEvaluateEdgeFlux( obj, edge, fm, fp )
-%             Em = fm(:,:,1) .* fm(:,:,2);
-%             Gm = fm(:,:,1) .* fm(:,:,3);
-%             fluxM = Em .* edge.nx + Gm .* edge.ny;
-%             
-%             Em = fp(:,:,1) .* fp(:,:,2);
-%             Gm = fp(:,:,1) .* fp(:,:,3);
-%             fluxP = Em .* edge.nx + Gm .* edge.ny;
-%         end
-%         
-%         function [ fluxS ] = matEvaluateEdgeNumFlux( obj, edge, fm, fp )
-%             [ uNorm ] = fm(:,:,2) .* edge.nx + fm(:,:,3) .* edge.ny;
-%             sign_um = sign( uNorm );
-%             fluxS = ( fm(:,:,1).*( sign_um + 1 )*0.5 + fp(:,:,1).*( 1 - sign_um  )*0.5 ).*uNorm;
-%         end
     end
     
     methods( Access = protected )
