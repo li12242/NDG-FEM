@@ -5,12 +5,10 @@ addpath( genpath( 'NdgCell' ) );
 addpath( genpath( 'NdgMesh') );
 addpath( genpath( 'NdgEdge') );
 addpath( genpath( 'NdgPhys') );
-addpath( genpath( 'Utilities') );
 addpath( genpath( 'NdgNetCDF') );
 addpath( genpath( 'NdgLimiter') );
-addpath( genpath( 'PostProcess') );
-addpath( genpath( 'Advection') );
-addpath( genpath( 'SWE') );
+addpath( genpath( 'Utilities') );
+addpath( genpath( 'Application') );
 fprintf('\n----------------------------------------------------------\n')
 
 fprintf('%s:: Compile mex files.\n', mfilename);

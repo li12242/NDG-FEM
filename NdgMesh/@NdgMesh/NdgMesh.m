@@ -29,10 +29,10 @@ classdef NdgMesh < handle
         K
         %> number of vertices
         Nv
-        %> vertex index in each cell (column)
+        %> vertex index in each cell
         EToV
-        %> region types for each cell
-        EToR @int8
+        %> region id for each cell
+        EToR
         %> coordinate of vertex
         vx, vy, vz
         %> edge objects
@@ -66,15 +66,6 @@ classdef NdgMesh < handle
         charLength
     end
     
-    properties%( SetAccess = protected )
-        %> the local face point index
-        eidM
-        %> the adjacent point index
-        eidP
-        %> edge type of each facial points
-        eidtype @int8
-    end
-    
     properties( SetAccess = protected )
         %> central coordinate
         xc, yc, zc
@@ -82,11 +73,6 @@ classdef NdgMesh < handle
         nx, ny, nz
         %> determination of facial integral at each face points
         Js
-    end
-    
-    properties( Hidden = true, SetAccess = protected )
-        %> figure handle
-        figureHandle
     end
     
     methods( Abstract, Hidden, Access = protected )
@@ -101,34 +87,14 @@ classdef NdgMesh < handle
         [ EToE, EToF, EToM ] = assembleCellConnect( obj )
         [ eidM, eidP, eidtype ] = assembleEdgeNode( obj )
         [ EToB ] = assembleCellBoundary( obj, BCToV )
-        
-        function [LAV, charLength] = assembleCellScale( obj, J )
-            
-            % Jacobian determination on each quadrature points
-            one = ones( obj.cell.Np, obj.K );
-            LAV = mxGetMeshIntegralValue( one, obj.cell.wq, J, obj.cell.Vq );
-            %LAV = mxGetIntegralValue(, obj.cell.wq, obj.Jq );
-            switch obj.cell.type
-                case NdgCellType.Line
-                    charLength = LAV;
-                case NdgCellType.Tri
-                    charLength = sqrt( 2*LAV );
-                case NdgCellType.Quad
-                    charLength = sqrt( LAV );
-            end
-        end% func
-        
-        function [x, y, z] = assembleNodeCoor( obj, vx, vy, vz )
-            x = obj.proj_vert2node(vx);
-            y = obj.proj_vert2node(vy);
-            z = obj.proj_vert2node(vz);
-        end% func
+        [x, y, z] = assembleNodeCoor( obj, vx, vy, vz );
+        [LAV, charLength] = assembleCellScale( obj, J )
     end
     
-    methods( Abstract )
-        %> determine the cell index that the gauge points in.
-        [ cellId ] = accessGaugePointLocation( obj, xg, yg, zg );
-    end
+%     methods( Abstract )
+%         %> determine the cell index that the gauge points in.
+%         [ cellId ] = accessGaugePointLocation( obj, xg, yg, zg );
+%     end
     
     methods
         
@@ -173,18 +139,12 @@ classdef NdgMesh < handle
             avergeValue = integralValue./obj.LAV;
         end
         
-        function setEToB(obj, k, f, edgeType)
-            obj.EToB(f, k) = NdgEdgeType( edgeType );
-            endNfp = sum( obj.cell.Nfp(1:f) );
-            facePointId = endNfp:-1:(endNfp - obj.cell.Nfp(f) + 1);
-            obj.eidtype(facePointId, k) = int8( edgeType );
-        end% func
-        
     end% methods
     
 end
 
-function [cell, Nv, vx, vy, vz, K, EToV, EToR] = checkInput(cell, Nv, vx, vy, vz, K, EToV, EToR)
+function [cell, Nv, vx, vy, vz, K, EToV, EToR] ...
+    = checkInput(cell, Nv, vx, vy, vz, K, EToV, EToR)
 
 if( numel(vx) ~= Nv ) || (numel(vy) ~= Nv ) || (numel(vz) ~= Nv )
     msgID = [mfilename, ':InputVertexError'];
@@ -219,5 +179,4 @@ if( size(EToV, 2) ~= K ) || (numel(EToR) ~= K)
     throw(ME);
 end
 
-EToR = int8( NdgRegionType( EToR ) );
 end

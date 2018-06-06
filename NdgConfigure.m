@@ -82,7 +82,7 @@ srcfile = {[path, 'mxVertLimit2d.c']};
 FuncHandle(path, srcfile, libfile);
 
 % SWE1d
-path = 'SWE/SWE1d/@SWEAbstract1d/private/';
+path = 'Application/SWE/SWE1d/@SWEAbstract1d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {};
 srcfile = { ...
@@ -91,21 +91,21 @@ srcfile = { ...
     [path, 'mxUpdateTimeInterval1d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWE1d/@SWEConventional1d/private/';
+path = 'Application/SWE/SWE1d/@SWEConventional1d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
     [path, 'mxEvaluateSourceTopography1d.c'], ...
     [path, 'mxEvaluatePostFunc1d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWE1d/@SWEPreBlanaced1d/private/';
+path = 'Application/SWE/SWE1d/@SWEPreBlanaced1d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux1d.c'], ...
     [path, 'mxEvaluateSourceTopography1d.c']};
 FuncHandle(path, srcfile, libfile);
 
 % SWE2d
-path = 'SWE/SWE2d/@SWEAbstract2d/private/';
+path = 'Application/SWE/SWE2d/@SWEAbstract2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
 libfile = {};
 srcfile = { ...
@@ -115,20 +115,20 @@ srcfile = { ...
     [path, 'mxUpdateTimeInterval2d.c']};
 FuncHandle(path, srcfile, libfile);
     
-path = 'SWE/SWE2d/@SWEConventional2d/private/';
+path = 'Application/SWE/SWE2d/@SWEConventional2d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluatePostFunc2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWE2d/@SWEPreBlanaced2d/private/';
+path = 'Application/SWE/SWE2d/@SWEPreBlanaced2d/private/';
 libfile = {};
 srcfile = {[path, 'mxEvaluateFlux2d.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWE2d/@SWEWDPreBlanaced2d/private/';
+path = 'Application/SWE/SWE2d/@SWEWDPreBlanaced2d/private/';
 libfile = {};
 srcfile = {[path, 'mxUpdateWDWetDryState.c'], ...
     [path, 'mxEvaluateSourceTopography2d.c'], ...
@@ -136,24 +136,24 @@ srcfile = {[path, 'mxUpdateWDWetDryState.c'], ...
 FuncHandle(path, srcfile, libfile);
 
 % SWE numerical flux
-path = 'SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver1d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver1d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
-path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver1d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWEHLLNumFluxSolver1d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
-path = 'SWE/SWENumFluxSolver/SWERoeNumFluxSolver1d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWERoeNumFluxSolver1d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
 
-path = 'SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver2d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWEAbstractNumFluxSolver2d/private/';
 CFLAGS = [CFLAGS, ' -I', path, ' '];
-path = 'SWE/SWENumFluxSolver/SWEHLLNumFluxSolver2d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWEHLLNumFluxSolver2d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
-path = 'SWE/SWENumFluxSolver/SWELFNumFluxSolver2d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWELFNumFluxSolver2d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
-path = 'SWE/SWENumFluxSolver/SWERoeNumFluxSolver2d/private/';
+path = 'Application/SWE/SWENumFluxSolver/SWERoeNumFluxSolver2d/private/';
 srcfile = {[path, 'mxEvaluate.c']};
 FuncHandle(path, srcfile, libfile);
 

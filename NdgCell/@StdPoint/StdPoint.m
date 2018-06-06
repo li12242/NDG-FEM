@@ -1,6 +1,6 @@
 classdef StdPoint < StdCell
     properties(Constant)
-        type = NdgCellType.Point
+        type = enumStdCell.Point
         Nv = 1      
         LAV = 0
         vr = 0      
@@ -9,7 +9,7 @@ classdef StdPoint < StdCell
         Nfv = 1     
         FToV = 1    
         Nface = 0
-        faceType = NdgCellType.Point
+        faceType = enumStdCell.Point
     end
     
     methods(Access=protected)

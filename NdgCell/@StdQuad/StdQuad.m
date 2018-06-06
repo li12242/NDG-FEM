@@ -1,7 +1,7 @@
 classdef StdQuad < StdCell
     
     properties(Constant)
-        type = NdgCellType.Quad
+        type = enumStdCell.Quad
         Nv = 4
         LAV = 4
         vr = [-1,  1,  1, -1]'
@@ -11,10 +11,10 @@ classdef StdQuad < StdCell
         FToV = [1,2; 2,3; 3,4; 4,1]'
         Nface = 4
         faceType = [...
-            NdgCellType.Line, ...
-            NdgCellType.Line, ...
-            NdgCellType.Line, ...
-            NdgCellType.Line]
+            enumStdCell.Line, ...
+            enumStdCell.Line, ...
+            enumStdCell.Line, ...
+            enumStdCell.Line]
     end
     
     methods(Access=protected)

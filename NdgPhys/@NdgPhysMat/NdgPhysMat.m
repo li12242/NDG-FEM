@@ -17,7 +17,7 @@ classdef NdgPhysMat < NdgPhys
         %> cell array for external value fields
         fext
         %> output netcdf file objects
-        outputNcFile
+        outputFile
         %> limiter object
         limiter
         %> 
@@ -97,15 +97,15 @@ classdef NdgPhysMat < NdgPhys
         %> by the name 'temporalDiscreteType'.
         function matEvaluateTemporalDiscrete( obj )            
             switch obj.getOption('temporalDiscreteType')
-                case NdgTemporalDiscreteType.Euler
+                case enumTemporalDiscrete.Euler
                     % call the Euler temporal discrete function
                     obj.matEvaluateEuler();
-                case NdgTemporalDiscreteType.RK45
+                case enumTemporalDiscrete.RK45
                     % call the SSP-RK45 temporal discrete function
                     obj.matEvaluateRK45();
-                case NdgTemporalDiscreteType.RK22
+                case enumTemporalDiscrete.RK22
                     obj.matEvaluateRK22();
-                case NdgTemporalDiscreteType.RK33
+                case enumTemporalDiscrete.RK33
                     obj.matEvaluateRK33();
                 otherwise
                     msgID = [ mfilename, ':UnknownTemproalDicsreteType'];
@@ -134,8 +134,9 @@ classdef NdgPhysMat < NdgPhys
         %> @brief Update the final result of the physical field
         function matUpdateFinalResult( obj, time, fphys )
             for m = 1:obj.Nmesh
-                obj.outputNcFile(m).outputFinalVar(time, [1, 2], time, fphys{m}(:,:,obj.varFieldIndex));
-                obj.outputNcFile(m).delete;
+                obj.outputFile(m).outputFinalResult( ...
+                    time, fphys{m}(:,:,obj.varFieldIndex) );
+                obj.outputFile(m).closeOutputFile();
             end
         end% function
     end

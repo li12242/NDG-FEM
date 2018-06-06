@@ -7,7 +7,7 @@
 % ======================================================================
 classdef StdLine < StdCell
     properties(Constant)
-        type = NdgCellType.Line
+        type = enumStdCell.Line
         Nv = 2
         LAV = 2
         vr = [-1, 1]'
@@ -16,7 +16,8 @@ classdef StdLine < StdCell
         Nfv = [1, 1]';
         FToV = [1,2];
         Nface = 2;
-        faceType = [NdgCellType.Point, NdgCellType.Point];
+        faceType = [enumStdCell.Point, 
+            enumStdCell.Point];
     end
     
     methods(Access=protected)

@@ -1,9 +1,9 @@
 classdef NdgMesh1d < NdgMesh
     %LINE_MESH Summary of this class goes here
     %   Detailed explanation goes here
-
+    
     properties(Constant)
-        type = NdgMeshType.OneDim
+        dim = enumMeshDim.One
     end
     
     methods(Hidden, Access = protected)
@@ -14,15 +14,15 @@ classdef NdgMesh1d < NdgMesh
         function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
             xr = obj.cell.Dr*obj.x;
             J = xr; rx = 1./J;
-
+            
             ry = zeros(size(rx));
-            rz = zeros(size(rx)); 
+            rz = zeros(size(rx));
             sx = zeros(size(rx));
             sy = zeros(size(rx));
-            sz = zeros(size(rx)); 
+            sz = zeros(size(rx));
             tx = zeros(size(rx));
             ty = zeros(size(rx));
-            tz = zeros(size(rx)); 
+            tz = zeros(size(rx));
         end
         
         function [nx, ny, nz, Js] = assembleFacialJaobiFactor( obj )
@@ -45,45 +45,16 @@ classdef NdgMesh1d < NdgMesh
     end% methods
     
     methods
+        %> \brief refine elements
         obj = refine(obj, refine_level);
-        
+        %> \brief draw mesh
+        draw( obj, zvar );
+        %> construction function
         function obj = NdgMesh1d( cell, Nv, vx, K, EToV, EToR, BCToV )
             vy = zeros(size(vx)); % vy is all zeros
-            vz = zeros(size(vx)); % vz is all zeros            
+            vz = zeros(size(vx)); % vz is all zeros
             obj = obj@NdgMesh(cell, Nv, vx, vy, vz, K, EToV, EToR, BCToV);
         end% func
-        
-        
-        function draw( obj, zvar )
-            % check the figure is created and not removed.
-            isFigureExit = ~isempty( obj.figureHandle ) ...
-                && isvalid( obj.figureHandle ) ;
-            
-            if isFigureExit
-                %updateFigure(obj.figureHandle, obj.x(:), zvar(:));
-                set( obj.figureHandle, 'YData', zvar(:) );
-            else
-                Np = obj.cell.Np; 
-                K = obj.K;
-                list = 1:Np:(K*Np);
-                g = graph();
-                for n = 1:Np-1
-                    g = addedge(g, list+n-1, list+n);
-                end
-                
-                obj.figureHandle = plot(g, ...
-                    'XData', obj.x(:), 'YData', zvar(:), ...
-                    'LineWidth', 1, ...
-                    'Marker', 'o', ...
-                    'NodeColor','k', ...
-                    'EdgeColor', 'k', ...
-                    'MarkerSize', 2, ...
-                    'NodeLabel', {});
-                box on;
-                grid on;
-            end
-
-        end
     end
     
 end

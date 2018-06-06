@@ -7,7 +7,7 @@
 % ======================================================================
 classdef StdTri < StdCell
     properties(Constant)
-        type = NdgCellType.Tri;
+        type = enumStdCell.Tri;
         Nv = 3
         LAV = 2
         vr = [-1,  1, -1]'
@@ -16,9 +16,9 @@ classdef StdTri < StdCell
         Nfv = [2,2,2];
         FToV = [1,2; 2,3; 3,1]';
         Nface = 3
-        faceType = [NdgCellType.Line, ...
-                    NdgCellType.Line, ...
-                    NdgCellType.Line]
+        faceType = [enumStdCell.Line, ...
+                    enumStdCell.Line, ...
+                    enumStdCell.Line]
     end
     
     methods(Access=protected)

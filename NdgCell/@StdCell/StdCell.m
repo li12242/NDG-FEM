@@ -101,21 +101,13 @@ classdef StdCell < handle
         %> @param[in] obj StdCell class
         %> @param[in] N The maximum number of the basis function
         %> @param[in] ind The index of the orthgonal function
-        %> @param[in] r Coordinate of the nodes
-        %> @param[in] s Coordinate of the nodes
-        %> @param[in] t Coordinate of the nodes
+        %> @param[in] r,s,t Coordinate of the nodes
         [ fun ] = orthogonal_func(obj, N, ind, r, s, t);
         %> @brief Project the scalar field from the cell vertices to the interpolation nodes.
-        %> @param[in] obj StdCell class
-        %> @param[in] vert_val the vertice values, the first dimension of
-        %> this variable should be equal to the Nv of the object.
         [ node_val ] = project_vert2node(obj, vert_val);
         %> @brief Calculate the
-        %> @param[in]
         assembleJacobianMatrix( obj, x, y, z );
         %> @brief Assemble the outword normal vectors.
-        %> @param[in]
-        %> @param[in]
         assembleNormalVector( obj, x, y, z )
     end
     
@@ -150,36 +142,16 @@ classdef StdCell < handle
         
         %> @brief Evaluate all the nodal basis function values at points
         %> @param[in] obj The StdCell class
-        %> @param[in] r The node coordinate
-        %> @param[in] s The node coordinate
-        %> @param[in] t The node coordinate
+        %> @param[in] r,s,t The node coordinate
         %> @param[out] func The basis function values at points
-        function [ func ] = nodal_func(obj, r, s, t)
-            func = zeros(numel(r), obj.Np);
-            for n = 1:obj.Np
-                func(:, n) = obj.orthogonal_func(obj.N, n, r, s, t);
-            end
-            func = func/obj.V;
-        end
+        [ func ] = nodal_func(obj, r, s, t);
         
         function [ dfr, dfs, dft ] = orthogonal_derivative_func(obj, ind, r, s, t)
             [ dfr, dfs, dft ] = obj.derivative_orthogonal_func( obj.N, ind, r, s, t );
         end
         
         %> @brief Evaluate the derivative nodal function values at points
-        function [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
-            Nr = numel( r );
-            Vr = zeros(Nr, obj.Np);
-            Vs = zeros(Nr, obj.Np);
-            Vt = zeros(Nr, obj.Np);
-            for n = 1:obj.Np
-                [Vr(:, n), Vs(:, n), Vt(:, n)] = ...
-                    obj.derivative_orthogonal_func(obj.N, n, r, s, t);
-            end
-            fDr = Vr/obj.V;
-            fDs = Vs/obj.V;
-            fDt = Vt/obj.V;
-        end
+        [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
         
         %> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
         %> @param[in] obj The StdCell class
@@ -226,45 +198,7 @@ classdef StdCell < handle
             invM = obj.V * obj.V';
         end% func
         
-        function Fmask = assembleFacialNodeIndex(obj)
-            maxnfp = max(obj.Nfp);
-            Fmask = zeros(maxnfp, obj.Nface);
-            for f = 1:obj.Nface
-                nfv = obj.Nfv(f);
-                % get vertex index on face f
-                rv = obj.vr( obj.FToV(1:nfv, f) );
-                sv = obj.vs( obj.FToV(1:nfv, f) );
-                tv = obj.vt( obj.FToV(1:nfv, f) );
-                if(isrow(rv)) rv = rv'; end
-                if(isrow(sv)) sv = sv'; end
-                if(isrow(tv)) tv = tv'; end
-                % get the nodes on face f
-                cell = getStdCell(obj.N, obj.faceType(f));
-                fr = cell.project_vert2node(rv);
-                fs = cell.project_vert2node(sv);
-                ft = cell.project_vert2node(tv);
-                % get the nodes index
-                for n = 1:obj.Nfp(f)
-                    dis = (fr(n) - obj.r).^2 + (fs(n) - obj.s).^2 + (ft(n) - obj.t).^2;
-                    ind = find(dis < 1e-10);
-                    Fmask(n, f) = ind;
-                end
-            end
-        end% func
+        Fmask = assembleFacialNodeIndex(obj)
         
-%         function LIFT = assembleLiftMatrix(obj)
-%             Mes = zeros(obj.Np, obj.TNfp);
-%             sk = 1;
-%             for f = 1:obj.Nface
-%                 fcell = getStdCell(obj.N, obj.faceType(f));
-%                 row = obj.Fmask(:, f);
-%                 row = row(row ~= 0);
-%                 for n = 1:fcell.Np
-%                     Mes(row, sk) = fcell.M(:, n);
-%                     sk = sk + 1;
-%                 end
-%             end
-%             LIFT = obj.invM * Mes;
-%         end
     end% methods
 end

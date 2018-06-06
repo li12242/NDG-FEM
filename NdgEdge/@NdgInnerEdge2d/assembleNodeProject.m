@@ -26,9 +26,9 @@ for n = 1:obj.Ne
         FToN2(:, n) = flip( mesh.cell.Fmask(:, f2) );
     end
     
-    if mesh.cell.type == NdgCellType.Tri
+    if mesh.cell.type == enumStdCell.Tri
         [ nx(:, n), ny(:, n), Js(:, n) ] = TriJacobian2d( mesh, f1, k1, FToN1(:, n) );
-    elseif mesh.cell.type == NdgCellType.Quad
+    elseif mesh.cell.type == enumStdCell.Quad
         [ nx(:, n), ny(:, n), Js(:, n) ] = QuadJacobian2d( mesh, f1, k1, FToN1(:, n) );
     end
 

@@ -36,10 +36,10 @@ for n = 1 : Ne
         FToN2(m, n) = Fmask(t, f2);
     end
     
-    if mesh.cell.type == NdgCellType.PrismTri
+    if mesh.cell.type == enumStdCell.PrismTri
         [ nx( :, n ), ny( :, n ), nz( :, n ), Js( :, n ) ] ...
             = PrismTriJacobian3d( mesh, f1, e1, cell.Fmask(1:cell.Nfp(f1), f1));
-    elseif mesh.cell.type == NdgCellType.PrismQuad
+    elseif mesh.cell.type == enumStdCell.PrismQuad
         [ nx( :, n ), ny( :, n ), nz( :, n ), Js( :, n ) ] ...
             = PrismQuadJacobian3d( mesh, f1, e1, cell.Fmask(1:cell.Nfp(f1), f1));
     end

@@ -2,7 +2,7 @@
 classdef NdgExtendMesh3d < handle
     
     properties( Constant )
-        type = NdgMeshType.ThreeDim
+        type = enumMeshDim.Three
     end
     
     properties( SetAccess = private )

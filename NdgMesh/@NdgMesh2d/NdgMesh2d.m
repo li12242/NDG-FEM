@@ -5,19 +5,21 @@
 %> methods include
 classdef NdgMesh2d < NdgMesh
     properties( Constant )
-        type = NdgMeshType.TwoDim
+        type = enumMeshDim.Two
     end
     
-    properties( Hidden=true )
-        point_h
-    end
+%     properties( Hidden=true )
+%         point_h
+%     end
     
     methods( Hidden, Access = protected )
         
-        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor(obj)
-            xr = obj.cell.Dr*obj.x; 
+        function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] ...
+                = assembleJacobiFactor(obj)
+            
+            xr = obj.cell.Dr*obj.x;
             xs = obj.cell.Ds*obj.x;
-            yr = obj.cell.Dr*obj.y; 
+            yr = obj.cell.Dr*obj.y;
             ys = obj.cell.Ds*obj.y;
             J = -xs.*yr + xr.*ys;
             
@@ -118,16 +120,3 @@ end
 
 EToR = NdgRegionType( EToR );
 end% func
-
-function [ EToV ] = makeCounterclockwiseVertexOrder( EToV, vx, vy )
-K = size(EToV, 2);
-for k = 1:K
-    vertId = EToV(:, k);
-    vxk = vx( EToV(:, k) );
-    vyk = vy( EToV(:, k) );
-
-    vertOrder = convhull(vxk, vyk);
-    EToV(:, k) = vertId( vertOrder(1:end-1) );
-end
-
-end
