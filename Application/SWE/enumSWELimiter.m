@@ -1,4 +1,4 @@
-classdef SWELimiterType < int8
+classdef enumSWELimiter < int8
     
     enumeration
         OnDepth     (1)

@@ -1,71 +1,66 @@
 classdef Sanya < SWEPreBlanaced2d
-
-    
-    properties( SetAccess = protected )
-    end
     
     properties(Constant)
-         %> wet/dry depth threshold
-        hmin = 0.5        
+        %> wet/dry depth threshold
+        hmin = 0.5
         %> gravity acceleration
-        gra = 9.8        
-        %> interval of tide elevation
+        gra = 9.8
+        %> interval of tide elevation (s)
         tideinterval = 600
-        
+        %> tidal elevation of open boundary vertices
+        tidalFile = ...
+            'Application/SWE/SWE2d/Benchmark/@Sanya/tide/TideElevation.txt'
     end
     
     properties
         N
-        gmshFile
-        OBVid
+        %> open boundary edge index
+        OBEdgeIndex
+        %> open boundary tidal elevation
         Tide
-        
-        FextLoader
     end
     
-    methods 
+    methods
         function obj = Sanya( N                                                                                                                                                                                                                                                                                      )
             obj = obj@SWEPreBlanaced2d();
             obj.N = N;
-            obj.gmshFile = [pwd, '/SWE2d/'...
-                '@Sanya/mesh/sanya0111'];
-            mesh = makeGmshFileUMeshUnion2d( N, obj.gmshFile );
+            gmshFile = [ fileparts( mfilename('fullpath') ), '/mesh/sanya0111.msh' ];
+            mesh = makeGmshFileUMeshUnion2d( N, gmshFile );
             obj.initPhysFromOptions( mesh );
-            obj.FindOBVertex;
-            obj.ReadTideElevation;
-        end 
+        end
         
+        OutputOpenBoundaryVertCoor( obj );
+        ReadTideElevation( obj );
         
     end%methods
     
-    methods(Access=protected)
+    methods ( Access = protected )
         function fphys = setInitialField( obj )
-            fphys = getInitialFunction(obj);
+            fphys = getInitialFunction( obj );
         end
         
         function [ option ] = setOption( obj, option )
             ftime = 259200;
-            outputIntervalNum = 432;
+            outputIntervalNum = 500;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
-            option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = 'Sanya2k_0328';
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')=CoriolisType.Latitude;
-            option('LatitudeFilePath')='SWE2d/@Sanya/tide/vertex_lat.txt';
-            option('WindType')=WindType.None;
-            option('FrictionType')=FrictionType.Quad;
-            option('FrictionCoefficient_n')=0.017;
-%             option('ExternalFieldInterpolateType') = FextInterpolateType.Linear;
-        end
+            option('temporalDiscreteType') = enumTemproalInterval.DeltaTime;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
             
-%         matEvaluateRK45( obj );
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
+            option('outputTimeInterval') = ftime/outputIntervalNum;
+            option('outputCaseName') = 'Sanya2k_0328';
+            option('limiterType') = enumLimiter.Vert;
+            option('SWELimiterType') = enumSWELimiter.OnElevation;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('CoriolisType')= enumSWECoriolis.None;
+            option('LatitudeFilePath')= ...
+                [ fileparts( mfilename('fullpath') ),'/tide/vertex_lat.txt'];
+            option('WindType')= enumSWEWind.None;
+            option('FrictionType')= enumSWEFriction.None;
+            option('FrictionCoefficient_n') = 0.017;
+        end
         matUpdateExternalField( obj, time, fphys )
         
     end%methods

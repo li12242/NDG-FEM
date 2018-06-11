@@ -14,6 +14,11 @@ for n = 1:obj.Nmesh
 end
 fphys = obj.fphys;
 
+DEBUG = 1;
+if DEBUG
+    visual = makeVisualizationFromNdgPhys( obj );
+end
+
 hwait = waitbar(0,'Runing MatSolver....');
 % try
     while( time < ftime )
@@ -35,14 +40,12 @@ hwait = waitbar(0,'Runing MatSolver....');
             fphys = obj.matEvaluateLimiter( fphys );
             fphys = obj.matEvaluatePostFunc( fphys );
 
+            if DEBUG
+                visual.drawResult( fphys{1}(:, :, 1) + fphys{1}(:, :, 4) )
+            end
         end
         
-%         obj.draw( fphys );
-%         for m = 1:obj.Nmesh
-%             obj.meshUnion(m).draw( fphys{m}(:,:,1) );
-%         end
-%         obj.meshUnion(1).draw( fphys{1}(:,:,1) + fphys{1}(:,:,4) );
-%         drawnow;
+        
 
         time = time + dt;
         obj.matUpdateOutputResult( time, fphys );

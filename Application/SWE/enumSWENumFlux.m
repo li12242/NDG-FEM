@@ -1,4 +1,4 @@
-classdef SWENumFluxType < int8
+classdef enumSWENumFlux < int8
     
     enumeration
         HLL     (1)

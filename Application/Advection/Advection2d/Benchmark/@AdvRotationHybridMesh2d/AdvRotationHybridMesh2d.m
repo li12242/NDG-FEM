@@ -39,7 +39,7 @@ classdef AdvRotationHybridMesh2d < AdvAbstractVarFlow2d
         end% func
     end
     
-    methods( Access = protected )
+    methods ( Access = protected )
         
         function [ fphys ] = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
@@ -52,7 +52,7 @@ classdef AdvRotationHybridMesh2d < AdvAbstractVarFlow2d
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = 2.4;
-            option('outputType') = enumOutputFile.VTK;
+            option('outputType') = enumOutputFile.NetCDF;
             option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
             option('outputCaseName') = mfilename;
@@ -67,10 +67,13 @@ classdef AdvRotationHybridMesh2d < AdvAbstractVarFlow2d
             option('integralType') = enumDiscreteIntegral.QuadratureFree;
             option('limiterType') = enumLimiter.None;
         end
+    end
+    
+    methods ( Access = protected, Static )
         
         %> the exact function
-        function f_ext = getExtFunc(obj, mesh, time)
-            f_ext = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
+        function f_ext = getExtFunc( x, y, time )
+            f_ext = zeros( [size(x), 3] );
             
             theta0 = -pi;
             theta = theta0 + obj.w*time;

@@ -48,7 +48,7 @@ if Ntri > 0
     EToVTri = [data(6, :); data(7, :); data(8, :)];
     EToRTri = data(4, :);
     stdTri = StdTri(N);
-    triMesh = NdgMesh2d(stdTri, Nv, vx, vy, Ntri, EToVTri, EToRTri, BCToV);
+    triMesh = NdgMesh2d(stdTri, Nv, vx, vy, Ntri, EToVTri, EToRTri);
 end
 
 if Nquad > 0
@@ -56,19 +56,29 @@ if Nquad > 0
     EToVQuad = [data(6, :); data(7, :); data(8, :); data(9, :)];
     EToRQuad = data(4, :);
     stdQuad = StdQuad(N);
-    quadMesh = NdgMesh2d(stdQuad, Nv, vx, vy, Nquad, EToVQuad, EToRQuad, BCToV);
+    quadMesh = NdgMesh2d(stdQuad, Nv, vx, vy, Nquad, EToVQuad, EToRQuad);
 end
 
 if (Ntri > 0) && (Nquad > 0)
-    mesh = makeMeshUnion(2, triMesh, quadMesh);
+    mesh = [triMesh, quadMesh];
+    mesh(1).ConnectMeshUnion( 1, mesh);
+    mesh(1).InnerEdge = NdgInnerEdge2d( mesh, mesh(1).ind );
+    mesh(1).BoundaryEdge = NdgHaloEdge2d( mesh, mesh(1).ind, BCToV );
+    
+    mesh(2).ConnectMeshUnion( 2, mesh);
+    mesh(2).InnerEdge = NdgInnerEdge2d( mesh, mesh(2).ind );
+    mesh(2).BoundaryEdge = NdgHaloEdge2d( mesh, mesh(2).ind, BCToV );
 elseif (Ntri > 0) && (Nquad == 0)
     mesh = triMesh;
+    mesh.ConnectMeshUnion( 1, mesh);
     mesh.InnerEdge = NdgInnerEdge2d( mesh, 1 );
+    mesh.BoundaryEdge = NdgHaloEdge2d( mesh, mesh.ind, BCToV );
 elseif (Nquad > 0) && (Ntri == 0)
     mesh = quadMesh;
+    mesh.ConnectMeshUnion( 1, mesh);
     mesh.InnerEdge = NdgInnerEdge2d( mesh, 1 );
+    mesh.BoundaryEdge = NdgHaloEdge2d( mesh, mesh.ind, BCToV );
 end
-
 
 end
 

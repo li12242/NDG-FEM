@@ -43,7 +43,7 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = 1.2;
-            option('outputType') = enumOutputFile.VTK;
+            option('outputType') = enumOutputFile.NetCDF;
             option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
             option('outputCaseName') = mfilename;
@@ -55,21 +55,22 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
         end
         
         %> the exact function
-        function f_ext = getExtFunc(obj, mesh, time)
-            f_ext = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
+        function f_ext = getExtFunc(obj, x, y, time)
+            [ Np, K ] = size( x );
+            f_ext = zeros( Np, K, obj.Nfield );
             
             theta0 = -pi;
             theta = theta0 + obj.w*time;
             xt = obj.x0 + obj.rd*cos(theta);
             yt = obj.y0 + obj.rd*sin(theta);
-            r2 = sqrt((mesh.x - xt).^2+(mesh.y - yt).^2)./obj.r0;
+            r2 = sqrt( (x - xt).^2+(y - yt).^2 )./obj.r0;
             ind = ( r2 <= 1.0);
-            temp = zeros( mesh.cell.Np, mesh.K );
-            temp(ind) = ( 1+cos(r2(ind)*pi) )./2;
+            temp = zeros( Np, K );
+            temp(ind) = ( 1+cos( r2(ind)*pi ) )./2;
             
             f_ext(:,:,1) = temp;
-            f_ext(:,:,2) = obj.w.* (- mesh.y);
-            f_ext(:,:,3) = obj.w.*( mesh.x );
+            f_ext(:,:,2) = obj.w.* (- y);
+            f_ext(:,:,3) = obj.w.*( x );
         end% func
     end% methods
     
@@ -77,10 +78,10 @@ end% class
 
 function mesh = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.Clamped, ...
-    NdgEdgeType.Clamped, ...
-    NdgEdgeType.Clamped, ...
-    NdgEdgeType.Clamped];
+    enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.Clamped];
 
 if (type == enumStdCell.Tri)
     mesh = makeUniformTriMesh(N, [-1, 1], [-1, 1], M, M, bctype);

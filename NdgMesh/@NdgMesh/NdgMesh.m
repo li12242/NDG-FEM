@@ -40,8 +40,8 @@ classdef NdgMesh < handle
         BoundaryEdge % halo edge
         %> mesh index
         ind
-        %> boundary types for each cell (column)
-        EToB
+        %> element status
+        status
     end
     
     % elemental volume infomation
@@ -66,53 +66,40 @@ classdef NdgMesh < handle
         charLength
     end
     
-    properties( SetAccess = protected )
+    properties ( SetAccess = protected )
         %> central coordinate
         xc, yc, zc
         %> normal vector of each facial point
-        nx, ny, nz
+        %nx, ny, nz
         %> determination of facial integral at each face points
-        Js
+        %Js
     end
     
-    methods( Abstract, Hidden, Access = protected )
+    methods ( Abstract, Hidden, Access = protected )
         %> Get volume infomation of each element
-        [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobiFactor( obj )
+        obj = assembleJacobiFactor( obj )
         %> Get outward normal vector of each elemental edges
-        [ nx, ny, nz ] = assembleFacialJaobiFactor( obj )
-        [ faceId ] = assembleGlobalFaceIndex( obj )
+        % [ nx, ny, nz ] = assembleFacialJaobiFactor( obj )
+        % [ faceId ] = assembleGlobalFaceIndex( obj )
     end
     
-    methods(Hidden, Access=protected)
-        [ EToE, EToF, EToM ] = assembleCellConnect( obj )
-        [ eidM, eidP, eidtype ] = assembleEdgeNode( obj )
-        [ EToB ] = assembleCellBoundary( obj, BCToV )
-        [x, y, z] = assembleNodeCoor( obj, vx, vy, vz );
-        [LAV, charLength] = assembleCellScale( obj, J )
+    methods ( Hidden, Access=protected )
+        obj = ConnectMesh( obj )
+        % [ eidM, eidP, eidtype ] = assembleEdgeNode( obj )
+        % [ EToB ] = assembleCellBoundary( obj, BCToV )
+        obj = GetNodeCoor( obj )
+        obj = GetCellSize( obj )
     end
-    
-%     methods( Abstract )
-%         %> determine the cell index that the gauge points in.
-%         [ cellId ] = accessGaugePointLocation( obj, xg, yg, zg );
-%     end
     
     methods
         
-        function obj = NdgMesh(cell, Nv, vx, vy, vz, K, EToV, EToR, BCToV)
-            [ obj.cell, obj.Nv, obj.vx, obj.vy, obj.vz, ...
-                obj.K, obj.EToV, obj.EToR ] ...
-                = checkInput(cell, Nv, vx, vy, vz, K, EToV, EToR);
+        function obj = NdgMesh(cell, Nv, vx, vy, vz, K, EToV, EToR)
+            obj = checkInput( obj, cell, Nv, vx, vy, vz, K, EToV, EToR );
+            obj = ConnectMesh( obj );
+            obj = GetNodeCoor( obj );
             
-            [ obj.EToE, obj.EToF, obj.EToM ]  = assembleCellConnect( obj );
-            [ obj.x, obj.y, obj.z ] = assembleNodeCoor( obj, vx, vy, vz );
-            [ obj.EToB ] = assembleCellBoundary(obj, BCToV);
-            
-            [ obj.rx, obj.ry, obj.rz, ...
-                obj.sx, obj.sy, obj.sz, ...
-                obj.tx, obj.ty, obj.tz, obj.J ] = assembleJacobiFactor( obj );
-            [ obj.LAV, obj.charLength ] = assembleCellScale( obj, obj.J );
-            [ obj.nx, obj.ny, obj.nz, obj.Js ] = assembleFacialJaobiFactor( obj );
-            %[ obj.eidM, obj.eidP, obj.eidtype ] = assembleEdgeNode( obj );
+            obj = assembleJacobiFactor( obj );
+            obj = GetCellSize( obj );
             
             [ obj.xc ] =  obj.GetMeshAverageValue( obj.x );
             [ obj.yc ] =  obj.GetMeshAverageValue( obj.y );
@@ -120,31 +107,26 @@ classdef NdgMesh < handle
         end% func
         
         % assemble mesh connection
-        assembleMeshConnection( obj, mesh1 )
-        
+        ConnectMeshUnion( obj, meshId, meshUnion )
+
+        % project scalars from mesh verts to nodes
         function nodeQ = proj_vert2node(obj, vertQ)
-            % project scalars from mesh verts to nodes
             ele_vQ = vertQ(obj.EToV);
             nodeQ = obj.cell.project_vert2node(ele_vQ);
         end
         
         function integralValue = GetMeshIntegralValue(obj, nodeVal)
-            integralValue = mxGetMeshIntegralValue...
-                (nodeVal, obj.cell.wq, obj.J, obj.cell.Vq);
+            integralValue = mxGetMeshIntegralValue(nodeVal, obj.cell.wq, obj.J, obj.cell.Vq);
         end
         
         function avergeValue = GetMeshAverageValue(obj, nodeVal)
-            integralValue = mxGetMeshIntegralValue...
-                (nodeVal, obj.cell.wq, obj.J, obj.cell.Vq);
-            avergeValue = integralValue./obj.LAV;
+            integralValue = mxGetMeshIntegralValue(nodeVal, obj.cell.wq, obj.J, obj.cell.Vq);
+            avergeValue = integralValue ./ obj.LAV;
         end
-        
     end% methods
-    
 end
 
-function [cell, Nv, vx, vy, vz, K, EToV, EToR] ...
-    = checkInput(cell, Nv, vx, vy, vz, K, EToV, EToR)
+function obj = checkInput(obj, cell, Nv, vx, vy, vz, K, EToV, EToR)
 
 if( numel(vx) ~= Nv ) || (numel(vy) ~= Nv ) || (numel(vz) ~= Nv )
     msgID = [mfilename, ':InputVertexError'];
@@ -178,5 +160,15 @@ if( size(EToV, 2) ~= K ) || (numel(EToR) ~= K)
     ME = MException(msgID, msgtext);
     throw(ME);
 end
+
+% assignment
+obj.cell = cell;
+obj.Nv = Nv;
+obj.vx = vx;
+obj.vy = vy;
+obj.vz = vz;
+obj.K = K;
+obj.EToV = EToV;
+obj.EToR = EToR;
 
 end

@@ -1,5 +1,5 @@
-classdef SteadyMount2d < SWEPreBlanaced2d & SDBAbstractTest & CSBAbstractTest
-    
+classdef SteadyMount2d < SWEPreBlanaced2d & CSBAbstractTest
+     
     properties( Constant )
         %> wet/dry depth threshold
         hmin = 1e-2
@@ -75,17 +75,17 @@ classdef SteadyMount2d < SWEPreBlanaced2d & SDBAbstractTest & CSBAbstractTest
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = [mfilename, '_', num2str(obj.N)];
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType')= CoriolisType.None;
-            option('WindType') = WindType.None;
-            option('FrictionType') = FrictionType.None;
+            option('outputCaseName') = [mfilename, '_', num2str(obj.N)];
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('SWELimiterType') = enumSWELimiter.OnElevation;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('CoriolisType')= enumSWECoriolis.None;
+            option('WindType') = enumSWEWind.None;
+            option('FrictionType') = enumSWEFriction.None;
         end
         
         function fphys = getExactFunction( obj, time )
@@ -121,14 +121,14 @@ end
 
 function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.SlipWall];
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.SlipWall];
 
-if (type == NdgCellType.Tri)
+if (type == enumStdCell.Tri)
     mesh = makeUniformTriMesh(N, [0, 1], [0, 1], M, M, bctype);
-elseif(type == NdgCellType.Quad)
+elseif(type == enumStdCell.Quad)
     mesh = makeUniformQuadMesh(N, [0, 1], [0, 1], M, M, bctype);
 else
     msgID = [mfile, ':inputCellTypeError'];

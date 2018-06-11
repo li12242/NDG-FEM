@@ -83,7 +83,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double *ny = mxGetPr(prhs[2]);
   SurfNodeField fM = ConvertMexToSurfField(prhs[3]);
   SurfNodeField fE = ConvertMexToSurfField(prhs[4]);
-  double *ftype = mxGetPr(prhs[5]);
+  signed char *ftype = (signed char *)mxGetData(prhs[5]);
 
   const size_t ndimOut = 3;
   const mwSize dimOut[3] = {fM.Nfp, fM.Ne, fM.Nfield};

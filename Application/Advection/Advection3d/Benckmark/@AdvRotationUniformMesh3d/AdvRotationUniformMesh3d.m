@@ -42,9 +42,9 @@ classdef AdvRotationUniformMesh3d < AdvAbstractVarFlow3d
         end% func
         
         function option = setOption( obj, option )
-            outputIntervalNum = 50;
+            outputIntervalNum = 100;
             option('startTime') = 0.0;
-            option('finalTime') = 0.5;
+            option('finalTime') = 2;
             option('outputType') = enumOutputFile.VTK;
             option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
@@ -64,9 +64,8 @@ classdef AdvRotationUniformMesh3d < AdvAbstractVarFlow3d
             
             theta0 = - pi;
             theta = theta0 + obj.w * time;
-            %xt = obj.x0 + obj.rd * cos(theta);
+            xt = obj.x0 + obj.rd * cos(theta);
             yt = obj.y0 + obj.rd * sin(theta);
-            xt = -1;
             zt = 0.5;
             r2 = sqrt((mesh.x - xt).^2 + (mesh.y - yt).^2 + (mesh.z - zt).^2 ) ./ obj.r0;
             ind = ( r2 <= 1.0);
@@ -74,8 +73,8 @@ classdef AdvRotationUniformMesh3d < AdvAbstractVarFlow3d
             temp(ind) = ( 1 + cos( r2(ind) * pi ) ) ./ 2;
             
             f_ext(:,:,1) = temp;
-%             f_ext(:,:,2) = obj.w .* ( - mesh.y );
-%             f_ext(:,:,3) = obj.w .* ( + mesh.x );
+            f_ext(:,:,2) = obj.w .* ( - mesh.y );
+            f_ext(:,:,3) = obj.w .* ( + mesh.x );
             f_ext(:,:,4) = - 0.5;
         end% func
     end% methods

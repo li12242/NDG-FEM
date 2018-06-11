@@ -8,9 +8,11 @@
 classdef NdgHaloEdge2d < NdgHaloEdge
     
     methods
-        function obj = NdgHaloEdge2d( meshUnion, locMeshId )
-            obj = obj@NdgHaloEdge( meshUnion, locMeshId );
+        function obj = NdgHaloEdge2d( meshUnion, locMeshId, BCToV )
+            obj = obj@NdgHaloEdge( meshUnion, locMeshId, BCToV );
         end
+        
+        [ fnode ] = proj_vert2node( obj, fvert );
         
         function draw(obj, varargin)
             indK = repmat( obj.FToE(1, :), obj.Nfp, 1 );
@@ -25,15 +27,11 @@ classdef NdgHaloEdge2d < NdgHaloEdge
         end
     end
     
-    methods(Hidden = true, Access = protected)
-        function [ eCell ] = setEdgeReferCell( obj, mesh )
-            eCell = StdLine( mesh.cell.N );
-        end
-    end
-    
     methods( Access = protected )
-        [ Nedge, FToE, FToF, FToV, FToM, ftype ] = assembleEdgeConnect( obj, mesh, meshId );
-        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, meshUnion )
+        obj = assembleMassMatrix( obj );
+        obj = assembleEdgeConnect( obj, mesh );
+        obj = assembleNodeProject( obj, mesh );
+        obj = assembleBoundaryConnection(obj, BCToV);
     end
     
 end

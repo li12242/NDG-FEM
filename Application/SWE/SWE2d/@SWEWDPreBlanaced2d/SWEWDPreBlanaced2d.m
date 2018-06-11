@@ -12,7 +12,7 @@ classdef SWEWDPreBlanaced2d < SWEPreBlanaced2d
         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                flg = ( mesh.EToR == int8( NdgRegionType.PartialWet ) );
+                flg = ( mesh.EToR == int8( enumSWERegion.PartialWet ) );
                 
                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 1);
                 ind = tempWD(1, :) < 0;

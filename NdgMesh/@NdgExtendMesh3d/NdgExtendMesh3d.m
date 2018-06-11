@@ -5,10 +5,6 @@ classdef NdgExtendMesh3d < handle
         type = enumMeshDim.Three
     end
     
-    properties( SetAccess = private )
-        figure_handle
-    end
-    
     properties ( SetAccess = public )
         %> std cell object
         cell
@@ -23,7 +19,7 @@ classdef NdgExtendMesh3d < handle
         %> vertex index in each element
         EToV
         %> region types for each element
-        EToR @int8
+        EToR
         %> coordinate of vertex
         vx, vy, vz
         %> edge objects
@@ -88,8 +84,7 @@ classdef NdgExtendMesh3d < handle
             [ obj.x, obj.y, obj.z ] = assembleNodeCoor( obj, obj.vx, obj.vy, obj.vz );
             
             % Jacobian coefficients at IP nodes
-            [ obj.rx, obj.sx, obj.tx, obj.ry, obj.sy, obj.ty, ...
-                obj.rz, obj.sz, obj.tz, obj.J] = Jacobian3d(obj, cell);
+            obj = Jacobian3d(obj, cell);
             
         end% func
         

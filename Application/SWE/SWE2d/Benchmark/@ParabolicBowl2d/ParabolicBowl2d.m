@@ -102,16 +102,13 @@ classdef ParabolicBowl2d < SWEConventional2d
             outputIntervalNum = 200;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('CFL') = 1/obj.meshUnion(1).cell.N;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
             option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
         end
         
         function fphys = getExactFunction( obj, time )

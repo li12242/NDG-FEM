@@ -53,7 +53,9 @@ classdef OpenChannel2d < SWEConventional2d
     methods( Access = private, Sealed )
         function mesh = makeUniformMesh( obj, N, M )
             obtype = obj.setOpenBoundaryCondition();
-            bctype = [NdgEdgeType.SlipWall, NdgEdgeType.SlipWall, ...
+            bctype = [ ...
+                enumBoundaryCondition.SlipWall, ...
+                enumBoundaryCondition.SlipWall, ...
                 obtype(1), obtype(2)];
             
             mesh = makeUniformQuadMesh(N, ...
@@ -77,14 +79,10 @@ classdef OpenChannel2d < SWEConventional2d
         
         function matUpdateExternalField( obj, time, fphys )
             for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
-                edge = mesh.BoundaryEdge;
-                ind = sub2ind( [mesh.cell.Np, mesh.K], edge.FToN1, ...
-                    repmat(edge.FToE(1, :), edge.Nfp, 1) );
-                xb = mesh.x( ind );
+                edge = obj.meshUnion(m).BoundaryEdge;
                 a = 1 - 1./exp( time/obj.T/2 );
                 [ obj.fext{m}(:,:,1), obj.fext{m}(:,:,2) ] ...
-                    = obj.setOBC( xb, time );
+                    = obj.setOBC( edge.xb, time );
 
                 if time < obj.T/2
                     obj.fext{m}(:, :, 1) = a.* ( obj.fext{m}(:, :, 1) - obj.H ) + obj.H;

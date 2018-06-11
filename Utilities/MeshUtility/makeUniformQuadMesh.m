@@ -23,7 +23,7 @@ Nx = Mx + 1; % number of elements along x coordinate
 Ny = My + 1;
 K = Mx * My;
 Nv = Nx * Ny;
-EToR = NdgRegionType.Normal * ones(K, 1, 'int8');
+EToR = double( enumRegion.Normal ) * ones(K, 1);
 
 % Define vectex
 % The vertex is sorted along x coordinate. (x coordinate counts first)
@@ -55,10 +55,10 @@ for i = 1:My
 end% for
 
 [ BCToV ] = makeUniformMeshBC( Mx, My, bcType );
-mesh = NdgMesh2d( quad, Nv, vx, vy, K, EToV, EToR, BCToV );
-mesh.ind = 1;
+mesh = NdgMesh2d( quad, Nv, vx, vy, K, EToV, EToR );
+mesh.ConnectMeshUnion( 1, mesh);
 mesh.InnerEdge = NdgInnerEdge2d( mesh, mesh.ind );
-mesh.BoundaryEdge = NdgHaloEdge2d( mesh, mesh.ind );
+mesh.BoundaryEdge = NdgHaloEdge2d( mesh, mesh.ind, BCToV );
 end
 
 function checkInput(xlim, ylim, Mx, My, bcType)

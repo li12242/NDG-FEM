@@ -1,6 +1,7 @@
 %>
-function obj = assembleEdgeConnect( obj, mesh )
+function obj = assembleEdgeConnect( obj, meshUnion )
 
+mesh = obj.mesh;
 K = mesh.K;
 Nface = mesh.cell.Nface;
 % IND has 4 rows, first 2 rows are vert indices, 3rd row is element 
@@ -22,8 +23,16 @@ ind = ind';
 
 Nedge = 0;
 flag = false( 1, K*Nface );
-for i = 2:( K*Nface-1 )
-    if all( ind(1:2,i+1) == ind(1:2,i) ) && any( ind(1:2,i-1) ~= ind(1:2,i) )
+
+% check first 2 faces 
+if all( ind( 1:2, 2 ) == ind( 1:2, 1 ) ) 
+    Nedge = Nedge + 1;
+    flag( 1 ) = 1;
+end
+
+for i = 2 : ( K*Nface - 1 )
+    if all( ind( 1:2, i+1 ) == ind( 1:2, i ) ) ...
+        && any( ind( 1:2, i-1 ) ~= ind( 1:2, i ) )
         Nedge = Nedge + 1;
         flag( i ) = 1;
     end

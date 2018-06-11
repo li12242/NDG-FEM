@@ -1,9 +1,9 @@
-classdef SWECoriolisType < int8
+classdef enumSWECoriolis < int8
     
     enumeration
         None        (0)
         Beta        (1)
-%       File        (2)
+        Latitude    (2)
     end
     
 end

@@ -14,7 +14,9 @@ classdef ClosedChannel2d < OpenChannel2d
     
     methods( Access = protected, Static )
         function obtype = setOpenBoundaryCondition(  )
-            obtype = [ NdgEdgeType.Flather, NdgEdgeType.SlipWall ];
+            obtype = [ ...
+                enumBoundaryCondition.Flather, ...
+                enumBoundaryCondition.SlipWall ];
         end
     end
     
@@ -24,18 +26,17 @@ classdef ClosedChannel2d < OpenChannel2d
             outputIntervalNum = 2000;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = ...
+            option('outputCaseName') = ...
                 [mfilename, '.', num2str(obj.meshUnion.cell.N)];
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.None;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.GaussQuadrature;
-            option('CoriolisType') = SWECoriolisType.None;
-            option('WindType') = SWEWindType.None;
-            option('FrictionType') = SWEFrictionType.None;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.None;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('CoriolisType') = enumSWECoriolis.None;
+            option('WindType') = enumSWEWind.None;
+            option('FrictionType') = enumSWEFriction.None;
         end
         
         function fphys = setInitialField( obj )

@@ -1,10 +1,4 @@
 %> \brief SWE conventional solver
-
-%> \details
-%> The conventional SWEs are solved, which have the flux and source terms
-%> as  
-%> \f$   \f$
-%> 
 classdef SWEConventional2d < SWEAbstract2d
     
     methods( Hidden )
@@ -17,8 +11,8 @@ classdef SWEConventional2d < SWEAbstract2d
         function matUpdateWetDryState(obj, fphys)
             for m = 1:obj.Nmesh
                 wetflag = all( fphys{m}(:,:,1) > obj.hmin );
-                obj.meshUnion(m).EToR( ~wetflag ) = int8( NdgRegionType.Dry );
-                obj.meshUnion(m).EToR(  wetflag ) = int8( NdgRegionType.Wet );
+                obj.meshUnion(m).status( ~wetflag ) = int8( enumSWERegion.Dry );
+                obj.meshUnion(m).status(  wetflag ) = int8( enumSWERegion.Wet );
             end
         end
         

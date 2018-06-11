@@ -10,10 +10,10 @@ classdef NdgInnerEdge < handle
     properties ( SetAccess = protected )
         %> mesh obj
         mesh
+        %> local interp node coodinate
+        r, s, t
         %> mass matrix
         M
-        %> edge std cell obj
-        eCell
         %> num of edges
         Ne
         %> num of face nodes
@@ -38,27 +38,29 @@ classdef NdgInnerEdge < handle
     
     methods ( Access = public )
         function obj = NdgInnerEdge( meshUnion, meshId )
-            obj.mesh = meshUnion(meshId); % set mesh object
+            obj.mesh = meshUnion( meshId ); % set mesh
             obj.FToM = meshId; % set mesh id
-            [ obj.Nfp, obj.M ] = assembleMassMatrix( obj );
-            % obj.eCell = obj.setEdgeReferCell( obj.mesh ); % set reference cell
+            obj = assembleMassMatrix( obj );
             
             % connect edge to elements
-            obj = obj.assembleEdgeConnect( obj.mesh );
-            
+            obj = obj.assembleEdgeConnect( meshUnion );
             % connect node
-            obj = assembleNodeProject( obj, obj.mesh );
+            obj = obj.assembleNodeProject( meshUnion );
         end
         
         %> evaluate R.H.S. for surface integral term
         frhs = matEvaluateStrongFromEdgeRHS( obj, fluxM, fluxP, fluxS );
         
-        [ fM, fP ] = matEvaluateSurfValue( obj, fphys );
+        [ fM, fP ] = matEvaluateSurfValue( obj, fphys );        
+    end
+    
+    methods ( Access = public, Abstract )
+        [ fnode ] = proj_vert2node( obj, fvert );
     end
     
     methods ( Abstract, Access = protected )
         %> connect edge to elements
-        [ Nfp, M ] = assembleMassMatrix( obj );
+        obj = assembleMassMatrix( obj );
         obj = assembleEdgeConnect( obj, mesh )
         obj = assembleNodeProject( obj, mesh )
     end

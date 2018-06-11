@@ -1,7 +1,7 @@
 %> \brief
-function [ Nedge, FToE, FToF, FToV, FToM, ftype ] ...
-    = assembleEdgeConnect( obj, mesh, meshId )
+function obj = assembleEdgeConnect( obj, meshUnion )
 
+mesh = obj.mesh;
 K = mesh.K;
 Nface = mesh.cell.Nface;
 % IND has 4 rows, first 2 rows are vert indices, 3rd row is element 
@@ -45,8 +45,7 @@ end
 FToE = zeros( 2, Nedge);
 FToF = zeros( 2, Nedge);
 FToV = zeros( max( mesh.cell.Nfv ), Nedge );
-FToM = ones( 2, Nedge ) * meshId;
-ftype = zeros( Nedge, 1 );
+FToM = ones( 2, Nedge ) * obj.FToM;
 
 sk = 1;
 for i = 1:K*Nface
@@ -59,10 +58,15 @@ for i = 1:K*Nface
         FToF(2, sk) = mesh.EToF(f, k);
         FToV(1:2, sk) = ind(1:2, i);
         FToM(2, sk) = mesh.EToM(f, k);
-        ftype(sk) = mesh.EToB(f, k);
         sk = sk + 1;
     end
 end
+
+obj.Ne = Nedge;
+obj.FToE = FToE;
+obj.FToF = FToF;
+obj.FToV = FToV;
+obj.FToM = FToM;
 
 end% func
 

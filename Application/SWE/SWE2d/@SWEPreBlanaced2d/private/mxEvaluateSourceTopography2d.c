@@ -25,9 +25,6 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   PhysField fphys = convertMexToPhysField(prhs[2]);
   const size_t Np = fphys.Np;
   const size_t K = fphys.K;
-  // const mwSize* dims = mxGetDimensions(prhs[2]);
-  // const size_t Np = dims[0];
-  // const size_t K = dims[1];
   const size_t Ntmp = Np * K;
 
   const size_t NdimOut = 3;
@@ -40,9 +37,6 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   double* by = zgrad + Ntmp;
 
   PhysField source = convertMexToPhysField(plhs[0]);
-  // double* sourceH = mxGetPr(plhs[0]);
-  // double* sourceQx = sourceH + Ntmp;
-  // double* sourceQy = sourceQx + Ntmp;
 
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(DG_THREADS)

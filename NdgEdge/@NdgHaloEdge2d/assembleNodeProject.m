@@ -1,14 +1,14 @@
-function [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, meshUnion )
+function obj = assembleNodeProject( obj, meshUnion )
 
 mesh = obj.mesh;
 cell = mesh.cell;
-eNfp = obj.eCell.Np;
-FToN1 = zeros( eNfp, obj.Ne );
-FToN2 = zeros( eNfp, obj.Ne );
-nx = zeros( eNfp, obj.Ne );
-ny = zeros( eNfp, obj.Ne );
-nz = zeros( eNfp, obj.Ne );
-Js = zeros( eNfp, obj.Ne );
+Nfp = obj.Nfp;
+FToN1 = zeros( Nfp, obj.Ne );
+FToN2 = zeros( Nfp, obj.Ne );
+nx = zeros( Nfp, obj.Ne );
+ny = zeros( Nfp, obj.Ne );
+nz = zeros( Nfp, obj.Ne );
+Js = zeros( Nfp, obj.Ne );
 
 for n = 1:obj.Ne
     m2 = obj.FToM(2, n);
@@ -32,13 +32,70 @@ for n = 1:obj.Ne
     end
     
     % set outward normal vector
-    tmp = sum( cell.Nfp(1:f1) );
-    fid = (tmp - cell.Nfp(f1) + 1):tmp;
-    nx(:, n) = mesh.nx(fid, k1);
-    ny(:, n) = mesh.ny(fid, k1);
-    nz(:, n) = mesh.nz(fid, k1);
-    Js(:, n) = mesh.Js(fid, k1);
+    if mesh.cell.type == enumStdCell.Tri
+        [ nx(:, n), ny(:, n), Js(:, n) ] = TriJacobian2d( mesh, f1, k1, FToN1(:, n) );
+    elseif mesh.cell.type == enumStdCell.Quad
+        [ nx(:, n), ny(:, n), Js(:, n) ] = QuadJacobian2d( mesh, f1, k1, FToN1(:, n) );
+    end
 end
+
+obj.FToN1 = FToN1;
+obj.FToN2 = FToN2;
+obj.nx = nx;
+obj.ny = ny;
+obj.nz = nz;
+obj.Js = Js;
+
+ind = obj.FToN1 + mesh.cell.Np * ( obj.FToE(1, :) - 1 );
+obj.xb = mesh.x( ind );
+obj.yb = mesh.y( ind );
+
+end
+
+function [ nx, ny, Js ] = QuadJacobian2d( mesh, f1, e1, nodeId )
+rx = mesh.rx( nodeId, e1 ); ry = mesh.ry( nodeId, e1 );
+sx = mesh.sx( nodeId, e1 ); sy = mesh.sy( nodeId, e1 );
+
+if f1 == 1
+    nx = - sx;
+    ny = - sy;
+elseif f1 == 2
+    nx = rx;
+    ny = ry;
+elseif f1 == 3
+    nx = sx;
+    ny = sy;
+elseif f1 == 4
+    nx = - rx;
+    ny = - ry;
+end
+
+Js = sqrt( nx .* nx + ny .* ny );
+nx = nx ./ Js;
+ny = ny ./ Js;
+Js = Js .* mesh.J( nodeId, e1 );
+
+end
+
+function [ nx, ny, Js ] = TriJacobian2d( mesh, f1, e1, nodeId )
+rx = mesh.rx( nodeId, e1 ); ry = mesh.ry( nodeId, e1 );
+sx = mesh.sx( nodeId, e1 ); sy = mesh.sy( nodeId, e1 );
+
+if f1 == 1
+    nx = - sx;
+    ny = - sy;
+elseif f1 == 2
+    nx = rx + sx;
+    ny = ry + sy;
+elseif f1 == 3
+    nx = - rx;
+    ny = - ry;
+end
+
+Js = sqrt( nx .* nx + ny .* ny );
+nx = nx ./ Js;
+ny = ny ./ Js;
+Js = Js .* mesh.J( nodeId, e1 );
 
 end
 

@@ -16,7 +16,8 @@ classdef Visual2d < AbstractVisual
             obj = obj.InitVisual2d(  );
         end
 
-        drawResult( obj, step, fieldId );
+        drawResult( obj, field );
+        drawOutputResult( obj, step, fieldId );
         drawMesh( obj );
     end
 

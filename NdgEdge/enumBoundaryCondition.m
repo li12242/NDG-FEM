@@ -5,7 +5,7 @@
 %> This class is part of the NDGOM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef NdgEdgeType < int8
+classdef enumBoundaryCondition < int8
     
     enumeration
         Inner           (0)

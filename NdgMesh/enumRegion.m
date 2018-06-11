@@ -5,16 +5,10 @@
 %> This class is part of the NDGOM software. 
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef NdgRegionType < int8
-    
+classdef enumRegion < int8
     enumeration
-        Normal      (1) % 
-        Refine      (2) % refined cell, not participate in calculation
-        Sponge      (3) % sponge cell
-        Wet         (4) % well cell (SWE)
-        Dry         (5) % dry cell (SWE)
-        PartialWet  (6)
-        PartialWetFlood    (7)
-        PartialWetDamBreak (8)
+        Normal      (0) % normal element
+        Coarse      (1) % coarse element, exclude from calculation
+        Refine      (2) % refined element, participate in calculation
     end
 end

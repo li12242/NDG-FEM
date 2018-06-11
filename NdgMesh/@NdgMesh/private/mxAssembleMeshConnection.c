@@ -8,8 +8,8 @@
 #define max(a, b) ((a > b) ? a : b)
 #define min(a, b) ((a < b) ? a : b)
 
-#define NRHS 14
-#define NLHS 4
+#define NRHS 13
+#define NLHS 3
 
 /**
  * @brief
@@ -44,7 +44,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double *EToM = mxGetPr(prhs[10]);
   double *EToE = mxGetPr(prhs[11]);
   double *EToF = mxGetPr(prhs[12]);
-  double *EToB = mxGetPr(prhs[13]);
 
   const int Nv1 = mxGetM(prhs[8]);
   const int Nv2 = mxGetM(prhs[9]);
@@ -56,11 +55,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   plhs[0] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
   plhs[1] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
   plhs[2] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
-  plhs[3] = mxCreateNumericArray(ndimOut, dimOut, mxDOUBLE_CLASS, mxREAL);
   double *EToM1 = mxGetPr(plhs[0]);
   double *EToE1 = mxGetPr(plhs[1]);
   double *EToF1 = mxGetPr(plhs[2]);
-  double *EToB1 = mxGetPr(plhs[3]);
 
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(DG_THREADS)
@@ -72,7 +69,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       EToM1[sk] = MeshId1;
       EToE1[sk] = EToE[sk];
       EToF1[sk] = EToF[sk];
-      EToB1[sk] = EToB[sk];
 
       const int ind = (int)EToE[sk] - 1;
 
@@ -95,7 +91,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
               EToM1[sk] = MeshId2;
               EToE1[sk] = k2 + 1;  // start from 1
               EToF1[sk] = f2 + 1;  // start from 1
-              EToB1[sk] = 1;
             }
           }
         }

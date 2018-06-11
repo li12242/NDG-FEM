@@ -1,4 +1,4 @@
-classdef DamBreakDryUniformMesh2d < SWEWDPreBlanaced2d
+classdef DamBreakDryUniformMesh2d < SWEPreBlanaced2d
     
     properties( SetAccess = protected )
         theta
@@ -18,7 +18,7 @@ classdef DamBreakDryUniformMesh2d < SWEWDPreBlanaced2d
     methods
         function obj = DamBreakDryUniformMesh2d(N, M, cellType, theta)
             [ mesh ] = makeUniformMesh(N, M, cellType, theta);
-            obj = obj@SWEWDPreBlanaced2d();
+            obj = obj@SWEPreBlanaced2d();
             obj.theta = theta;
             obj.initPhysFromOptions( mesh );
             obj.fphys = obj.matEvaluatePostFunc( obj.fphys );
@@ -58,15 +58,14 @@ classdef DamBreakDryUniformMesh2d < SWEWDPreBlanaced2d
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('NumFluxType') = SWENumFluxType.HLL;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('NumFluxType') = enumSWENumFlux.HLL;
         end
         
         fphys = getExactFunction( obj, time )
@@ -81,10 +80,10 @@ bctype = [...
     NdgEdgeType.SlipWall, ...
     NdgEdgeType.SlipWall];
 
-if (type == NdgCellType.Tri)
+if (type == enumStdCell.Tri)
     mesh = makeUniformRotationTriMesh(N, [0, 1000], [-10, 10], ...
         M, ceil(M/50), bctype, 500, 0, theta);
-elseif(type == NdgCellType.Quad)
+elseif(type == enumStdCell.Quad)
     mesh = makeUniformRotationQuadMesh(N, [0, 1000], [-10, 10], ...
         M, ceil(M/50), bctype, 500, 0, theta );
 else

@@ -23,7 +23,8 @@ classdef AdvAbstractConstFlow2d < NdgPhysMat
             initPhysFromOptions@NdgPhysMat( obj, mesh );
             finalTime = obj.getOption('finalTime');
             for m = 1:obj.Nmesh
-                obj.fext{m} = obj.getExtFunc(obj.meshUnion, finalTime);
+                mesh = obj.meshUnion(m);
+                obj.fext{m} = obj.getExtFunc(mesh.x, mesh.y, finalTime);
             end
         end
         
@@ -52,14 +53,14 @@ classdef AdvAbstractConstFlow2d < NdgPhysMat
         end
         
         function [ fM, fP ] = matImposeBoundaryCondition( obj, edge, nx, ny, fM, fP, fext )
-            ind = ( edge.ftype == double( NdgEdgeType.Clamped ) );
+            ind = ( edge.ftype == enumBoundaryCondition.Clamped );
             fP(:, ind) = 0;
         end
         
     end
     
     methods( Abstract, Access = protected )
-        [ fext ] = getExtFunc( mesh, time );
+        [ fext ] = getExtFunc( obj, x, y, time );
     end
     
 end

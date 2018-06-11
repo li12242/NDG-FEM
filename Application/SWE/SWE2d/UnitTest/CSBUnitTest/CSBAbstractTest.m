@@ -1,7 +1,7 @@
 classdef CSBAbstractTest < SWEPreBlanaced2d
     
     methods
-        function checkWellBalanced( obj, m, k )
+        function checkVolumeTerm( obj, m, k )
             mesh = obj.meshUnion(m);
             Np = mesh.cell.Np;
             % variable
@@ -17,7 +17,7 @@ classdef CSBAbstractTest < SWEPreBlanaced2d
             
             % volume integral
             fprintf('\nCheck Volume Flux Term\n');
-            obj.advectionSolver.evaluateAdvectionRHS( obj.fphys );
+            % obj.advectionSolver.evaluateAdvectionRHS( obj.fphys );
             [ E, G ] = obj.matEvaluateFlux( mesh, obj.fphys{m} );
             eflux = E(:, k, :);
             gflux = G(:, k, :);
@@ -33,43 +33,64 @@ classdef CSBAbstractTest < SWEPreBlanaced2d
             end
             
             fprintf('\nExact Volume Flux Term\n');
+            Eh = ones( Np, 1 ); Ehu = ones( Np, 1 ); Ehv = ones( Np, 1 );
+            Gh = ones( Np, 1 ); Ghu = ones( Np, 1 ); Ghv = ones( Np, 1 );
             for n = 1:Np
-                [ Eh, Ehu, Ehv, Gh, Ghu, Ghv ] = obj.evaluateVolumeFluxTerm...
+                [ Eh(n), Ehu(n), Ehv(n), Gh(n), Ghu(n), Ghv(n) ] = obj.evaluateVolumeFluxTerm...
                     ( h(n), hu(n), hv(n), z(n) );
-                
-                fprintf('n = %d, E(h) = %f, E(hu) = %f, E(hv) = %f\n', ...
-                    n, Eh, Ehu, Ehv );
-                fprintf('n = %d, G(h) = %f, G(hu) = %f, G(hv) = %f\n', ...
-                    n, Gh, Ghu, Ghv );
             end
-%             fprintf('|  Field  |  Node Id  |  E  |  G  |  F  |\n');
-%             for fld = 1:3
-%                 for n = 1:cell.Np
-%                     fprintf('|  fld = %d  |  %d  |  E = %e  |  G = %e  |  F = %e  |\n', fld, n, ...
-%                         E(n, k, fld), G(n, k, fld), obj.frhs{m}(n, k, fld)  );
-%                 end
-%             end
-            % volume integral
-%             obj.frhs{m} = zeros( obj.meshUnion.cell.Np, obj.meshUnion.K );
-%             obj.matEvaluateSourceTerm( obj.fphys );
-%             fprintf('-------- topography source --------\n');
-%             for fld = 1:3
-%                 for n = 1:cell.Np
-%                     fprintf('|  fld = %d  | %d | S = %e  |\n', fld, n, obj.frhs{m}(n, k, fld) );
-%                 end
-%             end
-%             % rhs
-%             obj.matEvaluateRHS( obj.fphys );
-%             fprintf('-------- RHS --------\n');
-%             for fld = 1:3
-%                 for n = 1:cell.Np
-%                     fprintf('|  fld = %d  | %d | rhs = %e  |\n', fld, n, obj.frhs{m}(n, k, fld) );
-%                 end
-%             end
+            
+            for n = 1:Np
+                fprintf('n = %d, E(h) = %f, E(hu) = %f, E(hv) = %f\n', ...
+                    n, Eh(n), Ehu(n), Ehv(n) );
+            end
+            for n = 1:Np
+                fprintf('n = %d, G(h) = %f, G(hu) = %f, G(hv) = %f\n', ...
+                    n, Gh(n), Ghu(n), Ghv(n) );
+            end
         end% func
+        
+        function checkSourceTerm( obj, m, k )
+            mesh = obj.meshUnion(m);
+            Np = mesh.cell.Np;
+            
+            h = obj.fphys{m}(:, k, 1); 
+            z = obj.fphys{m}(:, k, 4);
+            zx = obj.zGrad{m}(:, k, 1);
+            zy = obj.zGrad{m}(:, k, 2);
+            fprintf('\nConservative Variable\n');
+            for n = 1:Np
+                fprintf('n = %d, h = %f,  z = %f, zx = %f, zy = %f, eta = %f\n', ...
+                    n, h(n), z(n), zx(n), zy(n), h(n) + z(n));
+            end
+            
+            obj.matEvaluateTopographySourceTerm( obj.fphys );
+            Shu = obj.frhs{m}(:, :, 2);
+            Shv = obj.frhs{m}(:, :, 3);
+            fprintf('Source Term\n');
+            for n = 1:Np
+                fprintf('n = %d, Shu = %f, Shv = %f\n', n, Shu(n, k), Shv(n, k));
+            end
+            
+            fprintf('\nExact Source Term\n');
+            
+            Shu = zeros(Np, 1); Shv = zeros(Np, 1);
+            for n = 1:Np
+                [ Shu(n), Shv(n) ] = evaluateSourceTerm( obj, h(n), z(n), zx(n), zy(n) );
+            end
+            
+            for n = 1:Np
+                fprintf('n = %d, Shu = %f, Shv = %f\n', n, Shu(n), Shv(n));
+            end
+        end
     end
     
     methods( Access = protected )
+        function [ Shu, Shv ] = evaluateSourceTerm( obj, h, b, bx, by )
+            Shu = - obj.gra .* ( h +b ) .* bx;
+            Shv = - obj.gra .* ( h +b ) .* by;
+        end
+        
         function [ Eh, Ehu, Ehv, Gh, Ghu, Ghv ] = evaluateVolumeFluxTerm( obj, h, hu, hv, z )
             Eh = hu;
             Gh = hv;

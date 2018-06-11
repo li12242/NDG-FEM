@@ -12,14 +12,14 @@
 %> each elements. The numerical flux
 classdef SWEAbstract2d < NdgPhysMat
     
-    properties(Abstract, Constant)
+    properties (Abstract, Constant)
         %> wet/dry depth threshold
         hmin
         %> gravity acceleration
         gra
     end
     
-    properties( Constant )
+    properties ( Constant )
         %> number of physical field
         Nfield = 5
         %> number of variable field
@@ -28,9 +28,12 @@ classdef SWEAbstract2d < NdgPhysMat
         varFieldIndex = [ 1, 2, 3 ]
     end
     
-    properties( SetAccess = private )
+    properties ( SetAccess = protected )
         %> gradient of bottom elevation
         zGrad
+    end
+    
+    properties ( SetAccess = private )
         %> solver for coriolis source term
         coriolisSolver
         %> solver for friction source term
@@ -43,12 +46,8 @@ classdef SWEAbstract2d < NdgPhysMat
         limiterSolver
     end
     
-    methods( Access = public )
-        draw( obj, varargin )
-    end
-    
     % ======================================================================
-    methods( Hidden, Abstract ) % Abstract function, hidden
+    methods ( Hidden, Abstract ) % Abstract function, hidden
         %> abstract function to evaluate volume flux term
         [ E, G ] = matEvaluateFlux( obj, mesh, fphys );        
     end
@@ -56,12 +55,12 @@ classdef SWEAbstract2d < NdgPhysMat
 
     
     % ======================================================================
-    methods( Abstract, Access = protected )
+    methods ( Abstract, Access = protected )
         %> determine wetting and drying status
         matUpdateWetDryState(obj, fphys)
         
         %> evaluate topography source term
-        [ ] = matEvaluateTopographySourceTerm( obj, fphys )
+        matEvaluateTopographySourceTerm( obj, fphys )
         
         %> evaluate post function
         [ fphys ] = matEvaluatePostFunc(obj, fphys)
@@ -69,7 +68,7 @@ classdef SWEAbstract2d < NdgPhysMat
     % ======================================================================
 
     
-    methods( Hidden, Sealed, Access = public ) % public function, not allow to inherit
+    methods ( Hidden, Sealed, Access = public ) % public function, not allow to inherit
         
         %> impose boundary condition and evaluate cell boundary values
         [ fM, fP ] = matImposeBoundaryCondition( obj, edge, nx, ny, fM, fP, fext );
@@ -86,14 +85,14 @@ classdef SWEAbstract2d < NdgPhysMat
         end% func
     end
         
-    methods( Sealed, Access = protected )
+    methods ( Sealed, Access = protected )
         [ fphys ] = matEvaluateLimiter( obj, fphys )
         
         %> determine time interval
         [ dt ] = matUpdateTimeInterval( obj, fphys )
         
         %> evaluate source term
-        [ ] = matEvaluateSourceTerm( obj, fphys )
+        matEvaluateSourceTerm( obj, fphys )
     end
     
 end

@@ -40,27 +40,23 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
             finalTime = 2.0;
             option('startTime') = 0.0;
             option('finalTime') = finalTime;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.Constant;
-%             option('CFL') = 0.2;
             option('timeInterval') ...
                 = 2/obj.M/sqrt(obj.u0 ^ 2 + obj.v0 ^2)/(2*obj.N + 1);
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = finalTime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('limiterType') = NdgLimiterType.None;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
         end
                
         %> the exact function
-        function [ f_ext ] = getExtFunc(obj, mesh, time)
+        function [ f_ext ] = getExtFunc(obj, x, y, time)
             xc = obj.x0 + obj.u0.*time;
             yc = obj.y0 + obj.v0.*time;
             
             sigma = 125*1e3/(33*33);
-            t = -( (mesh.x-xc).^2+(mesh.y-yc).^2 )*sigma;
+            t = -( (x-xc).^2+(y-yc).^2 )*sigma;
             f_ext = exp(t);
         end% func
     end
@@ -68,13 +64,15 @@ classdef ConstAdvUniformMesh2d < AdvAbstractConstFlow2d
 end
 
 function mesh = makeUniformMesh(N, M, type)
-bctype = [NdgEdgeType.Clamped, NdgEdgeType.Clamped, ...
-    NdgEdgeType.Clamped, NdgEdgeType.Clamped];
+bctype = [enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.Clamped];
 
-if (type == NdgCellType.Tri)
+if (type == enumStdCell.Tri)
     mesh = makeUniformTriMesh(N, [-1, 1], [-1, 1], ...
         M, M, bctype);
-elseif(type == NdgCellType.Quad)
+elseif(type == enumStdCell.Quad)
     mesh = makeUniformQuadMesh(N, [-1, 1], [-1, 1], ...
         M, M, bctype);
 else

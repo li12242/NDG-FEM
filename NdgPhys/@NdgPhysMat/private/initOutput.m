@@ -5,13 +5,13 @@ function [ outputObj ] = initOutput( physMat, mesh )
 if physMat.option.isKey('outputTimeInterval')
     dt = physMat.getOption( 'outputTimeInterval' );
 else
-    error( 'Please set the output time interval option "outputTimeInterval".\n' );
+    error( 'Please set the output time interval option "outputTimeInterval".' );
 end
 
 if physMat.option.isKey('outputCaseName')
     casename = physMat.getOption( 'outputCaseName' );
 else
-    error( 'Please set the output case name option "outputCaseName".\n' );
+    error( 'Please set the output case name option "outputCaseName".' );
 end
 
 if physMat.option.isKey('outputType')

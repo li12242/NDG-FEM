@@ -5,9 +5,9 @@
 #include "mex.h"
 #include "blas.h"
 
-#if !defined(_WIN32)
-#define dgemm dgemm_
-#endif
+// #if !defined(_WIN32)
+// #define dgemm dgemm_
+// #endif
 
 #define DEBUG 0
 
@@ -30,11 +30,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double *Mb = mxGetPr(prhs[1]);
   double *FToE = mxGetPr(prhs[2]);
   double *FToN1 = mxGetPr(prhs[3]);
-  // double *FToN2 = mxGetPr(prhs[4]);
   double *Js = mxGetPr(prhs[4]);
   double *J = mxGetPr(prhs[5]);
   double *fluxM = mxGetPr(prhs[6]);
-  // double *fluxP = mxGetPr(prhs[8]);
   double *fluxS = mxGetPr(prhs[7]);
 
   // dims = mxGetDimensions(prhs[6]);

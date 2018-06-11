@@ -51,7 +51,7 @@ classdef NdgMeshTest < matlab.unittest.TestCase
                     testMesh = NdgMesh2d(stdCell,Nv,vx,vy,K,EToV,EToR,BCToV);
                 case NdgCellType.Quad 
                     Nv = stdCell.Nv;
-                    vx = stdCell.vr*3 + 2*test.cell.vs + 2;
+                    vx = stdCell.vr*3 + 2*stdCell.vs + 2;
                     vy = stdCell.vs/2+1;
                     K = 1;
                     EToV = [1,2,3,4]';

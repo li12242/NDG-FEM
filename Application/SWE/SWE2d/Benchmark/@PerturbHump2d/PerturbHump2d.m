@@ -34,19 +34,16 @@ classdef PerturbHump2d < SWEPreBlanaced2d
             outputIntervalNum = 200;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType') = SWECoriolisType.None;
-            option('WindType') = SWEWindType.None;
-            option('FrictionType') = SWEFrictionType.None;
-            option('SWELimiterType') = SWELimiterType.OnElevation;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('CoriolisType') = enumSWECoriolis.None;
+            option('WindType') = enumSWEWind.None;
+            option('FrictionType') = enumSWEFriction.None;
+            option('SWELimiterType') = enumSWELimiter.OnElevation;
         end
     end
 end
@@ -60,9 +57,9 @@ bctype = [...
 
 xlim = [0, 2]; 
 ylim = [0, 1];
-if (type == NdgCellType.Tri)
+if (type == enumStdCell.Tri)
     mesh = makeUniformTriMesh(N, xlim, ylim, M, ceil(M/2), bctype);
-elseif(type == NdgCellType.Quad)
+elseif(type == enumStdCell.Quad)
     mesh = makeUniformQuadMesh(N, xlim, ylim, M, ceil(M/2), bctype);
 else
     msgID = [mfile, ':inputCellTypeError'];

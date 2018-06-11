@@ -1,9 +1,11 @@
 classdef NdgInnerEdge2d < NdgInnerEdge
     
     methods
-        function obj = NdgInnerEdge2d( mesh, meshId )
-            obj = obj@NdgInnerEdge( mesh, meshId );
+        function obj = NdgInnerEdge2d( meshUnion, meshId )
+            obj = obj@NdgInnerEdge( meshUnion, meshId );
         end
+        
+        [ fnode ] = proj_vert2node( obj, fvert );
         
         function draw(obj, varargin)
             xfM = zeros( obj.Nfp, obj.Ne );
@@ -25,7 +27,7 @@ classdef NdgInnerEdge2d < NdgInnerEdge
     
     methods( Access = protected )
         
-        [ Nfp, M ] = assembleMassMatrix( obj );
+        obj = assembleMassMatrix( obj );
         %> connect edge to elements
         obj = assembleEdgeConnect( obj, mesh )
         obj = assembleNodeProject( obj, mesh )

@@ -1,4 +1,4 @@
-classdef SWEFrictionType < int8
+classdef enumSWEFriction < int8
     
     enumeration
         None   (1)

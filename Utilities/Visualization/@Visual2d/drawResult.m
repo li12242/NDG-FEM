@@ -1,16 +1,15 @@
-function drawResult( obj, step, fieldId )
-    field = obj.outputObj.readOutputResult(step);
+function drawResult( obj, field )
     
     isFigureEmpty = isempty( obj.drawHandle );
     if isFigureEmpty
-        drawNewFigure( obj, field(:, :, fieldId) );
+        drawNewFigure( obj, field );
         return;
     end
 
     if isvalid( obj.drawHandle )
         updateFigure( obj, field );
     else
-        drawNewFigure( obj, field(:, :, fieldId) );
+        drawNewFigure( obj, field );
     end
 end
 

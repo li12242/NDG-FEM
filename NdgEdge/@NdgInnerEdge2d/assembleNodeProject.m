@@ -1,5 +1,6 @@
 function obj = assembleNodeProject( obj, mesh )
 
+mesh = obj.mesh;
 cell = mesh.cell;
 Nfp = obj.Nfp;
 Ne = obj.Ne;

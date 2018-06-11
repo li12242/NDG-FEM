@@ -1,6 +1,6 @@
 classdef AdvAbstractVarFlow2d < NdgPhysMat
     
-    properties(Constant)
+    properties (Constant)
         %> Number of physical field
         Nfield = 3
         %> Number of variable field
@@ -16,14 +16,6 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
     end
     
     methods ( Hidden )
-
-        function initPhysFromOptions( obj, mesh )
-            initPhysFromOptions@NdgPhysMat( obj, mesh );
-            finalTime = obj.getOption('finalTime');
-            for m = 1:obj.Nmesh
-                obj.fext{m} = obj.getExtFunc(obj.meshUnion(m), finalTime);
-            end
-        end
         
         function [ E, G ] = matEvaluateFlux( obj, mesh, fphys )
             E = fphys(:,:,2) .* fphys(:,:,1);
@@ -44,14 +36,14 @@ classdef AdvAbstractVarFlow2d < NdgPhysMat
         end
         
         function [ fm, fp ] = matImposeBoundaryCondition( obj, edge, nx, ny, fm, fp, fext )
-            ind = ( edge.ftype == 5 );
-            fp(:, ind) = 0;
+            ind = ( edge.ftype == enumBoundaryCondition.Clamped );
+            fp(:, ind) = fext(:, ind);
         end
         
     end% methods
     
     methods( Abstract, Access = protected )
-        [ fext ] = getExtFunc( mesh, time );
+        [ fext ] = getExtFunc( obj, x, y, time );
     end
 end
 

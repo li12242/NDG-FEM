@@ -8,9 +8,11 @@ function initPhysFromOptions( obj, mesh )
         Np = obj.meshUnion(m).cell.Np;
         K = obj.meshUnion(m).K;
         obj.frhs{m} = zeros( Np, K, obj.Nvar );
-%         Nfp = mesh(m).BoundaryEdge.Nfp;
-%         Ne = mesh(m).BoundaryEdge.Ne;
-%         obj.fext{m} = zeros( Nfp, Ne, obj.Nfield );
+        if ~isempty( mesh(m).BoundaryEdge )
+            Nfp = mesh(m).BoundaryEdge.Nfp;
+            Ne = mesh(m).BoundaryEdge.Ne;
+            obj.fext{m} = zeros( Nfp, Ne, obj.Nfield );
+        end
     end
 
     % Setup the output NetCDF file object
@@ -33,30 +35,3 @@ function initPhysFromOptions( obj, mesh )
     %> choose the limiter
     [ obj.limiter ] = initSlopeLimiter( obj );
 end% func
-
-% function [ ncfile ] = makeBasicOutputNetcdfFile( phys, ind, mesh )
-%     dimTime = NdgNcDim('Nt', 0);
-%     dimK = NdgNcDim('K', mesh.K);
-%     dimNp = NdgNcDim('Np', mesh.cell.Np);
-%     dimNfield = NdgNcDim('Nvar', phys.Nvar);
-% 
-%     varTime = NdgNcVar('time', dimTime, enumNcData.NC_DOUBLE );
-%     varField = NdgNcVar('fphys', [dimNp, dimK, dimNfield, dimTime], enumNcData.NC_DOUBLE);
-% 
-%     filename = [ phys.getOption('outputNetcdfCaseName') , '.', num2str(ind),...
-%         '-', num2str( phys.Nmesh ), '.nc' ];
-% 
-%     intervalType = phys.getOption('outputIntervalType');
-%     switch intervalType
-%         case enumOutputInterval.DeltaTime
-%             interval = phys.getOption('outputTimeInterval');
-%         case enumOutputInterval.DeltaStep
-%             interval = phys.getOption('outputStepInterval');
-%         otherwise
-%             msgID = [mfilename, ':outputIntervalTypeInvalid'];
-%             msgtext = 'The output type is unknow.';
-%             throw( MException(msgID, msgtext) );
-%     end
-%     ncfile = getOutputFile( enumOutputFile.NetCDF, intervalType, filename, ...
-%         [dimTime, dimK, dimNp, dimNfield], [varTime, varField], interval);
-% end% func

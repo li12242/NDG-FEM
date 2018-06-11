@@ -5,67 +5,33 @@
 %> This class is part of the NDG-FEM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
-classdef NdgHaloEdge < handle
+classdef NdgHaloEdge < NdgInnerEdge
     
     properties ( SetAccess = protected )
-        %> mesh obj
-        mesh
-        %> edge std cell obj
-        eCell
-        %> num of edges
-        Ne
-        %> num of face nodes
-        Nfp
-        %> vertex index on each edge
-        FToV
-        %> local and adjacent element and face index
-        FToE, FToF
-        %> mesh index of local and adjacent element
-        FToM
-        
-        %> interp node index of 1st ele on each edge
-        FToN1
-        %> interp node index of 2nd ele on each edge
-        FToN2
-        %> outward normal vector
-        nx, ny, nz
-        %> determination of edge Jacabian
-        Js
         %> face type of each edge
         ftype
-    end
-    
-    methods(Abstract, Hidden=true, Access=protected)
-        [ eCell ] = setEdgeReferCell( obj, mesh );
+        %> boundary coordinate
+        xb, yb, zb
     end
     
     methods
         %> \brief constructor for Halo edge
         %> \param[in] meshUnion input mesh vector
         %> \param[in] locMeshId local mesh indices
-        function obj = NdgHaloEdge( meshUnion, locMeshId )
-            obj.mesh = meshUnion( locMeshId );
-            
-            % set reference element
-            obj.eCell = obj.setEdgeReferCell( obj.mesh );
-            
-            % set face node num
-            obj.Nfp = obj.eCell.Np;
-            
-            % connect edge to elements
-            [ obj.Ne, obj.FToE, obj.FToF, obj.FToV, obj.FToM, obj.ftype ] ...
-                = obj.assembleEdgeConnect( obj.mesh, locMeshId );
-            
-            [ obj.FToN1, obj.FToN2, obj.nx, obj.ny, obj.nz, obj.Js ] ...
-                = assembleNodeProject( obj, meshUnion );
+        function obj = NdgHaloEdge( meshUnion, locMeshId, BCToV )
+            obj = obj@NdgInnerEdge( meshUnion, locMeshId );
+            obj = assembleBoundaryConnection(obj, BCToV);
         end
         
+        %> evaluate right-hand-side for surface integral term
+        frhs = matEvaluateStrongFromEdgeRHS( obj, fluxM, fluxP, fluxS );
+        %> get surface values from physical field
+        [ fM, fP ] = matEvaluateSurfValue( obj, fphys );
         
     end
     
     methods( Abstract, Access = protected )
-        [ Nedge, FToE, FToF, FToV, FToM, ftype ] = assembleEdgeConnect( obj, mesh, meshId );
-        [ FToN1, FToN2, nx, ny, nz, Js ] = assembleNodeProject( obj, meshUnion )
+        obj = assembleBoundaryConnection(obj, BCToV);
     end
 end
 

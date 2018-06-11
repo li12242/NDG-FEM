@@ -21,7 +21,7 @@ classdef NdgQuadFreeStrongFormAdvSolver2d < NdgQuadFreeStrongFormSolver & ...
 
                 edge = phys.meshUnion(m).BoundaryEdge;
                 [ fm, fp ] = edge.matEvaluateSurfValue( fphys );
-                [ fm, fp ] = phys.matImposeBoundaryCondition( edge, edge.nx, edge.ny, fm, fp, phys.fext );
+                [ fm, fp ] = phys.matImposeBoundaryCondition( edge, edge.nx, edge.ny, fm, fp, phys.fext{m} );
                 [ fluxM ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, fm );
                 [ fluxS ] = phys.matEvaluateSurfNumFlux( edge, edge.nx, edge.ny, fm, fp );
                 [ phys.frhs{m} ] = phys.frhs{m} + edge.matEvaluateStrongFromEdgeRHS( fluxM, fluxS );

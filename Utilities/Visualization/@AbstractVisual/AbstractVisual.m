@@ -6,7 +6,8 @@ classdef AbstractVisual < handle
     end
 
     methods (Abstract, Access = public)
-        drawResult( obj, step, fieldId );
+        drawResult( obj, field );
+        drawOutputResult( obj, step, fieldId );
         drawMesh( obj );
     end% methods
 
@@ -16,10 +17,10 @@ classdef AbstractVisual < handle
             obj.mesh = output.mesh;
         end
         
-        function drawResultAll( obj, stepInterval, fieldId )
+        function drawOutputResultAll( obj, stepInterval, fieldId )
             Nstep = obj.outputObj.outputStep;
             for n = 1 : stepInterval : Nstep
-                obj.drawResult( n, fieldId );
+                obj.drawOutputResult( n, fieldId );
                 drawnow;
             end
         end
