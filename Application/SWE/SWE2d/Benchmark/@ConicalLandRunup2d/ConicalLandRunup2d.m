@@ -1,5 +1,5 @@
 
-classdef ConicalLandRunup2d < SWEPreBlanaced2d
+classdef ConicalLandRunup2d < SWEWDPreBlanaced2d
     
     properties(Constant)
         %> wet/dry depth threshold
@@ -8,25 +8,25 @@ classdef ConicalLandRunup2d < SWEPreBlanaced2d
         gra = 9.8
         %> initial water depth
         h0 = 0.32
+        %> island central
         x0 = 12.5
         y0 = 15
+        %> island length
         L = 15
         alpha = 0.1
     end
     
     methods
-        function obj = ConicalLand2d(N, M, cellType)
+        function obj = ConicalLandRunup2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-%             mesh = readGmshFile( N );
-            obj = obj@SWEPreBlanaced2d();
+            % mesh = readGmshFile( N );
+            obj = obj@SWEWDPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
         end
         
         drawMaxRunup( obj )
         drawResult( obj )
         drawGaugeResult( obj )
-        
-        
     end
     
     methods(Access=protected)
@@ -45,6 +45,7 @@ classdef ConicalLandRunup2d < SWEPreBlanaced2d
             h = obj.h0 + obj.alpha * obj.h0 * sech2 * theta;
             for m = 1:obj.Nmesh
                 obj.fext{m}(:,:,1) = h;
+%                 obj.fext{m}(:,:,1) = obj.h0 - obj.fext{m}(:,:,4);
             end
         end
         
@@ -59,10 +60,11 @@ classdef ConicalLandRunup2d < SWEPreBlanaced2d
                 r = sqrt( (mesh.x - xt).^2 + (mesh.y - yt).^2 );
                 bot = min( 0.625, 0.9 - r/4 );
                 bot( bot <= 0 ) = 0.0;
+                h = obj.h0 - bot;
+                h( h < 0 ) = 0.0;
+                
+                fphys{m}(:,:,1) = h;
                 fphys{m}(:,:,4) = bot;
-                temp = obj.h0 - bot;
-                temp( temp < 0 ) = 0.0;
-                fphys{m}(:,:,1) = temp;
             end
         end
         
@@ -71,18 +73,14 @@ classdef ConicalLandRunup2d < SWEPreBlanaced2d
             outputIntervalNum = 100;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType') = SWECoriolisType.None;
-            option('WindType') = SWEWindType.None;
-            option('FrictionType') = SWEFrictionType.None;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('SWELimiterType') = enumSWELimiter.OnElevation;
         end
     end
     
@@ -96,14 +94,14 @@ end
 
 function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ClampedDepth, ...
-    NdgEdgeType.ZeroGrad];
+    enumBoundaryCondition.ZeroGrad, ...
+    enumBoundaryCondition.ZeroGrad, ...
+    enumBoundaryCondition.ClampedDepth, ...
+    enumBoundaryCondition.ZeroGrad];
 
-if (type == NdgCellType.Tri)
+if (type == enumStdCell.Tri)
     mesh = makeUniformTriMesh(N, [0, 25], [0, 30], M, M, bctype);
-elseif(type == NdgCellType.Quad)
+elseif(type == enumStdCell.Quad)
     mesh = makeUniformQuadMesh(N, [0, 25], [0, 30], M, M, bctype);
 else
     msgID = [mfile, ':inputCellTypeError'];

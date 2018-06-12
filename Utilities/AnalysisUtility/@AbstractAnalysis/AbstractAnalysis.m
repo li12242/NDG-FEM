@@ -9,6 +9,8 @@ classdef AbstractAnalysis < handle
     properties ( SetAccess = protected )
         %> num of gauge points
         Ng
+        %> num of physical field
+        Nfield
         %> gauge point position
         xg, yg, zg
         %> mesh id of gauge point location
@@ -27,9 +29,11 @@ classdef AbstractAnalysis < handle
     methods
         function obj = AbstractAnalysis( phys )
             obj.phys = phys;
+            obj.Nfield = phys.Nfield;
         end
 
-        InterpGaugeResult( obj, fieldId )
+        data = InterpGaugeResult( obj, fphys )
+        data = InterpOutputResult2GaugePoint( obj, step )
     end
     
 end

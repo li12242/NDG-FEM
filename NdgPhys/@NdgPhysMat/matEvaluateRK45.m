@@ -14,48 +14,48 @@ for n = 1:obj.Nmesh
 end
 fphys = obj.fphys;
 
-DEBUG = 0;
+DEBUG = 1;
 if DEBUG
     visual = makeVisualizationFromNdgPhys( obj );
 end
 
 hwait = waitbar(0,'Runing MatSolver....');
 % try
-    while( time < ftime )
-        dt = obj.matUpdateTimeInterval( fphys );
-        if( time + dt > ftime )
-            dt = ftime - time;
-        end
-
-        for intRK = 1:5
-            tloc = time + rk4c( intRK ) * dt;
-            obj.matUpdateExternalField( tloc, fphys );
-            obj.matEvaluateRHS( fphys );
-
-            for n = 1:Nmesh
-                resQ{n} = rk4a( intRK ) * resQ{n} + dt * obj.frhs{n};
-                fphys{n}(:,:, obj.varFieldIndex) ...
-                    = fphys{n}(:,:, obj.varFieldIndex) + rk4b(intRK) * resQ{n};
-            end
-            fphys = obj.matEvaluateLimiter( fphys );
-            fphys = obj.matEvaluatePostFunc( fphys );
-
-            if DEBUG
-                visual.drawResult( fphys{1}(:, :, 1) + fphys{1}(:, :, 4) )
-            end
-        end
-        
-        
-
-        time = time + dt;
-        obj.matUpdateOutputResult( time, fphys );
-        timeRatio = time / ftime;
-        waitbar( timeRatio, hwait, ...
-            ['Runing MatSolver ', num2str( timeRatio ), '....']);
+while( time < ftime )
+    dt = obj.matUpdateTimeInterval( fphys );
+    if( time + dt > ftime )
+        dt = ftime - time;
     end
-    hwait.delete();
-    obj.matUpdateFinalResult( time, fphys );
-    obj.fphys = fphys;
+    
+    for intRK = 1:5
+        tloc = time + rk4c( intRK ) * dt;
+        obj.matUpdateExternalField( tloc, fphys );
+        obj.matEvaluateRHS( fphys );
+        
+        for n = 1:Nmesh
+            resQ{n} = rk4a( intRK ) * resQ{n} + dt * obj.frhs{n};
+            fphys{n}(:,:, obj.varFieldIndex) ...
+                = fphys{n}(:,:, obj.varFieldIndex) + rk4b(intRK) * resQ{n};
+        end
+        fphys = obj.matEvaluateLimiter( fphys );
+        fphys = obj.matEvaluatePostFunc( fphys );
+        
+        if DEBUG
+            visual.drawResult( fphys{1}(:, :, 1) + fphys{1}(:, :, 4) )
+        end
+    end
+    
+    
+    
+    time = time + dt;
+    obj.matUpdateOutputResult( time, fphys );
+    timeRatio = time / ftime;
+    waitbar( timeRatio, hwait, ...
+        ['Runing MatSolver ', num2str( timeRatio ), '....']);
+end
+hwait.delete();
+obj.matUpdateFinalResult( time, fphys );
+obj.fphys = fphys;
 % catch
 %     hwait.delete();
 % end

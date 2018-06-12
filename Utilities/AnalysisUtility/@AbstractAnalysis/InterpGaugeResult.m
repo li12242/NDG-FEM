@@ -1,19 +1,13 @@
-function InterpGaugeResult( obj, fieldId )
+function data = InterpGaugeResult( obj, fphys )
     
+    data = zeros( obj.Ng, obj.Nfield );
     for n = 1 : obj.Ng
-        figure(n)
         meshId = obj.gaugeMesh(n);
         cellId = obj.gaugeCell(n);
         Vg = obj.Vg{n};
 
-        Nstep = obj.phys.outputFile(meshId).outputStep;
-        time = obj.phys.outputFile(meshId).outputTime;
-        data = zeros( Nstep, 1 );
-        for i = 1 : Nstep
-            field = obj.phys.outputFile( meshId ).readOutputResult( i );
-            data(i) = Vg * field(:, cellId, fieldId);
+        for fld = 1:obj.Nfield
+            data(n, fld) = Vg * fphys{meshId}(:, cellId, fld);
         end
-        
-        plot( time, data ); 
     end
 end

@@ -1,39 +1,51 @@
 classdef SWEWDPreBlanaced2d < SWEPreBlanaced2d
     
+    methods( Hidden )
+        function [ E, G ] = matEvaluateFlux( obj, mesh, fphys )
+            [ E, G ] = mxEvaluateFlux2d( obj.hmin, obj.gra, mesh.status, fphys );
+        end
+    end
+    
     methods( Access = protected )
         
-        function matUpdateWDWetDryState(obj, fphys)
+%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+%             for m = 1:obj.Nmesh
+%                 mesh = obj.meshUnion(m);
+%                 flg = ( mesh.status == ...
+%                     int8( enumSWERegion.PartialWetDamBreak ) ) ...
+%                     | ( mesh.status == ...
+%                     int8( enumSWERegion.PartialWetFlood ) );
+%                 
+%                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 1);
+%                 tempWD(1, :) = max( 0, tempWD(1, :) );
+%                 tempWD(4:end, :) = 0;
+%                 fphys{m}(:, flg, 1) = mesh.cell.V * tempWD;
+%                 
+%                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 2);
+%                 tempWD(4:end, :) = 0;
+%                 fphys{m}(:, flg, 2) = mesh.cell.V * tempWD;
+%                 
+%                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 3);
+%                 tempWD(4:end, :) = 0;
+%                 fphys{m}(:, flg, 3) = mesh.cell.V * tempWD;
+%             end
+%             obj.matUpdateWetDryState( fphys );
+%         end% func
+        
+        function matUpdateWetDryState(obj, fphys)
             for n = 1:obj.Nmesh
                 mesh = obj.meshUnion(n);
-                mesh.EToR = mxUpdateWDWetDryState( obj.hmin, fphys{n} );
+                mesh.status = mxUpdateWDWetDryState( obj.hmin, fphys{n} );
             end
         end% func
         
-        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+        function matEvaluateTopographySourceTerm( obj, fphys )
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                flg = ( mesh.EToR == int8( enumSWERegion.PartialWet ) );
-                
-                tempWD = mesh.cell.V \ fphys{m}(:, flg, 1);
-                ind = tempWD(1, :) < 0;
-                tempWD(1, ind) = 0;
-                tempWD(4:end, :) = 0;
-                fphys{m}(:, flg, 1) = mesh.cell.V * tempWD;
-                
-                for fld = 2:obj.Nvar % reconstruct the WD cell values
-                    tempWD = mesh.cell.V \ fphys{m}(:, flg, fld);
-                    tempWD(4:end, :) = 0;
-                    fphys{m}(:, flg, fld) = mesh.cell.V * tempWD;
-                end
+                obj.frhs{m} = obj.frhs{m} + mxEvaluateSourceTopography2d...
+                    ( obj.gra, mesh.status, fphys{m}, obj.zGrad{m} );
             end
-            
-            obj.matUpdateWetDryState( fphys );
-        end% func
-        
-%         function fphys = matEvaluateLimiter( obj, fphys )
-%             obj.matUpdateWDWetDryState( fphys )
-%             fphys = matEvaluateLimiter@SWEPreBlanaced2d( obj, fphys );
-%         end% func
+        end
     end
     
 end
