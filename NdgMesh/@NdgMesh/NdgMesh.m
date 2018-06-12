@@ -41,7 +41,7 @@ classdef NdgMesh < handle
         %> mesh index
         ind
         %> element status
-        status
+        status      int8
     end
     
     % elemental volume infomation

@@ -1,24 +1,24 @@
+#include <math.h>
 #include "mex.h"
 #include "mxSWE2d.h"
-#include <math.h>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 /** */
-void evaluateNodalFlux(double hcrit, ///< water depth threshold
-                       double gra,   ///< gravity accerelation
-                       double h,     ///< water depth
-                       double qx,    ///< flux
-                       double qy,    ///< flux
-                       double z,     ///< bottom elevation
-                       double *Eh,   ///< flux term
-                       double *Eqx,  ///< flux term
-                       double *Eqy,  ///< flux term
-                       double *Gh,   ///< flux term
-                       double *Gqx,  ///< flux term
-                       double *Gqy   ///< flux term
+void evaluateNodalFlux(double hcrit,  ///< water depth threshold
+                       double gra,    ///< gravity accerelation
+                       double h,      ///< water depth
+                       double qx,     ///< flux
+                       double qy,     ///< flux
+                       double z,      ///< bottom elevation
+                       double *Eh,    ///< flux term
+                       double *Eqx,   ///< flux term
+                       double *Eqy,   ///< flux term
+                       double *Gh,    ///< flux term
+                       double *Gqx,   ///< flux term
+                       double *Gqy    ///< flux term
 ) {
   if (h > hcrit) {
     double h2 = 0.5 * gra * (h * h - z * z);
@@ -29,7 +29,7 @@ void evaluateNodalFlux(double hcrit, ///< water depth threshold
     *Gqx = huv;
     *Eqy = huv;
     *Gqy = (qy * qy / h + h2);
-  } else { // for dry nodes
+  } else {  // for dry nodes
     *Eh = 0;
     *Eqx = 0;
     *Eqy = 0;

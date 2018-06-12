@@ -5,7 +5,7 @@ for m = 1:obj.Nmesh
     dx = sqrt( obj.meshUnion(m).LAV );
     N = obj.meshUnion(m).cell.N;
     dtm = mxUpdateTimeInterval2d( obj.hmin, ...
-        obj.gra, N, dx, obj.meshUnion(m).EToR, fphys{m} );
+        obj.gra, N, dx, obj.meshUnion(m).status, fphys{m} );
     
     if ( dtm > 0 )
         dt = min(dt, dtm * obj.cfl);

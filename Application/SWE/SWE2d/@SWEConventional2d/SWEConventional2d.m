@@ -3,7 +3,7 @@ classdef SWEConventional2d < SWEAbstract2d
     
     methods( Hidden )
         function [ E, G ] = matEvaluateFlux( obj, mesh, fphys )
-            [ E, G ] = mxEvaluateFlux2d( obj.hmin, obj.gra, mesh.EToR, fphys );
+            [ E, G ] = mxEvaluateFlux2d( obj.hmin, obj.gra, mesh.status, fphys );
         end
     end
     
@@ -30,7 +30,7 @@ classdef SWEConventional2d < SWEAbstract2d
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
                 obj.frhs{m} = obj.frhs{m} + mxEvaluateSourceTopography2d...
-                    ( obj.gra, mesh.EToR, fphys{m}, obj.zGrad{m} );
+                    ( obj.gra, mesh.status, fphys{m}, obj.zGrad{m} );
             end
         end
     end

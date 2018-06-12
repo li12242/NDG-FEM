@@ -7,7 +7,6 @@ obj.matUpdateWetDryState( obj.fphys );
 obj.zGrad = cell( obj.Nmesh, 1 );
 for m = 1:obj.Nmesh
     mesh = obj.meshUnion(m);
-    mesh.status = zeros( mesh.K, 1, 'int8' );
     
     obj.zGrad{m} = zeros( mesh.cell.Np, mesh.K, 2 );
     zr = mesh.cell.Dr * obj.fphys{m}(:,:,4);

@@ -19,9 +19,9 @@ typedef enum {
 } NdgRegionType;
 
 typedef struct {
-  size_t Np;     ///< length of 1st dimension
-  size_t K;      ///< length of 2nd dimension
-  size_t Nfield; ///< length of 3rd dimension
+  size_t Np;      ///< length of 1st dimension
+  size_t K;       ///< length of 2nd dimension
+  size_t Nfield;  ///< length of 3rd dimension
   double *h;
   double *hu;
   double *hv;
@@ -45,13 +45,13 @@ inline PhysField convertMexToPhysField(const mxArray *mxfield) {
 }
 
 /** Evaluate the flow rate depending on the depth threshold */
-inline void
-evaluateFlowRateByDeptheThreshold(const double hcrit, ///< depth threshold
-                                  const double h,     ///< depth
-                                  const double hu,    ///< water flux
-                                  const double hv,    ///< water flux
-                                  double *u,          ///< result velocity
-                                  double *v           ///< velocity
+inline void evaluateFlowRateByDeptheThreshold(
+    const double hcrit,  ///< depth threshold
+    const double h,      ///< depth
+    const double hu,     ///< water flux
+    const double hv,     ///< water flux
+    double *u,           ///< result velocity
+    double *v            ///< velocity
 ) {
   if (h > hcrit) {
     //     const double sqrt2 = 1.414213562373095;
@@ -68,4 +68,4 @@ evaluateFlowRateByDeptheThreshold(const double hcrit, ///< depth threshold
   return;
 }
 
-#endif //__mxSWE_H__
+#endif  //__mxSWE_H__
