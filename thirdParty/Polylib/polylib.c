@@ -9,6 +9,10 @@
 #define EPS   100*DBL_EPSILON
 #define sign(a,b) ((b)<0 ? -fabs(a) : fabs(a))
 
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
+
 /*
 LIBRARY ROUTINES FOR ORTHOGONAL POLYNOMIAL CALCULUS AND INTERPOLATION
 
