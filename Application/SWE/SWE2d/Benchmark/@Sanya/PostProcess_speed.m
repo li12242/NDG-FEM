@@ -12,8 +12,10 @@ Nout = obj.outputFile.outputStep;
 gaugeValue = zeros( Ng, Nout );
 
 for i = 1:obj.outputFile.outputStep;
-    temp(:,:) = pos.InterpOutputResult2GaugePoint( i );
-
+    temp = pos.InterpOutputResult2GaugePoint( i );
+if i == 226
+    keyboard
+end
     gaugeValue(:,i) = sqrt(( temp(:,2) ./ temp(:,1)).^2 + ...
             ( temp(:,3) ./ temp(:,1) ).^2);
         

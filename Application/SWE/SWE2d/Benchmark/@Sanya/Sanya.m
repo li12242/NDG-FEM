@@ -31,6 +31,10 @@ classdef Sanya < SWEWDPreBlanaced2d
         
         OutputOpenBoundaryVertCoor( obj );
         ReadTideElevation( obj );
+        
+        Validation_level( obj, id1, id2 );
+        Validation_speed( obj, id1 );
+        Validation_direction( obj, id1 );
 
         
     end%methods
@@ -50,7 +54,7 @@ classdef Sanya < SWEWDPreBlanaced2d
             
             option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputCaseName') = 'Sanya2k_0328';
+            option('outputCaseName') = 'Sanya2k_0613';
             option('limiterType') = enumLimiter.Vert;
             option('SWELimiterType') = enumSWELimiter.OnElevation;
             option('equationType') = enumDiscreteEquation.Strong;

@@ -1,6 +1,7 @@
 function ReadTideElevation( obj )
 %READTIDEELEVATION
 data = load( obj.tidalFile );
+data = data';
 
 TotalNb = 0;
 Nb = cell( obj.Nmesh, 1 );
