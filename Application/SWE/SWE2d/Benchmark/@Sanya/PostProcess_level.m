@@ -1,44 +1,20 @@
-function gaugeValue = PostProcess_level( obj, ncfilename )
-sanyapos = NdgPostProcess(obj.meshUnion,ncfilename);
-for t = 1:sanyapos.Nt
-    field = sanyapos.accessOutputResultAtStepNum( t );
-    
-    for m = 1:sanyapos.Nmesh
-        TideElevation{m}(:,:,t) = ( field{m}(:,:,1) + ...
-            obj.fphys{1}(:,:,4) );
-    end
-end
+function gaugeValue = PostProcess_level( obj )
 
-Ntime = sanyapos.Nt;
-
-Gauge_file =[pwd, '/SWE2d/@Sanya/tide/gaugepoint.txt'];
-fp = fopen(Gauge_file,'r');
-GaugePoint = fscanf(fp, '%f\n', [3, inf]);
-fclose(fp); 
-GaugePoint = GaugePoint';
+Gauge_file =[ fileparts( mfilename('fullpath') ), '/tide/gaugepoint.txt'];
+GaugePoint = load(Gauge_file);
 xg = GaugePoint(:,2);
 yg = GaugePoint(:,1);
-zg = GaugePoint(:,3);
 
-Ng = numel( xg );
-gaugeValue = zeros(Ng, Ntime);
+pos = Analysis2d( obj, xg, yg );
+field = pos.InterpGaugeResult( obj.fphys );
 
-    for m = 1:sanyapos.Nmesh
-        [ cellId, Vg ] = sanyapos.meshUnion.accessGaugePointLocation( xg, yg, zg );
-        
-        for t = 1:Ntime
-            fresult = TideElevation{m}(:,:,t);
-            for n = 1:Ng
-                if (cellId(n) == 0)
-                    % the gauge point locates out of the mesh domain
-                    continue;
-                end
-                gaugeValue(n, t) = Vg(n, :) * fresult(:, cellId(n));
-            end
-        end
-    end
-
-
+Ng = numel(xg);
+Nout = obj.outputFile.outputStep;
+gaugeValue = zeros( Ng, Nout );
+for i = 1:Nout
+    temp = pos.InterpOutputResult2GaugePoint( i );
+    gaugeValue(:,i) = temp(:,1) + field(:,4);
+end
 
 end
 

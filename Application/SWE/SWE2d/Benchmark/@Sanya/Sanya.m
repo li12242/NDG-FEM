@@ -1,4 +1,4 @@
-classdef Sanya < SWEPreBlanaced2d
+classdef Sanya < SWEWDPreBlanaced2d
     
     properties(Constant)
         %> wet/dry depth threshold
@@ -21,8 +21,8 @@ classdef Sanya < SWEPreBlanaced2d
     end
     
     methods
-        function obj = Sanya( N                                                                                                                                                                                                                                                                                      )
-            obj = obj@SWEPreBlanaced2d();
+        function obj = Sanya( N )
+            obj = obj@SWEWDPreBlanaced2d();
             obj.N = N;
             gmshFile = [ fileparts( mfilename('fullpath') ), '/mesh/sanya0111.msh' ];
             mesh = makeGmshFileUMeshUnion2d( N, gmshFile );
@@ -31,6 +31,7 @@ classdef Sanya < SWEPreBlanaced2d
         
         OutputOpenBoundaryVertCoor( obj );
         ReadTideElevation( obj );
+
         
     end%methods
     
@@ -41,7 +42,7 @@ classdef Sanya < SWEPreBlanaced2d
         
         function [ option ] = setOption( obj, option )
             ftime = 259200;
-            outputIntervalNum = 500;
+            outputIntervalNum = 432;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
             option('temporalDiscreteType') = enumTemproalInterval.DeltaTime;
@@ -54,11 +55,11 @@ classdef Sanya < SWEPreBlanaced2d
             option('SWELimiterType') = enumSWELimiter.OnElevation;
             option('equationType') = enumDiscreteEquation.Strong;
             option('integralType') = enumDiscreteIntegral.QuadratureFree;
-            option('CoriolisType')= enumSWECoriolis.None;
+            option('CoriolisType')= enumSWECoriolis.Latitude;
             option('LatitudeFilePath')= ...
                 [ fileparts( mfilename('fullpath') ),'/tide/vertex_lat.txt'];
             option('WindType')= enumSWEWind.None;
-            option('FrictionType')= enumSWEFriction.None;
+            option('FrictionType')= enumSWEFriction.Quadric;
             option('FrictionCoefficient_n') = 0.017;
         end
         matUpdateExternalField( obj, time, fphys )

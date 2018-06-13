@@ -25,7 +25,7 @@ for t = 1:Ntime
         mesh = obj.meshUnion( m );
         edge = obj.meshUnion( m ).BoundaryEdge;
         
-        ind = edge.FToN1 + (edge.FToE(1, :) - 1) * mesh.cell.Np;
+        ind = edge.FToN1 + repmat(edge.FToE(1, :) - 1, edge.Nfp, 1) * mesh.cell.Np;
         bot = obj.fphys{m}(:, :, 4);
         obj.fext{m}(:, :, 4) = bot( ind );
         

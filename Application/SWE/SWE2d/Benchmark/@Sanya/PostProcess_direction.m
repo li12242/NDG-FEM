@@ -1,53 +1,36 @@
-function gaugeValue = PostProcess_direction( obj, ncfilename )
-sanyapos = NdgPostProcess(obj.meshUnion,ncfilename);
-for t = 1:sanyapos.Nt
-    field = sanyapos.accessOutputResultAtStepNum( t );
-    
-    for m = 1:sanyapos.Nmesh
-        Uspeed{m}(:,:,t) = ( field{m}(:,:,2) ./ field{m}(:,:,1) );
-        Vspeed{m}(:,:,t) = ( field{m}(:,:,3) ./ field{m}(:,:,1) );
-    end
-end
+function gaugeValue = PostProcess_direction( obj )
 
-Ntime = sanyapos.Nt;
-
-Gauge_file =[pwd, '/SWE2d/@Sanya/tide/gaugepoint.txt'];
-fp = fopen(Gauge_file,'r');
-GaugePoint = fscanf(fp, '%f\n', [3, inf]);
-fclose(fp);
-GaugePoint = GaugePoint';
+Gauge_file =[ fileparts( mfilename('fullpath') ), '/tide/gaugepoint.txt'];
+GaugePoint = load(Gauge_file);
 xg = GaugePoint(:,2);
 yg = GaugePoint(:,1);
-zg = GaugePoint(:,3);
 
-Ng = numel( xg );
-gaugeValue = zeros(Ng, Ntime);
+pos = Analysis2d( obj, xg, yg );
 
-for m = 1:sanyapos.Nmesh
-    [ cellId, Vg ] = sanyapos.meshUnion.accessGaugePointLocation( xg, yg, zg );
+Ng = numel(xg);
+Nout = obj.outputFile.outputStep;
+gaugeValue = zeros( Ng, Nout );
+
+for i = 1:obj.outputFile.outputStep;
+    temp(:,:) = pos.InterpOutputResult2GaugePoint( i );
     
-    for t = 1:Ntime
-        fresult1 = Uspeed{m}(:,:,t);
-        fresult2 = Vspeed{m}(:,:,t);
-        for n = 1:Ng
-            if (cellId(n) == 0)
-                % the gauge point locates out of the mesh domain
-                continue;
-            end
-            UVValue{m}(n, t,1) = Vg(n, :) * fresult1(:, cellId(n));
-            UVValue{m}(n, t,2) = Vg(n, :) * fresult2(:, cellId(n));
-            if ( UVValue{m}(n, t,1)<0 && UVValue{m}(n, t,2)>=0)
-                gaugeValue(n, t) = ...
-                    450 - atan2d(UVValue{m}(n, t,2), UVValue{m}(n, t,1));
-            else
-                gaugeValue(n, t) = ...
-                    90 - atan2d(UVValue{m}(n, t,2), UVValue{m}(n, t,1));
-            end
-            % gaugeValue(n, t,1) = Vg(n, :) * fresult1(:, cellId(n));
-            % gaugeValue(n, t,2) =  Vg(n, :) * fresult2(:, cellId(n));
-        end
+    U = temp(:,2)./temp(:,1);
+    V = temp(:,3)./temp(:,1);
+    
+    for j = 1 : pos.Ng
+    
+    if ( U(j)<0 && V(j)>=0)
+        gaugeValue(j, i) = ...
+            450 - atan2d(V(j), U(j));
+    else
+        gaugeValue(j, i) = ...
+            90 - atan2d(V(j), U(j));
     end
+    
+    end
+       
 end
+
 
 end
 

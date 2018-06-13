@@ -8,9 +8,9 @@ for m1 = 1:obj.Nmesh
 
     % time step
     s1 = floor( time/delta ) + 1;
-    s2 = ceil ( time/delta ) + 1;
-    alpha1 = ( delta * s2 - time ) / delta;
-    alpha2 = max( ( time - delta * s1 ) / delta, 0 );
+    s2 = s1 + 1;
+    alpha1 = ( delta * (s2 - 1) - time ) / delta;
+    alpha2 = ( time - delta * (s1 - 1) ) / delta;
     
     ind = obj.OBEdgeIndex{m1};
     fnT = obj.Tide{m1}(:, :, s1) .* alpha1 + obj.Tide{m1}(:, :, s2) .* alpha2;

@@ -46,7 +46,7 @@ obj.ny = ny;
 obj.nz = nz;
 obj.Js = Js;
 
-ind = obj.FToN1 + mesh.cell.Np * ( obj.FToE(1, :) - 1 );
+ind = obj.FToN1 + mesh.cell.Np * repmat( obj.FToE(1, :) - 1, obj.Nfp, 1 );
 obj.xb = mesh.x( ind );
 obj.yb = mesh.y( ind );
 

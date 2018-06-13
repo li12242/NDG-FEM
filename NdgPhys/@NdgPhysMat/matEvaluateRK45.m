@@ -14,7 +14,7 @@ for n = 1:obj.Nmesh
 end
 fphys = obj.fphys;
 
-DEBUG = 1;
+DEBUG = 0;
 if DEBUG
     visual = makeVisualizationFromNdgPhys( obj );
 end

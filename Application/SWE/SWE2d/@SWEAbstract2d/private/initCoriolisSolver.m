@@ -12,7 +12,7 @@ if obj.option.isKey('CoriolisType') % the option exist
             coriolisSolver = BetaApproCoriolisTermSolver(m, n);
         case enumSWECoriolis.Latitude
             file = obj.getOption('LatitudeFilePath');
-            obj.coriolisSolver = LatitudeCoriolisTermSolver(file);
+            coriolisSolver = LatitudeCoriolisTermSolver(obj, file);
     end
 else % the option does not exist
     coriolisSolver = NonCoriolisTermSolver();

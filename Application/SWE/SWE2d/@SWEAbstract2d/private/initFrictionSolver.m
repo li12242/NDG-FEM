@@ -14,7 +14,7 @@ if obj.option.isKey('FrictionType') % the option exist
             frictionSolver = ManningFrictionSolver2d( n );
         case enumSWEFriction.Quadric
             t = obj.getOption('FrictionCoefficient_n');
-            obj.frictionSolver = QuadFrictionTermSolver(t);
+            frictionSolver = QuadricFrictionTermSolver2d(t);
     end
 else % the option does not exist
     frictionSolver = NonFrictionTermSolver();

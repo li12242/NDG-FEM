@@ -14,10 +14,10 @@ classdef LatitudeCoriolisTermSolver < AbstractCoriolisTermSolver
                     LatVert = deg2rad( load(filename) );
                     obj.LatField = cell( phys.Nmesh, 1 );
                     obj.f = cell( phys.Nmesh, 1 );
-                    for m = 1:obj.Nmesh
+                    for m = 1:phys.Nmesh
                         mesh = phys.meshUnion( m );
                         obj.LatField{m} = mesh.proj_vert2node( LatVert );
-                        obj.f{m} = 2 * obj.omega * sin( obj.LatField );
+                        obj.f{m} = 2 * obj.omega * sin( obj.LatField{m} );
                     end
                 end
         
@@ -25,7 +25,7 @@ classdef LatitudeCoriolisTermSolver < AbstractCoriolisTermSolver
             
             for m = 1:physClass.Nmesh
                 mesh = physClass.meshUnion(m);
-                ind = (mesh.EToR == int8(NdgRegionType.Wet));
+                ind = (mesh.status == int8(enumSWERegion.Wet));
                 % frhs = frhs + f * hv
                 physClass.frhs{m}(:, ind, 2) = physClass.frhs{m}(:, ind, 2)...
                     + obj.f{m}(:, ind) .* fphys{m}(:, ind, 3);
