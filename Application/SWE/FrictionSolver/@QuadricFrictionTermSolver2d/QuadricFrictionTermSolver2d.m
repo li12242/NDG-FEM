@@ -12,20 +12,23 @@ classdef QuadricFrictionTermSolver2d < AbstractFrictionTermSolver
         
         function evaluateFrictionTermRHS( obj, phys, fphys )
             
+            a = obj.r;
+            g = phys.gra;
+            
             for m = 1:phys.Nmesh
                 
                 mesh = phys.meshUnion(m);
                 ind = (mesh.status == int8(enumSWERegion.Wet));
                 
-                s = sqrt( fphys{m}(:,ind,2).^2 + fphys{m}(:,ind,1).^2 )./fphys{m}(:,ind,1).^2;
+                s = sqrt( fphys{m}(:,ind,2).^2 + fphys{m}(:,ind,3).^2 )./fphys{m}(:,ind,1).^2;
                 
                 % frhs = frhs - rhu
                 phys.frhs{m}(:,ind,2) = phys.frhs{m}(:,ind,2)...
-                    - obj.r*(fphys{m}(:,ind,2) .* s);
+                    - g*a*a*(fphys{m}(:,ind,2) .* s)./(fphys{m}(:,ind,1).^(1/3));   
                 
                 % frhs = frhs - rhv
                 phys.frhs{m}(:,ind,3) = phys.frhs{m}(:,ind,3)...
-                    - obj.r*(fphys{m}(:,ind,3) .* s);
+                    - g*a*a*(fphys{m}(:,ind,3) .* s)./(fphys{m}(:,ind,1).^(1/3));
                 
             end
         end

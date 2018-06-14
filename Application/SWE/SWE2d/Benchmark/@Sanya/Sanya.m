@@ -54,7 +54,7 @@ classdef Sanya < SWEWDPreBlanaced2d
             
             option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputCaseName') = 'Sanya2k_0613';
+            option('outputCaseName') = 'Sanya2k_0614';
             option('limiterType') = enumLimiter.Vert;
             option('SWELimiterType') = enumSWELimiter.OnElevation;
             option('equationType') = enumDiscreteEquation.Strong;
