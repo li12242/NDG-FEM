@@ -6,10 +6,11 @@ methods (Access = public)
     end
 
     initFromMesh( obj, mesh );
-    %outputResult( obj, time, field );
+    
     function closeOutputFile( obj )
     end
-    % drawResult( obj )
+    
+    % read output
     readOutputResult( obj, timeStep )
 end
 end

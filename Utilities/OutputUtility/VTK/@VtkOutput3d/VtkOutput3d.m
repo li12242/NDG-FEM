@@ -6,6 +6,7 @@ classdef VtkOutput3d < VtkOutput2d
 
         initFromMesh( obj, mesh );
         % drawResult( obj )
+        
         readOutputResult( obj, timeStep )
     end
 end

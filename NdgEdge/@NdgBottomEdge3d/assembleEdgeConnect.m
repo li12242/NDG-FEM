@@ -13,13 +13,13 @@ for n = 1 : (Nz - 1)
     ind1 = ( (1:Kh) - 1) * Nz + n;
     % index of bottom layer element
     ind2 = ( (1:Kh) - 1) * Nz + n + 1;
-    temp = [ind1; ind2];
+    temp = [ ind1; ind2 ];
     obj.FToE = [ obj.FToE, temp ];
 end
 
 % last layer
 ind1 = ( (1:Kh) - 1) * Nz + Nz;
-temp = [ind1; ind1];
+temp = [ ind1; ind1 ];
 obj.FToE = [ obj.FToE, temp ];
 
 % all edge are default bottom edge
@@ -36,4 +36,8 @@ for n = 1 : Nz
     obj.FToV = [v, obj.FToV];
 end
 
+ftype = zeros(obj.Ne, 1);
+bottomLayerId = Kh * (Nz - 1) + ( 1 : Kh );
+ftype( bottomLayerId ) = enumBoundaryCondition.BottomBoundary;
+obj.ftype = enumBoundaryCondition( ftype );
 end% func

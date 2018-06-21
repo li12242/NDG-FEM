@@ -35,7 +35,8 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
         function [ fphys ] = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
             for m = 1:obj.Nmesh
-                fphys{m} = getExtFunc(obj, obj.meshUnion(m), 0);
+                mesh = obj.meshUnion(m);
+                fphys{m} = getExtFunc(obj, mesh.x, mesh.y, 0);
             end
         end% func
         
@@ -60,7 +61,7 @@ classdef AdvRotationUniformMesh2d < AdvAbstractVarFlow2d
             f_ext = zeros( Np, K, obj.Nfield );
             
             theta0 = -pi;
-            theta = theta0 + obj.w*time;
+            theta = theta0 + obj.w * time;
             xt = obj.x0 + obj.rd*cos(theta);
             yt = obj.y0 + obj.rd*sin(theta);
             r2 = sqrt( (x - xt).^2+(y - yt).^2 )./obj.r0;

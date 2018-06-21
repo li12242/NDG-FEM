@@ -12,7 +12,7 @@ classdef NdgQuadFreeStrongFormAdvSolver3d < NdgQuadFreeStrongFormSolver & ...
             
             % evaluate inner edge
             for m = 1:phys.Nmesh
-                edge = phys.meshUnion(m).InnerSideEdge;
+                edge = phys.meshUnion(m).InnerEdge;
                 [ fm, fp ] = edge.matEvaluateSurfValue( fphys );
                 [ fluxM ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, edge.nz, fm );
                 [ fluxP ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, edge.nz, fp );
@@ -25,15 +25,12 @@ classdef NdgQuadFreeStrongFormAdvSolver3d < NdgQuadFreeStrongFormSolver & ...
                 [ fluxM ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, edge.nz, fm );
                 [ fluxP ] = phys.matEvaluateSurfFlux( edge, edge.nx, edge.ny, edge.nz, fp );
                 [ fluxS ] = phys.matEvaluateSurfNumFlux( edge, edge.nx, edge.ny, edge.nz, fm, fp );
-                [ phys.frhs{m} ] = phys.frhs{m} + edge.matEvaluateStrongFromEdgeRHS( fluxM, fluxP, fluxS );
+                [ phys.frhs{m} ] = phys.frhs{m} + edge.matEvaluateStrongFormEdgeRHS( fluxM, fluxP, fluxS );
             end
             
             for m = 1:phys.Nmesh % calculate RHS term on each mesh
                 mesh = phys.meshUnion(m);
                 [ E, G, H ] = phys.matEvaluateFlux( mesh, fphys{m} );
-%                 [ fm, fp ] = phys.matEvaluateSurfaceValue( mesh, fphys{m}, phys.fext{m} );
-%                 [ fluxS ] = phys.matEvaluateSurfNumFlux( mesh, obj.nx{m}, obj.ny{m}, fm, fp );
-%                 [ flux ] = phys.matEvaluateSurfFlux( mesh, obj.nx{m}, obj.ny{m}, fm );
                 
                 for i = 1:phys.Nvar
                     phys.frhs{m}(:,:,i) = ...
@@ -47,7 +44,6 @@ classdef NdgQuadFreeStrongFormAdvSolver3d < NdgQuadFreeStrongFormSolver & ...
                         - obj.rz{m}.*( obj.Dr{m} * H(:,:,i) ) ...
                         - obj.sz{m}.*( obj.Ds{m} * H(:,:,i) ) ...
                         - obj.tz{m}.*( obj.Dt{m} * H(:,:,i) );
-%                         + ( obj.LIFT{m} * ( obj.Js{m} .* ( flux(:,:,i) - fluxS(:,:,i) ) ))./ obj.J{m};
                 end
             end
         end

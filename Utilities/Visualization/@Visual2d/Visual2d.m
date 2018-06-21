@@ -11,13 +11,13 @@ classdef Visual2d < AbstractVisual
     end
 
     methods (Access = public)
-        function obj = Visual2d(output)
-            obj = obj@AbstractVisual(output);
+        function obj = Visual2d( mesh )
+            obj = obj@AbstractVisual( mesh );
             obj = obj.InitVisual2d(  );
         end
 
         drawResult( obj, field );
-        drawOutputResult( obj, step, fieldId );
+        drawOutputResult( obj, outputObj, step, fieldId );
         drawMesh( obj );
     end
 

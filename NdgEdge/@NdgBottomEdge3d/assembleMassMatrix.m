@@ -1,4 +1,4 @@
-function [ Nfp, M ] = assembleMassMatrix( obj, N, Nz )
+function obj = assembleMassMatrix( obj, N, Nz )
     
     if ( obj.mesh.cell.type == enumStdCell.PrismTri )
         cell = StdTri(N);
@@ -9,4 +9,7 @@ function [ Nfp, M ] = assembleMassMatrix( obj, N, Nz )
         Nfp = cell.Np;
         M = cell.M;
     end
+    
+    obj.Nfp = Nfp;
+    obj.M = M;
 end

@@ -11,7 +11,8 @@ classdef AdvRotationUniformMesh3d < AdvAbstractVarFlow3d
     
     properties (Constant)
         %> domain central
-        x0 = 0, y0 = 0
+        x0 = 0, 
+        y0 = 0
         %> distance of the initial Gauss mount from the central point
         rd = 0.5
         %> size of the initial Gauss mount
@@ -45,7 +46,7 @@ classdef AdvRotationUniformMesh3d < AdvAbstractVarFlow3d
             outputIntervalNum = 100;
             option('startTime') = 0.0;
             option('finalTime') = 2;
-            option('outputType') = enumOutputFile.VTK;
+            option('outputType') = enumOutputFile.NetCDF;
             option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = 2.4/outputIntervalNum;
             option('outputCaseName') = mfilename;
@@ -82,10 +83,10 @@ end
 
 function mesh = makeUniformMesh(N, Nz, M, Mz, type)
     bctype = [...
-        NdgEdgeType.Clamped, ...
-        NdgEdgeType.Clamped, ...
-        NdgEdgeType.Clamped, ...
-        NdgEdgeType.Clamped];
+        enumBoundaryCondition.Clamped, ...
+        enumBoundaryCondition.Clamped, ...
+        enumBoundaryCondition.Clamped, ...
+        enumBoundaryCondition.Clamped];
 
     if (type == enumStdCell.PrismTri)
         mesh2d = makeUniformTriMesh(N, [-1, 1], [-1, 1], M, M, bctype);

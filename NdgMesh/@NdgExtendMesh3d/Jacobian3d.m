@@ -17,4 +17,5 @@ obj.sz = - ( xr .* yt - yr .* xt ) ./ J;
 obj.tz = ( xr .* ys - yr .* xs ) ./ J;
 
 obj.J = J;
+obj.Jz = zt;
 end

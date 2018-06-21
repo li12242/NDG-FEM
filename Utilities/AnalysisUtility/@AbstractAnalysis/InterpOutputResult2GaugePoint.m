@@ -21,4 +21,3 @@ for n = 1 : obj.Ng
 end
 
 end
-

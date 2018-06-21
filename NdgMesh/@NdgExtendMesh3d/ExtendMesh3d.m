@@ -57,18 +57,7 @@ function obj = ExtendMesh3d( obj, cell, mesh2d, Nz )
     obj.EToM = [];
     ind = ones( 1, mesh2d.K ) * obj.ind;
     for n = 1 : Nz
-        obj.EToM = [ obj.EToM; mesh2d.EToM ];
-        obj.EToM = [ obj.EToM; ind ];
-        obj.EToM = [ obj.EToM; ind ];
+        obj.EToM = [ obj.EToM; mesh2d.EToM; ind; ind ];
     end% for
     obj.EToM = reshape( obj.EToM, cell.Nface, Kloc );
-
-    % extend mesh boundary types
-    obj.EToB = [];
-    ind = zeros( 1, mesh2d.K );
-    for n = 1 : Nz
-        obj.EToB = [ obj.EToB; mesh2d.EToB ];
-        obj.EToB = [ obj.EToB; ind ];
-        obj.EToB = [ obj.EToB; ind ];
-    end% for
 end

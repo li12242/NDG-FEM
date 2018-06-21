@@ -1,4 +1,4 @@
-function [ Nfp, M ] = assembleMassMatrix( obj, N, Nz )    
+function obj = assembleMassMatrix( obj, N, Nz )    
     
     Nph = N + 1; 
     Npz = Nz + 1; 
@@ -13,4 +13,8 @@ function [ Nfp, M ] = assembleMassMatrix( obj, N, Nz )
 
     invV = inv(V);
     M = (invV')*invV;
+    
+    obj.Nfp = Nfp;
+    obj.M = M;
+    
 end

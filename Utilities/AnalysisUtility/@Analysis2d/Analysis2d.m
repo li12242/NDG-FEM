@@ -4,9 +4,9 @@ classdef Analysis2d < AbstractAnalysis
     end
 
     methods (Access = public)
-        function obj = Analysis2d(phys, xg, yg)
+        function obj = Analysis2d( phys, xg, yg )
             obj = obj@AbstractAnalysis( phys );
-            obj = initGaugePointInfo(obj, xg, yg);
+            obj = initGaugePointInfo( obj, xg, yg );
         end
     end
 

@@ -1,8 +1,8 @@
-adv = ConstAdvUniformMesh2d( 1, 4, NdgCellType.Tri );
+adv = ConstAdvUniformMesh2d( 1, 4, enumStdCell.Tri );
 mesh = adv.meshUnion;
 std = StdPrismTri( 1, 8 );
 zs = zeros(mesh.Nv, 1);
-zb = zeros(mesh.Nv, 1) - 1;
+zb = zeros(mesh.Nv, 1) - 2;
 mesh3 = NdgExtendMesh3d( std, mesh, zs, zb, 2 );
 edge3 = NdgSideEdge3d( mesh3, 1 );
 bEdge3 = NdgBottomEdge3d( mesh3, 1 );

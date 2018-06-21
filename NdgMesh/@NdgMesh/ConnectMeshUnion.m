@@ -1,7 +1,7 @@
 function ConnectMeshUnion( obj, meshId, meshUnion )
 
 obj.ind = meshId;
-obj.EToM = ones( obj.cell.Np, obj.K ) * meshId;
+obj.EToM = ones( obj.cell.Nface, obj.K ) * meshId;
 for m = 1 : numel( meshUnion )
     if m == meshId
         continue; % jump this cycle

@@ -28,7 +28,7 @@ classdef NdgBottomEdge3d < handle
         %> determination of edge Jacabian
         Js
         %> edge type
-        type
+        ftype
     end
     
     methods (Access = public)
@@ -36,7 +36,7 @@ classdef NdgBottomEdge3d < handle
             mesh = meshUnion3d( meshId );
 
             obj.mesh = mesh;
-            [ obj.Nfp, obj.M ] = assembleMassMatrix( obj, mesh.cell.N, mesh.cell.Nz );
+            obj = assembleMassMatrix( obj, mesh.cell.N, mesh.cell.Nz );
             obj = assembleEdgeConnect( obj, mesh, mesh.mesh2d );
             obj = assembleNodeProject( obj, mesh );
         end
@@ -44,13 +44,13 @@ classdef NdgBottomEdge3d < handle
         %> access boundary values at edges
         [ fM, fP ] = matEvaluateSurfValue( obj, fphys );
         %> evaluate strong-form surface term rhs
-        [ frhs ] = matEvaluateStrongFromEdgeRHS( obj, fluxM, fluxP, fluxS )
+        [ frhs ] = matEvaluateStrongFormEdgeRHS( obj, fluxM, fluxP, fluxS )
     end
     
     methods ( Access = private )
         obj = assembleEdgeConnect( obj, mesh, mesh2d );
         obj = assembleNodeProject( obj, mesh );
-        [ Nfp, M ] = assembleMassMatrix( obj, N, Nz );
+        obj = assembleMassMatrix( obj, N, Nz );
     end
 end
 

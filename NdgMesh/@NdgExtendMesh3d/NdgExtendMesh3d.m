@@ -24,12 +24,10 @@ classdef NdgExtendMesh3d < handle
         vx, vy, vz
         %> edge objects
         BottomEdge % surface/bottom faces
-        InnerSideEdge % inner edge
+        InnerEdge % inner edge
         BoundaryEdge % halo edge
         %> mesh index
         ind
-        %> boundary types for each element
-        EToB
     end
     
     % elemental volume infomation
@@ -41,7 +39,7 @@ classdef NdgExtendMesh3d < handle
         %> coordinate of interp points
         x, y, z
         %> determination of Jacobian matrix at each interp points
-        J
+        J, Jz
         %>
         rx, ry, rz
         sx, sy, sz
@@ -50,6 +48,7 @@ classdef NdgExtendMesh3d < handle
         LAV
         %> character length of each element
         charLength
+        figure_handle
     end
     
     methods (Access = public)
@@ -81,7 +80,7 @@ classdef NdgExtendMesh3d < handle
             obj.ind = mesh2d.ind;
             obj = ExtendMesh3d( obj, cell, mesh2d, Nz );
             % interp nodes
-            [ obj.x, obj.y, obj.z ] = assembleNodeCoor( obj, obj.vx, obj.vy, obj.vz );
+            obj = GetNodeCoor( obj );
             
             % Jacobian coefficients at IP nodes
             obj = Jacobian3d(obj, cell);
@@ -93,15 +92,21 @@ classdef NdgExtendMesh3d < handle
             ele_vQ = vertQ(obj.EToV);
             nodeQ = obj.cell.project_vert2node(ele_vQ);
         end
-        
+        %> draw horizontal result
         drawHorizonSlice( obj, varargin )
+        
+        %> evaluate vertical integral result
+        field2d = VerticalIntegralField( obj, field3d )
+        
+        %> 
+        field3d = Extend2dField( obj, field2d );
     end
     
     methods ( Access = protected )
-        function [x, y, z] = assembleNodeCoor( obj, vx, vy, vz )
-            x = obj.proj_vert2node(vx);
-            y = obj.proj_vert2node(vy);
-            z = obj.proj_vert2node(vz);
+        function obj = GetNodeCoor( obj )
+            obj.x = obj.proj_vert2node(obj.vx);
+            obj.y = obj.proj_vert2node(obj.vy);
+            obj.z = obj.proj_vert2node(obj.vz);
         end% func
     end
     

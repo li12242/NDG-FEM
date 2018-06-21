@@ -12,8 +12,7 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
 
     methods (Access = public)
         function obj = TsunamiRunup2d( N )
-            [ path, ~, ~ ] = fileparts( mfilename('fullpath') );
-            meshfile = [ path, '/mesh/quad.msh' ];
+            meshfile = [ fileparts( mfilename('fullpath') ), '/mesh/quad.msh' ];
             mesh = makeGmshFileUMeshUnion2d( N, meshfile );
             obj.initPhysFromOptions( mesh );
 
@@ -22,7 +21,7 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
         end
         
         %> Compared numerical water elevation with measured data
-        checkGaugePoints( obj );
+        CheckGaugeResult( obj );
     end
 
     methods (Access = protected)
@@ -49,10 +48,9 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
             alpha_N = delta_time_N / ( delta_time_P + delta_time_N );
             eta = obj.boundaryInfo.extElevation(idP) * alpha_P + ...
                 obj.boundaryInfo.extElevation(idN) * alpha_N;
+            
             for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
-                ind = obj.boundaryInfo.nodeId{m};
-                obj.fext{m}( ind ) = eta - fphys{m}( ind + 3 * mesh.cell.Np * mesh.K );
+                obj.fext{m}( :, :, 1 ) = eta - obj.fext{m}( :, :, 4 );
             end
         end
 
@@ -62,15 +60,14 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
             outputIntervalNum = 200;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK22;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('FrictionType') = SWEFrictionType.Manning;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('FrictionType') = enumSWEFriction.Manning;
             option('FrictionCoefficient_n') = obj.n;
         end
 
@@ -89,14 +86,8 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
 
     methods( Access = private )
         function boundaryInfo = initBoundaryInformation( obj )
-            boundaryInfo = struct('nodeId', {}, 'time', {}, 'extElevation', {});
+            boundaryInfo = struct('time', {}, 'extElevation', {});
             
-            nodeId = cell( obj.Nmesh, 1 );
-            for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
-                ind = ( mesh.eidtype == int8( NdgEdgeType.ClampedDepth ) );
-                nodeId{m} = mesh.eidM(ind);
-            end
             [ path, ~, ~ ] = fileparts( mfilename('fullpath') ); 
             obcfile = [ path, '/mesh/Benchmark_2_input.txt'];
             fp = fopen(obcfile);
@@ -104,18 +95,22 @@ classdef TsunamiRunup2d < SWEPreBlanaced2d
             data = fscanf(fp, '%f %f', [2, inf]);
             fclose(fp);
             
-            boundaryInfo(1).nodeId = nodeId;
             boundaryInfo(1).time = data(1, :);
             boundaryInfo(1).extElevation = data(2, :);
+            
+            for m = 1:obj.Nmesh
+                mesh = obj.meshUnion(m);
+                edge = obj.meshUnion(m).BoundaryEdge;
+                nodeid = edge.FToN1 + (edge.FToE(1, :) - 1) .* mesh.cell.Np;
+                obj.fext{m}( :, :, 4 ) = obj.fphys{m}( nodeid + mesh.K * mesh.cell.Np * 3 );
+            end
         end
     end
 
     methods(Access = private, Static)
         function bot = interpBottomLevel( mesh )
-            [ path, ~, ~ ] = fileparts( mfilename('fullpath') ); 
-            topography_file = [ path, ...
-                '/mesh/Benchmark_2_Bathymetry.txt'];
-            fp = fopen(topography_file);
+            fp = fopen([ fileparts( mfilename('fullpath') ), ...
+                '/mesh/Benchmark_2_Bathymetry.txt']);
             fgetl(fp);
             data = fscanf(fp, '%e %e %e', [3, inf]);
             fclose(fp);

@@ -6,6 +6,7 @@ classdef NcOutput < AbstractOutputFile
         timeVarableId
         fieldVarableId
         filename
+        vtkOutput
     end
     
     methods
@@ -19,6 +20,9 @@ classdef NcOutput < AbstractOutputFile
         outputResult( obj, time, field );
 
         [ field ] = readOutputResult( obj, step );
+
+        writeResultToVtk( obj, step, field );
+        writeOutputResultToVtk( obj, step );
 
         function closeOutputFile( obj )
             obj.ncfile.delete();

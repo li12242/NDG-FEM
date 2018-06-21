@@ -5,7 +5,6 @@
 #define DEBUG
 
 #include "mex.h"
-#include "blas.h"
 
 #define NRHS 5
 #define NLHS 2
@@ -79,12 +78,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       dims = mxGetDimensions(mxPhysP);
       const int Np2 = dims[0];
       const int K2 = dims[1];
-
-      // #ifdef DEBUG
-      //       mexPrintf("fld=%d, Ne=%d, m2=%d, e2=%d, K2=%d, Np2=%d\n", fld, k,
-      //       m2, e2,
-      //                 K2, Np2);
-      // #endif
 
       double *fval2 = mxGetPr(mxPhysP) + Np2 * K2 * fld;  // adjacent phys field
 

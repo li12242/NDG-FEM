@@ -24,6 +24,7 @@ classdef AbstractOutputFile < handle
             obj.outputStep = 0;
         end
 
+        %> output 
         function outputIntervalResult( obj, time, field )
             if ( time - obj.timePrevious ) > obj.timeInterval
                 obj.outputResult( time, field );
@@ -40,7 +41,6 @@ classdef AbstractOutputFile < handle
         initFromMesh( obj, mesh, timeInterval )
         outputResult( obj, time, field )
         closeOutputFile( obj )
-        % drawResult( obj )
         readOutputResult( obj, timeStep )
     end
     

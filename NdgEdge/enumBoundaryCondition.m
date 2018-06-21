@@ -17,8 +17,9 @@ classdef enumBoundaryCondition < int8
         ClampedDepth    (6)
         ClampedVel      (7)
         Flather         (8)
-        NonLinearFlatherDepth (9)
-        NonLinearFlatherFlow (10)
-        NonReflectFlux (11)
+        NonLinearFlatherDepth   (9)
+        NonLinearFlatherFlow    (10)
+        NonReflectFlux          (11)
+        BottomBoundary          (12)
     end
 end

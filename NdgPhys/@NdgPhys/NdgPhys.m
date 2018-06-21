@@ -49,8 +49,6 @@ classdef NdgPhys < handle
     end
     
     methods( Access = public )
-        function obj = NdgPhys()
-        end
         
         %> @brief Initial function
         %> This function will set the solver's mesh objects and initialize

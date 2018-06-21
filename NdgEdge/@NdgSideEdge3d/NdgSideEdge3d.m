@@ -29,10 +29,10 @@ classdef NdgSideEdge3d < handle
     methods ( Access = public )
         function obj = NdgSideEdge3d( meshUnion3d, meshId )
             mesh = meshUnion3d( meshId );
-
-            [ obj.Nfp, obj.M ] = assembleMassMatrix( obj, mesh.cell.N, mesh.cell.Nz );
+            
             obj.mesh = mesh;
-            obj = assembleEdgeConnect( obj, mesh, mesh.mesh2d.InnerEdge );
+            obj = assembleMassMatrix( obj, mesh.cell.N, mesh.cell.Nz );
+            obj = assembleEdgeConnect( obj, mesh );
             obj = assembleNodeProject( obj, mesh );
         end
 
@@ -42,9 +42,12 @@ classdef NdgSideEdge3d < handle
         [ frhs ] = matEvaluateStrongFromEdgeRHS( obj, fluxM, fluxP, fluxS )
     end
 
-    methods ( Access = private )
-        obj = assembleEdgeConnect( obj, mesh, edge );
+    methods ( Access = protected )
+        obj = assembleEdgeConnect( obj, mesh );
         obj = assembleNodeProject( obj, mesh );
         [ Nfp, M ] = assembleMassMatrix( obj, N, Nz );
+
+        [ nx, ny, nz, Js ] = PrismQuadJacobian3d( obj, mesh, f1, e1, fid );
+        [ nx, ny, nz, Js ] = PrismTriJacobian3d( obj, mesh, f1, e1, fid );
     end
 end

@@ -18,11 +18,13 @@ classdef AbstractVtkOutput < AbstractOutputFile
         ctype
     end
 
-    methods (Access = public)
+    methods ( Access = public )
         function obj = AbstractVtkOutput( casename, Nfield, dt )
             obj = obj@AbstractOutputFile( casename, Nfield, dt );
         end
         
-        outputResult( obj, time, field )
+        outputResult( obj, time, field );
+        %> output result at specific step
+        outputStepResult( obj, step, field );
     end
 end

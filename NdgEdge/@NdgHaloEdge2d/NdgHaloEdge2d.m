@@ -15,10 +15,11 @@ classdef NdgHaloEdge2d < NdgHaloEdge
         [ fnode ] = proj_vert2node( obj, fvert );
         
         function draw(obj, varargin)
-            indK = repmat( obj.FToE(1, :), obj.Nfp, 1 );
-            indM = sub2ind( [obj.mesh.cell.Np, obj.mesh.K], obj.FToN1, indK );
-            xv = obj.mesh.x( indM );
-            yv = obj.mesh.y( indM );
+            ind = obj.FToN1 + ( obj.FToE - 1 ) * obj.mesh.cell.Np;
+            % indK = repmat( obj.FToE(1, :), obj.Nfp, 1 );
+            % indM = sub2ind( [obj.mesh.cell.Np, obj.mesh.K], obj.FToN1, indK );
+            xv = obj.mesh.x( ind );
+            yv = obj.mesh.y( ind );
             if nargin == 1
                 plot( xv, yv, 'k.-', 'LineWidth', 2 );
             elseif nargin == 2

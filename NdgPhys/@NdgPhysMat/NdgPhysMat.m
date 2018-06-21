@@ -31,10 +31,6 @@ classdef NdgPhysMat < NdgPhys
     end
     
     methods( Access = public )
-        %> Construction function
-        function obj = NdgPhysMat()
-            obj = obj@NdgPhys();
-        end
         
         %> Evaluate the solver with the Matlab function
         function matSolve( obj )

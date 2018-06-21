@@ -1,5 +1,5 @@
-function drawOutputResult( obj, step, fieldId )
-    field = obj.outputObj.readOutputResult(step);
+function drawOutputResult( obj, outputObj, step, fieldId )
+    field = outputObj.readOutputResult(step);
     
     isFigureEmpty = isempty( obj.drawHandle );
     if isFigureEmpty
