@@ -12,7 +12,7 @@ classdef NdgHaloEdge3d < NdgSideEdge3d
         end
 
         %> evaluate right-hand-side for surface integral term
-        frhs = matEvaluateStrongFromEdgeRHS( obj, fluxM, fluxP, fluxS );
+        frhs = matEvaluateStrongFormEdgeRHS( obj, fluxM, fluxP, fluxS );
         %> get surface values from physical field
         [ fM, fP ] = matEvaluateSurfValue( obj, fphys );
     end

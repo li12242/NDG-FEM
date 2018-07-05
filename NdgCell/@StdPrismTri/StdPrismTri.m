@@ -19,10 +19,10 @@ classdef StdPrismTri < handle
         Nface = 5
         %> element types of each face
         faceType = [enumStdCell.Quad, ...
-                    enumStdCell.Quad, ...
-                    enumStdCell.Quad, ...
-                    enumStdCell.Tri, ...
-                    enumStdCell.Tri ]
+            enumStdCell.Quad, ...
+            enumStdCell.Quad, ...
+            enumStdCell.Tri, ...
+            enumStdCell.Tri ]
     end
     
     properties
@@ -31,12 +31,14 @@ classdef StdPrismTri < handle
         %> maximum polynomial order in vertical direction
         Nz
     end
-
+    
     properties ( SetAccess = protected )
         %> num of interpolation points (IP)
         Np, Nph, Npz
         %> coordinates of interpolation points
         r, s, t
+        %> horizontal and vertical node coordinate
+        r1, s1, t1
         %> node index of facial points
         Fmask
         %> number of facial interpolation points
@@ -46,7 +48,7 @@ classdef StdPrismTri < handle
     end
     properties ( SetAccess = protected)
         %> Vandermonde matrix
-        V
+        V, Vh, Vint
         %> project matrx from interpolation points to quadrature points
         Vq
         %> mass matrix
@@ -70,20 +72,19 @@ classdef StdPrismTri < handle
     methods
         % construction function of triangular prism reference element
         function obj = StdPrismTri(Nh, Nz)
-            obj.N = Nh; 
+            obj.N = Nh;
             obj.Nz = Nz;
-            [ obj.Np, obj.Nph, obj.Npz, obj.r, obj.s, obj.t ] ...
-                = obj.node_coor_func( Nh, Nz );
+            EvaluaetNodeCoor( obj, Nh, Nz );
             
             [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] ...
                 = obj.quad_coor_func( Nh, Nz );
             
-            [ obj.V ] = obj.assembleVandMatrix( @obj.orthogonal_func );
+            AssembleVandMatrix( obj );
             [ obj.Vq ] = obj.assembleQuadratureMatrix( );
             [ obj.M, obj.invM ] = obj.assembleMassMatrix( );
             [ obj.Dr, obj.Ds, obj.Dt ] ...
                 = obj.nodal_derivative_func(obj.r, obj.s, obj.t);
-
+            
             obj.Nfp = zeros(obj.Nface, 1);
             for i = 1:3
                 obj.Nfp(i) = ( Nh + 1 ) * ( Nz +1 );
@@ -91,13 +92,11 @@ classdef StdPrismTri < handle
             obj.Nfp( [ 4, 5 ] ) = obj.Nph;
             
             [ obj.TNfp ] = sum(obj.Nfp);
-            [ obj.Fmask ] = obj.assembleFacialNodeIndex();
+            [ obj.Fmask ] = obj.AssembleFacialNodeIndex();
         end
         
         [ fun ] = orthogonal_func(obj, N1, N2, ind, r, s, t);
         [ node_val ] = project_vert2node(obj, vert_val);
-        [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x, y, z );
-        [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z );
         
         %> @brief Evaluate all the nodal basis function values at points
         %> @param[in] obj The StdCell class
@@ -108,11 +107,13 @@ classdef StdPrismTri < handle
         function [ func ] = nodal_func(obj, r, s, t)
             func = zeros(numel(r), obj.Np);
             for n = 1:obj.Np
-                func(:, n) = obj.orthogonal_func(obj.N, obj.Nz, n, r, s, t);
+                fh = obj.EvaluateHorizontalOrthogonalFunc( obj.N, n, r, s );
+                fv = obj.EvaluateVerticalOrthogonalFunc( n, t );
+                func(:, n) = fh .* fv;
             end
             func = func/obj.V;
         end
-
+        
         %> @brief Evaluate the derivative nodal function values at points
         function [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
             Nr = numel( r );
@@ -128,12 +129,14 @@ classdef StdPrismTri < handle
             fDt = Vt/obj.V;
         end
     end% methods
-
+    
     methods ( Access=protected )
         [ Np, Nph, Npz, r, s, t ] = node_coor_func( obj, Nh, Nv );
         [ dr, ds, dt ] = derivative_orthogonal_func( obj, Nh, Nv, ind, r, s, t );
         [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, Nh, Nv );
-
+        [ f ] = EvaluateHorizontalOrthogonalFunc( obj, N1, td, r, s );
+        [ f ] = EvaluateVerticalOrthogonalFunc( obj, td, t );
+        
         %> @brief Assemble the interpolation matrix of Gauss quadrature nodes
         %> The elements of the quadratuer interpolation matrix is
         %> \f$ [V_q]_{i,j} = l_j(\xi_i) \f$
@@ -141,54 +144,23 @@ classdef StdPrismTri < handle
         function [ Vq ] = assembleQuadratureMatrix( obj )
             Vq = obj.nodal_func( obj.rq, obj.sq, obj.tq );
         end
-
+        
         %> @brief Assemble the Vandermonde matrix
         %> @details The Vandermonde matrix interpolate the orthgonal basis functions
         %> to the nodal basis functions, with
         %> \f$ [V]_{i,j} = P_j(r_i) \f$
         %> where \f$ r_i \f$ is the ith interpolation nodes and \f$ P_j \f$
         %> is the jth orthgonal function.
-        function V = assembleVandMatrix(obj, orthogonal_func)
-            V = zeros(obj.Np, obj.Np);
-            for n = 1:obj.Np
-                V(:, n) = orthogonal_func(obj.N, obj.Nz, n, obj.r, obj.s, obj.t);
-            end% for
-        end% func
-
+        AssembleVandMatrix( obj )
+        
         %> @brief Assemble the mass matrix
         function [ M, invM ] = assembleMassMatrix( obj )
             invV = inv(obj.V);
             M = (invV')*invV;
             invM = obj.V * obj.V';
         end% func
-
-        function Fmask = assembleFacialNodeIndex(obj)
-            maxnfp = max(obj.Nfp);
-            Fmask = zeros(maxnfp, obj.Nface);
-            
-            % vertical faces
-            f = 1;
-            ind = find( abs(obj.s + 1) < 1e-10 );
-            Fmask(1:obj.Nfp(f), f) = ind;
-            
-            f = 2;
-            ind = find( abs(obj.r + obj.s) < 1e-10 );
-            Fmask(1:obj.Nfp(f), f) = ind;
-            
-            f = 3;
-            ind = find( abs(obj.r + 1) < 1e-10 );
-            Fmask(1:obj.Nfp(f), f) = ind;
-            % horizontal faces
-            f = 4;
-            ind = find( abs(obj.t + 1) < 1e-10 );
-            Fmask(1:obj.Nfp(f), f) = ind;
-            
-            f = 5;
-            ind = find( abs(obj.t - 1) < 1e-10 );
-            Fmask(1:obj.Nfp(f), f) = ind;
-            
-        end% func
         
+        Fmask = AssembleFacialNodeIndex(obj)        
     end
     
 end

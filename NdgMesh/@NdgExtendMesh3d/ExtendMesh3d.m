@@ -60,4 +60,9 @@ function obj = ExtendMesh3d( obj, cell, mesh2d, Nz )
         obj.EToM = [ obj.EToM; mesh2d.EToM; ind; ind ];
     end% for
     obj.EToM = reshape( obj.EToM, cell.Nface, Kloc );
+    
+    obj.EToL = zeros( Kh, Nz );
+    for n = 1 : Nz
+        obj.EToL(:, n) = ( (1 : Kh) - 1) * Nz + n;
+    end
 end

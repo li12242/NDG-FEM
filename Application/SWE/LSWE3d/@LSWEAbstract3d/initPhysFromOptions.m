@@ -5,9 +5,6 @@ function initPhysFromOptions( obj, mesh2d, mesh3d )
     obj.mesh3d = mesh3d;
     obj.Nmesh = numel( mesh3d );
 
-    % initilize physical field
-    [ obj.fphys2d, obj.fphys3d ] = obj.setInitialField( );
-
     % set the physical field for the NdgPhysMat solver
     for m = 1:obj.Nmesh
         Np = obj.mesh3d(m).cell.Np;
@@ -30,5 +27,5 @@ function initPhysFromOptions( obj, mesh2d, mesh3d )
     end
 
     % Setup the output NetCDF file object
-    obj = initOutput( obj, mesh2d, mesh3d );
+    initOutput( obj, mesh2d, mesh3d );
 end

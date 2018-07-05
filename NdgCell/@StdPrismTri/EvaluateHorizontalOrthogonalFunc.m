@@ -1,16 +1,9 @@
-function [ fval ] = orthogonal_func(obj, N1, N2, td, r, s, t)
-td1 = mod( td - 1, obj.Nph ) + 1;
-td2 = ceil( td / obj.Nph );
+function [ f ] = EvaluateHorizontalOrthogonalFunc( obj, N1, td, r, s )
 
-[ f1 ] = tri_orthogonal_func( N1, td1, r, s );
-[ f2 ] = line_orthogonal_func( td2, t );
-fval = f1 .* f2;
+td1 = mod( td - 1, obj.Nph ) + 1;
+[ f ] = tri_orthogonal_func( N1, td1, r, s );
 
 end
-
-function [ f ] = line_orthogonal_func( ind, r )
-f = JacobiP(r, 0, 0, ind-1);
-end% func
 
 function [ fval ] = tri_orthogonal_func( N, td, r, s )
 %ORTHOGONAL_FUNC Get the values of the orthgonal basis
@@ -33,6 +26,3 @@ h2 = JacobiP(b, 2*i+1, 0, j);
 P = sqrt( 2.0 )* h1 .* h2 .* ( 1 - b ).^i;
 
 end
-
-
-

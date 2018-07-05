@@ -1,14 +1,26 @@
-function [ Np, Np1, Np2, r, s, t ] = node_coor_func( obj, Nh, Nz )
+function EvaluaetNodeCoor( obj, Nh, Nz )
     
-    [ Np1, r1, s1 ] = tri_node_coor_func( Nh );
-    [ Np2, t1 ] = line_node_coor_func( Nz );
+    [ Nph, r1, s1 ] = tri_node_coor_func( Nh );
+    [ Npz, t1 ] = line_node_coor_func( Nz );
 
-    Np = Np1 * Np2;
-    r = repmat(r1, 1, Np2);
-    s = repmat(s1, 1, Np2);
-    t = repmat(t1', Np1, 1 );
+    Np = Nph * Npz;
+    r = repmat(r1, 1, Npz);
+    s = repmat(s1, 1, Npz);
+    t = repmat(t1', Nph, 1 );
 
-    r = r(:); s = s(:); t = t(:);
+    %r = r(:); s = s(:); t = t(:);
+    
+    obj.Np = Np; 
+    obj.Nph = Nph; 
+    obj.Npz = Npz;
+    
+    obj.r1 = r1; 
+    obj.s1 = s1; 
+    obj.t1 = t1;
+    
+    obj.r = r(:);
+    obj.s = s(:);
+    obj.t = t(:);
 end
 
 function [ Np, t ] = line_node_coor_func( N )

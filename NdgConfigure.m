@@ -58,9 +58,16 @@ srcfile = {[path, 'mxEvaluateStrongFromEdgeRHS.c'], ...
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 
-path = 'NdgEdge/@NdgBottomEdge3d/private/';
+path = 'NdgEdge/@NdgBottomInnerEdge3d/private/';
 srcfile = {[path, 'mxEvaluateStrongFormEdgeRHS.c'], ...
-    [path, 'mxEvaluateSurfValue.c']};
+    [path, 'mxEvaluateSurfValue.c'], ...
+    [path, 'mxEvaluateStrongFormEdgeAlterRHS.c'], ...
+    [path, 'mxEvaluateStrongFormEdgeCentralRHS.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+
+path = 'NdgEdge/@NdgBottomHaloEdge3d/private/';
+srcfile = {[path, 'mxEvaluateStrongFormEdgeRHS.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 

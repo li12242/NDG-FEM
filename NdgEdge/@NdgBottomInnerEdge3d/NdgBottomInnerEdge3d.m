@@ -1,4 +1,4 @@
-classdef NdgBottomEdge3d < handle
+classdef NdgBottomInnerEdge3d < handle
     %NDGHORIZONEDGE3D Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -27,12 +27,12 @@ classdef NdgBottomEdge3d < handle
         nx, ny, nz
         %> determination of edge Jacabian
         Js
-        %> edge type
-        ftype
+%         %> edge type
+%         ftypes
     end
     
     methods (Access = public)
-        function obj = NdgBottomEdge3d( meshUnion3d, meshId )
+        function obj = NdgBottomInnerEdge3d( meshUnion3d, meshId )
             mesh = meshUnion3d( meshId );
 
             obj.mesh = mesh;
@@ -45,9 +45,11 @@ classdef NdgBottomEdge3d < handle
         [ fM, fP ] = matEvaluateSurfValue( obj, fphys );
         %> evaluate strong-form surface term rhs
         [ frhs ] = matEvaluateStrongFormEdgeRHS( obj, fluxM, fluxP, fluxS )
+        [ frhs ] = matEvaluateStrongFormEdgeAlterRHS( obj, fluxM, fluxP )
+        [ frhs ] = matEvaluateStrongFormEdgeCentralRHS( obj, fluxM, fluxP )
     end
     
-    methods ( Access = private )
+    methods ( Access = protected )
         obj = assembleEdgeConnect( obj, mesh, mesh2d );
         obj = assembleNodeProject( obj, mesh );
         obj = assembleMassMatrix( obj, N, Nz );

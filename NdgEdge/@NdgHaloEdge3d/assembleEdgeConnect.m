@@ -33,6 +33,6 @@ for n = 1 : Ne
     obj.FToV( :, n ) = mesh.EToV( i1, e1 );
 end
 
-obj.ftype = repmat( edge2d.ftype, Nz, 1 );
-
+obj.ftype = repmat( edge2d.ftype', Nz, 1 );
+obj.ftype = obj.ftype(:);
 end

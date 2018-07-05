@@ -15,13 +15,13 @@ Js = zeros( Nfp, Ne );
 Fmask = cell.Fmask;
 
 for n = 1 : Ne
-    e1 = obj.FToE(1, n);
-    e2 = obj.FToE(2, n);
-    f1 = obj.FToF(1, n);
-    f2 = obj.FToF(2, n);
+    e1 = obj.FToE( 1, n );
+    e2 = obj.FToE( 2, n );
+    f1 = obj.FToF( 1, n );
+    f2 = obj.FToF( 2, n );
     
     % set local node index
-    FToN1(:, n) = Fmask(1:Nfp, f1);
+    FToN1(:, n) = Fmask( 1:Nfp, f1 );
     
     x2 = mesh.x(Fmask(1:Nfp, f2), e2);
     y2 = mesh.y(Fmask(1:Nfp, f2), e2);

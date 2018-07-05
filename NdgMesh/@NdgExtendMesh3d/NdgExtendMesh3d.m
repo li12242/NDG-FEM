@@ -25,13 +25,17 @@ classdef NdgExtendMesh3d < handle
         %> edge objects
         BottomEdge % surface/bottom faces
         InnerEdge % inner edge
+        BottomBoundaryEdge
         BoundaryEdge % halo edge
+        SurfaceBoundaryEdge % surface edge
         %> mesh index
         ind
     end
     
     % elemental volume infomation
     properties ( SetAccess=protected )
+        %> element index in each layer
+        EToL
         %> index of adjecent mesh
         EToM
         %> index of adjacent elements and faces
@@ -40,7 +44,7 @@ classdef NdgExtendMesh3d < handle
         x, y, z
         %> determination of Jacobian matrix at each interp points
         J, Jz
-        %>
+        %> Jacobian matrix entries
         rx, ry, rz
         sx, sy, sz
         tx, ty, tz
@@ -93,13 +97,16 @@ classdef NdgExtendMesh3d < handle
             nodeQ = obj.cell.project_vert2node(ele_vQ);
         end
         %> draw horizontal result
-        drawHorizonSlice( obj, varargin )
+        drawHorizonSlice( obj, field3d )
+        %> draw vertical section
+        drawVerticalSlice( obj, nodeId2d, field3d )
         
         %> evaluate vertical integral result
-        field2d = VerticalIntegralField( obj, field3d )
-        
-        %> 
+        field2d = VerticalColumnIntegralField( obj, field3d )
+        %> extend 2d field to 3d
         field3d = Extend2dField( obj, field2d );
+        %> evaluate vertical integral from bottom to each node
+        fint3d = VerticalIntegralField( obj, field3d )
     end
     
     methods ( Access = protected )

@@ -1,4 +1,4 @@
-function drawHorizonSlice( obj, cvar )
+function drawHorizonSlice( obj, nodeField3d )
 
 Nhp = obj.mesh2d.cell.Np;
 Nzp = obj.cell.Nz + 1;
@@ -14,13 +14,13 @@ if isFigureExit
     for n = 1 : Nzp
         ind = (1 : Nhp) + Nhp * ( n - 1 );
         Update_Figure(obj.figure_handle{n}, ...
-            obj.x(ind, :), obj.y(ind, :), obj.z(ind, :), cvar(ind, :));
+            obj.x(ind, :), obj.y(ind, :), obj.z(ind, :), nodeField3d(ind, :));
     end
 else
     for n = 1 : Nzp
         ind = (1 : Nhp) + Nhp * ( n - 1 );
         obj.figure_handle{n} = drawNew3dFigure(obj, ...
-            obj.x(ind, :), obj.y(ind, :), obj.z(ind, :), cvar(ind, :) );
+            obj.x(ind, :), obj.y(ind, :), obj.z(ind, :), nodeField3d(ind, :) );
     end
 end
 

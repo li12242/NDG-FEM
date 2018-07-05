@@ -1,46 +1,44 @@
-classdef OpenChannel3d < LSWEAbstract3d
+classdef CloseChannel3d < LSWEAbstract3d
     %OPENCHANNEL3D Summary of this class goes here
     %   Detailed explanation goes here
     
     properties (Constant)
         %> channel length
-        ChLength = 100e3;
+        ChLength = 40e3;
         %> channel width
-        ChWidth = 20e3;
+        ChWidth = 8e3;
         %> channel depth
         H = 12;
-        % frequency
-        omega = 2 * pi / 12.4 / 3600;
         %> start time
         startTime = 0;
         %> final time
         finalTime = 24 * 3600;
         %> output time interval
-        outputTimeInterval = 240;
+        outputTimeInterval = 60;
         %> casename
-        casename = 'TidalForcingWithHorizontalBottomRectangularBasin';
-        %> amplitude
-        a = 0.25;
+        casename = 'FreeSurfaceSeichingWithHorizontalBottomClosedRectangularBasin';
+        %> maximum amplitude
+        eta = 0.25;
     end
     
     methods
-        function obj = OpenChannel3d( N, Nz, M, Mz )
+        function obj = CloseChannel3d( N, Nz, M, Mz )
+            % setup mesh domain
             [ obj.mesh2d, obj.mesh3d ] = makeChannelMesh( obj, N, Nz, M, Mz );
+            % allocate boundary field with mesh obj 
             obj.initPhysFromOptions( obj.mesh2d, obj.mesh3d );
-            
-            % initilize physical field
+            % set initilize physical field
             [ obj.fphys2d, obj.fphys3d ] = obj.setInitialField( );
-            [ obj.fext2d, obj.fext3d ] = obj.initBoundaryField( );
             % set vertical viscosity
             obj.miu = 0;
             %> linear slip parameter
             obj.K = 0;
             %> time interval
-            obj.dt = 60;
-        end
+            obj.dt = 80;
+        end 
         
-        AnalysisResult2d( obj );
-        AnalysisResult3d( obj );
+        AnalysisResult2d( obj )
+        AnalysisResult3d( obj )
     end
     
     methods ( Access = protected )
@@ -48,25 +46,12 @@ classdef OpenChannel3d < LSWEAbstract3d
         frhs2d = EvaluatePCE2d_BoundaryKernel( obj, edge, fphys2d, fext2d )
         %> evaluate horizontal flux for 3d momentum equations
         frhs3d = Evaluate3d_HorizontalBoundaryKernel( obj, edge, fphys3d, fext3d )
-        %> update external fields
-        matUpdateExternalField( obj, time, fphys2d, fphys3d );
         
-        function [ fext2d, fext3d ] = initBoundaryField( obj )
-            fext2d = cell( obj.Nmesh, 1 );
-            fext3d = cell( obj.Nmesh, 1 );
-            for m = 1:obj.Nmesh
-                mesh2d = obj.mesh2d(m);
-                edge2d = mesh2d.BoundaryEdge;
-                fext2d{m} = zeros( edge2d.Nfp, edge2d.Ne, obj.Nfield2d );
-                
-                edge3d = obj.mesh3d(m).BoundaryEdge;
-                fext3d{m} = zeros( edge3d.Nfp, edge3d.Ne, obj.Nfield3d );
-                % fext3d{m}(:, :, 1) = fext3d{m}(:, :, 5) .^2 ./ obj.miu / 2 ...
-                %    .* obj.phi / obj.ChLength .* ( edge3d.zb + 1 ) .^2;
-            end
+        function matUpdateExternalField( obj, time, fphys2d, fphys3d )
         end
         
-        function [ fphys2d, fphys3d ] = setInitialField( obj )
+        %> set initial function
+        function [fphys2d, fphys3d] = setInitialField( obj )
             fphys2d = cell( obj.Nmesh, 1 );
             fphys3d = cell( obj.Nmesh, 1 );
             for m = 1 : obj.Nmesh
@@ -76,9 +61,7 @@ classdef OpenChannel3d < LSWEAbstract3d
                 fphys3d{m} = zeros( mesh3d.cell.Np, mesh3d.K, obj.Nfield3d );
                 
                 % surface elevation
-                fphys2d{m}(:, :, 1) = obj.a * ( ...
-                    cos( obj.omega / sqrt( obj.gra * obj.H ) * ( obj.ChLength - mesh2d.x ) ) / ...
-                    cos( obj.omega / sqrt( obj.gra * obj.H ) * obj.ChLength ) );
+                fphys2d{m}(:, :, 1) = obj.eta * cos( ( mesh2d.x ./ obj.ChLength ) * pi );
                 % bottom elevation
                 fphys2d{m}(:, :, 5) = - obj.H;
                 % water depth
@@ -88,7 +71,6 @@ classdef OpenChannel3d < LSWEAbstract3d
                 fphys3d{m}(:, :, 6) = mesh3d.Extend2dField( fphys2d{m}(:, :, 4) );
                 % bottom elevation
                 fphys3d{m}(:, :, 7) = mesh3d.Extend2dField( fphys2d{m}(:, :, 1) );
-                
             end
         end
     end
@@ -99,11 +81,11 @@ function [mesh2d, mesh3d] = makeChannelMesh( obj, N, Nz, M, Mz )
 bctype = [ ...
     enumBoundaryCondition.SlipWall, ...
     enumBoundaryCondition.SlipWall, ...
-    enumBoundaryCondition.Clamped, ...
+    enumBoundaryCondition.SlipWall, ...
     enumBoundaryCondition.SlipWall ];
 
 mesh2d = makeUniformTriMesh( N, ...
-    [ 0, obj.ChLength ], [0, obj.ChWidth], M, 2, bctype);
+    [ -obj.ChLength, 0 ], [0, obj.ChWidth], M, 2, bctype);
 
 cell = StdPrismTri( N, Nz );
 zs = zeros(mesh2d.Nv, 1); zb = zs - 1;
@@ -113,5 +95,4 @@ mesh3d.BottomEdge = NdgBottomInnerEdge3d( mesh3d, 1 );
 mesh3d.BoundaryEdge = NdgHaloEdge3d( mesh3d, 1 );
 mesh3d.BottomBoundaryEdge = NdgBottomHaloEdge3d( mesh3d, 1 );
 mesh3d.SurfaceBoundaryEdge = NdgSurfaceHaloEdge3d( mesh3d, 1 );
-
 end

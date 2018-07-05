@@ -21,5 +21,6 @@ classdef enumBoundaryCondition < int8
         NonLinearFlatherFlow    (10)
         NonReflectFlux          (11)
         BottomBoundary          (12)
+        UpperSurfaceBoundary    (13)
     end
 end
