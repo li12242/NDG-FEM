@@ -2,10 +2,10 @@ classdef NdgNonVisSolver < NdgAbstractVisSolver
     
     methods
         function obj = NdgNonVisSolver( phys )
-            obj = obj@NdgAbstractVisSolver( phys );
+            obj = obj@NdgAbstractVisSolver( phys, 0, 0 );
         end
         
-        function evaluateViscosityRHS( obj, fphys )
+        function matEvaluateRHS( obj, fphys, frhs )
         end% func
     end
     
