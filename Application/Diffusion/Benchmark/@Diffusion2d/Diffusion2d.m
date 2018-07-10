@@ -3,6 +3,7 @@ classdef Diffusion2d < DiffusionAbstract2d
     %   Detailed explanation goes here
     
     properties ( Constant )
+        len = 4
         x0 = 0
         y0 = 0
         miu = 1e-1;
@@ -10,15 +11,27 @@ classdef Diffusion2d < DiffusionAbstract2d
     
     methods
         function obj = Diffusion2d( N, M, cellType )
-            mesh = makeUniformMesh(N, M, cellType);
             obj = obj@DiffusionAbstract2d( );
             obj.N = N;
             obj.M = M;
+            mesh = makeUniformMesh( obj, N, M, cellType);
             obj.initPhysFromOptions( mesh );
+            
+            Introduction(obj);
         end
     end
     
     methods( Access = protected )
+        function Introduction( obj )
+            fprintf('\n================  Diffusion2d  ==================');
+            fprintf('\nDiffusion problem with constant viscosity.');
+            fprintf('\nParameter: ');
+            fprintf( '\n   casename = %s', obj.getOption('outputCaseName'));
+            fprintf( '\n   miu = %8.4f', obj.miu);
+            fprintf( '\n   dt  = %8.4f', obj.getOption('timeInterval'));
+            fprintf( '\n   final time = %8.4f', obj.getOption('finalTime'));
+            fprintf( '\n=================================================');
+        end
         
         function [ fphys ] = setInitialField( obj )
             fphys = cell( obj.Nmesh, 1 );
@@ -37,7 +50,7 @@ classdef Diffusion2d < DiffusionAbstract2d
             option('outputTimeInterval') = 2.4/outputIntervalNum;
             option('outputCaseName') = mfilename;
             option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
-            option('timeInterval') = (2 / obj.M / (obj.N+1)).^2 ./ obj.miu / 100;
+            option('timeInterval') = (obj.len / obj.M / (obj.N+1)).^2 ./ obj.miu / 4;
             option('equationType') = enumDiscreteEquation.Strong;
             option('integralType') = enumDiscreteIntegral.QuadratureFree;
             option('limiterType') = enumLimiter.None;
@@ -51,17 +64,18 @@ classdef Diffusion2d < DiffusionAbstract2d
     
 end
 
-function mesh = makeUniformMesh(N, M, type)
+function mesh = makeUniformMesh(obj, N, M, type)
 bctype = [...
     enumBoundaryCondition.Clamped, ...
     enumBoundaryCondition.Clamped, ...
     enumBoundaryCondition.Clamped, ...
     enumBoundaryCondition.Clamped];
 
+domain = obj.len/2 * [-1, 1];
 if (type == enumStdCell.Tri)
-    mesh = makeUniformTriMesh(N, [-1, 1], [-1, 1], M, M, bctype);
+    mesh = makeUniformTriMesh(N, domain, domain, M, M, bctype);
 elseif(type == enumStdCell.Quad)
-    mesh = makeUniformQuadMesh(N, [-1, 1], [-1, 1], M, M, bctype);
+    mesh = makeUniformQuadMesh(N, domain, domain, M, M, bctype);
 else
     msgID = [mfilename, ':inputCellTypeError'];
     msgtext = ['The input cell type should be NdgCellType.Tri',...

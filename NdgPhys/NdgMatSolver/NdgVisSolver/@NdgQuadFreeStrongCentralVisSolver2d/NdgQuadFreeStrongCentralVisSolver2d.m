@@ -23,13 +23,14 @@ classdef NdgQuadFreeStrongCentralVisSolver2d < NdgAbstractVisSolver
                 mesh = obj.phys.meshUnion(m);
                 for fld = obj.Nfield
                     id = obj.varId(fld);
+                    dfdr = mesh.cell.Dr * fphys{m}(:, :, id);
+                    dfds = mesh.cell.Ds * fphys{m}(:, :, id);
+                    
                     obj.px{m}(:, :, fld) = - obj.mx{m} .* ( ...
-                        mesh.rx .* ( mesh.cell.Dr * fphys{m}(:, :, id) ) + ...
-                        mesh.sx .* ( mesh.cell.Ds * fphys{m}(:, :, id) ) );
+                        mesh.rx .* dfdr + mesh.sx .* dfds );
                     
                     obj.py{m}(:, :, fld) = - obj.my{m} .* ( ...
-                        mesh.ry .* ( mesh.cell.Dr * fphys{m}(:, :, id) ) + ...
-                        mesh.sy .* ( mesh.cell.Ds * fphys{m}(:, :, id) ) );
+                        mesh.ry .* dfdr + mesh.sy .* dfds );
                 end
             end
         end
@@ -41,20 +42,20 @@ classdef NdgQuadFreeStrongCentralVisSolver2d < NdgAbstractVisSolver
                 fluxM = fm(:, :, obj.varId) .* edge.nx;
                 fluxP = fp(:, :, obj.varId) .* edge.nx;
                 % fluxS = ( fluxM + fluxP ) * 0.5;
-                obj.px{m} = obj.px{m} + ...
-                    obj.mx{m} .* edge.matEvaluateStrongFormEdgeCentralRHS( fluxM, fluxP );
+                obj.px{m} = obj.px{m} + obj.mx{m} .* ...
+                    edge.matEvaluateStrongFormEdgeCentralRHS( fluxM, fluxP );
                 
                 fluxM = fm(:, :, obj.varId) .* edge.ny;
                 fluxP = fp(:, :, obj.varId) .* edge.ny;
                 % fluxS = ( fluxM + fluxP ) * 0.5;
-                obj.py{m} = obj.py{m} + ...
-                    obj.my{m} .* edge.matEvaluateStrongFormEdgeCentralRHS( fluxM, fluxP );
+                obj.py{m} = obj.py{m} + obj.my{m} .* ...
+                    edge.matEvaluateStrongFormEdgeCentralRHS( fluxM, fluxP );
             end
         end
         
         function matEvaluateOriVarRHS( obj, fphys )
-            matEvaluateOriVarVolumeKernel( obj );
             matEvaluateOriVarSurfaceKernel( obj, fphys );
+            matEvaluateOriVarVolumeKernel( obj );
         end
         
         function matEvaluateOriVarVolumeKernel( obj )
@@ -75,16 +76,17 @@ classdef NdgQuadFreeStrongCentralVisSolver2d < NdgAbstractVisSolver
         function matEvaluateOriVarSurfaceKernel( obj, fphys )
             for m = 1:obj.Nmesh
                 edge = obj.phys.meshUnion(m).InnerEdge;
-                [ fxm, fxp ] = edge.matEvaluateSurfValue( obj.px );
-                [ fym, fyp ] = edge.matEvaluateSurfValue( obj.py );
+                [ pxM, pxP ] = edge.matEvaluateSurfValue( obj.px );
+                [ pyM, pyP ] = edge.matEvaluateSurfValue( obj.py );
                 % [ fm, fp ] = edge.matEvaluateSurfValue( fphys );
                 % tau = 1;
                 for fld = 1:obj.Nfield
-                    fluxM = fxm(:, :, fld) .* edge.nx + fym(:, :, fld) .* edge.ny;
-                    fluxP = fxp(:, :, fld) .* edge.nx + fyp(:, :, fld) .* edge.ny;
+                    fluxM = pxM(:, :, fld) .* edge.nx + pyM(:, :, fld) .* edge.ny;
+                    fluxP = pxP(:, :, fld) .* edge.nx + pyP(:, :, fld) .* edge.ny;
                 end
                 % fluxS = ( fluxM + fluxP ) * 0.5;
-                obj.phys.frhs{m}(:, :, obj.rhsId) = obj.phys.frhs{m}(:, :, obj.rhsId) + ...
+                obj.phys.frhs{m}(:, :, obj.rhsId) = ...
+                    obj.phys.frhs{m}(:, :, obj.rhsId) + ...
                     edge.matEvaluateStrongFormEdgeCentralRHS( fluxM, fluxP );
             end
         end

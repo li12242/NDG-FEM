@@ -3,7 +3,7 @@
 function matEvaluateRHS( obj, fphys )
 
 obj.advectionSolver.evaluateAdvectionRHS( fphys );
-obj.viscositySolver.evaluateViscosityRHS( fphys );
+obj.viscositySolver.matEvaluateRHS( fphys );
 obj.matEvaluateSourceTerm( fphys );
 
 end

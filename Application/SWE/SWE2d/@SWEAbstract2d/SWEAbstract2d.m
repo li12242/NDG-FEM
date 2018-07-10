@@ -68,7 +68,7 @@ classdef SWEAbstract2d < NdgPhysMat
     % ======================================================================
 
     
-    methods ( Hidden, Sealed, Access = public ) % public function, not allow to inherit
+    methods ( Hidden, Access = public ) % public function, not allow to inherit
         
         %> impose boundary condition and evaluate cell boundary values
         [ fM, fP ] = matImposeBoundaryCondition( obj, edge, nx, ny, fM, fP, fext );

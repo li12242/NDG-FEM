@@ -36,12 +36,12 @@ while( time < ftime )
                 = fphys{n}(:,:, obj.varFieldIndex) + rk4b(intRK) * resQ{n};
         end
         fphys = obj.matEvaluateLimiter( fphys );
-        fphys = obj.matEvaluatePostFunc( fphys );
+        fphys = obj.matEvaluatePostFunc( fphys );        
         
+        % visual.drawResult( fphys{1}(:, :, 1) )
+
     end
-    
-    visual.drawResult( fphys{1}(:, :, 1) )
-    
+        
     time = time + dt;
     obj.matUpdateOutputResult( time, fphys );
     timeRatio = time / ftime;

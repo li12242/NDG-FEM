@@ -123,6 +123,10 @@ classdef NdgMesh < handle
             integralValue = mxGetMeshIntegralValue(nodeVal, obj.cell.wq, obj.J, obj.cell.Vq);
             avergeValue = integralValue ./ obj.LAV;
         end
+        
+        [ err ] = evaluateNormErr1( obj, fphys, fext );
+        [ err ] = evaluateNormErr2( obj, fphys, fext );
+        [ err ] = evaluateNormErrInf( obj, fphys, fext );
     end% methods
 end
 

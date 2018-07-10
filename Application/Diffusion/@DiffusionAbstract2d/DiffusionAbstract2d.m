@@ -50,6 +50,7 @@ classdef DiffusionAbstract2d < NdgPhysMat
     
     methods( Access = protected )
         function matEvaluateRHS( obj, fphys )
+            obj.frhs{1}(:) = 0;
             obj.viscositySolver.matEvaluateRHS( fphys );
         end
     end
