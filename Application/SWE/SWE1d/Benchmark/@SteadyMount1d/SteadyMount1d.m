@@ -1,4 +1,4 @@
-classdef SteadyMount1d < SWETransitionCell1d
+classdef SteadyMount1d < SWEWD1d
     %STEADYMOUNT1D Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -9,7 +9,7 @@ classdef SteadyMount1d < SWETransitionCell1d
     
     methods
         function obj = SteadyMount1d( N, M )
-            obj = obj@SWETransitionCell1d();
+            obj = obj@SWEWD1d();
             [ mesh ] = makeUniformMesh( N, M );
             obj.initPhysFromOptions( mesh );
         end
@@ -28,28 +28,28 @@ classdef SteadyMount1d < SWETransitionCell1d
         end
         
         function [ option ] = setOption( obj, option )
-            
             ftime = 0.5;
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.TVB;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.TVB;
             option('limiterParameter') = 1e-5;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
         end
     end
     
 end
 
 function [ mesh ] = makeUniformMesh( N, M )
-xlim = [0, 1];
-bcType = [NdgEdgeType.SlipWall, NdgEdgeType.SlipWall];
+xlim = [ 0, 1 ];
+bcType = [ ...
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.SlipWall ];
 [ mesh ] = makeUniformMesh1d( N, xlim, M, bcType );
 end
 

@@ -25,16 +25,12 @@ classdef NdgBJAbstract < NdgAbstractLimiter
         end
     end
     
+    methods ( Abstract )
+        %> \brief A cell storing the 
+        ws = assembleEdgeWeiths( obj )
+    end
+    
     methods( Hidden )
-        
-        function ws = assembleEdgeWeiths( obj )
-            ws = cell( obj.Nmesh );
-            for m = 1:obj.Nmesh
-                mesh = obj.meshUnion(m);
-                Mes = mesh.cell.M * mesh.cell.LIFT;
-                ws{m} = sum( Mes );
-            end
-        end
         
         [ fvmin, fvmax, cvar ] = matEvaluateVertAverage( obj, fphys, fieldId );
         

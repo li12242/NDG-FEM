@@ -1,4 +1,4 @@
-classdef PerturbHump2d < SWEPreBlanaced2d
+classdef PerturbHump2d < SWEWDPreBlanaced2d
     
     properties( Constant )
         gra = 9.81
@@ -8,10 +8,13 @@ classdef PerturbHump2d < SWEPreBlanaced2d
     methods
         function obj = PerturbHump2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            obj = obj@SWEPreBlanaced2d();
+            obj = obj@SWEWDPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
             obj.fext = obj.setInitialField( );
         end
+        
+        ContourEta( obj );
+        DrawSurfEta( obj );
     end
     
     methods(Access=protected)
@@ -21,7 +24,7 @@ classdef PerturbHump2d < SWEPreBlanaced2d
                 mesh = obj.meshUnion(m);
                 fphys{m} = zeros( mesh.cell.Np, mesh.K, obj.Nfield );
                 
-                bot = 0.8*exp( -5*(mesh.x - 0.9).^2 - 50*(mesh.y - 0.5).^2 );
+                bot = 0.8 * exp( -5*(mesh.x - 0.9).^2 - 50*(mesh.y - 0.5).^2 );
                 fphys{m}(:,:,4) = bot;
                 fphys{m}(:,:,1) = 1 - bot;
                 ind = ( any(mesh.x > 0.05 ) ) & ( any(mesh.x < 0.15 ) );
@@ -50,10 +53,10 @@ end
 
 function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.ClampedDepth, ...
-    NdgEdgeType.ClampedDepth];
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.ZeroGrad, ...
+    enumBoundaryCondition.ZeroGrad];
 
 xlim = [0, 2]; 
 ylim = [0, 1];

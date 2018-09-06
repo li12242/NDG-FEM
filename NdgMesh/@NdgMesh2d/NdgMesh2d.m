@@ -33,12 +33,15 @@ classdef NdgMesh2d < NdgMesh
     end% methods
     
     % public methods
-    methods(Access=public)
+    methods( Access = public )
         function obj = NdgMesh2d(cell, Nv, vx, vy, K, EToV, EToR)
             [ EToV ] = makeCounterclockwiseVertexOrder( EToV, vx, vy );
             vz = zeros( Nv, 1 ); % vz is all zeros
             obj = obj@NdgMesh(cell, Nv, vx, vy, vz, K, EToV, EToR);
         end% func
+        
+        % assemble mesh connection
+        ConnectMeshUnion( obj, meshId, meshUnion )
     end% methods
     
 end

@@ -1,8 +1,8 @@
 function obj = ConnectMesh( obj )
 
-Nface = obj.cell.Nface;
-Ke = obj.K;
-Nfv = max( obj.cell.Nfv );
+Nface = obj.cell.Nface; % num of faces
+Ke = obj.K; % num of elements
+Nfv = max( obj.cell.Nfv ); % maximum num of vertices on a face
 faceVertIndex = zeros( Nfv + 2, Nface * Ke );
 
 sk = 1;

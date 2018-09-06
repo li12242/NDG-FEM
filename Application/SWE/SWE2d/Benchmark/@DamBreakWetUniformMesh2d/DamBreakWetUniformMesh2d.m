@@ -26,8 +26,10 @@ classdef DamBreakWetUniformMesh2d < SWEConventional2d
         end
         
         function CheckSection( obj )
-            Ng = 100;
-            xg = linspace(0, 1000, Ng)'; yg = zeros(Ng, 1);
+            Ng = 300;
+            xg = linspace(0, 1000, Ng)'; 
+            yg = zeros(Ng, 1);
+            
             pos = Analysis2d( obj, xg, yg );
             fphyInterp = pos.InterpGaugeResult( obj.fphys );
             ftime = obj.getOption('finalTime');
@@ -82,10 +84,10 @@ bctype = [...
 
 if (type == enumStdCell.Tri)
     mesh = makeUniformRotationTriMesh(N, [0, 1000], [-10, 10], ...
-        M, ceil(M/50), bctype, 500, 0, theta);
+        M, 2, bctype, 500, 0, theta);
 elseif(type == enumStdCell.Quad)
     mesh = makeUniformRotationQuadMesh(N, [0, 1000], [-10, 10], ...
-        M, ceil(M/50), bctype, 500, 0, theta );
+        M, 2, bctype, 500, 0, theta );
 else
     msgID = 'DamBreakDryUniformMesh:inputCellTypeError';
     msgtext = 'The input cell type should be NdgCellType.Tri or NdgCellType.Quad.';

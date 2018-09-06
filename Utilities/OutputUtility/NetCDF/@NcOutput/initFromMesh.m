@@ -2,7 +2,7 @@ function initFromMesh( obj, mesh )
 
 % set vtk output
 if (mesh.type == enumMeshDim.One)
-    % obj.vtkOutput = vtkOutput2d();
+    obj.vtkOutput = VtkOutput1d(obj.casename, obj.Nfield, obj.timeInterval);
 elseif (mesh.type == enumMeshDim.Two)
     obj.vtkOutput = VtkOutput2d(obj.casename, obj.Nfield, obj.timeInterval);
 elseif (mesh.type == enumMeshDim.Three)

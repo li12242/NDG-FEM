@@ -17,6 +17,7 @@ classdef Analysis2d < AbstractAnalysis
             obj.yg = yg;
             [ obj.gaugeMesh, obj.gaugeCell ] = accessGaugePointLocation( obj );
             obj.Vg = assessGaugeInterpMatrix( obj );
+            obj.assessGaugePerMesh();
         end
 
         [ gaugeMesh, gaugeCell ] = accessGaugePointLocation( obj );

@@ -72,7 +72,14 @@ classdef SWEAbstract2d < NdgPhysMat
         
         %> impose boundary condition and evaluate cell boundary values
         [ fM, fP ] = matImposeBoundaryCondition( obj, edge, nx, ny, fM, fP, fext );
-        [ fM, fP ] = matEvaluateSurfaceValue( obj, mesh, fphys, fext );
+        
+        function [ fM, fP ] = matEvaluateSurfValue( obj, edge, fphys )
+            [ fM, fP ] = edge.matEvaluateSurfValue( fphys );
+            % hydrostatic reconstruction
+            z = max( fM(:, :, 4), fP(:, :, 4) );
+            fM(:, :, 1) = max( 0, fM(:, :, 1) + fM(:, :, 4) - z );
+            fP(:, :, 1) = max( 0, fP(:, :, 1) + fP(:, :, 4) - z );
+        end
         
         %> evaluate local boundary flux
         function [ fluxM ] = matEvaluateSurfFlux( obj, mesh, nx, ny, fm )

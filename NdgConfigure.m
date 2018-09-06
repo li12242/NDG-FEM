@@ -34,8 +34,12 @@ libfile = { [path, 'polylib.c'] };
 FuncHandle(outPath, srcfile, libfile);
 % NdgMesh
 path = 'NdgMesh/@NdgMesh/private/';
-srcfile = {[path, 'mxGetMeshIntegralValue.c'], ...
-    [path, 'mxAssembleMeshConnection.c']};
+srcfile = {[path, 'mxGetMeshIntegralValue.c']};
+libfile = {};
+FuncHandle(path, srcfile, libfile);
+
+path = 'NdgMesh/@NdgMesh2d/private/';
+srcfile = {[path, 'mxAssembleMeshConnection.c']};
 libfile = {};
 FuncHandle(path, srcfile, libfile);
 

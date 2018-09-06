@@ -14,7 +14,7 @@ xc = 12.5;
 yc = 15.0;
 r1 = 1.1;
 r2 = 3.6;
-le = 0.2;
+le = 0.3;
 
 // inner circle
 xc11 = xc - r1; yc11 = yc - r1;

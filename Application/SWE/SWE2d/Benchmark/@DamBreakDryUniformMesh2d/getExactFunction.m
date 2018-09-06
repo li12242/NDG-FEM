@@ -30,7 +30,7 @@ h(ind) = obj.h0;
 u(ind) = 0;
 % middle part
 ind = (temp > -c0 ) & ( temp < 2*c0 );
-h(ind) = (2*c0 - temp(ind) ).^2/obj.gra/obj.gra;
+h(ind) = (2*c0 - temp(ind) ).^2/9/obj.gra;
 u(ind) = 2/3*(c0 + temp(ind) );
 
 end

@@ -6,7 +6,7 @@ if physMat.option.isKey('limiterType')
     type = physMat.getOption('limiterType');
     dim = physMat.meshUnion(1).type;
     if dim == enumMeshDim.One
-        [ limiter ] = initSlopeLimiter1d( physMat.meshUnion, type );
+        [ limiter ] = initSlopeLimiter1d( physMat.meshUnion, type, physMat );
     elseif dim == enumMeshDim.Two
         [ limiter ] = initSlopeLimiter2d( physMat.meshUnion, type );
     elseif dim == enumMeshDim.Three
@@ -30,13 +30,13 @@ elseif( type == enumLimiter.BJ )
 end
 end
 
-function [ limiter ] = initSlopeLimiter1d( mesh, type )
+function [ limiter ] = initSlopeLimiter1d( mesh, type, solver )
 if ( type == enumLimiter.None )
     limiter = NdgNonLimiter( mesh );
 elseif( type == enumLimiter.Vert )
     limiter = NdgVertLimiter1d( mesh );
 elseif( type == enumLimiter.TVB )
-    limiter = NdgTVB1d( mesh );
+    limiter = NdgTVB1d( mesh, solver.getOption('limiterParameter') );
 elseif( type == enumLimiter.BJ )
     limiter = NdgBJ1d( mesh );
 end

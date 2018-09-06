@@ -19,7 +19,7 @@ classdef ConicalLandRunup2d < SWEWDPreBlanaced2d
     methods
         function obj = ConicalLandRunup2d(N, M, cellType)
             [ mesh ] = makeUniformMesh(N, M, cellType);
-            % mesh = readGmshFile( N );
+            %[ mesh ] = readGmshFile( N );
             obj = obj@SWEWDPreBlanaced2d();
             obj.initPhysFromOptions( mesh );
         end

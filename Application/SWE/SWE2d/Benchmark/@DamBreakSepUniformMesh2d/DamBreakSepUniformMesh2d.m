@@ -56,18 +56,16 @@ classdef DamBreakSepUniformMesh2d < SWEPreBlanaced2d
             outputIntervalNum = 50;
             option('startTime') = 0.0;
             option('finalTime') = ftime;
-            option('temporalDiscreteType') = NdgTemporalIntervalType.DeltaTime;
-            option('obcType') = NdgBCType.None;
-            option('outputIntervalType') = NdgIOIntervalType.DeltaTime;
+            option('temporalDiscreteType') = enumTemproalInterval.DeltaTime;
+            option('outputIntervalType') = enumOutputInterval.DeltaTime;
             option('outputTimeInterval') = ftime/outputIntervalNum;
-            option('outputNetcdfCaseName') = mfilename;
-            option('temporalDiscreteType') = NdgTemporalDiscreteType.RK45;
-            option('limiterType') = NdgLimiterType.Vert;
-            option('equationType') = NdgDiscreteEquationType.Strong;
-            option('integralType') = NdgDiscreteIntegralType.QuadratureFree;
-            option('CoriolisType') = SWECoriolisType.None;
-            option('WindType') = SWEWindType.None;
-            option('FrictionType') = SWEFrictionType.None;
+            option('outputCaseName') = mfilename;
+            option('temporalDiscreteType') = enumTemporalDiscrete.RK45;
+            option('limiterType') = enumLimiter.Vert;
+            option('equationType') = enumDiscreteEquation.Strong;
+            option('integralType') = enumDiscreteIntegral.QuadratureFree;
+            option('NumFluxType') = enumSWENumFlux.LF;
+
         end
         
         function fphys = getExactFunction( obj, time )
@@ -117,15 +115,15 @@ end
 
 function [ mesh ] = makeUniformMesh(N, M, type)
 bctype = [...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.SlipWall, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad];
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.SlipWall, ...
+    enumBoundaryCondition.ZeroGrad, ...
+    enumBoundaryCondition.ZeroGrad];
 
-if (type == NdgCellType.Tri)
-    mesh = makeUniformTriMesh(N, [-200, 400], [-10, 10], M, ceil(M/30), bctype);
-elseif(type == NdgCellType.Quad)
-    mesh = makeUniformQuadMesh(N, [-200, 400], [-10, 10], M, ceil(M/30), bctype);
+if (type == enumStdCell.Tri)
+    mesh = makeUniformTriMesh(N, [-200, 400], [-10, 10], M, 2, bctype);
+elseif(type == enumStdCell.Quad)
+    mesh = makeUniformQuadMesh(N, [-200, 400], [-10, 10], M, 2, bctype);
 else
     msgID = [mfile, ':inputCellTypeError'];
     msgtext = 'The input cell type should be NdgCellType.Tri or NdgCellType.Quad.';

@@ -137,7 +137,6 @@ classdef StdCell < handle
             end
             [ obj.TNfp ] = sum(obj.Nfp);
             [ obj.Fmask ] = obj.assembleFacialNodeIndex();
-            %[ obj.LIFT ] = obj.assembleLiftMatrix();
         end
         
         %> @brief Evaluate all the nodal basis function values at points
@@ -166,6 +165,10 @@ classdef StdCell < handle
         function quad_val = project_vert2quad(obj, vert_val)
             node_val = obj.project_vert2node(vert_val);
             quad_val = obj.project_node2quad(node_val);
+        end
+        
+        %> @brief assemble the filter matrix
+        function [ Filter ] = CutOffFilter( obj, N, frac )
         end
     end% methods
     

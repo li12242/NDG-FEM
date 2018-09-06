@@ -107,7 +107,8 @@ classdef NdgMesh < handle
         end% func
         
         % assemble mesh connection
-        ConnectMeshUnion( obj, meshId, meshUnion )
+        function ConnectMeshUnion( obj, meshId, meshUnion )
+        end
 
         % project scalars from mesh verts to nodes
         function nodeQ = proj_vert2node(obj, vertQ)

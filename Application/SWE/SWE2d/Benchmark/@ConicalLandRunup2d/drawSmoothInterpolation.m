@@ -1,7 +1,7 @@
-sx = linspace( 0, 25, 200 );
-sy = linspace( 0, 30, 200 );
-
-[sx, sy] = meshgrid(sx, sy);
+% sx = linspace( 0, 25, 200 );
+% sy = linspace( 0, 30, 200 );
+% 
+% [sx, sy] = meshgrid(sx, sy);
 
 a1 = gca;
 Faces = a1.Children(1).Faces;
@@ -18,6 +18,7 @@ F = TriScatteredInterp(x(:), y(:), z(:), 'nearest');
 z = F(Vertices(:,1), Vertices(:,2));
 Vertices(:, 3) = z(:);
 
-set(a1.Children(1), 'Vertices', Vertices,...
+set(a1.Children(1), ...
+    'Vertices', Vertices,...
     'FaceVertexCData', z(:));
 

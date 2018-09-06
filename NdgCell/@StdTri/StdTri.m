@@ -2,7 +2,7 @@
 %
 %> And here we can put some more detailed informations about the class.
 % ======================================================================
-%> This class is part of the NDGOM software. 
+%> This class is part of the NDGOM software.
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
 classdef StdTri < StdCell
@@ -17,8 +17,8 @@ classdef StdTri < StdCell
         FToV = [1,2; 2,3; 3,1]';
         Nface = 3
         faceType = [enumStdCell.Line, ...
-                    enumStdCell.Line, ...
-                    enumStdCell.Line]
+            enumStdCell.Line, ...
+            enumStdCell.Line]
     end
     
     methods(Access=protected)
@@ -32,17 +32,34 @@ classdef StdTri < StdCell
             obj = obj@StdCell(N);
         end
         
-        [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z );
+        % [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z );
+        
+        function [ Filter ] = CutOffFilter( obj, Nc, frac )
+            filterdiag = ones( obj.Np, 1);
+            
+            % build exponential filter
+            sk = 1;
+            for i=0:obj.N
+                for j=0:obj.N-i
+                    if (i+j>=Nc)
+                        filterdiag(sk) = frac;
+                    end
+                    sk = sk + 1;
+                end
+            end
+            
+            Filter = obj.V*diag(filterdiag)/(obj.V);
+        end
         
         %> @brief Return the jacobian matrix and its determination.
-        %> 
+        %>
         function [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] = assembleJacobianMatrix( obj, x, y, z )
             xr = obj.Dr * x; xs = obj.Ds * x;
             yr = obj.Dr * y; ys = obj.Ds * y;
             J = -xs.*yr + xr.*ys;
             
             rx = ys./J; sx =-yr./J;
-            ry =-xs./J; sy = xr./J; 
+            ry =-xs./J; sy = xr./J;
             
             rz = ones( size(x) );
             sz = ones( size(x) );
@@ -52,7 +69,7 @@ classdef StdTri < StdCell
         end
         
         f = orthogonal_func(obj, N, ind, r, s, t);
-
+        
         function node_val = project_vert2node(obj, vert_val)
             node_val = 0.5*(-(obj.r+obj.s)*vert_val(1, :) ...
                 + (1+obj.r)*vert_val(2, :)...

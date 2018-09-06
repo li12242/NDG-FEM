@@ -45,6 +45,23 @@ classdef StdQuad < StdCell
             tz = ones( size(x) );
         end
         
+        function [ Filter ] = CutOffFilter( obj, Nc, frac )
+            filterdiag = ones( obj.Np, 1);
+            
+            % build exponential filter
+            sk = 1;
+            for i=0:obj.N
+                for j=0:obj.N
+                    if ( (i>=Nc) || (j>=Nc) )
+                        filterdiag(sk) = frac;
+                    end
+                    sk = sk + 1;
+                end
+            end
+            
+            Filter = obj.V*diag(filterdiag)/(obj.V);
+        end
+        
         f = orthogonal_func(obj, N, ind, r, s, t);
         
         function node_val = project_vert2node(obj, vert_val)

@@ -14,6 +14,11 @@ for n = 1:obj.Nmesh
 end
 fphys = obj.fphys;
 
+% Filt = cell( obj.Nmesh, 1 );
+% for m = 1:obj.Nmesh
+%     mesh = obj.meshUnion(m);
+%     Filt{m} = mesh.cell.CutOffFilter(mesh.cell.N, 0.95);
+% end
 % DEBUG = 0;
 visual = makeVisualizationFromNdgPhys( obj );
 
@@ -30,18 +35,25 @@ while( time < ftime )
         obj.matUpdateExternalField( tloc, fphys );
         obj.matEvaluateRHS( fphys );
         
+        % filter residual
+        %         for m = 1:Nmesh
+        %             for fld=1:obj.Nvar
+        %                 obj.frhs{m}(:,:,fld) = Filt{m} * obj.frhs{m}(:,:,fld);
+        %             end
+        %         end
+        
         for n = 1:Nmesh
             resQ{n} = rk4a( intRK ) * resQ{n} + dt * obj.frhs{n};
             fphys{n}(:,:, obj.varFieldIndex) ...
                 = fphys{n}(:,:, obj.varFieldIndex) + rk4b(intRK) * resQ{n};
         end
         fphys = obj.matEvaluateLimiter( fphys );
-        fphys = obj.matEvaluatePostFunc( fphys );        
+        fphys = obj.matEvaluatePostFunc( fphys );
         
-        % visual.drawResult( fphys{1}(:, :, 1) )
-
+        %visual.drawResult( fphys{1}(:, :, 1) + fphys{1}(:, :, 4) )
+        % visual.drawResult( fphys{1}(:, :, 2) )
     end
-        
+    
     time = time + dt;
     obj.matUpdateOutputResult( time, fphys );
     timeRatio = time / ftime;

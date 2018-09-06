@@ -8,29 +8,32 @@ classdef SWEWDPreBlanaced2d < SWEPreBlanaced2d
     
     methods( Access = protected )
         
-%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-%             for m = 1:obj.Nmesh
-%                 mesh = obj.meshUnion(m);
-%                 flg = ( mesh.status == ...
-%                     int8( enumSWERegion.PartialWetDamBreak ) ) ...
-%                     | ( mesh.status == ...
-%                     int8( enumSWERegion.PartialWetFlood ) );
-%                 
-%                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 1);
-%                 tempWD(1, :) = max( 0, tempWD(1, :) );
-%                 tempWD(4:end, :) = 0;
-%                 fphys{m}(:, flg, 1) = mesh.cell.V * tempWD;
-%                 
-%                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 2);
-%                 tempWD(4:end, :) = 0;
-%                 fphys{m}(:, flg, 2) = mesh.cell.V * tempWD;
-%                 
-%                 tempWD = mesh.cell.V \ fphys{m}(:, flg, 3);
-%                 tempWD(4:end, :) = 0;
-%                 fphys{m}(:, flg, 3) = mesh.cell.V * tempWD;
-%             end
-%             obj.matUpdateWetDryState( fphys );
-%         end% func
+        function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+            obj.matUpdateWetDryState( fphys );
+            for m = 1:obj.Nmesh
+                mesh = obj.meshUnion(m);
+                flg = ( mesh.status == 8 ) ... % PartialWetDamBreak
+                    | ( mesh.status == 7 ) ; % PartialWetFlood                
+                
+                tempWD = mesh.cell.V \ fphys{m}(:, flg, 1);
+                tempWD(1, :) = max( 0, tempWD(1, :) );
+                tempWD(2:end, :) = 0;
+                fphys{m}(:, flg, 1) = mesh.cell.V * tempWD;
+                fphys{m}(:, flg, 1) = max( fphys{m}(:, flg, 1), 0 );
+                
+                tempWD = mesh.cell.V \ fphys{m}(:, flg, 2);
+                tempWD(2:end, :) = 0;
+                fphys{m}(:, flg, 2) = mesh.cell.V * tempWD;
+                
+                tempWD = mesh.cell.V \ fphys{m}(:, flg, 3);
+                tempWD(2:end, :) = 0;
+                fphys{m}(:, flg, 3) = mesh.cell.V * tempWD;
+                
+                flg = ( mesh.status == 5 );
+                fphys{m}(:, flg, 1) = max( fphys{m}(:, flg, 1), 0 );
+                fphys{m}(:, flg, 2:3) = 0;
+            end
+        end% func
         
         function matUpdateWetDryState(obj, fphys)
             for n = 1:obj.Nmesh

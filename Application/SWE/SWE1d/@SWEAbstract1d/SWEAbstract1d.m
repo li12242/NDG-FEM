@@ -56,7 +56,7 @@ classdef SWEAbstract1d < NdgPhysMat
         [ fphys ] = matEvaluatePostFunc(obj, fphys);
     end
         
-    methods( Access = protected, Sealed )
+    methods( Access = protected )
         
         %> apply slope limiter on conservative variables
         [ fphys ] = matEvaluateLimiter( obj, fphys )
@@ -86,17 +86,17 @@ classdef SWEAbstract1d < NdgPhysMat
         end
     end
     
-    %     methods( Access = protected )
-    %         %>
-    %         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
-    %             obj.matUpdateWetDryState( fphys );
-    %             for m = 1:obj.Nmesh
-    %                 hc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,1) );
-    %                 qxc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,2) );
-    %                 fphys{m}(:,:,1:2) = mxEvaluatePostFunc1d( obj.hmin, fphys{m}, hc, qxc );
-    %             end
-    %             obj.matUpdateWetDryState( fphys );
-    %         end
-    %     end
+%     methods( Access = protected )
+%         %>
+%         function [ fphys ] = matEvaluatePostFunc(obj, fphys)
+%             obj.matUpdateWetDryState( fphys );
+%             for m = 1:obj.Nmesh
+%                 hc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,1) );
+%                 qxc = obj.meshUnion(m).GetMeshAverageValue( fphys{m}(:,:,2) );
+%                 fphys{m}(:,:,1:2) = mxEvaluatePostFunc1d( obj.hmin, fphys{m}, hc, qxc );
+%             end
+%             obj.matUpdateWetDryState( fphys );
+%         end
+%     end
 end
 

@@ -24,9 +24,27 @@ classdef NdgBJ2d < NdgBJAbstract
                     fvmax, ...
                     obj.meshUnion(m).cell.Fmask, ...
                     obj.meshUnion(m).EToV, ...
-                    obj.meshUnion(m).Js, ...
                     obj.ws{m} ...
                     );
+            end
+        end
+        
+        function ws = assembleEdgeWeiths( obj )
+            ws = cell( obj.Nmesh );
+            for m = 1:obj.Nmesh
+                mesh = obj.meshUnion(m);
+                line = StdLine( mesh.cell.N );
+                sk = 1;
+                Mes = zeros(mesh.cell.Np, mesh.cell.TNfp);
+                for f = 1:mesh.cell.Nface
+                    row = mesh.cell.Fmask(:, f);
+                    row = row(row ~= 0);
+                    for n = 1:line.Np
+                        Mes(row, sk) = line.M(:, n);
+                        sk = sk + 1;
+                    end
+                end
+                ws{m} = sum( Mes );
             end
         end
     end

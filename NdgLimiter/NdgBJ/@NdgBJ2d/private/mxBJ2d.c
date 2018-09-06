@@ -1,5 +1,5 @@
 #include "mex.h"
-
+#include <math.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -15,8 +15,8 @@ void cal_slope_limiter(double fmean, double gx, double gy, double xc, double yc,
                        double *fvmax, double *fvmin,
                        double *alpha);
 
-void cal_gg_gradient(double *f_Q, double *x, double *y, int Np,              // node values
-                     double *fmask, int Nfp, int Nv, double *ws, double *Js, // edge info
+void cal_gg_gradient(double *f_Q, double *x, double *y, int Np,  // node values
+                     double *fmask, int Nfp, int Nv, double *ws, // edge info
                      double area, double *gx, double *gy);
 
 /*
@@ -33,7 +33,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
     /* check input & output */
-    if (nrhs != 13)
+    if (nrhs != 12)
         mexErrMsgTxt("Wrong number of input arguments.");
     if (nlhs != 1)
         mexErrMsgTxt("Wrong number of output arguments");
@@ -50,8 +50,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *v_max = mxGetPr(prhs[8]);
     double *fmask = mxGetPr(prhs[9]);
     double *EToV = mxGetPr(prhs[10]);
-    double *Js = mxGetPr(prhs[11]);
-    double *ws = mxGetPr(prhs[12]);
+    double *ws = mxGetPr(prhs[11]);
 
     size_t Np = mxGetM(prhs[0]);  // # of points in each element
     size_t K = mxGetN(prhs[0]);   // # of elements
@@ -106,7 +105,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
         double gx, gy; // gradient
         cal_gg_gradient(f_Q + k * Np, x + k * Np, y + k * Np, Np,
-                        fmask, Nfp, Nv, ws, Js + k * Nfp * Nv,
+                        fmask, Nfp, Nv, ws,
                         area[k], &gx, &gy);
 #if DEBUG
         mexPrintf("k=%d, dfdx=%f, dfdy=%f\n", k, gx, gy);
@@ -141,7 +140,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
  * Calculate the gradient by Green-Gauss formula.
  */
 void cal_gg_gradient(double *f_Q, double *x, double *y, int Np,              // node values
-                     double *fmask, int Nfp, int Nv, double *ws, double *Js, // edge info
+                     double *fmask, int Nfp, int Nv, double *ws, // edge info
                      double area, double *gx, double *gy)
 {
     *gx = 0; // initialize the gradient
@@ -160,7 +159,7 @@ void cal_gg_gradient(double *f_Q, double *x, double *y, int Np,              // 
         for (int n = 0; n < Nfp; n++)
         {
             int node_id = (int)fmask[f * Nfp + n] - 1;
-            double j = Js[sk];
+            double j = sqrt( dx*dx + dy*dy ) / 2;
             double w = ws[sk++];
 
             *gx += j * w * dy * f_Q[node_id];

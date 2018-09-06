@@ -1,24 +1,26 @@
 function drawMaxRunup( obj )
 
-bctype = [...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ZeroGrad, ...
-    NdgEdgeType.ClampedDepth, ...
-    NdgEdgeType.ZeroGrad];
-
-M = 150;
-N = 1;
-mesh = makeUniformQuadMesh(N, [0, 25], [0, 30], M, M, bctype);
+% bctype = [...
+%     enumBoundaryCondition.ZeroGrad, ...
+%     enumBoundaryCondition.ZeroGrad, ...
+%     enumBoundaryCondition.ClampedDepth, ...
+%     enumBoundaryCondition.ZeroGrad];
+% 
+% M = 150;
+% N = 1;
+Nt = numel( obj.outputFile.outputTime );
+% mesh = makeUniformQuadMesh(N, [0, 25], [0, 30], M, M, bctype);
 %mesh = obj.meshUnion;
+mesh = obj.meshUnion;
 
-casename = 'ConicalLand2d_150_1';
-conpos = NdgPostProcess( mesh, casename );
+% casename = 'ConicalLand2d_150_1';
+% conpos = NdgPostProcess( mesh, casename );
 
 dryFlag = ones( mesh.cell.Np, mesh.K );
-threshold = 2.3e-3;
-for t = 1:conpos.Nt
-    [ fphys ] = conpos.accessOutputResultAtStepNum( t );
-    dep = fphys{1}(:,:,1);
+threshold = 1.2e-2;
+for t = 1:Nt
+    [ fphys ] = obj.outputFile.readOutputResult( t );
+    dep = fphys(:,:,1);
     dryFlag( dep > threshold ) = 0;
 end
 
