@@ -26,27 +26,28 @@
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 % ======================================================================
 classdef StdCell < handle
+
     properties
-        %> maximum order of basis function
+        % maximum order of basis function
         N
     end
     
     properties ( Constant, Abstract )
-        %> reference cell type
+        % reference cell type
         type
-        %> num of vertice
+        % num of vertice
         Nv
-        %> vertice coordinate
+        % vertice coordinate
         vr, vs, vt
-        %> length/area/volume of standard cell
+        % length/area/volume of standard cell
         LAV
-        %> num of vertice on each face
+        % num of vertice on each face
         Nfv
-        %> veretx list on each face
+        % veretx list on each face
         FToV
-        %> number of faces
+        % number of faces
         Nface
-        %> standard cell types of each face
+        % standard cell types of each face
         faceType
     end
     
@@ -63,17 +64,18 @@ classdef StdCell < handle
         TNfp
     end
     properties ( SetAccess = protected)
-        %> Vandermonde matrix
+        % Vandermonde matrix
         V
-        %> project matrx from interpolation points to quadrature points
+        % project matrx from interpolation points to quadrature points
         Vq
-        %> mass matrix
+        % mass matrix
         M
-        %> inverse of mass matrix
+        % inverse of mass matrix
         invM
-        %> derivative matrix with
-        %> \f$ [Dr]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_i} \f$
-        Dr, Ds, Dt
+        % derivative matrix with :math:`[\mathrm{Dr}]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_i}`.
+        Dr
+        Ds
+        Dt
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
         LIFT
     end

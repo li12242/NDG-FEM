@@ -17,3 +17,7 @@ html
 doc/html
 debug
 NdgMex
+
+# doc
+doc/build/*
+doc-bk/
