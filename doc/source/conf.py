@@ -5,7 +5,6 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-import sys
 import os
 
 project = 'NDG-FEM'
@@ -13,7 +12,6 @@ copyright = '2023, li12242'
 author = 'li12242'
 release = 'v1'
 matlab_src_dir = os.path.abspath('../../NdgCell')
-print(matlab_src_dir)
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -41,3 +39,5 @@ language = 'zh_CN'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+mathjax_path = "es5/tex-chtml.js"

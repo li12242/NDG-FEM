@@ -15,7 +15,7 @@ Welcome to NDG-FEM's documentation!
 
 This is the test class folder
 
-.. module:: @StdLine
+.. automodule:: @StdLine
 
 .. autoclass:: StdLine
    :show-inheritance:
