@@ -11,7 +11,7 @@ project = 'NDG-FEM'
 copyright = '2023, li12242'
 author = 'li12242'
 release = 'v1'
-matlab_src_dir = os.path.abspath('../../NdgCell')
+matlab_src_dir = os.path.abspath('../../src')
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -10,27 +10,7 @@ Welcome to NDG-FEM's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-@StdLine
-++++++++
-
-This is the test class folder
-
-.. automodule:: @StdLine
-
-.. autoclass:: StdLine
-   :show-inheritance:
-   :members:
-
-@StdCell
-++++++++
-
-This is the test class folder
-
-.. module:: @StdCell
-
-.. autoclass:: StdCell
-   :show-inheritance:
-   :members:
+   ndg
 
 Indices and tables
 ==================

@@ -31,7 +31,7 @@ classdef StdCell < handle
         % maximum order of basis function
         N
     end
-    
+
     properties ( Constant, Abstract )
         % reference cell type
         type
@@ -50,7 +50,7 @@ classdef StdCell < handle
         % standard cell types of each face
         faceType
     end
-    
+
     properties ( SetAccess = protected )
         %> number of interpolation points (IP)
         Np
@@ -79,7 +79,7 @@ classdef StdCell < handle
         %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
         LIFT
     end
-    
+
     properties ( SetAccess = protected )
         %> number of gauss quadrature points
         Nq
@@ -88,7 +88,7 @@ classdef StdCell < handle
         %> integral weights for each quadrature points
         wq
     end
-    
+
     methods(Abstract, Access=protected)
         %> get the total number and coordinate of interpolation points
         [ Np,r,s,t ] = node_coor_func(obj, N)
@@ -97,7 +97,7 @@ classdef StdCell < handle
         %> get the derivative of orthogonal function at each interpolation points
         [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
     end
-    
+
     methods(Abstract)
         %> @brief Return the value of the orthogonal function at nodes (r, s, t)
         %> @param[in] obj StdCell class
@@ -112,7 +112,7 @@ classdef StdCell < handle
         %> @brief Assemble the outword normal vectors.
         assembleNormalVector( obj, x, y, z )
     end
-    
+
     methods
         %> Construction function of the StdCell class
         %> @param[in] N The maximum degree of the basis functions
@@ -126,7 +126,7 @@ classdef StdCell < handle
             [ obj.Dr, obj.Ds, obj.Dt ] = obj.nodal_derivative_func(obj.r, obj.s, obj.t);
             %[ obj.Drq, obj.Dsq, obj.Dtq ] ...
             %    = obj.assembleQuadratureDerivativeMatrix( @obj.derivative_orthogonal_func );
-            
+
             % get the number of nodes on each face
             if obj.Nface > 0
                 obj.Nfp = zeros(obj.Nface, 1);
@@ -140,27 +140,27 @@ classdef StdCell < handle
             [ obj.TNfp ] = sum(obj.Nfp);
             [ obj.Fmask ] = obj.assembleFacialNodeIndex();
         end
-        
+
         %> @brief Evaluate all the nodal basis function values at points
         %> @param[in] obj The StdCell class
         %> @param[in] r,s,t The node coordinate
         %> @param[out] func The basis function values at points
         [ func ] = nodal_func(obj, r, s, t);
-        
+
         function [ dfr, dfs, dft ] = orthogonal_derivative_func(obj, ind, r, s, t)
             [ dfr, dfs, dft ] = obj.derivative_orthogonal_func( obj.N, ind, r, s, t );
         end
-        
+
         %> @brief Evaluate the derivative nodal function values at points
         [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
-        
+
         %> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
         %> @param[in] obj The StdCell class
         %> @param[in] node_val The values on these interpolation nodes
         function quad_val = project_node2quad(obj, node_val)
             quad_val = obj.Vq * node_val;
         end% func
-        
+
         %> @brief Project the scalar field from the vertices to the Gauss quadrature nodes
         %> @param[in] obj The StdCell class
         %> @param[in] vert_val The values on these vertices
@@ -168,12 +168,12 @@ classdef StdCell < handle
             node_val = obj.project_vert2node(vert_val);
             quad_val = obj.project_node2quad(node_val);
         end
-        
+
         %> @brief assemble the filter matrix
         function [ Filter ] = CutOffFilter( obj, N, frac )
         end
     end% methods
-    
+
     methods(Hidden, Access = protected)
         %> @brief Assemble the interpolation matrix of Gauss quadrature nodes
         %> The elements of the quadratuer interpolation matrix is
@@ -182,7 +182,7 @@ classdef StdCell < handle
         function [ Vq ] = assembleQuadratureMatrix( obj )
             Vq = obj.nodal_func( obj.rq, obj.sq, obj.tq );
         end
-        
+
         %> @brief Assemble the Vandermonde matrix
         %> @details The Vandermonde matrix interpolate the orthgonal basis functions
         %> to the nodal basis functions, with
@@ -195,15 +195,15 @@ classdef StdCell < handle
                 V(:, n) = orthogonal_func(obj.N, n, obj.r, obj.s, obj.t);
             end% for
         end% func
-        
+
         %> @brief Assemble the mass matrix
         function [ M, invM ] = assembleMassMatrix( obj )
             invV = inv(obj.V);
             M = (invV')*invV;
             invM = obj.V * obj.V';
         end% func
-        
+
         Fmask = assembleFacialNodeIndex(obj)
-        
+
     end% methods
 end
