@@ -11,6 +11,7 @@ Welcome to NDG-FEM's documentation!
    :caption: Contents:
 
    ndg
+   ugrid
 
 Indices and tables
 ==================
