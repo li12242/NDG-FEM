@@ -1,0 +1,3 @@
+[submodule "src/ugrid"]
+	path = src/ugrid
+	url = ssh://git@10.128.4.12:6222/lilongxiang01/ugrid.git
