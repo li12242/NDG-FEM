@@ -11,9 +11,9 @@ classdef NdgMeshTest < matlab.unittest.TestCase
     
     properties(MethodSetupParameter)
         type = {...
-            %NdgCellType.Line, ...
-            NdgCellType.Tri, ...
-            NdgCellType.Quad, ...
+            %enumStdCell.Line, ...
+            enumStdCell.Tri, ...
+            enumStdCell.Quad, ...
             }
         order = {1, 2, 3}
     end
@@ -32,32 +32,29 @@ classdef NdgMeshTest < matlab.unittest.TestCase
         function set_test_cell(test)
             stdCell = test.cell;
             switch test.cell.type
-                case NdgCellType.Line
+                case enumStdCell.Line
                     Nv = stdCell.Nv;
                     vx = stdCell.vr./2+1;
                     K = 1;
                     EToV = [1,2]';
                     EToR = 1;
-                    BCToV = [1, 0; 2, 0]';
-                    testMesh = NdgMesh1d(stdCell,Nv,vx,K,EToV,EToR,BCToV);
-                case NdgCellType.Tri
+                    testMesh = NdgMesh1d(stdCell,Nv,vx,K,EToV,EToR);
+                case enumStdCell.Tri
                     Nv = stdCell.Nv;
                     vx = stdCell.vr/2+3;
                     vy = stdCell.vs/2+4;
                     K = 1;
                     EToV = [1,2,3]';
                     EToR = 1;
-                    BCToV = [1,2,0; 2,3,0; 3,1,0]';
-                    testMesh = NdgMesh2d(stdCell,Nv,vx,vy,K,EToV,EToR,BCToV);
-                case NdgCellType.Quad 
+                    testMesh = NdgMesh2d(stdCell,Nv,vx,vy,K,EToV,EToR);
+                case enumStdCell.Quad
                     Nv = stdCell.Nv;
                     vx = stdCell.vr*3 + 2*stdCell.vs + 2;
                     vy = stdCell.vs/2+1;
                     K = 1;
                     EToV = [1,2,3,4]';
                     EToR = 1;
-                    BCToV = [1,2,0; 2,3,0; 3,4,0; 4,1,0]';
-                    testMesh = NdgMesh2d(stdCell,Nv,vx,vy,K,EToV,EToR,BCToV);
+                    testMesh = NdgMesh2d(stdCell,Nv,vx,vy,K,EToV,EToR);
             end
             test.mesh = testMesh;
         end% func
@@ -73,12 +70,12 @@ classdef NdgMeshTest < matlab.unittest.TestCase
             y = test.mesh.y;
             z = test.mesh.z;
             switch test.cell.type
-                case NdgCellType.Line
+                case enumStdCell.Line
                     test.verifyEqual( r/2 + 1, x, 'AbsTol', test.tol);
-                case NdgCellType.Tri
+                case enumStdCell.Tri
                     test.verifyEqual( r/2 + 3, x, 'AbsTol', test.tol);    
                     test.verifyEqual( s/2 + 4, y, 'AbsTol', test.tol); 
-                case NdgCellType.Quad 
+                case enumStdCell.Quad 
                     test.verifyEqual( r*3 + 2*s + 2, x, 'AbsTol', test.tol);    
                     test.verifyEqual( s/2 + 1, y, 'AbsTol', test.tol); 
             end
@@ -86,11 +83,11 @@ classdef NdgMeshTest < matlab.unittest.TestCase
         
 %         function test_Jacobian(test)
 %             switch test.cell.type
-%                 case NdgCellType.Line
+%                 case enumStdCell.Line
 %                     test.verifyEqual(1/2*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol);
-%                 case NdgCellType.Tri
+%                 case enumStdCell.Tri
 %                     test.verifyEqual(1/4*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol);                   
-%                 case NdgCellType.Quad 
+%                 case enumStdCell.Quad 
 %                     test.verifyEqual(3/2*ones(size(test.mesh.J)), test.mesh.J, 'AbsTol', test.tol); 
 %             end
 %         end
@@ -104,15 +101,15 @@ classdef NdgMeshTest < matlab.unittest.TestCase
 %             y = test.mesh.y;
 %             z = test.mesh.z;
 %             switch test.cell.type
-%                 case NdgCellType.Line
+%                 case enumStdCell.Line
 %                     test.verifyEqual(ones(size(test.mesh.rx)), ...
 %                         Dr*x.*rx, 'AbsTol', test.tol);
-%                 case NdgCellType.Tri
+%                 case enumStdCell.Tri
 %                     test.verifyEqual(ones(size(test.mesh.rx)), ...
 %                         Dr*x.*rx+Ds*x.*sx, 'AbsTol', test.tol);                   
 %                     test.verifyEqual(ones(size(test.mesh.rx)), ...
 %                         Dr*y.*ry+ Ds*y.*sy, 'AbsTol', test.tol);                     
-%                 case NdgCellType.Quad
+%                 case enumStdCell.Quad
 %                     test.verifyEqual(ones(size(test.mesh.rx)), ...
 %                         Dr*x.*rx+Ds*x.*sx, 'AbsTol', test.tol);                   
 %                     test.verifyEqual(ones(size(test.mesh.ry)), ...

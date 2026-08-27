@@ -74,7 +74,9 @@ classdef StdCell < handle
         %> derivative matrix with
         %> \f$ [Dr]_{ij} = \left.\frac{\partial l_j}{\partial r}\right|_{r_i} \f$
         Dr, Ds, Dt
-        %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$
+        %> lift matrix, \f$ LIFT = M^{-1} \cdot M_e \f$.
+        %> NOTE: never assigned within NdgCell; kept as a placeholder for
+        %> legacy applications (SWE1D/Conv) that read obj.mesh.cell.LIFT.
         LIFT
     end
     
@@ -168,6 +170,8 @@ classdef StdCell < handle
         end
         
         %> @brief assemble the filter matrix
+        %> @note placeholder in the base class; concrete implementations
+        %> exist in StdTri/StdQuad.
         function [ Filter ] = CutOffFilter( obj, N, frac )
         end
     end% methods

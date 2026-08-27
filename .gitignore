@@ -17,3 +17,5 @@ html
 doc/html
 debug
 NdgMex
+# M1-P1: golden baseline must persist (exception to *.mat)
+!NdgCell/UnitTest/PolylibGoldenTest/*.mat

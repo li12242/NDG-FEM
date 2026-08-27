@@ -74,7 +74,7 @@ classdef StdPrismTri < handle
         function obj = StdPrismTri(Nh, Nz)
             obj.N = Nh;
             obj.Nz = Nz;
-            EvaluaetNodeCoor( obj, Nh, Nz );
+            evaluateNodeCoor( obj, Nh, Nz );
             
             [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] ...
                 = obj.quad_coor_func( Nh, Nz );
@@ -131,7 +131,6 @@ classdef StdPrismTri < handle
     end% methods
     
     methods ( Access=protected )
-        [ Np, Nph, Npz, r, s, t ] = node_coor_func( obj, Nh, Nv );
         [ dr, ds, dt ] = derivative_orthogonal_func( obj, Nh, Nv, ind, r, s, t );
         [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, Nh, Nv );
         [ f ] = EvaluateHorizontalOrthogonalFunc( obj, N1, td, r, s );

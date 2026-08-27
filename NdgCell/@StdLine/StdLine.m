@@ -30,8 +30,8 @@ classdef StdLine < StdCell
         
         function [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
             dr = GradJacobiP(r, 0, 0, ind-1);
-            ds = zeros(obj.Np, 1);
-            dt = zeros(obj.Np, 1);
+            ds = zeros(numel(r), 1);
+            dt = zeros(numel(r), 1);
         end
 
         function [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
