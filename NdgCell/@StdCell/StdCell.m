@@ -14,12 +14,12 @@
 % ======================================================================
 %> The public interface of StdCell includes:
 %> @code
-%>   [ func ] = orthogonal_func(obj, N, ind, r, s, t); //evaluate the orthogonal function values at points
-%>   [ func ] = nodal_func(obj, r, s, t); // evaluate all the nodal basis function values at points
-%>   [ Dx, Dy, Dz ] = nodal_deri_func(obj, x, y, z);
-%>   [ node_val ] = project_vert2node(obj, vert_val); // evaluate the node values from the vertice values
-%>   [ quad_val ] = project_node2quad(obj, node_val); // evaluate the quadrature node values from the node values
-%>   [ quad_val ] = project_vert2quad(obj, vert_val); // evaluate the quadrature node values from the vertice values
+%>   [ func ] = evaluateOrthogonalFunc(obj, N, ind, r, s, t); //evaluate the orthogonal function values at points
+%>   [ func ] = evaluateNodalFunc(obj, r, s, t); // evaluate all the nodal basis function values at points
+%>   [ fDr, fDs, fDt ] = evaluateNodalDerivativeFunc(obj, r, s, t);
+%>   [ node_val ] = projectVert2Node(obj, vert_val); // evaluate the node values from the vertice values
+%>   [ quad_val ] = projectNode2Quad(obj, node_val); // evaluate the quadrature node values from the node values
+%>   [ quad_val ] = projectVert2Quad(obj, vert_val); // evaluate the quadrature node values from the vertice values
 %> @endcode
 % ======================================================================
 %> This class is part of the NDGOM software.
@@ -91,11 +91,11 @@ classdef StdCell < handle
     
     methods(Abstract, Access=protected)
         %> get the total number and coordinate of interpolation points
-        [ Np,r,s,t ] = node_coor_func(obj, N)
+        [ Np,r,s,t ] = evaluateNodeCoor(obj, N)
         %> get the total number and coordinate of gauss quadrature points
-        [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
+        [ Nq,rq,sq,tq,wq ] = evaluateQuadCoor(obj, N)
         %> get the derivative of orthogonal function at each interpolation points
-        [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
+        [dr, ds, dt] = evaluateDerivativeOrthogonalFunc(obj, N, ind, r, s, t);
     end
     
     methods(Abstract)
@@ -104,9 +104,9 @@ classdef StdCell < handle
         %> @param[in] N The maximum number of the basis function
         %> @param[in] ind The index of the orthgonal function
         %> @param[in] r,s,t Coordinate of the nodes
-        [ fun ] = orthogonal_func(obj, N, ind, r, s, t);
+        [ fun ] = evaluateOrthogonalFunc(obj, N, ind, r, s, t);
         %> @brief Project the scalar field from the cell vertices to the interpolation nodes.
-        [ node_val ] = project_vert2node(obj, vert_val);
+        [ node_val ] = projectVert2Node(obj, vert_val);
         %> @brief Calculate the
         assembleJacobianMatrix( obj, x, y, z );
         %> @brief Assemble the outword normal vectors.
@@ -118,14 +118,14 @@ classdef StdCell < handle
         %> @param[in] N The maximum degree of the basis functions
         function obj = StdCell(N)
             [ obj.N ] = N;
-            [ obj.Np, obj.r, obj.s, obj.t ] = obj.node_coor_func( N );
-            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.quad_coor_func( N );
-            [ obj.V ] = obj.assembleVandMatrix( @obj.orthogonal_func );
+            [ obj.Np, obj.r, obj.s, obj.t ] = obj.evaluateNodeCoor( N );
+            [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] = obj.evaluateQuadCoor( N );
+            [ obj.V ] = obj.assembleVandMatrix( @obj.evaluateOrthogonalFunc );
             [ obj.Vq ] = obj.assembleQuadratureMatrix();
             [ obj.M, obj.invM ] = obj.assembleMassMatrix();
-            [ obj.Dr, obj.Ds, obj.Dt ] = obj.nodal_derivative_func(obj.r, obj.s, obj.t);
+            [ obj.Dr, obj.Ds, obj.Dt ] = obj.evaluateNodalDerivativeFunc(obj.r, obj.s, obj.t);
             %[ obj.Drq, obj.Dsq, obj.Dtq ] ...
-            %    = obj.assembleQuadratureDerivativeMatrix( @obj.derivative_orthogonal_func );
+            %    = obj.assembleQuadratureDerivativeMatrix( @obj.evaluateDerivativeOrthogonalFunc );
             
             % get the number of nodes on each face
             if obj.Nface > 0
@@ -145,34 +145,34 @@ classdef StdCell < handle
         %> @param[in] obj The StdCell class
         %> @param[in] r,s,t The node coordinate
         %> @param[out] func The basis function values at points
-        [ func ] = nodal_func(obj, r, s, t);
+        [ func ] = evaluateNodalFunc(obj, r, s, t);
         
-        function [ dfr, dfs, dft ] = orthogonal_derivative_func(obj, ind, r, s, t)
-            [ dfr, dfs, dft ] = obj.derivative_orthogonal_func( obj.N, ind, r, s, t );
+        function [ dfr, dfs, dft ] = orthogonalDerivativeFunc(obj, ind, r, s, t)
+            [ dfr, dfs, dft ] = obj.evaluateDerivativeOrthogonalFunc( obj.N, ind, r, s, t );
         end
         
         %> @brief Evaluate the derivative nodal function values at points
-        [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
+        [ fDr, fDs, fDt ] = evaluateNodalDerivativeFunc( obj, r, s, t )
         
         %> @brief Project the scalar field from the interpolation nodes to the Gauss quadrature nodes
         %> @param[in] obj The StdCell class
         %> @param[in] node_val The values on these interpolation nodes
-        function quad_val = project_node2quad(obj, node_val)
+        function quad_val = projectNode2Quad(obj, node_val)
             quad_val = obj.Vq * node_val;
         end% func
         
         %> @brief Project the scalar field from the vertices to the Gauss quadrature nodes
         %> @param[in] obj The StdCell class
         %> @param[in] vert_val The values on these vertices
-        function quad_val = project_vert2quad(obj, vert_val)
-            node_val = obj.project_vert2node(vert_val);
-            quad_val = obj.project_node2quad(node_val);
+        function quad_val = projectVert2Quad(obj, vert_val)
+            node_val = obj.projectVert2Node(vert_val);
+            quad_val = obj.projectNode2Quad(node_val);
         end
         
         %> @brief assemble the filter matrix
         %> @note placeholder in the base class; concrete implementations
         %> exist in StdTri/StdQuad.
-        function [ Filter ] = CutOffFilter( obj, N, frac )
+        function [ Filter ] = cutOffFilter( obj, N, frac )
         end
     end% methods
     
@@ -182,7 +182,7 @@ classdef StdCell < handle
         %> \f$ [V_q]_{i,j} = l_j(\xi_i) \f$
         %> where \f$ \xi_i \f$ is the ith Gauss quadrature nodes.
         function [ Vq ] = assembleQuadratureMatrix( obj )
-            Vq = obj.nodal_func( obj.rq, obj.sq, obj.tq );
+            Vq = obj.evaluateNodalFunc( obj.rq, obj.sq, obj.tq );
         end
         
         %> @brief Assemble the Vandermonde matrix
@@ -191,10 +191,10 @@ classdef StdCell < handle
         %> \f$ [V]_{i,j} = P_j(r_i) \f$
         %> where \f$ r_i \f$ is the ith interpolation nodes and \f$ P_j \f$
         %> is the jth orthgonal function.
-        function V = assembleVandMatrix(obj, orthogonal_func)
+        function V = assembleVandMatrix(obj, evaluateOrthogonalFunc)
             V = zeros(obj.Np, obj.Np);
             for n = 1:obj.Np
-                V(:, n) = orthogonal_func(obj.N, n, obj.r, obj.s, obj.t);
+                V(:, n) = evaluateOrthogonalFunc(obj.N, n, obj.r, obj.s, obj.t);
             end% for
         end% func
         

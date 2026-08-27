@@ -74,16 +74,16 @@ classdef StdPrismTri < handle
         function obj = StdPrismTri(Nh, Nz)
             obj.N = Nh;
             obj.Nz = Nz;
-            evaluateNodeCoor( obj, Nh, Nz );
+            assembleNodeCoor( obj, Nh, Nz );
             
             [ obj.Nq, obj.rq, obj.sq, obj.tq, obj.wq ] ...
-                = obj.quad_coor_func( Nh, Nz );
+                = obj.evaluateQuadCoor( Nh, Nz );
             
-            AssembleVandMatrix( obj );
+            assembleVandMatrix( obj );
             [ obj.Vq ] = obj.assembleQuadratureMatrix( );
             [ obj.M, obj.invM ] = obj.assembleMassMatrix( );
             [ obj.Dr, obj.Ds, obj.Dt ] ...
-                = obj.nodal_derivative_func(obj.r, obj.s, obj.t);
+                = obj.evaluateNodalDerivativeFunc(obj.r, obj.s, obj.t);
             
             obj.Nfp = zeros(obj.Nface, 1);
             for i = 1:3
@@ -92,11 +92,11 @@ classdef StdPrismTri < handle
             obj.Nfp( [ 4, 5 ] ) = obj.Nph;
             
             [ obj.TNfp ] = sum(obj.Nfp);
-            [ obj.Fmask ] = obj.AssembleFacialNodeIndex();
+            [ obj.Fmask ] = obj.assembleFacialNodeIndex();
         end
         
-        [ fun ] = orthogonal_func(obj, N1, N2, ind, r, s, t);
-        [ node_val ] = project_vert2node(obj, vert_val);
+        [ fun ] = evaluateOrthogonalFunc(obj, N1, N2, ind, r, s, t);
+        [ node_val ] = projectVert2Node(obj, vert_val);
         
         %> @brief Evaluate all the nodal basis function values at points
         %> @param[in] obj The StdCell class
@@ -104,25 +104,25 @@ classdef StdPrismTri < handle
         %> @param[in] s The node coordinate
         %> @param[in] t The node coordinate
         %> @param[out] func The basis function values at points
-        function [ func ] = nodal_func(obj, r, s, t)
+        function [ func ] = evaluateNodalFunc(obj, r, s, t)
             func = zeros(numel(r), obj.Np);
             for n = 1:obj.Np
-                fh = obj.EvaluateHorizontalOrthogonalFunc( obj.N, n, r, s );
-                fv = obj.EvaluateVerticalOrthogonalFunc( n, t );
+                fh = obj.evaluateHorizontalOrthogonalFunc( obj.N, n, r, s );
+                fv = obj.evaluateVerticalOrthogonalFunc( n, t );
                 func(:, n) = fh .* fv;
             end
             func = func/obj.V;
         end
         
         %> @brief Evaluate the derivative nodal function values at points
-        function [ fDr, fDs, fDt ] = nodal_derivative_func( obj, r, s, t )
+        function [ fDr, fDs, fDt ] = evaluateNodalDerivativeFunc( obj, r, s, t )
             Nr = numel( r );
             Vr = zeros(Nr, obj.Np);
             Vs = zeros(Nr, obj.Np);
             Vt = zeros(Nr, obj.Np);
             for n = 1:obj.Np
                 [Vr(:, n), Vs(:, n), Vt(:, n)] = ...
-                    obj.derivative_orthogonal_func(obj.N, obj.Nz, n, r, s, t);
+                    obj.evaluateDerivativeOrthogonalFunc(obj.N, obj.Nz, n, r, s, t);
             end
             fDr = Vr/obj.V;
             fDs = Vs/obj.V;
@@ -131,17 +131,17 @@ classdef StdPrismTri < handle
     end% methods
     
     methods ( Access=protected )
-        [ dr, ds, dt ] = derivative_orthogonal_func( obj, Nh, Nv, ind, r, s, t );
-        [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, Nh, Nv );
-        [ f ] = EvaluateHorizontalOrthogonalFunc( obj, N1, td, r, s );
-        [ f ] = EvaluateVerticalOrthogonalFunc( obj, td, t );
+        [ dr, ds, dt ] = evaluateDerivativeOrthogonalFunc( obj, Nh, Nv, ind, r, s, t );
+        [ Nq, rq, sq, tq, wq ] = evaluateQuadCoor( obj, Nh, Nv );
+        [ f ] = evaluateHorizontalOrthogonalFunc( obj, N1, td, r, s );
+        [ f ] = evaluateVerticalOrthogonalFunc( obj, td, t );
         
         %> @brief Assemble the interpolation matrix of Gauss quadrature nodes
         %> The elements of the quadratuer interpolation matrix is
         %> \f$ [V_q]_{i,j} = l_j(\xi_i) \f$
         %> where \f$ \xi_i \f$ is the ith Gauss quadrature nodes.
         function [ Vq ] = assembleQuadratureMatrix( obj )
-            Vq = obj.nodal_func( obj.rq, obj.sq, obj.tq );
+            Vq = obj.evaluateNodalFunc( obj.rq, obj.sq, obj.tq );
         end
         
         %> @brief Assemble the Vandermonde matrix
@@ -150,7 +150,7 @@ classdef StdPrismTri < handle
         %> \f$ [V]_{i,j} = P_j(r_i) \f$
         %> where \f$ r_i \f$ is the ith interpolation nodes and \f$ P_j \f$
         %> is the jth orthgonal function.
-        AssembleVandMatrix( obj )
+        assembleVandMatrix( obj )
         
         %> @brief Assemble the mass matrix
         function [ M, invM ] = assembleMassMatrix( obj )
@@ -159,7 +159,7 @@ classdef StdPrismTri < handle
             invM = obj.V * obj.V';
         end% func
         
-        Fmask = AssembleFacialNodeIndex(obj)        
+        Fmask = assembleFacialNodeIndex(obj)        
     end
     
 end

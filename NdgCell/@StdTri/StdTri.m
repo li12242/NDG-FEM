@@ -22,9 +22,9 @@ classdef StdTri < StdCell
     end
     
     methods(Access=protected)
-        [Np,r,s,t] = node_coor_func(obj, N);
-        [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
-        [Nq, rq, sq, tq, wq] = quad_coor_func( obj, qOrd );
+        [Np,r,s,t] = evaluateNodeCoor(obj, N);
+        [dr, ds, dt] = evaluateDerivativeOrthogonalFunc(obj, N, ind, r, s, t);
+        [Nq, rq, sq, tq, wq] = evaluateQuadCoor( obj, qOrd );
     end
     
     methods
@@ -34,7 +34,7 @@ classdef StdTri < StdCell
         
         % [ nx, ny, nz, Js ] = assembleNormalVector( obj, x, y, z );
         
-        function [ Filter ] = CutOffFilter( obj, Nc, frac )
+        function [ Filter ] = cutOffFilter( obj, Nc, frac )
             filterdiag = ones( obj.Np, 1);
             
             % build exponential filter
@@ -68,9 +68,9 @@ classdef StdTri < StdCell
             tz = ones( size(x) );
         end
         
-        f = orthogonal_func(obj, N, ind, r, s, t);
+        f = evaluateOrthogonalFunc(obj, N, ind, r, s, t);
         
-        function node_val = project_vert2node(obj, vert_val)
+        function node_val = projectVert2Node(obj, vert_val)
             node_val = 0.5*(-(obj.r+obj.s)*vert_val(1, :) ...
                 + (1+obj.r)*vert_val(2, :)...
                 + (1+obj.s)*vert_val(3, :));

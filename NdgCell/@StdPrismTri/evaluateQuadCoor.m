@@ -1,4 +1,4 @@
-function [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, N, N2 )
+function [ Nq, rq, sq, tq, wq ] = evaluateQuadCoor( obj, N, N2 )
 %> @brief Quadrature nodes and weights on the triangular prism,
 %> as the tensor product of the collapsed-square triangle rule
 %> (ndgcell.triquad) and the 1D LGL rule.

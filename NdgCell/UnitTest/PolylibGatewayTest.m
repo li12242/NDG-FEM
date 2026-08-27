@@ -34,7 +34,7 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
 
     methods(Test)
         %> orthonormality: \int_{-1}^{1} \tilde P_n^2 dr = 1
-        function test_jacobiP_normalization(testCase)
+        function testJacobiPNormalization(testCase)
             [x, w] = zwglj(30);
             for n = 0:8
                 P = JacobiP(x, 0, 0, n);
@@ -44,7 +44,7 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
         end
 
         %> known values of the normalized Legendre polynomial
-        function test_jacobiP_known_legendre(testCase)
+        function testJacobiPKnownLegendre(testCase)
             x = linspace(-1, 1, 11)';
             testCase.verifyEqual( JacobiP(x, 0, 0, 0), ...
                 1/sqrt(2)*ones(11, 1), 'AbsTol', testCase.tol );
@@ -55,19 +55,19 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
         end
 
         %> the mex always returns a numel(r)-by-1 column
-        function test_jacobiP_column_output(testCase)
+        function testJacobiPColumnOutput(testCase)
             r = linspace(-1, 1, 7); % row vector on purpose
             P = JacobiP(r, 0, 0, 3);
             testCase.verifySize(P, [7, 1]);
         end
 
-        function test_gradJacobiP_zero_order(testCase)
+        function testGradJacobiPZeroOrder(testCase)
             testCase.verifyEqual( GradJacobiP(linspace(-1, 1, 5)', 0, 0, 0), ...
                 zeros(5, 1) );
         end
 
         %> finite-difference check of the derivative identity
-        function test_gradJacobiP_finite_diff(testCase)
+        function testGradJacobiPFiniteDiff(testCase)
             h = 1e-6;
             x = linspace(-0.9, 0.9, 9)';
             for ab = [0, 0; 2, 0; 3, 1]'
@@ -80,14 +80,14 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
             end
         end
 
-        function test_zwglj_degenerate_case(testCase)
+        function testZwgljDegenerateCase(testCase)
             [z, w] = zwglj(1);
             testCase.verifyEqual(z, 0);
             testCase.verifyEqual(w, 2);
         end
 
         %> LGL properties: endpoints, ascending, symmetry, weight sums
-        function test_zwglj_property(testCase)
+        function testZwgljProperty(testCase)
             for np = 2:8
                 [z, w] = zwglj(np);
                 testCase.verifyEqual(z(1), -1);
@@ -100,7 +100,7 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
         end
 
         %> the np-point LGL rule integrates polynomials of degree 2*np-3 exactly
-        function test_zwglj_exactness(testCase)
+        function testZwgljExactness(testCase)
             np = 8;
             [z, w] = zwglj(np);
             for k = 0:(2*np - 3)
@@ -112,7 +112,7 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
 
         % ---------------- golden regression (mex baseline) ----------------
 
-        function test_jacobiP_golden(testCase)
+        function testJacobiPGolden(testCase)
             for c = 1:numel(testCase.golden.jacobiP)
                 ref = testCase.golden.jacobiP(c);
                 testCase.verifyEqual( ...
@@ -123,7 +123,7 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
             end
         end
 
-        function test_gradJacobiP_golden(testCase)
+        function testGradJacobiPGolden(testCase)
             for c = 1:numel(testCase.golden.gradJacobiP)
                 ref = testCase.golden.gradJacobiP(c);
                 testCase.verifyEqual( ...
@@ -134,7 +134,7 @@ classdef PolylibGatewayTest < matlab.unittest.TestCase
             end
         end
 
-        function test_zwglj_golden(testCase)
+        function testZwgljGolden(testCase)
             for c = 1:numel(testCase.golden.zwglj)
                 ref = testCase.golden.zwglj(c);
                 [z, w] = zwglj(ref.np);

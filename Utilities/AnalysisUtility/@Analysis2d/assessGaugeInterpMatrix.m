@@ -12,7 +12,7 @@ function [ Vg ] = assessGaugeInterpMatrix( obj )
             [rd, sd] = accessQuadLocalCoor( mesh, obj.xg(n), obj.yg(n), cellId );
         end
 
-        Vg{n} = mesh.cell.nodal_func( rd, sd, 0 );
+        Vg{n} = mesh.cell.evaluateNodalFunc( rd, sd, 0 );
     end
 
 end

@@ -13,20 +13,20 @@ classdef StdPoint < StdCell
     end
     
     methods(Access=protected)
-        function [Np,r,s,t] = node_coor_func(obj, N)
+        function [Np,r,s,t] = evaluateNodeCoor(obj, N)
             Np = 1;
             r = 0;
             s = 0;
             t = 0;
         end
         
-        function [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
+        function [dr, ds, dt] = evaluateDerivativeOrthogonalFunc(obj, N, ind, r, s, t)
             dr = 0;
             ds = 0;
             dt = 0;
         end
         
-        function [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
+        function [ Nq,rq,sq,tq,wq ] = evaluateQuadCoor(obj, N)
             Nq = 1;
             rq = 0;
             sq = 0;
@@ -60,11 +60,11 @@ classdef StdPoint < StdCell
             J = ones( size(x) );
         end
         
-        function fun = orthogonal_func(obj, N, ind, r, s, t)
+        function fun = evaluateOrthogonalFunc(obj, N, ind, r, s, t)
             fun = 1;
         end
         
-        function node_val = project_vert2node(obj, vert_val)
+        function node_val = projectVert2Node(obj, vert_val)
             node_val = vert_val;
         end
         

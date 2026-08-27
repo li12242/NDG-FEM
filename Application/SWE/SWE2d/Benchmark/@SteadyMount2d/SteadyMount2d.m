@@ -76,8 +76,8 @@ classdef SteadyMount2d < SWEWDPreBlanaced2d
             fphys = cell( obj.Nmesh, 1 );
             for m = 1:obj.Nmesh
                 mesh = obj.meshUnion(m);
-                xq = mesh.cell.project_node2quad( mesh.x );
-                yq = mesh.cell.project_node2quad( mesh.y );
+                xq = mesh.cell.projectNode2Quad( mesh.x );
+                yq = mesh.cell.projectNode2Quad( mesh.y );
                 
                 bot = 0.75 * exp( 40 * (-(xq - .5).^2 - (yq - 0.5).^2 ));
                 % bot = max(0, 0.25 - 5 * (xq - .5).^2 - 5 * (yq - 0.5).^2 );

@@ -104,18 +104,18 @@ classdef NdgGaussQuadStrongFormSolver < handle
             
             [ rx, ry, rz, sx, sy, sz, tx, ty, tz, J ] ...
                 = mesh.cell.assembleJacobianMatrix( mesh.x, mesh.y, mesh.z );
-            [ Jq ] = mesh.cell.project_node2quad( J );
+            [ Jq ] = mesh.cell.projectNode2Quad( J );
             [ wJ ] = bsxfun(@times, mesh.cell.wq, Jq);
             
-            rxwJ = wJ.*( mesh.cell.project_node2quad( rx ) );
-            rywJ = wJ.*( mesh.cell.project_node2quad( ry ) );
-            rzwJ = wJ.*( mesh.cell.project_node2quad( rz ) );
-            txwJ = wJ.*( mesh.cell.project_node2quad( tx ) );
-            tywJ = wJ.*( mesh.cell.project_node2quad( ty ) );
-            tzwJ = wJ.*( mesh.cell.project_node2quad( tz ) );
-            sxwJ = wJ.*( mesh.cell.project_node2quad( sx ) );
-            sywJ = wJ.*( mesh.cell.project_node2quad( sy ) );
-            szwJ = wJ.*( mesh.cell.project_node2quad( sz ) );
+            rxwJ = wJ.*( mesh.cell.projectNode2Quad( rx ) );
+            rywJ = wJ.*( mesh.cell.projectNode2Quad( ry ) );
+            rzwJ = wJ.*( mesh.cell.projectNode2Quad( rz ) );
+            txwJ = wJ.*( mesh.cell.projectNode2Quad( tx ) );
+            tywJ = wJ.*( mesh.cell.projectNode2Quad( ty ) );
+            tzwJ = wJ.*( mesh.cell.projectNode2Quad( tz ) );
+            sxwJ = wJ.*( mesh.cell.projectNode2Quad( sx ) );
+            sywJ = wJ.*( mesh.cell.projectNode2Quad( sy ) );
+            szwJ = wJ.*( mesh.cell.projectNode2Quad( sz ) );
         end
         
         function [ nx, ny, nz, Js ] = assembleNormalVector( mesh )
@@ -132,16 +132,16 @@ classdef NdgGaussQuadStrongFormSolver < handle
                 vr = cell.vr( cell.FToV(:, f) );
                 vs = cell.vs( cell.FToV(:, f) );
                 vt = cell.vt( cell.FToV(:, f) );
-                rq = fcell.project_vert2quad( vr );
-                sq = fcell.project_vert2quad( vs );
-                tq = fcell.project_vert2quad( vt );
+                rq = fcell.projectVert2Quad( vr );
+                sq = fcell.projectVert2Quad( vs );
+                tq = fcell.projectVert2Quad( vt );
                 rfq( sk:(sk+fcell.Nq-1) ) = rq(:);
                 sfq( sk:(sk+fcell.Nq-1) ) = sq(:);
                 tfq( sk:(sk+fcell.Nq-1) ) = tq(:);
                 sk = sk+fcell.Nq;
             end
             
-            Vfq = cell.nodal_func( rfq, sfq, tfq );
+            Vfq = cell.evaluateNodalFunc( rfq, sfq, tfq );
         end
         
         function [ FVfq ] = assembleFacialVandMatrixFaceQuadrature( cell, TNfq )
@@ -162,7 +162,7 @@ classdef NdgGaussQuadStrongFormSolver < handle
             K = mesh.K;
             invM = zeros( Np, Np, K );
             for k = 1:K
-                Jq = cell.project_node2quad( mesh.J(:, k) );
+                Jq = cell.projectNode2Quad( mesh.J(:, k) );
                 M = ( cell.Vq' * diag( Jq.*cell.wq ) ) * cell.Vq;
                 invM(:, :, k) = inv( M );
             end
@@ -170,7 +170,7 @@ classdef NdgGaussQuadStrongFormSolver < handle
         
         function [ Dr, Ds, Dt ] = assembleDerivativeMatrix( mesh )
             cell = mesh.cell;
-            [ Dr, Ds, Dt ] = cell.nodal_derivative_func( cell.rq, cell.sq, cell.tq );
+            [ Dr, Ds, Dt ] = cell.evaluateNodalDerivativeFunc( cell.rq, cell.sq, cell.tq );
         end
         
         function [ LIFT ] = assembleLiftMatrix( mesh, TNfq )
@@ -182,10 +182,10 @@ classdef NdgGaussQuadStrongFormSolver < handle
                 vr = cell.vr( cell.FToV(:, f) );
                 vs = cell.vs( cell.FToV(:, f) );
                 vt = cell.vt( cell.FToV(:, f) );
-                rq = fcell.project_vert2quad( vr );
-                sq = fcell.project_vert2quad( vs );
-                tq = fcell.project_vert2quad( vt );
-                LIFT(:, sk:(sk+fcell.Nq-1) ) = ( cell.nodal_func( rq, sq, tq ) )';
+                rq = fcell.projectVert2Quad( vr );
+                sq = fcell.projectVert2Quad( vs );
+                tq = fcell.projectVert2Quad( vt );
+                LIFT(:, sk:(sk+fcell.Nq-1) ) = ( cell.evaluateNodalFunc( rq, sq, tq ) )';
                 sk = sk + fcell.Nq;
             end
         end

@@ -13,7 +13,7 @@ end
 
 Vg = zeros(Ng, obj.cell.Np);
 for n = 1:obj.cell.Np
-    Vg(:, n) = obj.cell.orthogonal_func(obj.cell.N, n, rd, 0, 0);
+    Vg(:, n) = obj.cell.evaluateOrthogonalFunc(obj.cell.N, n, rd, 0, 0);
 end
 Vg = Vg/obj.cell.V;
 

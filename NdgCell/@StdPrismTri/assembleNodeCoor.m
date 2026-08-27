@@ -1,4 +1,4 @@
-function evaluateNodeCoor( obj, Nh, Nz )
+function assembleNodeCoor( obj, Nh, Nz )
 %> @brief Assemble the interpolation node coordinates of the triangular prism,
 %> as the tensor product of triangle nodes (ndgcell.triNodeCoor) in the
 %> horizontal direction and LGL nodes in the vertical direction.

@@ -1,4 +1,4 @@
-function [dr, ds, dt] = derivative_orthogonal_func( obj, N1, N2, td, r, s, t)
+function [dr, ds, dt] = evaluateDerivativeOrthogonalFunc( obj, N1, N2, td, r, s, t)
 %> @brief Derivatives of the prism orthgonal basis, as products of the
 %> horizontal (triangle) and vertical (line) modes.
 
@@ -7,7 +7,7 @@ td2 = ceil( td / obj.Nph );
 
 % horizontal part: triangle mode (td1) and its derivatives
 [ a, b ] = ndgcell.rstoab( r, s );
-[ i, j ] = ndgcell.trans_ind( N1, td1 );
+[ i, j ] = ndgcell.transInd( N1, td1 );
 [ drh, dsh ] = ndgcell.deriSimplex2DP( a, b, i, j );
 % vertical mode value
 [ ft ] = JacobiP(t, 0, 0, td2-1);

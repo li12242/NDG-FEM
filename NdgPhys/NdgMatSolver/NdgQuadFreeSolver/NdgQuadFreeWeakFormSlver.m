@@ -24,7 +24,7 @@ classdef NdgQuadFreeWeakFormSlver < NdgQuadFreeStrongFormSolver
             Vs = zeros(cell.Np, cell.Np);
             Vt = zeros(cell.Np, cell.Np);
             for n = 1:cell.Np
-                [Vr(:, n), Vs(:, n), Vt(:, n)] = cell.orthogonal_derivative_func...
+                [Vr(:, n), Vs(:, n), Vt(:, n)] = cell.orthogonalDerivativeFunc...
                     (n, cell.r, cell.s, cell.t);
             end
             Dr = (cell.V * Vr');

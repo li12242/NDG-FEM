@@ -18,9 +18,9 @@ classdef StdQuad < StdCell
     end
     
     methods(Access=protected)
-        [Np, r,s,t] = node_coor_func(obj, N);
-        [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t);
-        [Nq, rq, sq, tq, wq] = quad_coor_func(obj, N);
+        [Np, r,s,t] = evaluateNodeCoor(obj, N);
+        [dr, ds, dt] = evaluateDerivativeOrthogonalFunc(obj, N, ind, r, s, t);
+        [Nq, rq, sq, tq, wq] = evaluateQuadCoor(obj, N);
     end
     
     methods
@@ -45,7 +45,7 @@ classdef StdQuad < StdCell
             tz = ones( size(x) );
         end
         
-        function [ Filter ] = CutOffFilter( obj, Nc, frac )
+        function [ Filter ] = cutOffFilter( obj, Nc, frac )
             filterdiag = ones( obj.Np, 1);
             
             % build exponential filter
@@ -62,9 +62,9 @@ classdef StdQuad < StdCell
             Filter = obj.V*diag(filterdiag)/(obj.V);
         end
         
-        f = orthogonal_func(obj, N, ind, r, s, t);
+        f = evaluateOrthogonalFunc(obj, N, ind, r, s, t);
         
-        function node_val = project_vert2node(obj, vert_val)
+        function node_val = projectVert2Node(obj, vert_val)
             node_val = 0.25*(...
                 (1-obj.r).*(1-obj.s)*vert_val(1,:) + ...
                 (1+obj.r).*(1-obj.s)*vert_val(2,:) + ...

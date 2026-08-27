@@ -51,14 +51,14 @@ classdef StdCellTest < matlab.unittest.TestCase
 
     methods(TestMethodSetup)
         %> get the StdCell object
-        function set_std_cell(test, type, order)
+        function setStdCell(test, type, order)
             test.cell = getStdCell(order, type);
         end% func
     end
 
     methods(Test, ParameterCombination = 'sequential')
-        function test_point_coor(test)
-            [ r_ext, s_ext, t_ext ] = get_ext_coor(test.testdir, test.cell);
+        function testPointCoor(test)
+            [ r_ext, s_ext, t_ext ] = getExtCoor(test.testdir, test.cell);
             test.verifyEqual(test.cell.r, r_ext, 'AbsTol', test.tol);
             test.verifyEqual(test.cell.s, s_ext, 'AbsTol', test.tol);
             test.verifyEqual(test.cell.t, t_ext, 'AbsTol', test.tol);
@@ -72,40 +72,40 @@ classdef StdCellTest < matlab.unittest.TestCase
         %> interpolation nodes \f$(r_i, s_i)\f$, and
         %> \f$ \l_{fi}^{\partial \Omega} \f$ are the nodal basis function
         %> of the boundary cell, and on the interpolation nodel \f$(r_{fi})\f$.
-        function test_edge_basis_val(test)
+        function testEdgeBasisVal(test)
             facetype = test.cell.faceType;
             for f = 1:test.cell.Nface
                 bcell = getStdCell(test.cell.N, facetype(f));
 
                 r = test.cell.r(test.cell.Fmask(:,f));
                 s = test.cell.s(test.cell.Fmask(:,f));
-                rq = bcell.project_node2quad(r);
-                sq = bcell.project_node2quad(s);
+                rq = bcell.projectNode2Quad(r);
+                sq = bcell.projectNode2Quad(s);
                 Vq = zeros(bcell.Nq, test.cell.Np);
                 ind = test.cell.Fmask(:, f);
                 for n = 1:test.cell.Np
-                    Vq(ind, n) = test.cell.orthogonal_func(bcell.N, n, rq, sq);
+                    Vq(ind, n) = test.cell.evaluateOrthogonalFunc(bcell.N, n, rq, sq);
                 end% func
                 Vq = Vq / (test.cell.V);
                 test.verifyEqual(Vq(ind, ind), bcell.Vq, 'AbsTol', test.tol);
             end
         end
 
-        function test_vand_matrix(test)
-            [ vand_ext ] = get_ext_vandmatrix(test.testdir, test.cell);
+        function testVandMatrix(test)
+            [ vand_ext ] = getExtVandMatrix(test.testdir, test.cell);
             test.verifyEqual(test.cell.V, vand_ext, 'AbsTol', test.tol);
         end
 
         %> derivative matrices vs reference data (*.cc)
-        function test_deri_matrix(test)
-            [ dr, ds, dt ] = get_ext_derimatrix(test.testdir, test.cell);
+        function testDeriMatrix(test)
+            [ dr, ds, dt ] = getExtDeriMatrix(test.testdir, test.cell);
             test.verifyEqual(test.cell.Dr, dr, 'AbsTol', test.tol);
             test.verifyEqual(test.cell.Ds, ds, 'AbsTol', test.tol);
             test.verifyEqual(test.cell.Dt, dt, 'AbsTol', test.tol);
         end
 
         %> derivative identity: d/dr of the linear function r is exactly 1
-        function test_derivative_identity(test)
+        function testDerivativeIdentity(test)
             Dr = test.cell.Dr;
             Ds = test.cell.Ds;
             r = test.cell.r;
@@ -127,7 +127,7 @@ classdef StdCellTest < matlab.unittest.TestCase
         end% func
 
         %> quadrature weights against exact monomial integrals
-        function test_quadrature_weight(test)
+        function testQuadratureWeight(test)
             N = test.cell.N;
             r = test.cell.rq;
             w = test.cell.wq;
@@ -160,12 +160,12 @@ classdef StdCellTest < matlab.unittest.TestCase
         end% func
 
         %> test the orthgonality of the basis function
-        function test_orthgonal_func(test)
+        function testOrthogonalFunc(test)
             N = test.cell.N;
             w = test.cell.wq;
             V = zeros(test.cell.Nq, test.cell.Np);
             for n = 1:test.cell.Np
-                V(:, n) = test.cell.orthogonal_func(...
+                V(:, n) = test.cell.evaluateOrthogonalFunc(...
                     N, n, test.cell.rq, test.cell.sq, test.cell.tq);
             end
 
@@ -185,7 +185,7 @@ classdef StdCellTest < matlab.unittest.TestCase
         end% func
 
         %> face node index: valid range and counts per face
-        function test_fmask(test)
+        function testFmask(test)
             for f = 1:test.cell.Nface
                 ind = test.cell.Fmask(:, f);
                 nNode = nnz(ind);
@@ -198,7 +198,7 @@ classdef StdCellTest < matlab.unittest.TestCase
     end% methods
 end% classdef
 
-function [r_ext, s_ext, t_ext] = get_ext_coor(testdir, cell)
+function [r_ext, s_ext, t_ext] = getExtCoor(testdir, cell)
 r_ext = zeros(cell.Np, 1);
 s_ext = zeros(cell.Np, 1);
 t_ext = zeros(cell.Np, 1);
@@ -218,7 +218,7 @@ switch cell.type
 end
 end% func
 
-function [ V_ext ] = get_ext_vandmatrix(testdir, cell)
+function [ V_ext ] = getExtVandMatrix(testdir, cell)
 switch cell.type
     case enumStdCell.Line
         folder = fullfile(testdir, 'StdLineTest', 'Vand_Test');
@@ -230,7 +230,7 @@ end
 V_ext = load( fullfile(folder, ['Vand_', num2str(cell.N), '.cc']) );
 end% func
 
-function [Dr, Ds, Dt] = get_ext_derimatrix(testdir, cell)
+function [Dr, Ds, Dt] = getExtDeriMatrix(testdir, cell)
 Dr = zeros(cell.Np, cell.Np);
 Ds = zeros(cell.Np, cell.Np);
 Dt = zeros(cell.Np, cell.Np);

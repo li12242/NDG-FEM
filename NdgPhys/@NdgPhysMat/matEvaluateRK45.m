@@ -17,7 +17,7 @@ fphys = obj.fphys;
 % Filt = cell( obj.Nmesh, 1 );
 % for m = 1:obj.Nmesh
 %     mesh = obj.meshUnion(m);
-%     Filt{m} = mesh.cell.CutOffFilter(mesh.cell.N, 0.95);
+%     Filt{m} = mesh.cell.cutOffFilter(mesh.cell.N, 0.95);
 % end
 % DEBUG = 0;
 visual = makeVisualizationFromNdgPhys( obj );

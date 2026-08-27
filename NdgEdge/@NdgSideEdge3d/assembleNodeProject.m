@@ -11,7 +11,7 @@ nx = zeros( Nfp, Ne ); ny = zeros( Nfp, Ne );
 nz = zeros( Nfp, Ne ); Js = zeros( Nfp, Ne );
 Fmask = cell.Fmask;
 % [ r, s ] = assembleInpterpNode( Nh, Nz );
-% [ Dr, Ds ] = nodal_derivative_func( Nh, Nz, r, s );
+% [ Dr, Ds ] = evaluateNodalDerivativeFunc( Nh, Nz, r, s );
 
 for n = 1 : Ne
     e1 = obj.FToE(1, n);

@@ -39,14 +39,14 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
     end
 
     methods(TestMethodSetup)
-        function set_prism(test, order)
+        function setPrism(test, order)
             test.cell = StdPrismTri(order, order);
         end
     end
 
     methods(Test, ParameterCombination = 'sequential')
         %> node counts and tensor layout
-        function test_node_layout(test)
+        function testNodeLayout(test)
             N = test.cell.N;
             test.verifyEqual( test.cell.Nph, (N+1)*(N+2)/2 );
             test.verifyEqual( test.cell.Npz, N+1 );
@@ -64,7 +64,7 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
         end
 
         %> face node counts and index validity
-        function test_fmask(test)
+        function testFmask(test)
             N = test.cell.N;
             for f = 1:3 % quad side faces
                 test.verifyEqual( test.cell.Nfp(f), (N+1)*(N+1) );
@@ -84,7 +84,7 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
         %> quadrature weights against exact monomial integrals
         %> \iiint r dV = -4/3 (centroid x = -1/3, Area(tri) = 2, height = 2),
         %> \iiint t dV = 0, total volume = 4.
-        function test_quadrature_weight(test)
+        function testQuadratureWeight(test)
             w = test.cell.wq;
             test.verifyEqual( sum(w), 4, 'AbsTol', test.tol );
             test.verifyEqual( sum( w.*test.cell.rq ), -4/3, ...
@@ -97,7 +97,7 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
 
         %> orthonormality of modes with combined degree <= N-1
         %> (triquad and LGL rules are exact up to degree 2N-1)
-        function test_orthgonal_func(test)
+        function testOrthogonalFunc(test)
             N = test.cell.N;
             w = test.cell.wq;
             rq = test.cell.rq; sq = test.cell.sq; tq = test.cell.tq;
@@ -108,7 +108,7 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
             for n = 1:test.cell.Np
                 td1 = mod( n-1, Nph ) + 1;
                 td2 = ceil( n/Nph );
-                [ i1, j1 ] = ndgcell.trans_ind( N, td1 );
+                [ i1, j1 ] = ndgcell.transInd( N, td1 );
                 modal(:, n) = ndgcell.simplex2DP( a, b, i1, j1 ) ...
                     .* JacobiP( tq, 0, 0, td2-1 );
                 deg(n) = i1 + j1 + (td2 - 1);
@@ -124,7 +124,7 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
         end
 
         %> derivative identities of linear functions
-        function test_derivative_identity(test)
+        function testDerivativeIdentity(test)
             Np = test.cell.Np;
             test.verifyEqual( test.cell.Dr*test.cell.r, ones(Np, 1), ...
                 'AbsTol', test.tol );
@@ -139,9 +139,9 @@ classdef StdPrismTriTest < matlab.unittest.TestCase
         end
 
         %> vertex projection is exact for a linear field
-        function test_project_vert2node(test)
+        function testProjectVert2Node(test)
             vert_val = test.cell.vr + test.cell.vs + test.cell.vt; % 6-by-1
-            node_val = test.cell.project_vert2node(vert_val);
+            node_val = test.cell.projectVert2Node(vert_val);
             ext_val = test.cell.r + test.cell.s + test.cell.t;
             test.verifyEqual( node_val, ext_val, 'AbsTol', test.tol );
         end

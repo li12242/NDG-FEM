@@ -21,20 +21,20 @@ classdef StdLine < StdCell
     end
     
     methods(Access=protected)
-        function [Np,r,s,t] = node_coor_func(obj, N)
+        function [Np,r,s,t] = evaluateNodeCoor(obj, N)
             Np = N+1;
             [ r,~ ] = zwglj(Np);
             s = zeros(Np, 1);
             t = zeros(Np, 1);
         end
         
-        function [dr, ds, dt] = derivative_orthogonal_func(obj, N, ind, r, s, t)
+        function [dr, ds, dt] = evaluateDerivativeOrthogonalFunc(obj, N, ind, r, s, t)
             dr = GradJacobiP(r, 0, 0, ind-1);
             ds = zeros(numel(r), 1);
             dt = zeros(numel(r), 1);
         end
 
-        function [ Nq,rq,sq,tq,wq ] = quad_coor_func(obj, N)
+        function [ Nq,rq,sq,tq,wq ] = evaluateQuadCoor(obj, N)
             Nq = N+1;
             [ rq, wq ] = zwglj( Nq );
             sq = zeros(Nq, 1);
@@ -73,11 +73,11 @@ classdef StdLine < StdCell
             tz = ones( size(x) );
         end
         
-        function f = orthogonal_func(obj, N, ind, r, s, t)
+        function f = evaluateOrthogonalFunc(obj, N, ind, r, s, t)
             f = JacobiP(r, 0, 0, ind-1);
         end% func
         
-        function node_val = project_vert2node(obj, vert_val)
+        function node_val = projectVert2Node(obj, vert_val)
             node_val = 0.5*((1-obj.r)*vert_val(1,:) + (1+obj.r)*vert_val(2,:));
         end
         

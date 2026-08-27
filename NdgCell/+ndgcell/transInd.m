@@ -1,4 +1,4 @@
-function [ i, j ] = trans_ind( N, ind )
+function [ i, j ] = transInd( N, ind )
 %> @brief Transfer the linear mode index on the triangle to (i,j).
 %> @details The mode sequence on the standard triangle is
 %>   i = 0, j = 0,1,2,...,N;

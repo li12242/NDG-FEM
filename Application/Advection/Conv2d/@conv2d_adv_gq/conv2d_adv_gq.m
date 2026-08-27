@@ -22,11 +22,11 @@ classdef conv2d_adv_gq < conv2d
                 input_type = 'file';
                 input_var = {N, cell_type, casename};
             elseif( isa(varargin{2}, 'double') )
-                N = varargin{1}; % µ¥Ôª½×Êý
-                M = varargin{2}; % µ¥Ôª¸öÊý
-                cell_type = varargin{3}; % µ¥ÔªÀàÐÍ
-                xlim = [-1, 1]; ylim = [-1, 1]; % ¼ÆËãÓò
-                Mx = M; My = M; % µ¥Ôª¸öÊý
+                N = varargin{1}; % ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½
+                M = varargin{2}; % ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½
+                cell_type = varargin{3}; % ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½
+                xlim = [-1, 1]; ylim = [-1, 1]; % ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                Mx = M; My = M; % ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½
                 zg_bc = ndg_lib.bc_type.ZeroGrad;
                 bc_type = [zg_bc, zg_bc, zg_bc, zg_bc];
 
@@ -61,15 +61,15 @@ classdef conv2d_adv_gq < conv2d
             reset_gq_mesh(obj)
             obj.u = obj.u0*ones(obj.mesh.cell.Np, obj.mesh.K);
             obj.v = obj.v0*ones(obj.mesh.cell.Np, obj.mesh.K);
-            obj.uq = obj.mesh.cell.project_node2quad(obj.u);
-            obj.vq = obj.mesh.cell.project_node2quad(obj.u);
+            obj.uq = obj.mesh.cell.projectNode2Quad(obj.u);
+            obj.vq = obj.mesh.cell.projectNode2Quad(obj.u);
             obj.f_Q = obj.ext_func(0);
             obj.f_extQ = zeros(obj.mesh.cell.Np, obj.mesh.K);
         end% func
         
     end
     
-    %% Ë½ÓÐº¯Êý
+    %% Ë½ï¿½Ðºï¿½ï¿½ï¿½
     methods(Access=protected) % private 
         [ E, G ] = flux_term_quad( obj, f_Q ) % get the flux terms
         [ dflux ] = surf_term_quad( obj, f_Q ) % get flux deviation

@@ -113,7 +113,7 @@ classdef NdgMesh < handle
         % project scalars from mesh verts to nodes
         function nodeQ = proj_vert2node(obj, vertQ)
             ele_vQ = vertQ(obj.EToV);
-            nodeQ = obj.cell.project_vert2node(ele_vQ);
+            nodeQ = obj.cell.projectVert2Node(ele_vQ);
         end
         
         function integralValue = GetMeshIntegralValue(obj, nodeVal)

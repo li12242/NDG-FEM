@@ -25,7 +25,7 @@ classdef NdgMeshTest < matlab.unittest.TestCase
     end
     methods(TestMethodSetup)
         %> get the StdCell object
-        function set_std_cell(test, type, order)
+        function setStdCell(test, type, order)
             test.cell = getStdCell(order, type);
         end% func
         

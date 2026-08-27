@@ -30,7 +30,7 @@ for m1 = 1:obj.Nmesh
 %         fvT(obj.OBVid(i,1)) = tidet(i);
 %     end
 %     ele_fvT = fvT(mesh.EToV);
-%     fnT = mesh.cell.project_vert2node(ele_fvT);
+%     fnT = mesh.cell.projectVert2Node(ele_fvT);
 %     
 %     ele = fnT - obj.fphys{m1}(:,:,4);
 %     obj.fext{m1}(:,:,1) = max(0,ele);

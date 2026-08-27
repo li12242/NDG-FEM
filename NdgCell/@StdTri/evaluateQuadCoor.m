@@ -1,4 +1,4 @@
-function [ Nq, rq, sq, tq, wq ] = quad_coor_func( obj, N )
+function [ Nq, rq, sq, tq, wq ] = evaluateQuadCoor( obj, N )
 %> @brief Quadrature nodes and weights on the reference triangle.
 %> Uses the collapsed-square Gauss rule (ndgcell.triquad) of order N+1.
 qOrd = N+1;

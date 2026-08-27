@@ -1,20 +1,20 @@
-function AssembleVandMatrix( obj )
+function assembleVandMatrix( obj )
 V = zeros(obj.Np, obj.Np);
 
 for n = 1:obj.Np
-    fh = obj.EvaluateHorizontalOrthogonalFunc( obj.N, n, obj.r, obj.s );
-    fv = obj.EvaluateVerticalOrthogonalFunc( n, obj.t );
+    fh = obj.evaluateHorizontalOrthogonalFunc( obj.N, n, obj.r, obj.s );
+    fv = obj.evaluateVerticalOrthogonalFunc( n, obj.t );
     V(:, n) = fh .* fv;
 end% for
 
 Vh = zeros(obj.Nph, obj.Nph);
 for n = 1:obj.Nph
-    fh = obj.EvaluateHorizontalOrthogonalFunc( obj.N, n, obj.r1, obj.s1 );
+    fh = obj.evaluateHorizontalOrthogonalFunc( obj.N, n, obj.r1, obj.s1 );
     Vh(:, n) = fh;
 end% for
 
 % vertical integral vandermonde matrix
-Vint = EvaluateVerticalIntegralOrthogonalFunc( obj );
+Vint = evaluateVerticalIntegralOrthogonalFunc( obj );
 
 obj.V = V;
 obj.Vh = Vh;
@@ -22,11 +22,11 @@ obj.Vint = Vint;
 
 end% func
 
-function Vz = EvaluateVerticalIntegralOrthogonalFunc( obj )
+function Vz = evaluateVerticalIntegralOrthogonalFunc( obj )
 
 Vz = zeros(obj.Np, obj.Np);
 for n = 1:obj.Np
-    fh = obj.EvaluateHorizontalOrthogonalFunc( obj.N, n, obj.r, obj.s );
+    fh = obj.evaluateHorizontalOrthogonalFunc( obj.N, n, obj.r, obj.s );
     ind = ceil( n / obj.Nph ); % vertical orthogonal polynomial index
     if ind == 1
         fv = LegendreNorm1d( ind + 1, obj.t );

@@ -12,9 +12,9 @@ for f = 1:obj.Nface
     if(isrow(tv)) tv = tv'; end
     % get the nodes on face f
     cell = getStdCell(obj.N, obj.faceType(f));
-    fr = cell.project_vert2node(rv);
-    fs = cell.project_vert2node(sv);
-    ft = cell.project_vert2node(tv);
+    fr = cell.projectVert2Node(rv);
+    fs = cell.projectVert2Node(sv);
+    ft = cell.projectVert2Node(tv);
     % get the nodes index
     for n = 1:obj.Nfp(f)
         dis = (fr(n) - obj.r).^2 + (fs(n) - obj.s).^2 + (ft(n) - obj.t).^2;

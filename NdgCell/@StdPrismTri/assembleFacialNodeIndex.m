@@ -1,4 +1,4 @@
-function Fmask = AssembleFacialNodeIndex(obj)
+function Fmask = assembleFacialNodeIndex(obj)
 
 maxnfp = max(obj.Nfp);
 Fmask = zeros(maxnfp, obj.Nface);

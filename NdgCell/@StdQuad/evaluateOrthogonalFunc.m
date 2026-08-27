@@ -1,4 +1,4 @@
-function [ fval ] = orthogonal_func(obj, N, ind, r, s, t)
+function [ fval ] = evaluateOrthogonalFunc(obj, N, ind, r, s, t)
 
 i = mod( ind - 1, N + 1 );
 j = floor( (ind - 1) / (N + 1) );

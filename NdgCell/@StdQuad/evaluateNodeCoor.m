@@ -12,14 +12,16 @@
 %> This function is part of the NDGOM software. 
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 %======================================================================
-function [ fdr, fds, fdt ] = derivative_orthogonal_func(obj, N, ind, r, s, t)
+function [ Np,r,s,t ] = evaluateNodeCoor( obj, order )
+np = order+1;
+[x,~] = zwglj(np);
 
-% transform the index to two indexes.
-i = mod( ind - 1, N + 1 );
-j = floor( (ind - 1) / (N + 1) );
-% calculate the derivative basis function values.
-fdr = GradJacobiP(r(:), 0, 0, i).*JacobiP(s(:), 0, 0, j);
-fds = JacobiP(r(:), 0, 0, i).*GradJacobiP(s(:), 0, 0, j);
-fdt = zeros(size(fdr));
+r = x * ones(1, np);
+s = ones(np, 1) * x';
+
+r = r(:); 
+s = s(:);
+t = zeros(size(r));
+Np = np*np;
 end
 

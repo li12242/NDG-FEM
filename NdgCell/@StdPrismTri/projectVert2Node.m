@@ -1,4 +1,4 @@
-function [ node_val ] = project_vert2node( obj, vert_val )
+function [ node_val ] = projectVert2Node( obj, vert_val )
 %PROJECT_VERT2NODE Summary of this function goes here
 %   Detailed explanation goes here
 

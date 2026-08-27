@@ -13,7 +13,7 @@
 %> This class is part of the NDG-FEM software. 
 %> @author li12242, Tianjin University, li12242@tju.edu.cn
 %======================================================================
-function [Nq, rq, sq, tq, wq] = quad_coor_func(obj, N)
+function [Nq, rq, sq, tq, wq] = evaluateQuadCoor(obj, N)
 %QUADRATURE_NODE_FUNC Summary of this function goes here
 %   Detailed explanation goes here
 
