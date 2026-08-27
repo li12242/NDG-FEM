@@ -34,7 +34,7 @@ typedef struct {
 /** Put input variable into FluxSolver  */
 FluxSolver ConvertInputMexVariable2d(const int Nlhs,        ///< number of LHS
                                      const int Nrhs,        ///< number of RHS
-                                     const mxArray *plhs[], ///< LHS pointer
+                                     mxArray *plhs[],       ///< LHS pointer
                                      const mxArray *prhs[]  ///< RHS pointer
 ) {
   /* check input & output */
